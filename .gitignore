@@ -1,0 +1,27 @@
+.gradle
+/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+# gradle/wrapper/gradle-wrapper.properties
+
+# IDEA
+/.idea/
+
+# Architectury-loom runClient
+/common/build/
+/forge/build/
+/fabric/build/
+/quilt/build/
+/forge/run/
+/fabric/run/
+/quilt/run/
+/run/

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "notenoughupdates",
+  "version": "${version}",
+  "name": "Not Enough Updates",
+  "description": "Not Enough Updates - A mod for Hypixel Skyblock",
+  "authors": [
+    "nea89"
+  ],
+  "contact": {
+    "homepage": "https://github.com/romangraef/TODO",
+    "sources": "https://github.com/romangraef/TODO"
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/notenoughupdates/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "net.examplemod.fabric.ExampleModFabric"
+    ],
+	"rei": [
+	  "moe.nea.notenoughupdates.rei.NEUReiPlugin"
+	]
+  },
+  "mixins": [
+	"notenoughupdates.mixins.json",
+    "notenoughupdates-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.18.2",
+    "architectury": ">=4.2.50"
+  }
+}
