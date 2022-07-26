@@ -15,8 +15,6 @@ object NotEnoughUpdates {
     }
 
 
-
-
     fun init() {
 
     }

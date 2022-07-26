@@ -1,4 +1,4 @@
-package moe.nea.notenoughupdates
+package moe.nea.notenoughupdates.util
 
 import net.minecraft.nbt.*
 import java.util.*
