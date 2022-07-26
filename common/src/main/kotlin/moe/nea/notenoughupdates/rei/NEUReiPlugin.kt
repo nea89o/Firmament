@@ -28,6 +28,7 @@ class NEUReiPlugin : REIClientPlugin {
         registry.register(SKYBLOCK_ITEM_TYPE_ID, SBItemEntryDefinition)
     }
 
+
     override fun registerEntries(registry: EntryRegistry) {
         neuRepo.items.items.values.forEach {
             if (!it.isVanilla)

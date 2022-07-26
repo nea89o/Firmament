@@ -8,7 +8,7 @@ import moe.nea.notenoughupdates.util.LegacyTagParser
 import moe.nea.notenoughupdates.util.appendLore
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
-import net.minecraft.network.chat.TextComponent
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.datafix.DataFixers
 import net.minecraft.util.datafix.fixes.References
@@ -46,8 +46,8 @@ object ItemCache : IReloadable {
         val oldItemTag = get10809CompoundTag()
         val modernItemTag = oldItemTag.transformFrom10809ToModern()
             ?: return ItemStack(Items.PAINTING).apply {
-                setHoverName(TextComponent(this@asItemStackNow.displayName))
-                appendLore(listOf(TextComponent("Exception rendering item: $skyblockItemId")))
+                setHoverName(Component.literal(this@asItemStackNow.displayName))
+                appendLore(listOf(Component.literal("Exception rendering item: $skyblockItemId")))
             }
         val itemInstance = ItemStack.of(modernItemTag)
         if (itemInstance.tag?.contains("Enchantments") == true) {
@@ -67,7 +67,6 @@ object ItemCache : IReloadable {
 
     fun NEUItem.getResourceLocation() =
         ResourceLocation("skyblockitem", skyblockItemId.lowercase().replace(";", "__"))
-
 
 
     override fun reload(repository: NEURepository) {

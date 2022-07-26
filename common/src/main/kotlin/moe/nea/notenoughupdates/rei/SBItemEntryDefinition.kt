@@ -6,6 +6,7 @@ import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
+import me.shedaniel.rei.api.client.gui.widgets.TooltipContext
 import me.shedaniel.rei.api.common.entry.EntrySerializer
 import me.shedaniel.rei.api.common.entry.EntryStack
 import me.shedaniel.rei.api.common.entry.comparison.ComparisonContext
@@ -50,9 +51,9 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
                 )
         }
 
-        override fun getTooltip(entry: EntryStack<NEUItem>, mouse: Point): Tooltip? {
+        override fun getTooltip(entry: EntryStack<NEUItem>, tooltipContext: TooltipContext): Tooltip? {
             return VanillaEntryTypes.ITEM.definition.renderer
-                .getTooltip(entry.asItemEntry(), mouse)
+                .getTooltip(entry.asItemEntry(), tooltipContext)
         }
 
     }

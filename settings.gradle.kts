@@ -18,8 +18,6 @@ pluginManagement {
 
 include("common")
 include("fabric")
-include("quilt")
-include("forge")
 
 rootProject.name = "NotEnoughApdates"
 
