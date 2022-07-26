@@ -16,7 +16,7 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-      "net.examplemod.fabric.ExampleModFabric"
+      "moe.nea.notenoughupdates.FabricMain"
     ],
 	"rei": [
 	  "moe.nea.notenoughupdates.rei.NEUReiPlugin"

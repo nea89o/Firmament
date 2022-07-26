@@ -9,6 +9,11 @@ architectury {
 
 loom {
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
+    launches {
+        named("client") {
+            property("fabric.log.level", "info")
+        }
+    }
 }
 
 /**

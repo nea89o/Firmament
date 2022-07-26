@@ -3,7 +3,6 @@
   "package": "net.examplemod.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "MixinTitleScreen"
   ],
   "mixins": [
   ],

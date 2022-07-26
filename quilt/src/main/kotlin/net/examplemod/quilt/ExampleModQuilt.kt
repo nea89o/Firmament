@@ -1,6 +1,6 @@
 package net.examplemod.quilt
 
-import net.examplemod.ExampleMod.init
+import moe.nea.notenoughupdates.NotEnoughUpdates.init
 import org.quiltmc.loader.api.ModContainer
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer
 
