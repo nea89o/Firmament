@@ -16,7 +16,6 @@ import me.shedaniel.rei.api.common.entry.type.EntryDefinition
 import me.shedaniel.rei.api.common.entry.type.EntryType
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
-import me.shedaniel.rei.api.common.util.EntryStacks
 import moe.nea.notenoughupdates.LegacyTagParser
 import moe.nea.notenoughupdates.NotEnoughUpdates.neuRepo
 import net.minecraft.ChatFormatting
@@ -31,7 +30,6 @@ import net.minecraft.util.datafix.DataFixers.getDataFixer
 import net.minecraft.util.datafix.fixes.References
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.world.item.enchantment.Enchantments
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Stream
 
@@ -77,7 +75,7 @@ class NEUReiPlugin : REIClientPlugin {
             }
             val itemInstance = ItemStack.of(itemTag_modern)
             return itemInstance.also {
-                if(false)it.appendLore(
+                if (false) it.appendLore(
                     listOf(
                         TextComponent("Old: $minecraftItemId").withStyle {
                             it.withItalic(false).withColor(ChatFormatting.RED)
@@ -87,7 +85,6 @@ class NEUReiPlugin : REIClientPlugin {
                         },
                     )
                 )
-                it.hoverName = TextComponent(this.skyblockItemId)
             }
         }
 
@@ -107,6 +104,10 @@ class NEUReiPlugin : REIClientPlugin {
     object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         override fun equals(o1: NEUItem?, o2: NEUItem?, context: ComparisonContext?): Boolean {
             return o1 == o2
+        }
+
+        override fun cheatsAs(entry: EntryStack<NEUItem>?, value: NEUItem?): ItemStack? {
+            return value?.asItemStack()
         }
 
         override fun getValueType(): Class<NEUItem> = NEUItem::class.java
@@ -181,10 +182,8 @@ class NEUReiPlugin : REIClientPlugin {
 
     override fun registerEntries(registry: EntryRegistry) {
         neuRepo.items.items.values.forEach {
-            registry.addEntry(EntryStack.of(SBItemEntryDefinition, it))
+            if (!it.isVanilla)
+                registry.addEntry(EntryStack.of(SBItemEntryDefinition, it))
         }
-        registry.addEntry(EntryStacks.of(ItemStack(Items.DIAMOND).also {
-            it.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 10)
-        }))
     }
 }
