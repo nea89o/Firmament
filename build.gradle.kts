@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
     kotlin("jvm") version "1.7.10"
     id("dev.architectury.loom") version "0.12.0.+"
-    id("com.github.johnrengelman.plugin-shadow") version "2.0.3"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 loom {
@@ -13,6 +13,7 @@ loom {
     launches {
         removeIf { it.name != "client" }
         named("client") {
+            property("devauth.enabled", "true")
             property("fabric.log.level", "info")
         }
     }
@@ -42,7 +43,7 @@ dependencies {
     // Fabric dependencies
     modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
     modApi("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_api_version")}")
-    modImplementation("net.fabricmc:fabric-language-kotlin:1.8.2+kotlin.1.7.10")
+    modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("fabric_kotlin_version")}")
 
     // Actual dependencies
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}")

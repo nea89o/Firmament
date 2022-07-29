@@ -2,7 +2,6 @@ package moe.nea.notenoughupdates.rei
 
 import com.mojang.blaze3d.vertex.PoseStack
 import io.github.moulberry.repo.data.NEUItem
-import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
@@ -24,7 +23,7 @@ import java.util.stream.Stream
 
 object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     override fun equals(o1: NEUItem?, o2: NEUItem?, context: ComparisonContext?): Boolean {
-        return o1 == o2
+        return o1 === o2
     }
 
     override fun cheatsAs(entry: EntryStack<NEUItem>?, value: NEUItem?): ItemStack? {
@@ -71,7 +70,7 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     }
 
     override fun hash(entry: EntryStack<NEUItem>, value: NEUItem, context: ComparisonContext): Long {
-        return value.skyblockItemId.hashCode().toLong()
+        return System.identityHashCode(value) * 31L
     }
 
     override fun wildcard(entry: EntryStack<NEUItem>, value: NEUItem): NEUItem {

@@ -21,7 +21,13 @@
 		"value": "moe.nea.notenoughupdates.NotEnoughUpdates"
 	  }
 	],
-	"rei": [
+	"client": [
+	  {
+		"adapter": "kotlin",
+		"value": "moe.nea.notenoughupdates.NotEnoughUpdates"
+	  }
+	],
+	"rei_client": [
 	  "moe.nea.notenoughupdates.rei.NEUReiPlugin"
 	]
   },

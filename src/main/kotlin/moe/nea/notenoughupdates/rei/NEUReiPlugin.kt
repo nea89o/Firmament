@@ -20,10 +20,8 @@ class NEUReiPlugin : REIClientPlugin {
             return EntryStack.of(VanillaEntryTypes.ITEM, value.asItemStack())
         }
 
-
         val SKYBLOCK_ITEM_TYPE_ID = ResourceLocation("notenoughupdates", "skyblockitems")
     }
-
     override fun registerEntryTypes(registry: EntryTypeRegistry) {
         registry.register(SKYBLOCK_ITEM_TYPE_ID, SBItemEntryDefinition)
     }
