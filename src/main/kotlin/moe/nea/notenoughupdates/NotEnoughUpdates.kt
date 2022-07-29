@@ -1,12 +1,11 @@
 package moe.nea.notenoughupdates
 
-import dev.architectury.registry.registries.Registries
 import io.github.moulberry.repo.NEURepository
+import net.fabricmc.api.ModInitializer
 import java.nio.file.Path
-import java.util.logging.Logger
 
-object NotEnoughUpdates {
-    val REGISTRIES by lazy { Registries.get(MOD_ID) }
+object NotEnoughUpdates : ModInitializer {
+    val DATA_DIR = Path.of(".notenoughupdates")
 
     const val MOD_ID = "notenoughupdates"
 
@@ -14,8 +13,6 @@ object NotEnoughUpdates {
         it.reload()
     }
 
-
-    fun init() {
-
+    override fun onInitialize() {
     }
 }

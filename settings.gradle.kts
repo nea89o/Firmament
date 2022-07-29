@@ -16,8 +16,5 @@ pluginManagement {
     }
 }
 
-include("common")
-include("fabric")
-
 rootProject.name = "NotEnoughApdates"
 

@@ -5,30 +5,32 @@
   "name": "Not Enough Updates",
   "description": "Not Enough Updates - A mod for Hypixel Skyblock",
   "authors": [
-    "nea89"
+	"nea89"
   ],
   "contact": {
-    "homepage": "https://github.com/romangraef/TODO",
-    "sources": "https://github.com/romangraef/TODO"
+	"homepage": "https://github.com/romangraef/TODO",
+	"sources": "https://github.com/romangraef/TODO"
   },
   "license": "LGPL-3.0",
   "icon": "assets/notenoughupdates/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "moe.nea.notenoughupdates.FabricMain"
-    ],
+	"main": [
+	  {
+		"adapter": "kotlin",
+		"value": "moe.nea.notenoughupdates.NotEnoughUpdates"
+	  }
+	],
 	"rei": [
 	  "moe.nea.notenoughupdates.rei.NEUReiPlugin"
 	]
   },
   "mixins": [
-	"notenoughupdates.mixins.json",
-    "notenoughupdates-common.mixins.json"
+	"notenoughupdates.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
-    "minecraft": ">=1.18.2",
-    "architectury": ">=4.2.50"
+	"fabric": "*",
+	"fabric-language-kotlin": ">=1.8.2+kotlin.1.7.10",
+	"minecraft": ">=1.18.2"
   }
 }

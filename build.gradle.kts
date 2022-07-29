@@ -1,84 +1,92 @@
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    `kotlin-dsl`
-    id("architectury-plugin") version "3.4-SNAPSHOT"
-    id("dev.architectury.loom") version "0.12.0.+" apply false
+    `maven-publish`
+    kotlin("jvm") version "1.7.10"
+    id("dev.architectury.loom") version "0.12.0.+"
+    id("com.github.johnrengelman.plugin-shadow") version "2.0.3"
 }
 
-architectury {
-    minecraft = rootProject.property("minecraft_version").toString()
-}
-
-subprojects {
-    apply(plugin = "dev.architectury.loom")
-
-    val loom = project.extensions.getByName<LoomGradleExtensionAPI>("loom")
-
-
-    dependencies {
-        "minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
-        // The following line declares the mojmap mappings, you may use other mappings as well
-        "mappings"(
-            loom.officialMojangMappings()
-        )
-        // The following line declares the yarn mappings you may select this one as well.
-        // "mappings"("net.fabricmc:yarn:1.18.2+build.3:v2")
-    }
-}
-
-allprojects {
-    apply(plugin = "java")
-    apply(plugin = "architectury-plugin")
-    apply(plugin = "maven-publish")
-    apply(plugin = "org.jetbrains.kotlin.jvm")
-
-    base.archivesName.set(rootProject.property("archives_base_name").toString())
-    //base.archivesBaseName = rootProject.property("archives_base_name").toString()
-    version = rootProject.property("mod_version").toString()
-    group = rootProject.property("maven_group").toString()
-
-    repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
-        maven("https://maven.terraformersmc.com/releases/")
-        maven("https://maven.shedaniel.me")
-        maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
-        maven("https://api.modrinth.com/maven") {
-            content {
-                includeGroup("maven.modrinth")
-            }
+loom {
+    accessWidenerPath.set(project.file("src/main/resources/notenoughupdates.accesswidener"))
+    launches {
+        removeIf { it.name != "client" }
+        named("client") {
+            property("fabric.log.level", "info")
         }
-        mavenLocal()
     }
+}
 
-    dependencies {
-        "compileClasspath"("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
-        implementation("io.github.moulberry:neurepoparser:0.0.1")
+repositories {
+    maven("https://maven.terraformersmc.com/releases/")
+    maven("https://maven.shedaniel.me")
+    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    maven("https://api.modrinth.com/maven") {
+        content {
+            includeGroup("maven.modrinth")
+        }
     }
+    mavenLocal()
+}
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.release.set(17)
-    }
+val shadowMe by configurations.creating {
+    configurations.implementation.get().extendsFrom(this)
+}
 
-    java {
-        withSourcesJar()
-        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-    }
+dependencies {
+    // Minecraft dependencies
+    "minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
+    "mappings"(loom.officialMojangMappings())
 
-    // could not set to 17, up to 16
-    val compileKotlin: KotlinCompile by tasks
-    compileKotlin.kotlinOptions {
-        jvmTarget = "16"
-    }
-    val compileTestKotlin: KotlinCompile by tasks
-    compileTestKotlin.kotlinOptions {
-        jvmTarget = "16"
-    }
+    // Fabric dependencies
+    modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
+    modApi("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_api_version")}")
+    modImplementation("net.fabricmc:fabric-language-kotlin:1.8.2+kotlin.1.7.10")
+
+    // Actual dependencies
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}")
+    shadowMe("io.github.moulberry:neurepoparser:0.0.1")
+
+    // Dev environment preinstalled mods
+    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.property("rei_version")}")
+    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${project.property("devauth_version")}")
+    modRuntimeOnly("maven.modrinth:modmenu:${project.property("modmenu_version")}")
+
+}
+
+
+version = rootProject.property("mod_version").toString()
+group = rootProject.property("maven_group").toString()
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.release.set(17)
+}
+
+java {
+    withSourcesJar()
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+// could not set to 17, up to 16
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "16"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "16"
+}
+
+tasks.shadowJar {
+    configurations = listOf(shadowMe)
+    archiveClassifier.set("dev-thicc")
+}
+
+tasks.remapJar {
+    injectAccessWidener.set(true)
+    inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
+    dependsOn(tasks.shadowJar)
+    archiveClassifier.set("thicc")
 }
