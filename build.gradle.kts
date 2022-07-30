@@ -4,17 +4,21 @@ plugins {
     java
     `maven-publish`
     kotlin("jvm") version "1.7.10"
+    kotlin("plugin.serialization") version "1.7.10"
     id("dev.architectury.loom") version "0.12.0.+"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 loom {
     accessWidenerPath.set(project.file("src/main/resources/notenoughupdates.accesswidener"))
-    launches {
+    runConfigs {
         removeIf { it.name != "client" }
+    }
+    launches {
         named("client") {
             property("devauth.enabled", "true")
             property("fabric.log.level", "info")
+            property("notenoughupdates.debug", "true")
         }
     }
 }
@@ -35,6 +39,13 @@ val shadowMe by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
 }
 
+val transInclude by configurations.creating {
+    exclude(group = "com.mojang")
+    exclude(group = "org.jetbrains.kotlin")
+    exclude(group = "org.jetbrains.kotlinx")
+    isTransitive = true
+}
+
 dependencies {
     // Minecraft dependencies
     "minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
@@ -48,12 +59,20 @@ dependencies {
     // Actual dependencies
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}")
     shadowMe("io.github.moulberry:neurepoparser:0.0.1")
+    fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${project.property("ktor_version")}"
+    transInclude(implementation(ktor("client-core"))!!)
+    transInclude(implementation(ktor("client-java"))!!)
+    transInclude(implementation(ktor("serialization-kotlinx-json"))!!)
+    transInclude(implementation(ktor("client-content-negotiation"))!!)
 
     // Dev environment preinstalled mods
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.property("rei_version")}")
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${project.property("devauth_version")}")
     modRuntimeOnly("maven.modrinth:modmenu:${project.property("modmenu_version")}")
 
+    transInclude.resolvedConfiguration.resolvedArtifacts.forEach {
+        include(it.moduleVersion.id.toString())
+    }
 }
 
 

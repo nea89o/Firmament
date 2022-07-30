@@ -4,6 +4,7 @@ import com.mojang.serialization.Dynamic
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
+import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.util.LegacyTagParser
 import moe.nea.notenoughupdates.util.appendLore
 import net.minecraft.nbt.CompoundTag
@@ -37,7 +38,7 @@ object ItemCache : IReloadable {
                 2975
             ).value as CompoundTag
         } catch (e: Exception) {
-            e.printStackTrace()
+            NotEnoughUpdates.logger.error("Failed to datafixer an item", e)
             isFlawless = false
             null
         }
@@ -46,7 +47,7 @@ object ItemCache : IReloadable {
         val oldItemTag = get10809CompoundTag()
         val modernItemTag = oldItemTag.transformFrom10809ToModern()
             ?: return ItemStack(Items.PAINTING).apply {
-                setHoverName(Component.literal(this@asItemStackNow.displayName))
+                hoverName = Component.literal(this@asItemStackNow.displayName)
                 appendLore(listOf(Component.literal("Exception rendering item: $skyblockItemId")))
             }
         val itemInstance = ItemStack.of(modernItemTag)
