@@ -5,38 +5,43 @@
   "name": "Not Enough Updates",
   "description": "Not Enough Updates - A mod for Hypixel Skyblock",
   "authors": [
-	"nea89"
+    {
+      "name": "Linnea Gräf",
+      "contact": {
+        "email": "nea@nea89.moe"
+      }
+    }
   ],
   "contact": {
-	"homepage": "https://github.com/romangraef/TODO",
-	"sources": "https://github.com/romangraef/TODO"
+    "discord": "https://discord.gg/moulberry",
+    "sources": "https://git.nea.moe/nea/neurepoparsing/"
   },
-  "license": "LGPL-3.0",
+  "license": "ARR",
   "icon": "assets/notenoughupdates/icon.png",
   "environment": "client",
   "entrypoints": {
-	"main": [
-	  {
-		"adapter": "kotlin",
-		"value": "moe.nea.notenoughupdates.NotEnoughUpdates"
-	  }
-	],
-	"client": [
-	  {
-		"adapter": "kotlin",
-		"value": "moe.nea.notenoughupdates.NotEnoughUpdates"
-	  }
-	],
-	"rei_client": [
-	  "moe.nea.notenoughupdates.rei.NEUReiPlugin"
-	]
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "moe.nea.notenoughupdates.NotEnoughUpdates"
+      }
+    ],
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "moe.nea.notenoughupdates.NotEnoughUpdates"
+      }
+    ],
+    "rei_client": [
+      "moe.nea.notenoughupdates.rei.NEUReiPlugin"
+    ]
   },
   "mixins": [
-	"notenoughupdates.mixins.json"
+    "notenoughupdates.mixins.json"
   ],
   "depends": {
-	"fabric": "*",
-	"fabric-language-kotlin": ">=1.8.2+kotlin.1.7.10",
-	"minecraft": ">=1.18.2"
+    "fabric": "*",
+    "fabric-language-kotlin": ">=1.8.2+kotlin.1.7.10",
+    "minecraft": ">=1.18.2"
   }
 }

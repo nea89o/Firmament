@@ -24,22 +24,18 @@ object RepoDownloadManager {
     val repoSavedLocation = NotEnoughUpdates.DATA_DIR.resolve("repo-extracted")
     val repoMetadataLocation = NotEnoughUpdates.DATA_DIR.resolve("loaded-repo-sha.txt")
 
-    val user = "NotEnoughUpdates"
-    val repo = "NotEnoughUpdates-REPO"
-    val branch = "dangerous"
-
     private fun loadSavedVersionHash(): String? =
-        if (repoSavedLocation.exists()) {
-            if (repoMetadataLocation.exists()) {
-                try {
-                    repoMetadataLocation.readText().trim()
-                } catch (e: IOException) {
+            if (repoSavedLocation.exists()) {
+                if (repoMetadataLocation.exists()) {
+                    try {
+                        repoMetadataLocation.readText().trim()
+                    } catch (e: IOException) {
+                        null
+                    }
+                } else {
                     null
                 }
-            } else {
-                null
-            }
-        } else null
+            } else null
 
     private fun saveVersionHash(versionHash: String) {
         latestSavedVersionHash = versionHash
@@ -54,7 +50,7 @@ object RepoDownloadManager {
 
     private suspend fun requestLatestGithubSha(): String? {
         val response =
-            NotEnoughUpdates.httpClient.get("https://api.github.com/repos/$user/$repo/commits/$branch")
+                NotEnoughUpdates.httpClient.get("https://api.github.com/repos/${RepoManager.config.user}/${RepoManager.config.repo}/commits/${RepoManager.config.branch}")
         if (response.status.value != 200) {
             return null
         }
@@ -81,11 +77,11 @@ object RepoDownloadManager {
         }
         val currentSha = loadSavedVersionHash()
         if (latestSha != currentSha) {
-            val requestUrl = "https://github.com/$user/$repo/archive/$latestSha.zip"
+            val requestUrl = "https://github.com/${RepoManager.config.user}/${RepoManager.config.repo}/archive/$latestSha.zip"
             logger.info("Planning to upgrade repository from $currentSha to $latestSha from $requestUrl")
             val zipFile = downloadGithubArchive(requestUrl)
             logger.info("Download repository zip file to $zipFile. Deleting old repository")
-            withContext(IO) { repoSavedLocation.deleteIfExists() }
+            withContext(IO) { repoSavedLocation.toFile().deleteRecursively() }
             logger.info("Extracting new repository")
             withContext(IO) { extractNewRepository(zipFile) }
             logger.info("Repository loaded on disk.")
@@ -104,9 +100,9 @@ object RepoDownloadManager {
                 val entry = cis.nextEntry ?: break
                 if (entry.isDirectory) continue
                 val extractedLocation =
-                    repoSavedLocation.resolve(
-                        entry.name.substringAfter('/', missingDelimiterValue = "")
-                    )
+                        repoSavedLocation.resolve(
+                                entry.name.substringAfter('/', missingDelimiterValue = "")
+                        )
                 if (repoSavedLocation !in extractedLocation.iterate { it.parent }) {
                     logger.error("Not Enough Updates detected an invalid zip file. This is a potential security risk, please report this in the Moulberry discord.")
                     throw RuntimeException("Not Enough Updates detected an invalid zip file. This is a potential security risk, please report this in the Moulberry discord.")

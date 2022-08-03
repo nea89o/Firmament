@@ -29,7 +29,7 @@ class NEUReiPlugin : REIClientPlugin {
 
 
     override fun registerEntries(registry: EntryRegistry) {
-        RepoManager.neuRepo.items.items.values.forEach {
+        RepoManager.neuRepo.items?.items?.values?.forEach {
             if (!it.isVanilla)
                 registry.addEntry(EntryStack.of(SBItemEntryDefinition, it))
         }

@@ -32,6 +32,7 @@ repositories {
             includeGroup("maven.modrinth")
         }
     }
+    maven("https://server.bbkr.space/artifactory/libs-release")
     mavenLocal()
 }
 
@@ -64,6 +65,7 @@ dependencies {
     transInclude(implementation(ktor("client-java"))!!)
     transInclude(implementation(ktor("serialization-kotlinx-json"))!!)
     transInclude(implementation(ktor("client-content-negotiation"))!!)
+    modImplementation(include("io.github.cottonmc:LibGui:${project.property("libgui_version")}")!!)
 
     // Dev environment preinstalled mods
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.property("rei_version")}")
@@ -109,4 +111,11 @@ tasks.remapJar {
     inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
     dependsOn(tasks.shadowJar)
     archiveClassifier.set("thicc")
+}
+tasks.processResources {
+    filesMatching("**/fabric.mod.json") {
+        expand(
+                "version" to project.version
+        )
+    }
 }
