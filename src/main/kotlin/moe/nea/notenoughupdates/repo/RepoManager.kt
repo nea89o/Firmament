@@ -1,6 +1,7 @@
 package moe.nea.notenoughupdates.repo
 
 import io.github.moulberry.repo.NEURepository
+import io.github.moulberry.repo.NEURepositoryException
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
@@ -9,15 +10,16 @@ import moe.nea.notenoughupdates.NotEnoughUpdates.logger
 import moe.nea.notenoughupdates.util.ConfigHolder
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.Minecraft
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket
 
 object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Config) {
     @Serializable
     data class Config(
-            var user: String = "NotEnoughUpdates",
-            var repo: String = "NotEnoughUpdates-REPO",
-            var autoUpdate: Boolean = true,
-            var branch: String = "dangerous",
+        var user: String = "NotEnoughUpdates",
+        var repo: String = "NotEnoughUpdates-REPO",
+        var autoUpdate: Boolean = true,
+        var branch: String = "dangerous",
     )
 
     var recentlyFailedToUpdateItemList = false
@@ -33,7 +35,9 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
     }
 
     private fun trySendClientboundUpdateRecipesPacket(): Boolean {
-        return Minecraft.getInstance().level != null && Minecraft.getInstance().connection?.handleUpdateRecipes(ClientboundUpdateRecipesPacket(mutableListOf())) != null
+        return Minecraft.getInstance().level != null && Minecraft.getInstance().connection?.handleUpdateRecipes(
+            ClientboundUpdateRecipesPacket(mutableListOf())
+        ) != null
     }
 
     init {
@@ -46,7 +50,18 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
     fun launchAsyncUpdate() {
         NotEnoughUpdates.coroutineScope.launch {
             RepoDownloadManager.downloadUpdate()
+            reload()
+        }
+    }
+
+    fun reload() {
+        try {
             neuRepo.reload()
+        } catch (exc: NEURepositoryException) {
+            Minecraft.getInstance().player?.sendSystemMessage(
+                Component.literal("Failed to reload repository. This will result in some mod features not working.")
+            )
+            exc.printStackTrace()
         }
     }
 
@@ -54,7 +69,7 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
         if (config.autoUpdate) {
             launchAsyncUpdate()
         } else {
-            neuRepo.reload()
+            reload()
         }
     }
 

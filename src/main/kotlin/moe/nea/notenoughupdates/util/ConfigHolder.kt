@@ -4,6 +4,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.events.NEUScreenEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.minecraft.client.Minecraft
 import net.minecraft.commands.CommandSource
 import net.minecraft.network.chat.Component
@@ -15,9 +16,11 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.reflect.KClass
 
-abstract class ConfigHolder<T>(val serializer: KSerializer<T>,
-                               val name: String,
-                               val default: () -> T) {
+abstract class ConfigHolder<T>(
+    val serializer: KSerializer<T>,
+    val name: String,
+    val default: () -> T
+) {
 
     var config: T
         private set
@@ -33,15 +36,21 @@ abstract class ConfigHolder<T>(val serializer: KSerializer<T>,
         if (file.exists())
             try {
                 return NotEnoughUpdates.json.decodeFromString(
-                        serializer,
-                        file.readText()
+                    serializer,
+                    file.readText()
                 )
             } catch (e: IOException) {
                 badLoads.add(name)
-                NotEnoughUpdates.logger.error("IO exception during loading of config file $name. This will reset this config.", e)
+                NotEnoughUpdates.logger.error(
+                    "IO exception during loading of config file $name. This will reset this config.",
+                    e
+                )
             } catch (e: SerializationException) {
                 badLoads.add(name)
-                NotEnoughUpdates.logger.error("Serialization exception during loading of config file $name. This will reset this config.", e)
+                NotEnoughUpdates.logger.error(
+                    "Serialization exception during loading of config file $name. This will reset this config.",
+                    e
+                )
             }
         return default()
     }
@@ -95,8 +104,12 @@ abstract class ConfigHolder<T>(val serializer: KSerializer<T>,
 
         private fun warnForResetConfigs(player: CommandSource) {
             if (badLoads.isNotEmpty()) {
-                player.sendSystemMessage(Component.literal("The following configs have been reset: ${badLoads.joinToString(", ")}. " +
-                        "This can be intentional, but probably isn't."))
+                player.sendSystemMessage(
+                    Component.literal(
+                        "The following configs have been reset: ${badLoads.joinToString(", ")}. " +
+                                "This can be intentional, but probably isn't."
+                    )
+                )
                 badLoads.clear()
             }
         }
@@ -109,6 +122,9 @@ abstract class ConfigHolder<T>(val serializer: KSerializer<T>,
                     warnForResetConfigs(p)
                 }
                 false
+            })
+            ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
+                performSaves()
             })
         }
 

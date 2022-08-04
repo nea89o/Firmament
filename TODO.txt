@@ -1,0 +1,6 @@
+ - translations
+ - recipes
+ - fairy souls
+
+
+ - and much more that i will add as i go along

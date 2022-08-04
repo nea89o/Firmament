@@ -3,6 +3,7 @@ package moe.nea.notenoughupdates
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
+import io.github.moulberry.repo.NEURepositoryException
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -18,6 +19,7 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
@@ -67,14 +69,20 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     ) {
         dispatcher.register(ClientCommandManager.literal("neureload").executes {
             it.source.sendFeedback(Component.literal("Reloading repository from disk. This may lag a bit."))
-            RepoManager.neuRepo.reload()
+            try {
+                RepoManager.reload()
+            } catch (exc: NEURepositoryException) {
+                it.source.sendError(Component.literal("There has been an error reloading the repository. Please try again. IF this persists, delete the .notenoughupdates folder in your mincraft folder"))
+                exc.printStackTrace()
+            }
             Command.SINGLE_SUCCESS
         })
-        dispatcher.register(ClientCommandManager.literal("neu")
-            .then(ClientCommandManager.literal("repo").executes {
-                setScreenLater(CottonClientScreen(RepoManagementGui()))
-                Command.SINGLE_SUCCESS
-            })
+        dispatcher.register(
+            ClientCommandManager.literal("neu")
+                .then(ClientCommandManager.literal("repo").executes {
+                    setScreenLater(CottonClientScreen(RepoManagementGui()))
+                    Command.SINGLE_SUCCESS
+                })
         )
     }
 
@@ -82,6 +90,12 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
         RepoManager.initialize()
         ConfigHolder.registerEvents()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
+        ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
+            runBlocking {
+                logger.info("Shutting down NEU coroutines")
+                globalJob.cancel()
+            }
+        })
     }
 
     override fun onInitializeClient() {

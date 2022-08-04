@@ -4,6 +4,8 @@ import com.mojang.serialization.Dynamic
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.util.LegacyTagParser
 import moe.nea.notenoughupdates.util.appendLore
@@ -70,7 +72,18 @@ object ItemCache : IReloadable {
         ResourceLocation("skyblockitem", skyblockItemId.lowercase().replace(";", "__"))
 
 
+    var job: Job? = null
+
     override fun reload(repository: NEURepository) {
         cache.clear()
+        val j = job
+        if (j != null && j.isActive) {
+            j.cancel()
+            job = NotEnoughUpdates.coroutineScope.launch {
+                repository.items?.items?.values?.forEach {
+                    it.asItemStack() // Rebuild cache
+                }
+            }
+        }
     }
 }
