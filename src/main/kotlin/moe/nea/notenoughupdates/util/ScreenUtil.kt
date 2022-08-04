@@ -23,8 +23,7 @@ object ScreenUtil {
 
     private var nextOpenedGui: Screen? = null
 
-    @Suppress("UnusedReceiverParameter")
-    fun Minecraft.setScreenLater(nextScreen: Screen) {
+    fun setScreenLater(nextScreen: Screen) {
         val nog = nextOpenedGui
         if (nog != null) {
             NotEnoughUpdates.logger.warn("Setting screen ${nextScreen::class.qualifiedName} to be opened later, but ${nog::class.qualifiedName} is already queued.")

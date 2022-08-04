@@ -21,7 +21,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
-import net.minecraft.client.Minecraft
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.network.chat.Component
 import org.apache.logging.log4j.LogManager
@@ -32,7 +31,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     const val MOD_ID = "notenoughupdates"
 
-    val DEBUG = System.getenv("notenoughupdates.debug") == "true"
+    val DEBUG = System.getProperty("notenoughupdates.debug") == "true"
     val DATA_DIR: Path = Path.of(".notenoughupdates").also { Files.createDirectories(it) }
     val CONFIG_DIR: Path = Path.of("config/notenoughupdates").also { Files.createDirectories(it) }
     val logger = LogManager.getLogger("NotEnoughUpdates")
@@ -58,13 +57,13 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
 
     val globalJob = Job()
     val coroutineScope =
-            CoroutineScope(EmptyCoroutineContext + CoroutineName("NotEnoughUpdates")) + SupervisorJob(globalJob)
+        CoroutineScope(EmptyCoroutineContext + CoroutineName("NotEnoughUpdates")) + SupervisorJob(globalJob)
     val coroutineScopeIo = coroutineScope + Dispatchers.IO + SupervisorJob(globalJob)
 
     private fun registerCommands(
-            dispatcher: CommandDispatcher<FabricClientCommandSource>,
-            @Suppress("UNUSED_PARAMETER")
-            _ctx: CommandBuildContext
+        dispatcher: CommandDispatcher<FabricClientCommandSource>,
+        @Suppress("UNUSED_PARAMETER")
+        _ctx: CommandBuildContext
     ) {
         dispatcher.register(ClientCommandManager.literal("neureload").executes {
             it.source.sendFeedback(Component.literal("Reloading repository from disk. This may lag a bit."))
@@ -72,11 +71,11 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
             Command.SINGLE_SUCCESS
         })
         dispatcher.register(ClientCommandManager.literal("neu")
-                .then(ClientCommandManager.literal("repo").executes {
-                    it.source.sendFeedback(Component.literal("Hi, this should work"))
-                    Minecraft.getInstance().setScreenLater(CottonClientScreen(RepoManagementGui()))
-                    Command.SINGLE_SUCCESS
-                }))
+            .then(ClientCommandManager.literal("repo").executes {
+                setScreenLater(CottonClientScreen(RepoManagementGui()))
+                Command.SINGLE_SUCCESS
+            })
+        )
     }
 
     override fun onInitialize() {
