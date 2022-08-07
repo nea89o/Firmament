@@ -1,6 +1,7 @@
 package moe.nea.notenoughupdates.repo
 
 import com.mojang.serialization.Dynamic
+import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
@@ -79,11 +80,22 @@ object ItemCache : IReloadable {
         val j = job
         if (j != null && j.isActive) {
             j.cancel()
-            job = NotEnoughUpdates.coroutineScope.launch {
-                repository.items?.items?.values?.forEach {
-                    it.asItemStack() // Rebuild cache
-                }
+        }
+
+        job = NotEnoughUpdates.coroutineScope.launch {
+            val items = repository.items?.items
+            if (items == null) {
+                CottonHud.remove(RepoManager.progressBar)
+                return@launch
             }
+            RepoManager.progressBar.reportProgress("Recache Items", 0, items.size)
+            CottonHud.add(RepoManager.progressBar)
+            var i = 0
+            items.values.forEach {
+                it.asItemStack() // Rebuild cache
+                RepoManager.progressBar.reportProgress("Recache Items", i++, items.size)
+            }
+            CottonHud.remove(RepoManager.progressBar)
         }
     }
 }

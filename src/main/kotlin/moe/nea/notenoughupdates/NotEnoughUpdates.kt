@@ -3,7 +3,6 @@ package moe.nea.notenoughupdates
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
-import io.github.moulberry.repo.NEURepositoryException
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -67,16 +66,17 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
         @Suppress("UNUSED_PARAMETER")
         _ctx: CommandBuildContext
     ) {
-        dispatcher.register(ClientCommandManager.literal("neureload").executes {
-            it.source.sendFeedback(Component.literal("Reloading repository from disk. This may lag a bit."))
-            try {
+        dispatcher.register(ClientCommandManager.literal("neureload")
+            .then(ClientCommandManager.literal("fetch").executes {
+                it.source.sendFeedback(Component.literal("Trying to redownload the repository")) // TODO better reporting
+                RepoManager.launchAsyncUpdate()
+                Command.SINGLE_SUCCESS
+            })
+            .executes {
+                it.source.sendFeedback(Component.literal("Reloading repository from disk. This may lag a bit."))
                 RepoManager.reload()
-            } catch (exc: NEURepositoryException) {
-                it.source.sendError(Component.literal("There has been an error reloading the repository. Please try again. IF this persists, delete the .notenoughupdates folder in your mincraft folder"))
-                exc.printStackTrace()
-            }
-            Command.SINGLE_SUCCESS
-        })
+                Command.SINGLE_SUCCESS
+            })
         dispatcher.register(
             ClientCommandManager.literal("neu")
                 .then(ClientCommandManager.literal("repo").executes {
