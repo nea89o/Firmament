@@ -1,6 +1,7 @@
  - translations
  - recipes
  - fairy souls
+ - easy config gui builder
 
 
  - and much more that i will add as i go along

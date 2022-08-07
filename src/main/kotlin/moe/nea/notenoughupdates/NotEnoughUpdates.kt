@@ -10,7 +10,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
-import moe.nea.notenoughupdates.gui.RepoManagementGui
+import moe.nea.notenoughupdates.gui.repoGui
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.ConfigHolder
 import moe.nea.notenoughupdates.util.ScreenUtil.setScreenLater
@@ -80,7 +80,7 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
         dispatcher.register(
             ClientCommandManager.literal("neu")
                 .then(ClientCommandManager.literal("repo").executes {
-                    setScreenLater(CottonClientScreen(RepoManagementGui()))
+                    setScreenLater(CottonClientScreen(repoGui()))
                     Command.SINGLE_SUCCESS
                 })
         )
