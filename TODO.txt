@@ -2,6 +2,7 @@
  - recipes
  - fairy souls
  - easy config gui builder
+ - neumap, with a common source from 1.8.9
 
 
  - and much more that i will add as i go along
