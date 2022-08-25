@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        mavenLocal()
         maven {
             name = "fabricmc"
             url = uri("https://maven.fabricmc.net/")

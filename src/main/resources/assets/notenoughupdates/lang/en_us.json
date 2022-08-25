@@ -1,0 +1,9 @@
+{
+    "notenoughupdates": {
+        "repo": {
+            "reload": {
+                "disk": "Reloading repository from disk. This may lag a bit."
+            }
+        }
+    }
+}

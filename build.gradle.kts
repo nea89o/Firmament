@@ -7,6 +7,8 @@ plugins {
     kotlin("plugin.serialization") version "1.7.10"
     id("dev.architectury.loom") version "0.12.0.+"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("moe.nea.licenseextractificator") version "0.0.1"
+    id("com.github.eutro.hierarchical-lang") version "1.1.3"
 }
 
 loom {
@@ -60,7 +62,10 @@ dependencies {
     // Actual dependencies
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}")
     shadowMe("io.github.moulberry:neurepoparser:0.0.1")
+    shadowMe("com.github.hypfvieh:dbus-java-core:4.1.0")
+    shadowMe("com.github.hypfvieh:dbus-java-transport-native-unixsocket:4.1.0")
     fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${project.property("ktor_version")}"
+
     transInclude(implementation(ktor("client-core"))!!)
     transInclude(implementation(ktor("client-java"))!!)
     transInclude(implementation(ktor("serialization-kotlinx-json"))!!)
@@ -112,10 +117,21 @@ tasks.remapJar {
     dependsOn(tasks.shadowJar)
     archiveClassifier.set("thicc")
 }
+
 tasks.processResources {
     filesMatching("**/fabric.mod.json") {
         expand(
-                "version" to project.version
+            "version" to project.version
         )
     }
+    filesMatching("**/lang/*.json") {
+        flattenJson(this)
+    }
+}
+
+
+tasks.create<moe.nea.licenseextractificator.LicenseDiscoveryTask>("license") {
+    scanConfiguration(project.configurations.compileClasspath.get())
+    outputFile.set(file("$buildDir/LICENSES.json"))
+    licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())
 }

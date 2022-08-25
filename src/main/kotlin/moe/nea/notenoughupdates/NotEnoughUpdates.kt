@@ -9,6 +9,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
+import moe.nea.notenoughupdates.dbus.NEUDbusObject
 import moe.nea.notenoughupdates.gui.repoGui
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.ConfigHolder
@@ -25,6 +26,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata
 import net.minecraft.commands.CommandBuildContext
 import net.minecraft.network.chat.Component
 import org.apache.logging.log4j.LogManager
+import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.coroutines.EmptyCoroutineContext
@@ -57,6 +59,8 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     }
 
     val globalJob = Job()
+    val dbusConnection = DBusConnectionBuilder.forSessionBus()
+        .build()
     val coroutineScope =
         CoroutineScope(EmptyCoroutineContext + CoroutineName("NotEnoughUpdates")) + SupervisorJob(globalJob)
     val coroutineScopeIo = coroutineScope + Dispatchers.IO + SupervisorJob(globalJob)
@@ -73,7 +77,7 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
                 Command.SINGLE_SUCCESS
             })
             .executes {
-                it.source.sendFeedback(Component.literal("Reloading repository from disk. This may lag a bit."))
+                it.source.sendFeedback(Component.translatable("notenoughupdates.repo.reload.disk"))
                 RepoManager.reload()
                 Command.SINGLE_SUCCESS
             })
@@ -87,6 +91,8 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     }
 
     override fun onInitialize() {
+        dbusConnection.requestBusName("moe.nea.notenoughupdates")
+        dbusConnection.exportObject(NEUDbusObject)
         RepoManager.initialize()
         ConfigHolder.registerEvents()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)

@@ -24,6 +24,8 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
         var branch: String = "dangerous",
     )
 
+    val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash
+
     var recentlyFailedToUpdateItemList = false
 
     val progressBar = ProgressBar("", null, 0).also {
@@ -72,6 +74,7 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
             Minecraft.getInstance().player?.sendSystemMessage(
                 Component.literal("Failed to reload repository. This will result in some mod features not working.")
             )
+            CottonHud.remove(progressBar)
             exc.printStackTrace()
         }
     }
