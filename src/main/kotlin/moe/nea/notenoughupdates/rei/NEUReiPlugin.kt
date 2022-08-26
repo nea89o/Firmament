@@ -8,19 +8,18 @@ import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
 import moe.nea.notenoughupdates.repo.ItemCache.asItemStack
 import moe.nea.notenoughupdates.repo.RepoManager
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.item.ItemStack
+import net.minecraft.item.ItemStack
+import net.minecraft.util.Identifier
 
 
 class NEUReiPlugin : REIClientPlugin {
 
     companion object {
-
         fun EntryStack<NEUItem>.asItemEntry(): EntryStack<ItemStack> {
             return EntryStack.of(VanillaEntryTypes.ITEM, value.asItemStack())
         }
 
-        val SKYBLOCK_ITEM_TYPE_ID = ResourceLocation("notenoughupdates", "skyblockitems")
+        val SKYBLOCK_ITEM_TYPE_ID = Identifier("notenoughupdates", "skyblockitems")
     }
 
     override fun registerEntryTypes(registry: EntryTypeRegistry) {

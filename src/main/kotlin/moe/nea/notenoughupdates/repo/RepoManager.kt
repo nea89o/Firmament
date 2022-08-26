@@ -11,9 +11,9 @@ import moe.nea.notenoughupdates.NotEnoughUpdates.logger
 import moe.nea.notenoughupdates.hud.ProgressBar
 import moe.nea.notenoughupdates.util.ConfigHolder
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.Minecraft
-import net.minecraft.network.chat.Component
-import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket
+import net.minecraft.client.MinecraftClient
+import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
+import net.minecraft.text.Text
 
 object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Config) {
     @Serializable
@@ -43,8 +43,8 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
     }
 
     private fun trySendClientboundUpdateRecipesPacket(): Boolean {
-        return Minecraft.getInstance().level != null && Minecraft.getInstance().connection?.handleUpdateRecipes(
-            ClientboundUpdateRecipesPacket(mutableListOf())
+        return MinecraftClient.getInstance().world != null && MinecraftClient.getInstance().networkHandler?.onSynchronizeRecipes(
+            SynchronizeRecipesS2CPacket(mutableListOf())
         ) != null
     }
 
@@ -71,8 +71,8 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
             CottonHud.add(progressBar)
             neuRepo.reload()
         } catch (exc: NEURepositoryException) {
-            Minecraft.getInstance().player?.sendSystemMessage(
-                Component.literal("Failed to reload repository. This will result in some mod features not working.")
+            MinecraftClient.getInstance().player?.sendMessage(
+                Text.literal("Failed to reload repository. This will result in some mod features not working.")
             )
             CottonHud.remove(progressBar)
             exc.printStackTrace()

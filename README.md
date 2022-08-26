@@ -1,6 +1,6 @@
-# architectury-template-kotlin-dsl
-architectury template with kotlin-dsl
+## NotEnoughUpdates 1.19
 
-Based on [Architectury-templates(1.18.2-forge-fabric-quilt-mixin)](https://github.com/architectury/architectury-templates/releases)
+> This is still very much more of a tech demo, than an actual usable project. Please do not confuse it for one.
 
-If you find bugs, please open a issues or PR to help me fix bugs.
+### Building your own 
+

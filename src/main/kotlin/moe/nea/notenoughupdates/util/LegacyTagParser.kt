@@ -81,7 +81,7 @@ class LegacyTagParser private constructor(string: String) {
 
     companion object {
         val digitRange = '0'..'9'
-        fun parse(string: String): CompoundTag {
+        fun parse(string: String): NbtCompound {
             return LegacyTagParser(string).baseTag
         }
     }
@@ -90,11 +90,11 @@ class LegacyTagParser private constructor(string: String) {
         racer.consumeWhile { Character.isWhitespace(it.last()) } // Only check last since other chars are always checked before.
     }
 
-    fun parseTag(): CompoundTag {
+    fun parseTag(): NbtCompound {
         skipWhitespace()
         racer.expect("{", "Expected '{’ at start of tag")
         skipWhitespace()
-        val tag = CompoundTag()
+        val tag = NbtCompound()
         while (!racer.tryConsume("}")) {
             skipWhitespace()
             val lhs = parseIdentifier()
@@ -109,7 +109,7 @@ class LegacyTagParser private constructor(string: String) {
         return tag
     }
 
-    private fun parseAny(): Tag {
+    private fun parseAny(): NbtElement {
         skipWhitespace()
         val nextChar = racer.peekReq(1) ?: racer.error("Expected new object, found EOF")
         return when {
@@ -121,11 +121,11 @@ class LegacyTagParser private constructor(string: String) {
         }
     }
 
-    fun parseList(): ListTag {
+    fun parseList(): NbtList {
         skipWhitespace()
         racer.expect("[", "Expected '[' at start of tag")
         skipWhitespace()
-        val list = ListTag()
+        val list = NbtList()
         while (!racer.tryConsume("]")) {
             skipWhitespace()
             racer.pushState()
@@ -170,8 +170,8 @@ class LegacyTagParser private constructor(string: String) {
         return sb.toString()
     }
 
-    fun parseStringTag(): StringTag {
-        return StringTag.valueOf(parseQuotedString())
+    fun parseStringTag(): NbtString {
+        return NbtString.of(parseQuotedString())
     }
 
     object Patterns {
@@ -185,7 +185,7 @@ class LegacyTagParser private constructor(string: String) {
         val ROUGH_PATTERN = "[-+]?[0-9]*\\.?[0-9]+[dDbBfFlLsS]?".toRegex()
     }
 
-    fun parseNumericTag(): NumericTag {
+    fun parseNumericTag(): AbstractNbtNumber {
         skipWhitespace()
         val textForm = racer.consumeWhile { Patterns.ROUGH_PATTERN.matchEntire(it) != null }
         if (textForm.isEmpty()) {
@@ -193,27 +193,27 @@ class LegacyTagParser private constructor(string: String) {
         }
         val doubleMatch = Patterns.DOUBLE.matchEntire(textForm) ?: Patterns.DOUBLE_UNTYPED.matchEntire(textForm)
         if (doubleMatch != null) {
-            return DoubleTag.valueOf(doubleMatch.groups[1]!!.value.toDouble())
+            return NbtDouble.of(doubleMatch.groups[1]!!.value.toDouble())
         }
         val floatMatch = Patterns.FLOAT.matchEntire(textForm)
         if (floatMatch != null) {
-            return FloatTag.valueOf(floatMatch.groups[1]!!.value.toFloat())
+            return NbtFloat.of(floatMatch.groups[1]!!.value.toFloat())
         }
         val byteMatch = Patterns.BYTE.matchEntire(textForm)
         if (byteMatch != null) {
-            return ByteTag.valueOf(byteMatch.groups[1]!!.value.toByte())
+            return NbtByte.of(byteMatch.groups[1]!!.value.toByte())
         }
         val longMatch = Patterns.LONG.matchEntire(textForm)
         if (longMatch != null) {
-            return LongTag.valueOf(longMatch.groups[1]!!.value.toLong())
+            return NbtLong.of(longMatch.groups[1]!!.value.toLong())
         }
         val shortMatch = Patterns.SHORT.matchEntire(textForm)
         if (shortMatch != null) {
-            return ShortTag.valueOf(shortMatch.groups[1]!!.value.toShort())
+            return NbtShort.of(shortMatch.groups[1]!!.value.toShort())
         }
         val integerMatch = Patterns.INTEGER.matchEntire(textForm)
         if (integerMatch != null) {
-            return IntTag.valueOf(integerMatch.groups[1]!!.value.toInt())
+            return NbtInt.of(integerMatch.groups[1]!!.value.toInt())
         }
         throw IllegalStateException("Could not properly parse numeric tag '$textForm', despite passing rough verification. This is a bug in the LegacyTagParser")
     }

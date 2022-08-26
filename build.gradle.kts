@@ -7,8 +7,9 @@ plugins {
     kotlin("plugin.serialization") version "1.7.10"
     id("dev.architectury.loom") version "0.12.0.+"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("moe.nea.licenseextractificator") version "0.0.1"
+    id("moe.nea.licenseextractificator") version "fffc76c"
     id("com.github.eutro.hierarchical-lang") version "1.1.3"
+    id("io.github.juuxel.loom-quiltflower") version "1.7.2"
 }
 
 loom {
@@ -52,7 +53,7 @@ val transInclude by configurations.creating {
 dependencies {
     // Minecraft dependencies
     "minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
-    "mappings"(loom.officialMojangMappings())
+    "mappings"("net.fabricmc:yarn:${project.property("yarn_version")}:v2")
 
     // Fabric dependencies
     modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
@@ -130,7 +131,7 @@ tasks.processResources {
 }
 
 
-tasks.create<moe.nea.licenseextractificator.LicenseDiscoveryTask>("license") {
+tasks.license {
     scanConfiguration(project.configurations.compileClasspath.get())
     outputFile.set(file("$buildDir/LICENSES.json"))
     licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())

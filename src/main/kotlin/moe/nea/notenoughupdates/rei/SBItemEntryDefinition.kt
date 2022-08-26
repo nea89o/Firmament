@@ -1,6 +1,5 @@
 package moe.nea.notenoughupdates.rei
 
-import com.mojang.blaze3d.vertex.PoseStack
 import io.github.moulberry.repo.data.NEUItem
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
@@ -14,11 +13,12 @@ import me.shedaniel.rei.api.common.entry.type.EntryType
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
 import moe.nea.notenoughupdates.rei.NEUReiPlugin.Companion.asItemEntry
 import moe.nea.notenoughupdates.repo.ItemCache.asItemStack
-import moe.nea.notenoughupdates.repo.ItemCache.getResourceLocation
-import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
-import net.minecraft.world.item.ItemStack
+import moe.nea.notenoughupdates.repo.ItemCache.getIdentifier
+import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.item.ItemStack
+import net.minecraft.tag.TagKey
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import java.util.stream.Stream
 
 object SBItemEntryDefinition : EntryDefinition<NEUItem> {
@@ -37,7 +37,7 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     override fun getRenderer(): EntryRenderer<NEUItem> = object : EntryRenderer<NEUItem> {
         override fun render(
             entry: EntryStack<NEUItem>,
-            matrices: PoseStack,
+            matrices: MatrixStack,
             bounds: Rectangle,
             mouseX: Int,
             mouseY: Int,
@@ -65,7 +65,7 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return Stream.empty()
     }
 
-    override fun asFormattedText(entry: EntryStack<NEUItem>, value: NEUItem): Component {
+    override fun asFormattedText(entry: EntryStack<NEUItem>, value: NEUItem): Text {
         return VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asItemStack())
     }
 
@@ -89,8 +89,8 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return false
     }
 
-    override fun getIdentifier(entry: EntryStack<NEUItem>?, value: NEUItem): ResourceLocation {
-        return value.getResourceLocation()
+    override fun getIdentifier(entry: EntryStack<NEUItem>?, value: NEUItem): Identifier {
+        return value.getIdentifier()
     }
 
 

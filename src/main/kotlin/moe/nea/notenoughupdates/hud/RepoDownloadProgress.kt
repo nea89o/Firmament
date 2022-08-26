@@ -1,10 +1,10 @@
 package moe.nea.notenoughupdates.hud
 
-import com.mojang.blaze3d.vertex.PoseStack
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing
 import io.github.cottonmc.cotton.gui.widget.WWidget
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment
 import io.github.cottonmc.cotton.gui.widget.data.Insets
+import net.minecraft.client.util.math.MatrixStack
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
@@ -31,7 +31,7 @@ class ProgressBar(
 
     }
 
-    override fun paint(matrices: PoseStack, x: Int, y: Int, mouseX: Int, mouseY: Int) {
+    override fun paint(matrices: MatrixStack, x: Int, y: Int, mouseX: Int, mouseY: Int) {
         ScreenDrawing.coloredRect(matrices, x, y, width, height, 0xFF808080.toInt())
         val (l, prog) = synchronized(this) {
             label to (progress to total)

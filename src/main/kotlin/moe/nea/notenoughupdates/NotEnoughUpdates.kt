@@ -23,8 +23,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
-import net.minecraft.commands.CommandBuildContext
-import net.minecraft.network.chat.Component
+import net.minecraft.command.CommandRegistryAccess
+import net.minecraft.text.Text
 import org.apache.logging.log4j.LogManager
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
 import java.nio.file.Files
@@ -68,16 +68,16 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     private fun registerCommands(
         dispatcher: CommandDispatcher<FabricClientCommandSource>,
         @Suppress("UNUSED_PARAMETER")
-        _ctx: CommandBuildContext
+        _ctx: CommandRegistryAccess
     ) {
         dispatcher.register(ClientCommandManager.literal("neureload")
             .then(ClientCommandManager.literal("fetch").executes {
-                it.source.sendFeedback(Component.literal("Trying to redownload the repository")) // TODO better reporting
+                it.source.sendFeedback(Text.literal("Trying to redownload the repository")) // TODO better reporting
                 RepoManager.launchAsyncUpdate()
                 Command.SINGLE_SUCCESS
             })
             .executes {
-                it.source.sendFeedback(Component.translatable("notenoughupdates.repo.reload.disk"))
+                it.source.sendFeedback(Text.translatable("notenoughupdates.repo.reload.disk"))
                 RepoManager.reload()
                 Command.SINGLE_SUCCESS
             })

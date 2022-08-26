@@ -2,19 +2,19 @@ package moe.nea.notenoughupdates.util
 
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.Screen
 
 object ScreenUtil {
     init {
         ClientTickEvents.START_CLIENT_TICK.register(::onTick)
     }
 
-    private fun onTick(minecraft: Minecraft) {
+    private fun onTick(minecraft: MinecraftClient) {
         if (nextOpenedGui != null) {
             val p = minecraft.player
-            if (p?.containerMenu != null) {
-                p.closeContainer()
+            if (p?.currentScreenHandler != null) {
+                p.closeHandledScreen()
             }
             minecraft.setScreen(nextOpenedGui)
             nextOpenedGui = null

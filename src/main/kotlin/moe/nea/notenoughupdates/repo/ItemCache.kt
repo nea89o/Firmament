@@ -10,36 +10,36 @@ import kotlinx.coroutines.launch
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.util.LegacyTagParser
 import moe.nea.notenoughupdates.util.appendLore
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.datafixer.Schemas
+import net.minecraft.datafixer.TypeReferences
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
-import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.datafix.DataFixers
-import net.minecraft.util.datafix.fixes.References
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import java.util.concurrent.ConcurrentHashMap
 
 object ItemCache : IReloadable {
     val cache: MutableMap<String, ItemStack> = ConcurrentHashMap()
-    val df = DataFixers.getDataFixer()
+    val df = Schemas.getFixer()
     var isFlawless = true
 
-    private fun NEUItem.get10809CompoundTag(): CompoundTag = CompoundTag().apply {
+    private fun NEUItem.get10809CompoundTag(): NbtCompound = NbtCompound().apply {
         put("tag", LegacyTagParser.parse(nbttag))
         putString("id", minecraftItemId)
         putByte("Count", 1)
         putShort("Damage", damage.toShort())
     }
 
-    private fun CompoundTag.transformFrom10809ToModern(): CompoundTag? =
+    private fun NbtCompound.transformFrom10809ToModern(): NbtCompound? =
         try {
             df.update(
-                References.ITEM_STACK,
+                TypeReferences.ITEM_STACK,
                 Dynamic(NbtOps.INSTANCE, this),
                 -1,
                 2975
-            ).value as CompoundTag
+            ).value as NbtCompound
         } catch (e: Exception) {
             NotEnoughUpdates.logger.error("Failed to datafixer an item", e)
             isFlawless = false
@@ -50,12 +50,12 @@ object ItemCache : IReloadable {
         val oldItemTag = get10809CompoundTag()
         val modernItemTag = oldItemTag.transformFrom10809ToModern()
             ?: return ItemStack(Items.PAINTING).apply {
-                hoverName = Component.literal(this@asItemStackNow.displayName)
-                appendLore(listOf(Component.literal("Exception rendering item: $skyblockItemId")))
+                setCustomName(Text.literal(this@asItemStackNow.displayName))
+                appendLore(listOf(Text.literal("Exception rendering item: $skyblockItemId")))
             }
-        val itemInstance = ItemStack.of(modernItemTag)
-        if (itemInstance.tag?.contains("Enchantments") == true) {
-            itemInstance.enchantmentTags.add(CompoundTag())
+        val itemInstance = ItemStack.fromNbt(modernItemTag)
+        if (itemInstance.nbt?.contains("Enchantments") == true) {
+            itemInstance.enchantments.add(NbtCompound())
         }
         return itemInstance
     }
@@ -69,8 +69,8 @@ object ItemCache : IReloadable {
         return s
     }
 
-    fun NEUItem.getResourceLocation() =
-        ResourceLocation("skyblockitem", skyblockItemId.lowercase().replace(";", "__"))
+    fun NEUItem.getIdentifier() =
+        Identifier("skyblockitem", skyblockItemId.lowercase().replace(";", "__"))
 
 
     var job: Job? = null

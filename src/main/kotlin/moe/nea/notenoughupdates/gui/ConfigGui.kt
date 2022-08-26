@@ -10,7 +10,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.util.ConfigHolder
-import net.minecraft.network.chat.Component
+import net.minecraft.text.Text
 import kotlin.reflect.KMutableProperty1
 
 class ConfigGui<K>(val holder: ConfigHolder<K>, val build: ConfigGui<K>.() -> Unit) : LightweightGuiDescription() {
@@ -24,48 +24,48 @@ class ConfigGui<K>(val holder: ConfigHolder<K>, val build: ConfigGui<K>.() -> Un
         reload()
     }
 
-    fun title(component: Component) {
+    fun title(text: Text) {
         if (col != 0) {
             NotEnoughUpdates.logger.warn("Set title not at the top of the ConfigGui")
         }
-        val label = WLabel(component)
+        val label = WLabel(text)
         label.verticalAlignment = VerticalAlignment.TOP
         label.horizontalAlignment = HorizontalAlignment.CENTER
         root.add(label, 0, col, 11, 1)
         col++
     }
 
-    private fun label(component: Component) {
-        val label = WLabel(component)
+    private fun label(text: Text) {
+        val label = WLabel(text)
         label.verticalAlignment = VerticalAlignment.CENTER
         root.add(label, 0, col, 5, 1)
     }
 
-    fun toggle(component: Component, prop: KMutableProperty1<K, Boolean>) {
-        val toggle = WToggleButton(component)
+    fun toggle(text: Text, prop: KMutableProperty1<K, Boolean>) {
+        val toggle = WToggleButton(text)
         reloadables.add { toggle.toggle = prop.get(holder.config) }
         toggle.setOnToggle {
             prop.set(holder.config, true)
             holder.markDirty()
         }
         root.add(toggle, 5, col, 6, 1)
-        label(component)
+        label(text)
         col++
     }
 
-    fun button(component: Component, buttonText: Component, runnable: () -> Unit) {
+    fun button(text: Text, buttonText: Text, runnable: () -> Unit) {
         val button = WButton(buttonText)
         button.setOnClick {
             runnable.invoke()
         }
         root.add(button, 5, col, 6, 1)
-        label(component)
+        label(text)
         col++
     }
 
     fun textfield(
-        component: Component,
-        background: Component,
+        text: Text,
+        background: Text,
         prop: KMutableProperty1<K, String>,
         maxLength: Int = 255
     ) {
@@ -80,7 +80,7 @@ class ConfigGui<K>(val holder: ConfigHolder<K>, val build: ConfigGui<K>.() -> Un
             holder.markDirty()
         }
         root.add(textfield, 5, col, 6, 11)
-        label(component)
+        label(text)
         col++
     }
 

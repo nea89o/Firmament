@@ -5,9 +5,10 @@ import kotlinx.serialization.SerializationException
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.events.NEUScreenEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
-import net.minecraft.client.Minecraft
-import net.minecraft.commands.CommandSource
-import net.minecraft.network.chat.Component
+import net.minecraft.client.MinecraftClient
+import net.minecraft.command.CommandSource
+import net.minecraft.server.command.CommandOutput
+import net.minecraft.text.Text
 import java.io.IOException
 import java.nio.file.Path
 import java.util.concurrent.CopyOnWriteArrayList
@@ -102,10 +103,10 @@ abstract class ConfigHolder<T>(
             }
         }
 
-        private fun warnForResetConfigs(player: CommandSource) {
+        private fun warnForResetConfigs(player: CommandOutput) {
             if (badLoads.isNotEmpty()) {
-                player.sendSystemMessage(
-                    Component.literal(
+                player.sendMessage(
+                    Text.literal(
                         "The following configs have been reset: ${badLoads.joinToString(", ")}. " +
                                 "This can be intentional, but probably isn't."
                     )
@@ -117,7 +118,7 @@ abstract class ConfigHolder<T>(
         fun registerEvents() {
             NEUScreenEvents.SCREEN_OPEN.register(NEUScreenEvents.OnScreenOpen { old, new ->
                 performSaves()
-                val p = Minecraft.getInstance().player
+                val p = MinecraftClient.getInstance().player
                 if (p != null) {
                     warnForResetConfigs(p)
                 }
@@ -127,7 +128,6 @@ abstract class ConfigHolder<T>(
                 performSaves()
             })
         }
-
 
     }
 }
