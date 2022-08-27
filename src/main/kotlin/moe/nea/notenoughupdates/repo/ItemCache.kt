@@ -5,11 +5,14 @@ import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
+import java.io.PrintWriter
+import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import moe.nea.notenoughupdates.NotEnoughUpdates
-import moe.nea.notenoughupdates.util.LegacyTagParser
-import moe.nea.notenoughupdates.util.appendLore
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.writer
+import net.minecraft.client.resource.language.I18n
 import net.minecraft.datafixer.Schemas
 import net.minecraft.datafixer.TypeReferences
 import net.minecraft.item.ItemStack
@@ -18,11 +21,9 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
-import java.io.PrintWriter
-import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.writer
+import moe.nea.notenoughupdates.NotEnoughUpdates
+import moe.nea.notenoughupdates.util.LegacyTagParser
+import moe.nea.notenoughupdates.util.appendLore
 
 object ItemCache : IReloadable {
     val dfuLog = Path.of("logs/dfulog.txt")
@@ -60,7 +61,7 @@ object ItemCache : IReloadable {
         val modernItemTag = oldItemTag.transformFrom10809ToModern()
             ?: return ItemStack(Items.PAINTING).apply {
                 setCustomName(Text.literal(this@asItemStackNow.displayName))
-                appendLore(listOf(Text.literal("Exception rendering item: $skyblockItemId")))
+                appendLore(listOf(Text.translatable("notenoughupdates.repo.brokenitem", skyblockItemId)))
             }
         val itemInstance = ItemStack.fromNbt(modernItemTag)
         if (itemInstance.nbt?.contains("Enchantments") == true) {
@@ -98,12 +99,13 @@ object ItemCache : IReloadable {
                 CottonHud.remove(RepoManager.progressBar)
                 return@launch
             }
-            RepoManager.progressBar.reportProgress("Recache Items", 0, items.size)
+            val recacheItems = I18n.translate("notenoughupdates.repo.cache")
+            RepoManager.progressBar.reportProgress(recacheItems, 0, items.size)
             CottonHud.add(RepoManager.progressBar)
             var i = 0
             items.values.forEach {
                 it.asItemStack() // Rebuild cache
-                RepoManager.progressBar.reportProgress("Recache Items", i++, items.size)
+                RepoManager.progressBar.reportProgress(recacheItems, i++, items.size)
             }
             CottonHud.remove(RepoManager.progressBar)
         }

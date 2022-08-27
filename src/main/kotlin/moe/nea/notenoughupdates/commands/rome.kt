@@ -13,7 +13,7 @@ fun neuCommand() = literal("neu") {
     thenLiteral("reload") {
         thenLiteral("fetch") {
             thenExecute {
-                source.sendFeedback(Text.literal("Trying to redownload the repository")) // TODO better reporting
+                source.sendFeedback(Text.translatable("notenoughupdates.repo.reload.network")) // TODO better reporting
                 RepoManager.launchAsyncUpdate()
             }
         }

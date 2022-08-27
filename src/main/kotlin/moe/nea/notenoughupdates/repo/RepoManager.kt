@@ -55,11 +55,11 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
         })
     }
 
-    fun launchAsyncUpdate() {
+    fun launchAsyncUpdate(force: Boolean = false) {
         NotEnoughUpdates.coroutineScope.launch {
             progressBar.reportProgress("Downloading", 0, null)
             CottonHud.add(progressBar)
-            RepoDownloadManager.downloadUpdate()
+            RepoDownloadManager.downloadUpdate(force)
             progressBar.reportProgress("Download complete", 1, 1)
             reload()
         }

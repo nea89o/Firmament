@@ -1,31 +1,31 @@
 package moe.nea.notenoughupdates.gui
 
-import moe.nea.notenoughupdates.repo.RepoManager
 import net.minecraft.text.Text
+import moe.nea.notenoughupdates.repo.RepoManager
 
 fun repoGui(): ConfigGui<RepoManager.Config> {
     return ConfigGui(RepoManager) {
-        title(Text.literal("NotEnoughUpdates Repo Settings"))
-        toggle(Text.literal("Auto Update"), RepoManager.Config::autoUpdate)
+        title(Text.translatable("notenoughupdates.gui.repo.title"))
+        toggle(Text.translatable("notenoughupdates.gui.repo.autoupdate"), RepoManager.Config::autoUpdate)
         textfield(
-            Text.literal("Repo Username"),
-            Text.literal("<github user>"),
+            Text.translatable("notenoughupdates.gui.repo.username"),
+            Text.translatable("notenoughupdates.gui.repo.hint.username"),
             RepoManager.Config::user,
             maxLength = 255
         )
         textfield(
-            Text.literal("Repo Name"),
-            Text.literal("<repo name>"),
+            Text.translatable("notenoughupdates.gui.repo.reponame"),
+            Text.translatable("notenoughupdates.gui.repo.hint.reponame"),
             RepoManager.Config::repo
         )
         textfield(
-            Text.literal("Repo Branch"),
-            Text.literal("<repo branch>"),
+            Text.translatable("notenoughupdates.gui.repo.branch"),
+            Text.translatable("notenoughupdates.gui.repo.hint.branch"),
             RepoManager.Config::branch
         )
         button(
-            Text.literal("Reset to Defaults"),
-            Text.literal("Reset"),
+            Text.translatable("notenoughupdates.gui.repo.reset.label"),
+            Text.translatable("notenoughupdates.gui.repo.reset"),
         ) {
             RepoManager.config.user = "NotEnoughUpdates"
             RepoManager.config.repo = "NotEnoughUpdates-REPO"

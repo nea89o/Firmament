@@ -1,3 +1,5 @@
+root = true
+
 [*]
 charset = utf-8
 end_of_line = lf
@@ -7,4 +9,7 @@ insert_final_newline = true
 max_line_length = 120
 
 
-[{*.kt,*.kts}]
+[*.kt]
+ij_kotlin_name_count_to_use_star_import = 99999
+ij_kotlin_name_count_to_use_star_import_for_members = 99999
+ij_kotlin_imports_layout = *, |, kotlinx.**, kotlin.**, net.minecraft.**, moe.nea.notenoughupdates.**, |, $*

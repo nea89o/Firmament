@@ -2,7 +2,24 @@
     "notenoughupdates": {
         "repo": {
             "reload": {
+                "network": "Trying to redownload the repository",
                 "disk": "Reloading repository from disk. This may lag a bit."
+            },
+            "cache": "Recaching items",
+            "brokenitem": "Failed to render item: %s"
+        },
+        "gui": {
+            "repo": {
+                "title": "NotEnoughUpdates Repo Settings",
+                "autoupdate": "Auto Update",
+                "username": "Repo Username",
+                "hint.username": "NotEnoughUpdates",
+                "reponame": "Repo Name",
+                "hint.reponame": "NotEnoughUpdates-REPO",
+                "branch": "Repo Branch",
+                "hint.branch": "dangerous",
+                "reset": "Reset",
+                "reset.label": "Reset to Defaults"
             }
         }
     }

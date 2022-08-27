@@ -69,7 +69,7 @@ object RepoDownloadManager {
      * Downloads the latest repository from github, setting [latestSavedVersionHash].
      * @return true, if an update was performed, false, otherwise (no update needed, or wasn't able to complete update)
      */
-    suspend fun downloadUpdate(): Boolean = withContext(CoroutineName("Repo Update Check")) {
+    suspend fun downloadUpdate(force: Boolean): Boolean = withContext(CoroutineName("Repo Update Check")) {
         val latestSha = requestLatestGithubSha()
         if (latestSha == null) {
             logger.warn("Could not request github API to retrieve latest REPO sha.")
