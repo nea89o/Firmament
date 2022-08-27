@@ -18,12 +18,19 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import java.io.PrintWriter
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.writer
 
 object ItemCache : IReloadable {
-    val cache: MutableMap<String, ItemStack> = ConcurrentHashMap()
-    val df = Schemas.getFixer()
+    val dfuLog = Path.of("logs/dfulog.txt")
+    private val cache: MutableMap<String, ItemStack> = ConcurrentHashMap()
+    private val df = Schemas.getFixer()
+    private val dfuHandle = PrintWriter(dfuLog.writer())
     var isFlawless = true
+        private set
 
     private fun NEUItem.get10809CompoundTag(): NbtCompound = NbtCompound().apply {
         put("tag", LegacyTagParser.parse(nbttag))
@@ -41,8 +48,10 @@ object ItemCache : IReloadable {
                 2975
             ).value as NbtCompound
         } catch (e: Exception) {
-            NotEnoughUpdates.logger.error("Failed to datafixer an item", e)
+            if (isFlawless)
+                NotEnoughUpdates.logger.error("Failed to run data fixer an item. Check ${dfuLog.absolutePathString()} for more information")
             isFlawless = false
+            e.printStackTrace(dfuHandle)
             null
         }
 
@@ -76,11 +85,12 @@ object ItemCache : IReloadable {
     var job: Job? = null
 
     override fun reload(repository: NEURepository) {
-        cache.clear()
         val j = job
         if (j != null && j.isActive) {
             j.cancel()
         }
+        cache.clear()
+        isFlawless = true
 
         job = NotEnoughUpdates.coroutineScope.launch {
             val items = repository.items?.items

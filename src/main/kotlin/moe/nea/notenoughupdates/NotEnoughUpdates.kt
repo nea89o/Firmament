@@ -1,22 +1,18 @@
 package moe.nea.notenoughupdates
 
-import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
-import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
+import moe.nea.notenoughupdates.commands.registerNeuCommand
 import moe.nea.notenoughupdates.dbus.NEUDbusObject
-import moe.nea.notenoughupdates.gui.repoGui
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.ConfigHolder
-import moe.nea.notenoughupdates.util.ScreenUtil.setScreenLater
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -24,7 +20,6 @@ import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
 import net.minecraft.command.CommandRegistryAccess
-import net.minecraft.text.Text
 import org.apache.logging.log4j.LogManager
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
 import java.nio.file.Files
@@ -70,24 +65,7 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
         @Suppress("UNUSED_PARAMETER")
         _ctx: CommandRegistryAccess
     ) {
-        dispatcher.register(ClientCommandManager.literal("neureload")
-            .then(ClientCommandManager.literal("fetch").executes {
-                it.source.sendFeedback(Text.literal("Trying to redownload the repository")) // TODO better reporting
-                RepoManager.launchAsyncUpdate()
-                Command.SINGLE_SUCCESS
-            })
-            .executes {
-                it.source.sendFeedback(Text.translatable("notenoughupdates.repo.reload.disk"))
-                RepoManager.reload()
-                Command.SINGLE_SUCCESS
-            })
-        dispatcher.register(
-            ClientCommandManager.literal("neu")
-                .then(ClientCommandManager.literal("repo").executes {
-                    setScreenLater(CottonClientScreen(repoGui()))
-                    Command.SINGLE_SUCCESS
-                })
-        )
+        registerNeuCommand(dispatcher)
     }
 
     override fun onInitialize() {
