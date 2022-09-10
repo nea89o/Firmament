@@ -76,7 +76,7 @@ object RepoDownloadManager {
             return@withContext false
         }
         val currentSha = loadSavedVersionHash()
-        if (latestSha != currentSha) {
+        if (latestSha != currentSha || force) {
             val requestUrl = "https://github.com/${RepoManager.config.user}/${RepoManager.config.repo}/archive/$latestSha.zip"
             logger.info("Planning to upgrade repository from $currentSha to $latestSha from $requestUrl")
             val zipFile = downloadGithubArchive(requestUrl)

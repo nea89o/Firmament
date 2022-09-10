@@ -25,6 +25,7 @@ import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.coroutines.EmptyCoroutineContext
+import moe.nea.notenoughupdates.features.FeatureManager
 
 object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     const val MOD_ID = "notenoughupdates"
@@ -71,8 +72,9 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     override fun onInitialize() {
         dbusConnection.requestBusName("moe.nea.notenoughupdates")
         dbusConnection.exportObject(NEUDbusObject)
-        RepoManager.initialize()
         ConfigHolder.registerEvents()
+        RepoManager.initialize()
+        FeatureManager.autoload()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
             runBlocking {

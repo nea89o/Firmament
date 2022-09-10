@@ -1,21 +1,20 @@
 package moe.nea.notenoughupdates.util
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationException
-import moe.nea.notenoughupdates.NotEnoughUpdates
-import moe.nea.notenoughupdates.events.NEUScreenEvents
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.command.CommandSource
-import net.minecraft.server.command.CommandOutput
-import net.minecraft.text.Text
 import java.io.IOException
 import java.nio.file.Path
 import java.util.concurrent.CopyOnWriteArrayList
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.reflect.KClass
+import net.minecraft.client.MinecraftClient
+import net.minecraft.server.command.CommandOutput
+import net.minecraft.text.Text
+import moe.nea.notenoughupdates.NotEnoughUpdates
+import moe.nea.notenoughupdates.events.ScreenOpenEvent
 
 abstract class ConfigHolder<T>(
     val serializer: KSerializer<T>,
@@ -108,7 +107,7 @@ abstract class ConfigHolder<T>(
                 player.sendMessage(
                     Text.literal(
                         "The following configs have been reset: ${badLoads.joinToString(", ")}. " +
-                                "This can be intentional, but probably isn't."
+                            "This can be intentional, but probably isn't."
                     )
                 )
                 badLoads.clear()
@@ -116,14 +115,13 @@ abstract class ConfigHolder<T>(
         }
 
         fun registerEvents() {
-            NEUScreenEvents.SCREEN_OPEN.register(NEUScreenEvents.OnScreenOpen { old, new ->
+            ScreenOpenEvent.subscribe { event ->
                 performSaves()
                 val p = MinecraftClient.getInstance().player
                 if (p != null) {
                     warnForResetConfigs(p)
                 }
-                false
-            })
+            }
             ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
                 performSaves()
             })
