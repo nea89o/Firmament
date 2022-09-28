@@ -5,12 +5,8 @@ import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.*
-import kotlinx.serialization.json.Json
-import moe.nea.notenoughupdates.commands.registerNeuCommand
-import moe.nea.notenoughupdates.dbus.NEUDbusObject
-import moe.nea.notenoughupdates.repo.RepoManager
-import moe.nea.notenoughupdates.util.ConfigHolder
+import java.nio.file.Files
+import java.nio.file.Path
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
@@ -19,13 +15,18 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
-import net.minecraft.command.CommandRegistryAccess
 import org.apache.logging.log4j.LogManager
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
-import java.nio.file.Files
-import java.nio.file.Path
+import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
 import kotlin.coroutines.EmptyCoroutineContext
+import net.minecraft.command.CommandRegistryAccess
+import moe.nea.notenoughupdates.commands.registerNeuCommand
+import moe.nea.notenoughupdates.dbus.NEUDbusObject
 import moe.nea.notenoughupdates.features.FeatureManager
+import moe.nea.notenoughupdates.repo.RepoManager
+import moe.nea.notenoughupdates.util.SBData
+import moe.nea.notenoughupdates.util.config.IConfigHolder
 
 object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     const val MOD_ID = "notenoughupdates"
@@ -59,7 +60,6 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
         .build()
     val coroutineScope =
         CoroutineScope(EmptyCoroutineContext + CoroutineName("NotEnoughUpdates")) + SupervisorJob(globalJob)
-    val coroutineScopeIo = coroutineScope + Dispatchers.IO + SupervisorJob(globalJob)
 
     private fun registerCommands(
         dispatcher: CommandDispatcher<FabricClientCommandSource>,
@@ -72,8 +72,9 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     override fun onInitialize() {
         dbusConnection.requestBusName("moe.nea.notenoughupdates")
         dbusConnection.exportObject(NEUDbusObject)
-        ConfigHolder.registerEvents()
+        IConfigHolder.registerEvents()
         RepoManager.initialize()
+        SBData.init()
         FeatureManager.autoload()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {

@@ -9,7 +9,7 @@ import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
 import moe.nea.notenoughupdates.NotEnoughUpdates
-import moe.nea.notenoughupdates.util.ConfigHolder
+import moe.nea.notenoughupdates.util.config.ConfigHolder
 import net.minecraft.text.Text
 import kotlin.reflect.KMutableProperty1
 

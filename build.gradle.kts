@@ -8,8 +8,7 @@ plugins {
     id("dev.architectury.loom") version "0.12.0.+"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator") version "fffc76c"
-    id("com.github.eutro.hierarchical-lang") version "1.1.3"
-    id("io.github.juuxel.loom-quiltflower") version "1.7.2"
+    id("io.github.juuxel.loom-quiltflower") version "1.7.3"
 }
 
 loom {
@@ -22,6 +21,12 @@ loom {
             property("devauth.enabled", "true")
             property("fabric.log.level", "info")
             property("notenoughupdates.debug", "true")
+        }
+    }
+    runs {
+        named("client") {
+            vmArg("-XX:+AllowEnhancedClassRedefinition")
+            vmArg("-XX:HotswapAgent=fatjar")
         }
     }
 }
@@ -59,12 +64,16 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
     modApi("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_api_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("fabric_kotlin_version")}")
+    modApi("dev.architectury:architectury:6.2.46")
 
     // Actual dependencies
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}")
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}") {
+        exclude(module = "architectury")
+        exclude(module = "architectury-fabric")
+    }
     shadowMe("io.github.moulberry:neurepoparser:0.0.1")
-    shadowMe("com.github.hypfvieh:dbus-java-core:4.1.0")
-    shadowMe("com.github.hypfvieh:dbus-java-transport-native-unixsocket:4.1.0")
+    shadowMe("com.github.hypfvieh:dbus-java-core:${rootProject.property("dbus_java_version")}")
+    shadowMe("com.github.hypfvieh:dbus-java-transport-native-unixsocket:${rootProject.property("dbus_java_version")}")
     fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${project.property("ktor_version")}"
 
     transInclude(implementation(ktor("client-core"))!!)
@@ -74,7 +83,11 @@ dependencies {
     modImplementation(include("io.github.cottonmc:LibGui:${project.property("libgui_version")}")!!)
 
     // Dev environment preinstalled mods
-    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.property("rei_version")}")
+    modRuntimeOnly("dev.architectury:architectury-fabric:6.2.46")
+    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.property("rei_version")}") {
+        exclude(module = "architectury")
+        exclude(module = "architectury-fabric")
+    }
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${project.property("devauth_version")}")
     modRuntimeOnly("maven.modrinth:modmenu:${project.property("modmenu_version")}")
 
@@ -126,7 +139,7 @@ tasks.processResources {
         )
     }
     filesMatching("**/lang/*.json") {
-        flattenJson(this)
+        // flattenJson(this)
     }
 }
 

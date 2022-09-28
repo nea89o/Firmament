@@ -1,7 +1,14 @@
 package moe.nea.notenoughupdates.events
 
 import java.util.concurrent.CopyOnWriteArrayList
+import moe.nea.notenoughupdates.NotEnoughUpdates
 
+/**
+ * A pubsub event bus.
+ *
+ * [subscribe] to events [publish]ed on this event bus.
+ * Subscriptions may not necessarily be delivered in the order or registering.
+ */
 open class NEUEventBus<T : NEUEvent> {
     data class Handler<T>(val invocation: (T) -> Unit, val receivesCancelled: Boolean)
 
@@ -17,7 +24,11 @@ open class NEUEventBus<T : NEUEvent> {
     fun publish(event: T): T {
         for (function in toHandle) {
             if (function.receivesCancelled || event !is NEUEvent.Cancellable || !event.cancelled) {
-                function.invocation(event)
+                try {
+                    function.invocation(event)
+                } catch (e: Exception) {
+                    NotEnoughUpdates.logger.error("Caught exception during processing event $event", e)
+                }
             }
         }
         return event

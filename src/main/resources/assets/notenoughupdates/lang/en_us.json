@@ -1,26 +1,22 @@
 {
-    "notenoughupdates": {
-        "repo": {
-            "reload": {
-                "network": "Trying to redownload the repository",
-                "disk": "Reloading repository from disk. This may lag a bit."
-            },
-            "cache": "Recaching items",
-            "brokenitem": "Failed to render item: %s"
-        },
-        "gui": {
-            "repo": {
-                "title": "NotEnoughUpdates Repo Settings",
-                "autoupdate": "Auto Update",
-                "username": "Repo Username",
-                "hint.username": "NotEnoughUpdates",
-                "reponame": "Repo Name",
-                "hint.reponame": "NotEnoughUpdates-REPO",
-                "branch": "Repo Branch",
-                "hint.branch": "dangerous",
-                "reset": "Reset",
-                "reset.label": "Reset to Defaults"
-            }
-        }
-    }
+    "notenoughupdates.repo.reload.network": "Trying to redownload the repository",
+    "notenoughupdates.repo.reload.disk": "Reloading repository from disk. This may lag a bit.",
+    "notenoughupdates.repo.cache": "Recaching items",
+    "notenoughupdates.repo.brokenitem": "Failed to render item: %s",
+    "notenoughupdates.gui.repo.title": "NotEnoughUpdates Repo Settings",
+    "notenoughupdates.gui.repo.autoupdate": "Auto Update",
+    "notenoughupdates.gui.repo.username": "Repo Username",
+    "notenoughupdates.gui.repo.hint.username": "NotEnoughUpdates",
+    "notenoughupdates.gui.repo.reponame": "Repo Name",
+    "notenoughupdates.gui.repo.hint.reponame": "NotEnoughUpdates-REPO",
+    "notenoughupdates.gui.repo.branch": "Repo Branch",
+    "notenoughupdates.gui.repo.hint.branch": "dangerous",
+    "notenoughupdates.gui.repo.reset": "Reset",
+    "notenoughupdates.gui.repo.reset.label": "Reset to Defaults",
+    "notenoughupdates.sbinfo.nolocraw": "No locraw data available",
+    "notenoughupdates.sbinfo.profile": "Current profile cutename: %s",
+    "notenoughupdates.sbinfo.server": "Locraw Server: %s",
+    "notenoughupdates.sbinfo.gametype": "Locraw Gametype: %s",
+    "notenoughupdates.sbinfo.mode": "Locraw Mode: %s",
+    "notenoughupdates.sbinfo.map": "Locraw Map: %s"
 }

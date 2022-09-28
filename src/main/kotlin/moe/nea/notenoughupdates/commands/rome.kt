@@ -2,11 +2,12 @@ package moe.nea.notenoughupdates.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
-import moe.nea.notenoughupdates.gui.repoGui
-import moe.nea.notenoughupdates.repo.RepoManager
-import moe.nea.notenoughupdates.util.ScreenUtil.setScreenLater
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
+import moe.nea.notenoughupdates.gui.repoGui
+import moe.nea.notenoughupdates.repo.RepoManager
+import moe.nea.notenoughupdates.util.SBData
+import moe.nea.notenoughupdates.util.ScreenUtil.setScreenLater
 
 
 fun neuCommand() = literal("neu") {
@@ -25,6 +26,23 @@ fun neuCommand() = literal("neu") {
     thenLiteral("repo") {
         thenExecute {
             setScreenLater(CottonClientScreen(repoGui()))
+        }
+    }
+    thenLiteral("dev") {
+        val sbData = thenLiteral("sbdata") {
+            thenExecute {
+                source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.profile", SBData.profileCuteName))
+                val locrawInfo = SBData.locraw
+                if (locrawInfo == null) {
+                    source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.nolocraw"))
+                } else {
+                    source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.server", locrawInfo.server))
+                    source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.gametype", locrawInfo.gametype))
+                    source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.mode", locrawInfo.mode))
+                    source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.map", locrawInfo.map))
+                }
+
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ import kotlinx.serialization.serializer
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.NotEnoughUpdates.logger
 import moe.nea.notenoughupdates.hud.ProgressBar
-import moe.nea.notenoughupdates.util.ConfigHolder
+import moe.nea.notenoughupdates.util.config.ConfigHolder
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
