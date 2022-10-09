@@ -29,6 +29,7 @@ abstract class ProfileSpecificConfigHolder<S>(
     init {
         allConfigs = readValues()
         readValues()
+        IConfigHolder.putConfig(this::class, this)
     }
 
     private val configDirectory: Path get() = NotEnoughUpdates.CONFIG_DIR.resolve("profiles")

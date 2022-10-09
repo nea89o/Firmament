@@ -1,7 +1,17 @@
 package moe.nea.notenoughupdates.util
 
-import net.minecraft.nbt.*
 import java.util.*
+import net.minecraft.nbt.AbstractNbtNumber
+import net.minecraft.nbt.NbtByte
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtDouble
+import net.minecraft.nbt.NbtElement
+import net.minecraft.nbt.NbtFloat
+import net.minecraft.nbt.NbtInt
+import net.minecraft.nbt.NbtList
+import net.minecraft.nbt.NbtLong
+import net.minecraft.nbt.NbtShort
+import net.minecraft.nbt.NbtString
 
 class LegacyTagParser private constructor(string: String) {
     data class TagParsingException(val baseString: String, val offset: Int, val mes0: String) :
@@ -80,7 +90,7 @@ class LegacyTagParser private constructor(string: String) {
     val baseTag = parseTag()
 
     companion object {
-        val digitRange = '0'..'9'
+        val digitRange = "0123456789-"
         fun parse(string: String): NbtCompound {
             return LegacyTagParser(string).baseTag
         }
@@ -161,6 +171,7 @@ class LegacyTagParser private constructor(string: String) {
                     }
                     sb.append(escaped)
                 }
+
                 null -> racer.error("Unfinished string")
                 else -> {
                     sb.append(peek)
@@ -182,7 +193,7 @@ class LegacyTagParser private constructor(string: String) {
         val SHORT = "([-+]?[0-9]+)[s|S]".toRegex()
         val INTEGER = "([-+]?[0-9]+)".toRegex()
         val DOUBLE_UNTYPED = "([-+]?[0-9]*\\.?[0-9]+)".toRegex()
-        val ROUGH_PATTERN = "[-+]?[0-9]*\\.?[0-9]+[dDbBfFlLsS]?".toRegex()
+        val ROUGH_PATTERN = "[-+]?[0-9]*\\.?[0-9]*[dDbBfFlLsS]?".toRegex()
     }
 
     fun parseNumericTag(): AbstractNbtNumber {

@@ -29,7 +29,7 @@ fun neuCommand() = literal("neu") {
         }
     }
     thenLiteral("dev") {
-        val sbData = thenLiteral("sbdata") {
+        thenLiteral("sbdata") {
             thenExecute {
                 source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.profile", SBData.profileCuteName))
                 val locrawInfo = SBData.locraw

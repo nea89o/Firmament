@@ -56,18 +56,27 @@ object ItemCache : IReloadable {
             null
         }
 
-    private fun NEUItem.asItemStackNow(): ItemStack {
-        val oldItemTag = get10809CompoundTag()
-        val modernItemTag = oldItemTag.transformFrom10809ToModern()
-            ?: return ItemStack(Items.PAINTING).apply {
-                setCustomName(Text.literal(this@asItemStackNow.displayName))
-                appendLore(listOf(Text.translatable("notenoughupdates.repo.brokenitem", skyblockItemId)))
-            }
-        val itemInstance = ItemStack.fromNbt(modernItemTag)
-        if (itemInstance.nbt?.contains("Enchantments") == true) {
-            itemInstance.enchantments.add(NbtCompound())
+    private fun brokenItemStack(neuItem: NEUItem): ItemStack {
+        return ItemStack(Items.PAINTING).apply {
+            setCustomName(Text.literal(neuItem.displayName))
+            appendLore(listOf(Text.translatable("notenoughupdates.repo.brokenitem", neuItem.skyblockItemId)))
         }
-        return itemInstance
+    }
+
+    private fun NEUItem.asItemStackNow(): ItemStack {
+        try {
+            val oldItemTag = get10809CompoundTag()
+            val modernItemTag = oldItemTag.transformFrom10809ToModern()
+                ?: return brokenItemStack(this)
+            val itemInstance = ItemStack.fromNbt(modernItemTag)
+            if (itemInstance.nbt?.contains("Enchantments") == true) {
+                itemInstance.enchantments.add(NbtCompound())
+            }
+            return itemInstance
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return brokenItemStack(this)
+        }
     }
 
     fun NEUItem.asItemStack(): ItemStack {

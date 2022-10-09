@@ -1,15 +1,18 @@
 package moe.nea.notenoughupdates.util
 
-import dev.architectury.event.events.client.ClientPlayerEvent
+import java.time.Instant
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
+import net.minecraft.network.message.ArgumentSignatureDataMap
+import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.events.ServerChatLineReceivedEvent
 import moe.nea.notenoughupdates.events.SkyblockServerUpdateEvent
+import moe.nea.notenoughupdates.events.WorldReadyEvent
 
 @OptIn(ExperimentalTime::class)
 object SBData {
@@ -32,15 +35,15 @@ object SBData {
                 val lLS = lastLocrawSent
                 if (tryReceiveLocraw(event.unformattedString) && lLS != null && lLS.elapsedNow() < locrawRoundtripTime) {
                     lastLocrawSent = null
-                    event.cancel()
+                    // event.cancel()
                 }
             }
         }
 
-        ClientPlayerEvent.CLIENT_PLAYER_JOIN.register(ClientPlayerEvent.ClientPlayerJoin {
-            locraw = null
+        WorldReadyEvent.subscribe {
             sendLocraw()
-        })
+            locraw = null
+        }
     }
 
     private fun tryReceiveLocraw(unformattedString: String): Boolean = try {
@@ -49,14 +52,27 @@ object SBData {
         SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, locraw))
         true
     } catch (e: SerializationException) {
+        e.printStackTrace()
         false
     } catch (e: IllegalArgumentException) {
+        e.printStackTrace()
         false
     }
 
     fun sendLocraw() {
         lastLocrawSent = TimeSource.Monotonic.markNow()
-        MC.player?.sendCommand("locraw")
+        val nh = MC.player?.networkHandler ?: return
+        val ack = nh.consumeAcknowledgment()
+        nh.sendPacket(
+            CommandExecutionC2SPacket(
+                "locraw",
+                Instant.now(),
+                0L,
+                ArgumentSignatureDataMap.EMPTY,
+                false,
+                ack
+            )
+        )
     }
 
 

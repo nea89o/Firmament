@@ -3,6 +3,7 @@
     "package": "moe.nea.notenoughupdates.mixins",
     "compatibilityLevel": "JAVA_16",
     "client": [
+        "MixinClientPlayNetworkHandler",
         "MixinMessageHandler",
         "MixinMinecraft",
         "MixinWorldRenderer"
