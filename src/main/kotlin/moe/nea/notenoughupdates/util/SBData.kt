@@ -35,7 +35,7 @@ object SBData {
                 val lLS = lastLocrawSent
                 if (tryReceiveLocraw(event.unformattedString) && lLS != null && lLS.elapsedNow() < locrawRoundtripTime) {
                     lastLocrawSent = null
-                    // event.cancel()
+                    event.cancel()
                 }
             }
         }
