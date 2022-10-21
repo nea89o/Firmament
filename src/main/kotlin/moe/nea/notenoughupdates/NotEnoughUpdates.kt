@@ -26,7 +26,7 @@ import moe.nea.notenoughupdates.dbus.NEUDbusObject
 import moe.nea.notenoughupdates.features.FeatureManager
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.SBData
-import moe.nea.notenoughupdates.util.config.IConfigHolder
+import moe.nea.notenoughupdates.util.data.IDataHolder
 
 object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     const val MOD_ID = "notenoughupdates"
@@ -72,7 +72,7 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     override fun onInitialize() {
         dbusConnection.requestBusName("moe.nea.notenoughupdates")
         dbusConnection.exportObject(NEUDbusObject)
-        IConfigHolder.registerEvents()
+        IDataHolder.registerEvents()
         RepoManager.initialize()
         SBData.init()
         FeatureManager.autoload()

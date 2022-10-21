@@ -9,13 +9,13 @@ import kotlinx.serialization.serializer
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.NotEnoughUpdates.logger
 import moe.nea.notenoughupdates.hud.ProgressBar
-import moe.nea.notenoughupdates.util.config.ConfigHolder
+import moe.nea.notenoughupdates.util.data.DataHolder
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.text.Text
 
-object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Config) {
+object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Config) {
     @Serializable
     data class Config(
         var user: String = "NotEnoughUpdates",
@@ -80,7 +80,7 @@ object RepoManager : ConfigHolder<RepoManager.Config>(serializer(), "repo", ::Co
     }
 
     fun initialize() {
-        if (config.autoUpdate) {
+        if (data.autoUpdate) {
             launchAsyncUpdate()
         } else {
             reload()

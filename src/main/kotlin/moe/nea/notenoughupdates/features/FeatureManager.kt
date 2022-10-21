@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.features.world.FairySouls
-import moe.nea.notenoughupdates.util.config.ConfigHolder
+import moe.nea.notenoughupdates.util.data.DataHolder
 
-object FeatureManager : ConfigHolder<FeatureManager.Config>(serializer(), "features", ::Config) {
+object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "features", ::Config) {
     @Serializable
     data class Config(
         val enabledFeatures: MutableMap<String, Boolean> = mutableMapOf()
@@ -40,11 +40,11 @@ object FeatureManager : ConfigHolder<FeatureManager.Config>(serializer(), "featu
     }
 
     fun isEnabled(identifier: String): Boolean? =
-        config.enabledFeatures[identifier]
+        data.enabledFeatures[identifier]
 
 
     fun setEnabled(identifier: String, value: Boolean) {
-        config.enabledFeatures[identifier] = value
+        data.enabledFeatures[identifier] = value
         markDirty()
     }
 

@@ -1,4 +1,4 @@
-package moe.nea.notenoughupdates.util.config
+package moe.nea.notenoughupdates.util.data
 
 import java.util.concurrent.CopyOnWriteArrayList
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -9,17 +9,17 @@ import net.minecraft.text.Text
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.events.ScreenOpenEvent
 
-interface IConfigHolder<T> {
+interface IDataHolder<T> {
     companion object {
         internal var badLoads: MutableList<String> = CopyOnWriteArrayList()
-        private val allConfigs: MutableMap<KClass<out IConfigHolder<*>>, IConfigHolder<*>> = mutableMapOf()
-        private val dirty: MutableSet<KClass<out IConfigHolder<*>>> = mutableSetOf()
+        private val allConfigs: MutableMap<KClass<out IDataHolder<*>>, IDataHolder<*>> = mutableMapOf()
+        private val dirty: MutableSet<KClass<out IDataHolder<*>>> = mutableSetOf()
 
-        internal fun <T : IConfigHolder<K>, K> putConfig(kClass: KClass<T>, inst: IConfigHolder<K>) {
+        internal fun <T : IDataHolder<K>, K> putDataHolder(kClass: KClass<T>, inst: IDataHolder<K>) {
             allConfigs[kClass] = inst
         }
 
-        fun <T : IConfigHolder<K>, K> markDirty(kClass: KClass<T>) {
+        fun <T : IDataHolder<K>, K> markDirty(kClass: KClass<T>) {
             if (kClass !in allConfigs) {
                 NotEnoughUpdates.logger.error("Tried to markDirty '${kClass.qualifiedName}', which isn't registered as 'IConfigHolder'")
                 return
@@ -68,7 +68,7 @@ interface IConfigHolder<T> {
 
     }
 
-    val config: T
+    val data: T
     fun save()
     fun markDirty()
     fun load()

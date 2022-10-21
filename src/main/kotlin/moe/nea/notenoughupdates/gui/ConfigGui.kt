@@ -9,11 +9,11 @@ import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
 import moe.nea.notenoughupdates.NotEnoughUpdates
-import moe.nea.notenoughupdates.util.config.ConfigHolder
+import moe.nea.notenoughupdates.util.data.DataHolder
 import net.minecraft.text.Text
 import kotlin.reflect.KMutableProperty1
 
-class ConfigGui<K>(val holder: ConfigHolder<K>, val build: ConfigGui<K>.() -> Unit) : LightweightGuiDescription() {
+class ConfigGui<K>(val holder: DataHolder<K>, val build: ConfigGui<K>.() -> Unit) : LightweightGuiDescription() {
     private val root = WGridPanelWithPadding(verticalPadding = 4)
     private val reloadables = mutableListOf<(() -> Unit)>()
 
@@ -43,9 +43,9 @@ class ConfigGui<K>(val holder: ConfigHolder<K>, val build: ConfigGui<K>.() -> Un
 
     fun toggle(text: Text, prop: KMutableProperty1<K, Boolean>) {
         val toggle = WToggleButton(text)
-        reloadables.add { toggle.toggle = prop.get(holder.config) }
+        reloadables.add { toggle.toggle = prop.get(holder.data) }
         toggle.setOnToggle {
-            prop.set(holder.config, true)
+            prop.set(holder.data, true)
             holder.markDirty()
         }
         root.add(toggle, 5, col, 6, 1)
@@ -72,11 +72,11 @@ class ConfigGui<K>(val holder: ConfigHolder<K>, val build: ConfigGui<K>.() -> Un
         val textfield = WTextField(background)
         textfield.isEditable = true
         reloadables.add {
-            textfield.text = prop.get(holder.config)
+            textfield.text = prop.get(holder.data)
         }
         textfield.maxLength = maxLength
         textfield.setChangedListener {
-            prop.set(holder.config, it)
+            prop.set(holder.data, it)
             holder.markDirty()
         }
         root.add(textfield, 5, col, 6, 11)

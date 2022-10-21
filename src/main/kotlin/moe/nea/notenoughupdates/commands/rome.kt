@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
+import moe.nea.notenoughupdates.features.world.FairySouls
 import moe.nea.notenoughupdates.gui.repoGui
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.SBData
@@ -29,6 +30,11 @@ fun neuCommand() = literal("neu") {
         }
     }
     thenLiteral("dev") {
+        thenLiteral("config") {
+            thenExecute {
+                FairySouls.TConfig.showConfigEditor()
+            }
+        }
         thenLiteral("sbdata") {
             thenExecute {
                 source.sendFeedback(Text.translatable("notenoughupdates.sbinfo.profile", SBData.profileCuteName))

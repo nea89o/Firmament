@@ -27,9 +27,9 @@ fun repoGui(): ConfigGui<RepoManager.Config> {
             Text.translatable("notenoughupdates.gui.repo.reset.label"),
             Text.translatable("notenoughupdates.gui.repo.reset"),
         ) {
-            RepoManager.config.user = "NotEnoughUpdates"
-            RepoManager.config.repo = "NotEnoughUpdates-REPO"
-            RepoManager.config.branch = "dangerous"
+            RepoManager.data.user = "NotEnoughUpdates"
+            RepoManager.data.repo = "NotEnoughUpdates-REPO"
+            RepoManager.data.branch = "dangerous"
             reload()
         }
     }

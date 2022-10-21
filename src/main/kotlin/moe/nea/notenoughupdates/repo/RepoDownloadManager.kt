@@ -50,7 +50,7 @@ object RepoDownloadManager {
 
     private suspend fun requestLatestGithubSha(): String? {
         val response =
-                NotEnoughUpdates.httpClient.get("https://api.github.com/repos/${RepoManager.config.user}/${RepoManager.config.repo}/commits/${RepoManager.config.branch}")
+                NotEnoughUpdates.httpClient.get("https://api.github.com/repos/${RepoManager.data.user}/${RepoManager.data.repo}/commits/${RepoManager.data.branch}")
         if (response.status.value != 200) {
             return null
         }
@@ -77,7 +77,7 @@ object RepoDownloadManager {
         }
         val currentSha = loadSavedVersionHash()
         if (latestSha != currentSha || force) {
-            val requestUrl = "https://github.com/${RepoManager.config.user}/${RepoManager.config.repo}/archive/$latestSha.zip"
+            val requestUrl = "https://github.com/${RepoManager.data.user}/${RepoManager.data.repo}/archive/$latestSha.zip"
             logger.info("Planning to upgrade repository from $currentSha to $latestSha from $requestUrl")
             val zipFile = downloadGithubArchive(requestUrl)
             logger.info("Download repository zip file to $zipFile. Deleting old repository")

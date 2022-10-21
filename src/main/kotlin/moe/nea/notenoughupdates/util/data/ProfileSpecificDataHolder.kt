@@ -1,4 +1,4 @@
-package moe.nea.notenoughupdates.util.config
+package moe.nea.notenoughupdates.util.data
 
 import java.nio.file.Path
 import kotlinx.serialization.KSerializer
@@ -13,15 +13,15 @@ import kotlin.io.path.writeText
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.util.SBData
 
-abstract class ProfileSpecificConfigHolder<S>(
-    private val configSerializer: KSerializer<S>,
+abstract class ProfileSpecificDataHolder<S>(
+    private val dataSerializer: KSerializer<S>,
     val configName: String,
     private val configDefault: () -> S
-) : IConfigHolder<S?> {
+) : IDataHolder<S?> {
 
     var allConfigs: MutableMap<String, S>
 
-    override val config: S?
+    override val data: S?
         get() = SBData.profileCuteName?.let {
             allConfigs.computeIfAbsent(it) { configDefault() }
         }
@@ -29,10 +29,10 @@ abstract class ProfileSpecificConfigHolder<S>(
     init {
         allConfigs = readValues()
         readValues()
-        IConfigHolder.putConfig(this::class, this)
+        IDataHolder.putDataHolder(this::class, this)
     }
 
-    private val configDirectory: Path get() = NotEnoughUpdates.CONFIG_DIR.resolve("profiles")
+    private val configDirectory: Path get() = NotEnoughUpdates.CONFIG_DIR.resolve("profiles").resolve(configName)
 
     private fun readValues(): MutableMap<String, S> {
         if (!configDirectory.exists()) {
@@ -43,9 +43,9 @@ abstract class ProfileSpecificConfigHolder<S>(
             .filter { it.extension == "json" }
             .mapNotNull {
                 try {
-                    it.nameWithoutExtension to NotEnoughUpdates.json.decodeFromString(configSerializer, it.readText())
+                    it.nameWithoutExtension to NotEnoughUpdates.json.decodeFromString(dataSerializer, it.readText())
                 } catch (e: Exception) { /* Expecting IOException and SerializationException, but Kotlin doesn't allow multi catches*/
-                    IConfigHolder.badLoads.add(configName)
+                    IDataHolder.badLoads.add(configName)
                     NotEnoughUpdates.logger.error(
                         "Exception during loading of profile specific config file $it ($configName). This will reset that profiles config.",
                         e
@@ -67,12 +67,12 @@ abstract class ProfileSpecificConfigHolder<S>(
         }
         c.forEach { (name, value) ->
             val f = configDirectory.resolve("$name.json")
-            f.writeText(NotEnoughUpdates.json.encodeToString(configSerializer, value))
+            f.writeText(NotEnoughUpdates.json.encodeToString(dataSerializer, value))
         }
     }
 
     override fun markDirty() {
-        IConfigHolder.markDirty(this::class)
+        IDataHolder.markDirty(this::class)
     }
 
     override fun load() {

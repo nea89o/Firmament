@@ -3,6 +3,7 @@ package moe.nea.notenoughupdates.features.world
 import io.github.moulberry.repo.data.Coordinate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
+import net.minecraft.client.MinecraftClient
 import net.minecraft.util.math.BlockPos
 import moe.nea.notenoughupdates.events.ServerChatLineReceivedEvent
 import moe.nea.notenoughupdates.events.SkyblockServerUpdateEvent
@@ -11,7 +12,8 @@ import moe.nea.notenoughupdates.features.NEUFeature
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.MC
 import moe.nea.notenoughupdates.util.SBData
-import moe.nea.notenoughupdates.util.config.ProfileSpecificConfigHolder
+import moe.nea.notenoughupdates.util.config.ManagedConfig
+import moe.nea.notenoughupdates.util.data.ProfileSpecificDataHolder
 import moe.nea.notenoughupdates.util.render.RenderBlockContext.Companion.renderBlocks
 import moe.nea.notenoughupdates.util.unformattedString
 
@@ -19,11 +21,21 @@ val Coordinate.blockPos: BlockPos
     get() = BlockPos(x, y, z)
 
 object FairySouls : NEUFeature,
-    ProfileSpecificConfigHolder<FairySouls.Config>(serializer(), "fairy-souls.json", ::Config) {
+    ProfileSpecificDataHolder<FairySouls.Config>(serializer(), "found-fairysouls", ::Config) {
     @Serializable
     data class Config(
         val foundSouls: MutableMap<String, MutableSet<Int>> = mutableMapOf()
     )
+
+    object TConfig : ManagedConfig("fairysouls") {
+
+        val displaySouls by toggle("show") { false }
+        val resetSouls by button("reset") {
+            FairySouls.data?.foundSouls?.clear() != null
+            updateMissingSouls()
+        }
+    }
+
 
     override val name: String get() = "Fairy Souls"
     override val identifier: String get() = "fairy-souls"
@@ -37,7 +49,7 @@ object FairySouls : NEUFeature,
 
     fun updateMissingSouls() {
         currentMissingSouls = emptyList()
-        val c = config ?: return
+        val c = data ?: return
         val fi = c.foundSouls[currentLocationName] ?: setOf()
         val cms = currentLocationSouls.toMutableList()
         fi.asSequence().sortedDescending().filter { it in cms.indices }.forEach { cms.removeAt(it) }
@@ -65,7 +77,7 @@ object FairySouls : NEUFeature,
 
     private fun markNearestSoul() {
         val nearestSoul = findNearestClickableSoul() ?: return
-        val c = config ?: return
+        val c = data ?: return
         val loc = currentLocationName ?: return
         val idx = currentLocationSouls.indexOf(nearestSoul)
         c.foundSouls.computeIfAbsent(loc) { mutableSetOf() }.add(idx)
@@ -92,6 +104,7 @@ object FairySouls : NEUFeature,
             }
         }
         WorldRenderLastEvent.subscribe {
+            if (!TConfig.displaySouls) return@subscribe
             renderBlocks(it.camera) {
                 color(1F, 1F, 0F, 0.8F)
                 currentMissingSouls.forEach {

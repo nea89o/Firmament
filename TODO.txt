@@ -1,4 +1,3 @@
- - translations
  - recipes
  - fairy souls
  - easy config gui builder
