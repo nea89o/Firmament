@@ -41,6 +41,7 @@ repositories {
         }
     }
     maven("https://server.bbkr.space/artifactory/libs-release")
+    maven("https://repo.nea.moe/releases")
     mavenLocal()
 }
 
@@ -71,10 +72,11 @@ dependencies {
         exclude(module = "architectury")
         exclude(module = "architectury-fabric")
     }
-    shadowMe("io.github.moulberry:neurepoparser:0.0.1")
+    shadowMe("moe.nea:neurepoparser:0.0.1")
     shadowMe("com.github.hypfvieh:dbus-java-core:${rootProject.property("dbus_java_version")}")
     shadowMe("com.github.hypfvieh:dbus-java-transport-native-unixsocket:${rootProject.property("dbus_java_version")}")
     fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${project.property("ktor_version")}"
+
 
     transInclude(implementation(ktor("client-core"))!!)
     transInclude(implementation(ktor("client-java"))!!)

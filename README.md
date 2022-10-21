@@ -6,9 +6,6 @@
 
 Use Java 17.
 
-This depends on [neurepoparsing](https://git.nea.moe/nea/neurepoparsing/). Please clone that repository and make it available in your local maven repository using `./gradlew publishToMavenLocal`. This will be automated at a later stage. 
-
-
-Afterwards, running `./gradlew build` will create a mod jar in `build/libs`
+Running `./gradlew build` will create a mod jar in `build/libs`
 
 
