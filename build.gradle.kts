@@ -25,8 +25,11 @@ loom {
     }
     runs {
         named("client") {
+            /*
             vmArg("-XX:+AllowEnhancedClassRedefinition")
             vmArg("-XX:HotswapAgent=fatjar")
+
+             */
         }
     }
 }

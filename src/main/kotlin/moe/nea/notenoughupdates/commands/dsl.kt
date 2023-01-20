@@ -5,12 +5,18 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import moe.nea.notenoughupdates.util.iterate
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import java.lang.reflect.ParameterizedType
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import moe.nea.notenoughupdates.util.iterate
 
 
 typealias DefaultSource = FabricClientCommandSource
+
+
+inline val <T : CommandContext<*>> T.context get() = this
+operator fun <T : Any, C : CommandContext<*>> C.get(arg: TypeSafeArg<T>): T {
+    return arg.get(this)
+}
 
 fun literal(
     name: String,

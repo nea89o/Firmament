@@ -12,19 +12,19 @@ import moe.nea.notenoughupdates.util.ScreenUtil.setScreenLater
 
 
 fun neuCommand() = literal("neu") {
-    thenLiteral("reload") {
-        thenLiteral("fetch") {
+    thenLiteral("repo") {
+        thenLiteral("reload") {
+            thenLiteral("fetch") {
+                thenExecute {
+                    source.sendFeedback(Text.translatable("notenoughupdates.repo.reload.network")) // TODO better reporting
+                    RepoManager.launchAsyncUpdate()
+                }
+            }
             thenExecute {
-                source.sendFeedback(Text.translatable("notenoughupdates.repo.reload.network")) // TODO better reporting
-                RepoManager.launchAsyncUpdate()
+                source.sendFeedback(Text.translatable("notenoughupdates.repo.reload.disk"))
+                RepoManager.reload()
             }
         }
-        thenExecute {
-            source.sendFeedback(Text.translatable("notenoughupdates.repo.reload.disk"))
-            RepoManager.reload()
-        }
-    }
-    thenLiteral("repo") {
         thenExecute {
             setScreenLater(CottonClientScreen(repoGui()))
         }
