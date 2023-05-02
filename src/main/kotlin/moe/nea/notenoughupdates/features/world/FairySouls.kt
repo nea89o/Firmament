@@ -105,7 +105,7 @@ object FairySouls : NEUFeature,
         }
         WorldRenderLastEvent.subscribe {
             if (!TConfig.displaySouls) return@subscribe
-            renderBlocks(it.camera) {
+            renderBlocks(it.matrices, it.camera) {
                 color(1F, 1F, 0F, 0.8F)
                 currentMissingSouls.forEach {
                     block(it.blockPos)

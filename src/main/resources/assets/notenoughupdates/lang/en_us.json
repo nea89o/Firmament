@@ -18,5 +18,7 @@
     "notenoughupdates.sbinfo.server": "Locraw Server: %s",
     "notenoughupdates.sbinfo.gametype": "Locraw Gametype: %s",
     "notenoughupdates.sbinfo.mode": "Locraw Mode: %s",
-    "notenoughupdates.sbinfo.map": "Locraw Map: %s"
+    "notenoughupdates.sbinfo.map": "Locraw Map: %s",
+    "neu.config.fairysouls.show": "Show Fairy Soul Waypoints",
+    "neu.config.fairysouls.reset": "Reset Collected Fairy Souls"
 }
