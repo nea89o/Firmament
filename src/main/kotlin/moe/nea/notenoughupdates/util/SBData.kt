@@ -11,12 +11,11 @@ import moe.nea.notenoughupdates.events.ServerChatLineReceivedEvent
 import moe.nea.notenoughupdates.events.SkyblockServerUpdateEvent
 import moe.nea.notenoughupdates.events.WorldReadyEvent
 
-@OptIn(ExperimentalTime::class)
 object SBData {
     val profileRegex = "(?:Your profile was changed to: |You are playing on profile: )(.+)".toRegex()
     var profileCuteName: String? = null
 
-    private var lastLocrawSent: TimeSource.Monotonic.ValueTimeMark? = null
+    private var lastLocrawSent = Timer()
     private val locrawRoundtripTime: Duration = 5.seconds
     var locraw: Locraw? = null
     val skyblockLocation get() = locraw?.skyblockLocation
@@ -29,9 +28,8 @@ object SBData {
                 profileCuteName = profileMatch.groupValues[1]
             }
             if (event.unformattedString.startsWith("{")) {
-                val lLS = lastLocrawSent
-                if (tryReceiveLocraw(event.unformattedString) && lLS != null && lLS.elapsedNow() < locrawRoundtripTime) {
-                    lastLocrawSent = null
+                if (tryReceiveLocraw(event.unformattedString) && lastLocrawSent.timePassed() < locrawRoundtripTime) {
+                    lastLocrawSent.markFarPast()
                     event.cancel()
                 }
             }
@@ -57,9 +55,9 @@ object SBData {
     }
 
     fun sendLocraw() {
-        lastLocrawSent = TimeSource.Monotonic.markNow()
+        lastLocrawSent.markNow()
         val nh = MC.player?.networkHandler ?: return
-nh.sendChatCommand("locraw")
+        nh.sendChatCommand("locraw")
     }
 
 
