@@ -64,18 +64,20 @@ object NotEnoughUpdates : ModInitializer, ClientModInitializer {
     private fun registerCommands(
         dispatcher: CommandDispatcher<FabricClientCommandSource>,
         @Suppress("UNUSED_PARAMETER")
-        _ctx: CommandRegistryAccess
+        ctx: CommandRegistryAccess
     ) {
         registerNeuCommand(dispatcher)
     }
 
     override fun onInitialize() {
+
         dbusConnection.requestBusName("moe.nea.notenoughupdates")
         dbusConnection.exportObject(NEUDbusObject)
         IDataHolder.registerEvents()
         RepoManager.initialize()
         SBData.init()
         FeatureManager.autoload()
+
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
             runBlocking {

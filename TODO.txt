@@ -1,7 +1,20 @@
- - recipes
- - fairy souls
- - easy config gui builder
- - neumap, with a common source from 1.8.9
-
+- recipes
+- easy config gui builder
+- Storage Overlay
+- PV
+- NEU buttons
+- Slot locking
+- Pet/Equipment hud in inventory
+- Pet Overlay
+- Price Graphs
+- Minion Helper
+- Fishing
+- Highlighters
+- Metal Detector
+- Dwarven Mines
+- Experimentation Solver
+- Capes
+- Dungeon Profit
+- Dungeon Map
 
  - and much more that i will add as i go along
