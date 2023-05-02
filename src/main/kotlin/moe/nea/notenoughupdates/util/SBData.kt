@@ -1,14 +1,11 @@
 package moe.nea.notenoughupdates.util
 
-import java.time.Instant
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
-import net.minecraft.network.message.ArgumentSignatureDataMap
-import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import moe.nea.notenoughupdates.NotEnoughUpdates
 import moe.nea.notenoughupdates.events.ServerChatLineReceivedEvent
 import moe.nea.notenoughupdates.events.SkyblockServerUpdateEvent
@@ -62,17 +59,7 @@ object SBData {
     fun sendLocraw() {
         lastLocrawSent = TimeSource.Monotonic.markNow()
         val nh = MC.player?.networkHandler ?: return
-        val ack = nh.consumeAcknowledgment()
-        nh.sendPacket(
-            CommandExecutionC2SPacket(
-                "locraw",
-                Instant.now(),
-                0L,
-                ArgumentSignatureDataMap.EMPTY,
-                false,
-                ack
-            )
-        )
+nh.sendChatCommand("locraw")
     }
 
 

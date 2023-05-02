@@ -22,7 +22,7 @@ class RenderBlockContext(val tesselator: Tessellator, val camPos: Vec3d) {
         matrixStack.push()
         matrixStack.translate(blockPos.x - camPos.x, blockPos.y - camPos.y, blockPos.z - camPos.z)
         RenderSystem.applyModelViewMatrix()
-        RenderSystem.setShader(GameRenderer::getPositionColorShader)
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram)
         buildCube(buffer)
         tesselator.draw()
         matrixStack.pop()
@@ -73,7 +73,6 @@ class RenderBlockContext(val tesselator: Tessellator, val camPos: Vec3d) {
 
         fun renderBlocks(camera: Camera, block: RenderBlockContext. () -> Unit) {
             RenderSystem.disableDepthTest()
-            RenderSystem.disableTexture()
             RenderSystem.enableBlend()
             RenderSystem.defaultBlendFunc()
 
@@ -82,7 +81,6 @@ class RenderBlockContext(val tesselator: Tessellator, val camPos: Vec3d) {
 
             VertexBuffer.unbind()
             RenderSystem.enableDepthTest()
-            RenderSystem.enableTexture()
             RenderSystem.disableBlend()
         }
     }

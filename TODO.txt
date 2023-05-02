@@ -1,4 +1,5 @@
 - recipes
+- replace REI with custom renderer (if needed)
 - easy config gui builder
 - Storage Overlay
 - PV

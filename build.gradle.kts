@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
     kotlin("jvm") version "1.7.10"
     kotlin("plugin.serialization") version "1.7.10"
-    id("dev.architectury.loom") version "0.12.0.+"
+    id("dev.architectury.loom") version "1.1.336"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator") version "fffc76c"
     id("io.github.juuxel.loom-quiltflower") version "1.7.3"
@@ -13,22 +13,15 @@ plugins {
 
 loom {
     accessWidenerPath.set(project.file("src/main/resources/notenoughupdates.accesswidener"))
-    runConfigs {
+    runs {
         removeIf { it.name != "client" }
-    }
-    launches {
         named("client") {
             property("devauth.enabled", "true")
             property("fabric.log.level", "info")
             property("notenoughupdates.debug", "true")
-        }
-    }
-    runs {
-        named("client") {
             /*
             vmArg("-XX:+AllowEnhancedClassRedefinition")
             vmArg("-XX:HotswapAgent=fatjar")
-
              */
         }
     }
@@ -68,7 +61,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
     modApi("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_api_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("fabric_kotlin_version")}")
-    modApi("dev.architectury:architectury:6.2.46")
+    modApi("dev.architectury:architectury:8.1.79")
 
     // Actual dependencies
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}") {
@@ -88,7 +81,7 @@ dependencies {
     modImplementation(include("io.github.cottonmc:LibGui:${project.property("libgui_version")}")!!)
 
     // Dev environment preinstalled mods
-    modRuntimeOnly("dev.architectury:architectury-fabric:6.2.46")
+    modRuntimeOnly("dev.architectury:architectury-fabric:8.1.79")
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.property("rei_version")}") {
         exclude(module = "architectury")
         exclude(module = "architectury-fabric")
@@ -138,10 +131,14 @@ tasks.remapJar {
 }
 
 tasks.processResources {
+    val replacements = listOf(
+        "version" to project.version,
+        "minecraft_version" to project.property("minecraft_version"),
+        "fabric_kotlin_version" to project.property("fabric_kotlin_version")
+    ).map { (k, v) -> k to v.toString() }
+    replacements.forEach { (key, value) -> inputs.property(key, value) }
     filesMatching("**/fabric.mod.json") {
-        expand(
-            "version" to project.version
-        )
+        expand(*replacements.toTypedArray())
     }
     filesMatching("**/lang/*.json") {
         // flattenJson(this)

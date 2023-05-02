@@ -16,10 +16,10 @@ import moe.nea.notenoughupdates.repo.ItemCache.asItemStack
 import moe.nea.notenoughupdates.repo.ItemCache.getIdentifier
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.ItemStack
-import net.minecraft.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import java.util.stream.Stream
+import net.minecraft.registry.tag.TagKey
 
 object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     override fun equals(o1: NEUItem?, o2: NEUItem?, context: ComparisonContext?): Boolean {
@@ -61,7 +61,7 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return null
     }
 
-    override fun getTagsFor(entry: EntryStack<NEUItem>?, value: NEUItem?): Stream<out TagKey<*>> {
+    override fun getTagsFor(entry: EntryStack<NEUItem>?, value: NEUItem?): Stream<out TagKey<*>>? {
         return Stream.empty()
     }
 

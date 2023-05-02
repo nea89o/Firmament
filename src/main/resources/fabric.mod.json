@@ -41,7 +41,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "fabric-language-kotlin": ">=1.8.2+kotlin.1.7.10",
-    "minecraft": ">=1.18.2"
+    "fabric-language-kotlin": ">=${fabric_kotlin_version}",
+    "minecraft": ">=${minecraft_version}"
   }
 }

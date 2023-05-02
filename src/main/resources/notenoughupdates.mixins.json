@@ -6,8 +6,7 @@
         "MixinClientPlayNetworkHandler",
         "MixinMessageHandler",
         "MixinMinecraft",
-        "MixinWorldRenderer",
-        "MixinClientBrandRetriever"
+        "MixinWorldRenderer"
     ],
     "mixins": [
     ],
