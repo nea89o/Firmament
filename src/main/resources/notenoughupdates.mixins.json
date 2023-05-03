@@ -1,16 +1,19 @@
 {
-  "required": true,
-  "package": "moe.nea.notenoughupdates.mixins",
-  "compatibilityLevel": "JAVA_16",
-  "client": [
-    "MixinDownloadingTerrainScreen",
-    "MixinMessageHandler",
-    "MixinMinecraft",
-    "MixinWorldRenderer"
-  ],
-  "mixins": [
-  ],
-  "injectors": {
-    "defaultRequire": 1
+    "required": true,
+    "plugin": "moe.nea.notenoughupdates.init.MixinPlugin",
+    "package": "moe.nea.notenoughupdates.mixins",
+    "compatibilityLevel": "JAVA_16",
+    "client": [
+        "MixinDownloadingTerrainScreen",
+        "MixinMessageHandler",
+        "MixinMinecraft",
+        "MixinWorldRenderer",
+        "devenv.DisableCommonPacketWarnings"
+    ],
+    "mixins": [
+        "devenv.DisableInvalidFishingHook"
+    ],
+    "injectors": {
+        "defaultRequire": 1
   }
 }
