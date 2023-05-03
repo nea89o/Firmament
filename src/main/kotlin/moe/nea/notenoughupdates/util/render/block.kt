@@ -12,7 +12,7 @@ import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.BlockPos
 
-class RenderBlockContext(private val tesselator: Tessellator, private val matrixStack: MatrixStack) {
+class RenderBlockContext private constructor(private val tesselator: Tessellator, private val matrixStack: MatrixStack) {
     private val buffer = tesselator.buffer
     fun color(red: Float, green: Float, blue: Float, alpha: Float) {
         RenderSystem.setShaderColor(red, green, blue, alpha)
@@ -83,6 +83,7 @@ class RenderBlockContext(private val tesselator: Tessellator, private val matrix
 
             matrices.pop()
 
+            RenderSystem.setShaderColor(1F,1F,1F,1F)
             VertexBuffer.unbind()
             RenderSystem.enableDepthTest()
             RenderSystem.disableBlend()
