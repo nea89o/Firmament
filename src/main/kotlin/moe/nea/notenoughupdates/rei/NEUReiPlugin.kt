@@ -1,16 +1,12 @@
 package moe.nea.notenoughupdates.rei
 
-import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUItem
-import java.util.*
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
-import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry
-import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.entry.EntryStack
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
@@ -21,7 +17,6 @@ import moe.nea.notenoughupdates.recipes.SBCraftingRecipe
 import moe.nea.notenoughupdates.repo.ItemCache.asItemStack
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.SkyblockId
-import moe.nea.notenoughupdates.util.skyblockId
 
 
 class NEUReiPlugin : REIClientPlugin {
@@ -41,33 +36,9 @@ class NEUReiPlugin : REIClientPlugin {
     override fun registerCategories(registry: CategoryRegistry) {
         registry.add(SBCraftingRecipe.Category)
     }
+
     override fun registerDisplays(registry: DisplayRegistry) {
-        registry.registerGlobalDisplayGenerator(object : DynamicDisplayGenerator<SBCraftingRecipe> {
-            override fun getRecipeFor(entry: EntryStack<*>): Optional<List<SBCraftingRecipe>> {
-                if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
-                val item = entry.castValue<NEUItem>()
-                val recipes = RepoManager.getRecipesFor(item.skyblockId)
-                val craftingRecipes = recipes.filterIsInstance<NEUCraftingRecipe>()
-                return Optional.of(craftingRecipes.map { SBCraftingRecipe(it) })
-            }
-
-            override fun generate(builder: ViewSearchBuilder): Optional<List<SBCraftingRecipe>> {
-                if (SBCraftingRecipe.Category.catIdentifier !in builder.categories) return Optional.empty()
-                return Optional.of(
-                    RepoManager.getAllRecipes().filterIsInstance<NEUCraftingRecipe>().map { SBCraftingRecipe(it) }
-                        .toList()
-                )
-            }
-
-            override fun getUsageFor(entry: EntryStack<*>): Optional<List<SBCraftingRecipe>> {
-                if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
-                val item = entry.castValue<NEUItem>()
-                val recipes = RepoManager.getUsagesFor(item.skyblockId)
-                val craftingRecipes = recipes.filterIsInstance<NEUCraftingRecipe>()
-                return Optional.of(craftingRecipes.map { SBCraftingRecipe(it) })
-
-            }
-        })
+        registry.registerDisplayGenerator(SBCraftingRecipe.Category.catIdentifier, SkyblockRecipeDynamicGenerator)
     }
 
     override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {
