@@ -1,6 +1,7 @@
 package moe.nea.notenoughupdates.rei
 
 import io.github.moulberry.repo.data.NEUItem
+import java.util.stream.Stream
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
@@ -11,15 +12,17 @@ import me.shedaniel.rei.api.common.entry.comparison.ComparisonContext
 import me.shedaniel.rei.api.common.entry.type.EntryDefinition
 import me.shedaniel.rei.api.common.entry.type.EntryType
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
+import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.registry.tag.TagKey
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import moe.nea.notenoughupdates.rei.NEUReiPlugin.Companion.asItemEntry
 import moe.nea.notenoughupdates.repo.ItemCache.asItemStack
 import moe.nea.notenoughupdates.repo.ItemCache.getIdentifier
-import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.item.ItemStack
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import java.util.stream.Stream
-import net.minecraft.registry.tag.TagKey
+import moe.nea.notenoughupdates.repo.RepoManager
+import moe.nea.notenoughupdates.util.SkyblockId
 
 object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     override fun equals(o1: NEUItem?, o2: NEUItem?, context: ComparisonContext?): Boolean {
@@ -57,8 +60,21 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
 
     }
 
-    override fun getSerializer(): EntrySerializer<NEUItem>? {
-        return null
+    override fun getSerializer(): EntrySerializer<NEUItem?> {
+        return object : EntrySerializer<NEUItem?> {
+            override fun supportSaving(): Boolean = true
+            override fun supportReading(): Boolean = true
+
+            override fun read(tag: NbtCompound): NEUItem? {
+                return RepoManager.getNEUItem(SkyblockId(tag.getString("SKYBLOCK_ID")))
+            }
+
+            override fun save(entry: EntryStack<NEUItem?>, value: NEUItem?): NbtCompound {
+                return NbtCompound().apply {
+                    putString("SKYBLOCK_ID", value?.skyblockItemId ?: "null")
+                }
+            }
+        }
     }
 
     override fun getTagsFor(entry: EntryStack<NEUItem>?, value: NEUItem?): Stream<out TagKey<*>>? {
@@ -70,6 +86,7 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     }
 
     override fun hash(entry: EntryStack<NEUItem>, value: NEUItem, context: ComparisonContext): Long {
+        // Repo items are immutable, and get replaced entirely when loaded from disk
         return System.identityHashCode(value) * 31L
     }
 

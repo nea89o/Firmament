@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.text.Text
+import moe.nea.notenoughupdates.util.SkyblockId
 
 object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Config) {
     @Serializable
@@ -54,6 +55,8 @@ object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Conf
                 recentlyFailedToUpdateItemList = false
         })
     }
+
+    fun getNEUItem(skyblockId: SkyblockId) = neuRepo.items.getItemBySkyblockId(skyblockId.neuItem)
 
     fun launchAsyncUpdate(force: Boolean = false) {
         NotEnoughUpdates.coroutineScope.launch {
