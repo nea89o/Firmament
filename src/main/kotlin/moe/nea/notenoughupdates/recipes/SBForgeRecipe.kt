@@ -29,15 +29,16 @@ class SBForgeRecipe(override val neuRecipe: NEUForgeRecipe) : SBRecipe() {
         override fun getIcon(): Renderer = EntryStacks.of(Blocks.ANVIL)
         override fun setupDisplay(display: SBForgeRecipe, bounds: Rectangle): List<Widget> {
             return buildList {
+                // TODO: proper gui for this (possibly inspired by the old circular gui)
                 add(Widgets.createRecipeBase(bounds))
-                val resultSlot = Point(bounds.centerX - 18 / 2, bounds.centerY + 5)
+                val resultSlot = Point(bounds.centerX, bounds.centerY + 5)
                 add(Widgets.createResultSlotBackground(resultSlot))
                 val ingredientsCenter = Point(bounds.centerX, bounds.centerY - 20)
                 val count = display.neuRecipe.inputs.size
                 display.neuRecipe.inputs.forEachIndexed { idx, ingredient ->
                     add(
                         Widgets.createSlot(
-                            Point(ingredientsCenter.x - 18 / 2 - count / 2 * 24 + idx * 24, ingredientsCenter.y)
+                            Point(ingredientsCenter.x + 12 - count * 24 / 2 + idx * 24, ingredientsCenter.y)
                         ).markInput().entry(SBItemEntryDefinition.getEntry(ingredient))
                     )
                 }

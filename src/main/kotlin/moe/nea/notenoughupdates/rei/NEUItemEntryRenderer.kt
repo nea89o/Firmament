@@ -6,9 +6,8 @@ import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext
 import me.shedaniel.rei.api.common.entry.EntryStack
-import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
-import moe.nea.notenoughupdates.rei.NEUReiPlugin.Companion.asItemEntry
 import net.minecraft.client.util.math.MatrixStack
+import moe.nea.notenoughupdates.rei.NEUReiPlugin.Companion.asItemEntry
 
 object NEUItemEntryRenderer : EntryRenderer<NEUItem> {
     override fun render(
@@ -19,16 +18,14 @@ object NEUItemEntryRenderer : EntryRenderer<NEUItem> {
         mouseY: Int,
         delta: Float
     ) {
-        VanillaEntryTypes.ITEM.definition.renderer
-            .render(
-                entry.asItemEntry(),
-                matrices, bounds, mouseX, mouseY, delta
-            )
+        matrices.push()
+        matrices.translate(0F, 0F, 100F)
+        entry.asItemEntry().render(matrices, bounds, mouseX, mouseY, delta)
+        matrices.pop()
     }
 
     override fun getTooltip(entry: EntryStack<NEUItem>, tooltipContext: TooltipContext): Tooltip? {
-        return VanillaEntryTypes.ITEM.definition.renderer
-            .getTooltip(entry.asItemEntry(), tooltipContext)
+        return entry.asItemEntry().getTooltip(tooltipContext, false)
     }
 
 }
