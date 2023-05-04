@@ -139,11 +139,12 @@ tasks.processResources {
     filesMatching("**/lang/*.json") {
         // flattenJson(this)
     }
+    from(tasks.license)
 }
 
 
 tasks.license {
     scanConfiguration(project.configurations.compileClasspath.get())
-    outputFile.set(file("$buildDir/LICENSES.json"))
+    outputFile.set(file("$buildDir/LICENSES-NEU.json"))
     licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())
 }
