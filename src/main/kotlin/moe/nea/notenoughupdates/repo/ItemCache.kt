@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.writer
+import net.minecraft.SharedConstants
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.datafixer.Schemas
 import net.minecraft.datafixer.TypeReferences
@@ -22,6 +23,7 @@ import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.notenoughupdates.NotEnoughUpdates
+import moe.nea.notenoughupdates.mixins.accessor.AccessorDataFixTypes
 import moe.nea.notenoughupdates.util.LegacyTagParser
 import moe.nea.notenoughupdates.util.appendLore
 
@@ -46,7 +48,7 @@ object ItemCache : IReloadable {
                 TypeReferences.ITEM_STACK,
                 Dynamic(NbtOps.INSTANCE, this),
                 -1,
-                2975
+                SharedConstants.getGameVersion().saveVersion.id
             ).value as NbtCompound
         } catch (e: Exception) {
             if (isFlawless)
