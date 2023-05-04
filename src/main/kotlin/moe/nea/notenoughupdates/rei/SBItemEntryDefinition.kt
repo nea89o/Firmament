@@ -85,20 +85,20 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asItemStack())
     }
 
-    override fun hash(entry: EntryStack<NEUItem>, value: NEUItem, context: ComparisonContext): Long {
+    override fun hash(entry: EntryStack<NEUItem>, value: NEUItem?, context: ComparisonContext): Long {
         // Repo items are immutable, and get replaced entirely when loaded from disk
         return System.identityHashCode(value) * 31L
     }
 
-    override fun wildcard(entry: EntryStack<NEUItem>, value: NEUItem): NEUItem {
+    override fun wildcard(entry: EntryStack<NEUItem>?, value: NEUItem?): NEUItem? {
         return value
     }
 
-    override fun normalize(entry: EntryStack<NEUItem>, value: NEUItem): NEUItem {
+    override fun normalize(entry: EntryStack<NEUItem>?, value: NEUItem?): NEUItem? {
         return value
     }
 
-    override fun copy(entry: EntryStack<NEUItem>?, value: NEUItem): NEUItem {
+    override fun copy(entry: EntryStack<NEUItem>?, value: NEUItem?): NEUItem? {
         return value
     }
 
@@ -106,8 +106,8 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return false
     }
 
-    override fun getIdentifier(entry: EntryStack<NEUItem>?, value: NEUItem): Identifier {
-        return value.getIdentifier()
+    override fun getIdentifier(entry: EntryStack<NEUItem>?, value: NEUItem?): Identifier {
+        return value?.getIdentifier() ?: Identifier.of("skyblockitem", "null")!!
     }
 
 
