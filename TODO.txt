@@ -18,4 +18,13 @@
 - Dungeon Profit
 - Dungeon Map
 
+Priority 2:
+- item overlays
+    - tree capitator
+    - builders wand
+    - builders ruler
+    - biome wands
+    - dirt wand
+    - block zapper
+
  - and much more that i will add as i go along
