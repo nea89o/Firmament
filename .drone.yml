@@ -1,0 +1,9 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+    -   name: Build
+        image: eclipse-temurin:17-alpine
+        commands:
+            - ./gradlew build
