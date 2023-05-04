@@ -21,7 +21,7 @@ data class HypixelPetInfo(
     val type: String,
     val tier: Rarity,
 ) {
-    val skyblockId get() = SkyblockId("${type.uppercase()};${tier}")
+    val skyblockId get() = SkyblockId("${type.uppercase()};${tier.ordinal}")
 }
 
 private val jsonparser = Json { ignoreUnknownKeys = true }
