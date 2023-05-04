@@ -1,5 +1,6 @@
 package moe.nea.notenoughupdates.rei
 
+import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import java.util.stream.Stream
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
@@ -25,8 +26,8 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return o1 === o2
     }
 
-    override fun cheatsAs(entry: EntryStack<NEUItem>?, value: NEUItem?): ItemStack? {
-        return value?.asItemStack()
+    override fun cheatsAs(entry: EntryStack<NEUItem>?, value: NEUItem?): ItemStack {
+        return value.asItemStack()
     }
 
     override fun getValueType(): Class<NEUItem> = NEUItem::class.java
@@ -71,8 +72,14 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return value?.getIdentifier() ?: Identifier.of("skyblockitem", "null")!!
     }
 
-    fun getEntry(neuItem: NEUItem?) = EntryStack.of(this, neuItem)
-    fun getEntry(skyblockId: SkyblockId?) = EntryStack.of(this, skyblockId?.let { RepoManager.getNEUItem(it) })
+    fun getEntry(neuItem: NEUItem?): EntryStack<NEUItem> =
+        EntryStack.of(this, neuItem)
+
+    fun getEntry(skyblockId: SkyblockId?): EntryStack<NEUItem> =
+        EntryStack.of(this, skyblockId?.let { RepoManager.getNEUItem(it) })
+
+    fun getEntry(ingredient: NEUIngredient?): EntryStack<NEUItem> =
+        getEntry(ingredient?.itemId?.let { SkyblockId(it) })
 
 
 }

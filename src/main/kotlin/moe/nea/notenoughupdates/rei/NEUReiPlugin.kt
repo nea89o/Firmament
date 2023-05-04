@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.notenoughupdates.recipes.SBCraftingRecipe
+import moe.nea.notenoughupdates.recipes.SBForgeRecipe
 import moe.nea.notenoughupdates.repo.ItemCache.asItemStack
 import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.SkyblockId
@@ -23,7 +24,7 @@ class NEUReiPlugin : REIClientPlugin {
 
     companion object {
         fun EntryStack<NEUItem>.asItemEntry(): EntryStack<ItemStack> {
-            return EntryStack.of(VanillaEntryTypes.ITEM, value?.asItemStack())
+            return EntryStack.of(VanillaEntryTypes.ITEM, value.asItemStack())
         }
 
         val SKYBLOCK_ITEM_TYPE_ID = Identifier("notenoughupdates", "skyblockitems")
@@ -35,10 +36,18 @@ class NEUReiPlugin : REIClientPlugin {
 
     override fun registerCategories(registry: CategoryRegistry) {
         registry.add(SBCraftingRecipe.Category)
+        registry.add(SBForgeRecipe.Category)
     }
 
     override fun registerDisplays(registry: DisplayRegistry) {
-        registry.registerDisplayGenerator(SBCraftingRecipe.Category.catIdentifier, SkyblockRecipeDynamicGenerator)
+        registry.registerDisplayGenerator(
+            SBCraftingRecipe.Category.catIdentifier,
+            SkyblockCraftingRecipeDynamicGenerator
+        )
+        registry.registerDisplayGenerator(
+            SBForgeRecipe.Category.categoryIdentifier,
+            SkyblockForgeRecipeDynamicGenerator
+        )
     }
 
     override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {
