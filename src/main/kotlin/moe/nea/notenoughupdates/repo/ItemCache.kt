@@ -56,10 +56,10 @@ object ItemCache : IReloadable {
             null
         }
 
-    private fun brokenItemStack(neuItem: NEUItem): ItemStack {
+    fun brokenItemStack(neuItem: NEUItem?): ItemStack {
         return ItemStack(Items.PAINTING).apply {
-            setCustomName(Text.literal(neuItem.displayName))
-            appendLore(listOf(Text.translatable("notenoughupdates.repo.brokenitem", neuItem.skyblockItemId)))
+            setCustomName(Text.literal(neuItem?.displayName ?: "null"))
+            appendLore(listOf(Text.translatable("notenoughupdates.repo.brokenitem", neuItem?.skyblockItemId)))
         }
     }
 
@@ -79,7 +79,8 @@ object ItemCache : IReloadable {
         }
     }
 
-    fun NEUItem.asItemStack(): ItemStack {
+    fun NEUItem?.asItemStack(): ItemStack {
+        if (this == null) return brokenItemStack(null)
         var s = cache[this.skyblockItemId]
         if (s == null) {
             s = asItemStackNow()

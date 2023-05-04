@@ -8,16 +8,18 @@ import moe.nea.notenoughupdates.repo.RepoManager
 import moe.nea.notenoughupdates.util.SkyblockId
 
 object NEUItemEntrySerializer : EntrySerializer<NEUItem?> {
+    const val SKYBLOCK_ID_ENTRY = "SKYBLOCK_ID"
+
     override fun supportSaving(): Boolean = true
     override fun supportReading(): Boolean = true
 
     override fun read(tag: NbtCompound): NEUItem? {
-        return RepoManager.getNEUItem(SkyblockId(tag.getString("SKYBLOCK_ID")))
+        return RepoManager.getNEUItem(SkyblockId(tag.getString(SKYBLOCK_ID_ENTRY)))
     }
 
     override fun save(entry: EntryStack<NEUItem?>, value: NEUItem?): NbtCompound {
         return NbtCompound().apply {
-            putString("SKYBLOCK_ID", value?.skyblockItemId ?: "null")
+            putString(SKYBLOCK_ID_ENTRY, value?.skyblockItemId ?: "null")
         }
     }
 }
