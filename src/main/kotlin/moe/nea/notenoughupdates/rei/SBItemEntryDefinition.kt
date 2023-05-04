@@ -16,7 +16,10 @@ import net.minecraft.util.Identifier
 import moe.nea.notenoughupdates.rei.NEUReiPlugin.Companion.asItemEntry
 import moe.nea.notenoughupdates.repo.ItemCache.asItemStack
 import moe.nea.notenoughupdates.repo.ItemCache.getIdentifier
+import moe.nea.notenoughupdates.repo.RepoManager
+import moe.nea.notenoughupdates.util.SkyblockId
 
+// TODO: allow stackable entries
 object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     override fun equals(o1: NEUItem?, o2: NEUItem?, context: ComparisonContext?): Boolean {
         return o1 === o2
@@ -69,6 +72,7 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
     }
 
     fun getEntry(neuItem: NEUItem?) = EntryStack.of(this, neuItem)
+    fun getEntry(skyblockId: SkyblockId?) = EntryStack.of(this, skyblockId?.let { RepoManager.getNEUItem(it) })
 
 
 }

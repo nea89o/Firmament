@@ -1,20 +1,22 @@
 package moe.nea.notenoughupdates.repo
 
 import io.github.cottonmc.cotton.gui.client.CottonHud
+import io.github.moulberry.repo.NEURecipeCache
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.NEURepositoryException
+import io.github.moulberry.repo.data.NEURecipe
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import moe.nea.notenoughupdates.NotEnoughUpdates
-import moe.nea.notenoughupdates.NotEnoughUpdates.logger
-import moe.nea.notenoughupdates.hud.ProgressBar
-import moe.nea.notenoughupdates.util.data.DataHolder
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.text.Text
+import moe.nea.notenoughupdates.NotEnoughUpdates
+import moe.nea.notenoughupdates.NotEnoughUpdates.logger
+import moe.nea.notenoughupdates.hud.ProgressBar
 import moe.nea.notenoughupdates.util.SkyblockId
+import moe.nea.notenoughupdates.util.data.DataHolder
 
 object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Config) {
     @Serializable
@@ -42,6 +44,13 @@ object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Conf
             }
         }
     }
+
+    private val recipeCache = NEURecipeCache.forRepo(neuRepo)
+
+    fun getAllRecipes() = neuRepo.items.items.values.asSequence().flatMap { it.recipes }
+
+    fun getRecipesFor(skyblockId: SkyblockId): Set<NEURecipe> = recipeCache.recipes[skyblockId.neuItem] ?: setOf()
+    fun getUsagesFor(skyblockId: SkyblockId): Set<NEURecipe> = recipeCache.usages[skyblockId.neuItem] ?: setOf()
 
     private fun trySendClientboundUpdateRecipesPacket(): Boolean {
         return MinecraftClient.getInstance().world != null && MinecraftClient.getInstance().networkHandler?.onSynchronizeRecipes(

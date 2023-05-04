@@ -27,4 +27,8 @@ Priority 2:
     - dirt wand
     - block zapper
 
+Priority 3:
+- Use REIs "Move Item" functionality to higlight slots
+
+
  - and much more that i will add as i go along
