@@ -68,5 +68,7 @@ object SBItemEntryDefinition : EntryDefinition<NEUItem> {
         return value?.getIdentifier() ?: Identifier.of("skyblockitem", "null")!!
     }
 
+    fun getEntry(neuItem: NEUItem?) = EntryStack.of(this, neuItem)
+
 
 }

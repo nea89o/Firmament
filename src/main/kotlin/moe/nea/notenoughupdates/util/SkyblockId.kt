@@ -1,14 +1,20 @@
 package moe.nea.notenoughupdates.util
 
+import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.util.Identifier
 
 @JvmInline
-value class SkyblockId(val neuItem: String)
+value class SkyblockId(val neuItem: String) {
+    val identifier get() = Identifier("skyblockitem", neuItem.lowercase().replace(";", "__"))
+}
+
+val NEUItem.skyblockId get() = SkyblockId(skyblockItemId)
 
 @Serializable
 data class HypixelPetInfo(

@@ -21,11 +21,10 @@ import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import moe.nea.notenoughupdates.NotEnoughUpdates
-import moe.nea.notenoughupdates.mixins.accessor.AccessorDataFixTypes
 import moe.nea.notenoughupdates.util.LegacyTagParser
 import moe.nea.notenoughupdates.util.appendLore
+import moe.nea.notenoughupdates.util.skyblockId
 
 object ItemCache : IReloadable {
     val dfuLog = Path.of("logs/dfulog.txt")
@@ -91,8 +90,7 @@ object ItemCache : IReloadable {
         return s
     }
 
-    fun NEUItem.getIdentifier() =
-        Identifier("skyblockitem", skyblockItemId.lowercase().replace(";", "__"))
+    fun NEUItem.getIdentifier() = skyblockId.identifier
 
 
     var job: Job? = null
