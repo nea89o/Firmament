@@ -12,6 +12,7 @@ plugins {
 }
 
 loom {
+    clientOnlyMinecraftJar()
     accessWidenerPath.set(project.file("src/main/resources/notenoughupdates.accesswidener"))
     runs {
         removeIf { it.name != "client" }
