@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.7.10"
-    kotlin("plugin.serialization") version "1.7.10"
+    kotlin("jvm") version "1.8.10"
+    kotlin("plugin.serialization") version "1.8.10"
     id("dev.architectury.loom") version "1.1.336"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator") version "fffc76c"
@@ -55,40 +55,35 @@ val transInclude by configurations.creating {
 
 dependencies {
     // Minecraft dependencies
-    "minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
-    "mappings"("net.fabricmc:yarn:${project.property("yarn_version")}:v2")
+    "minecraft"(libs.minecraft)
+    "mappings"("net.fabricmc:yarn:${libs.versions.yarn.get()}:v2")
 
     // Fabric dependencies
-    modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
-    modApi("net.fabricmc.fabric-api:fabric-api:${project.property("fabric_api_version")}")
-    modImplementation("net.fabricmc:fabric-language-kotlin:${project.property("fabric_kotlin_version")}")
-    modApi("dev.architectury:architectury:8.1.79")
+    modImplementation(libs.fabric.loader)
+    modImplementation(libs.fabric.kotlin)
+    modImplementation(libs.libgui)
+    include(libs.libgui)
+    modApi(libs.fabric.api)
+    modApi(libs.architectury)
 
     // Actual dependencies
-    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.property("rei_version")}") {
+    modCompileOnly(libs.rei.api) {
         exclude(module = "architectury")
         exclude(module = "architectury-fabric")
     }
-    shadowMe("moe.nea:neurepoparser:0.0.1")
-    shadowMe("com.github.hypfvieh:dbus-java-core:${rootProject.property("dbus_java_version")}")
-    shadowMe("com.github.hypfvieh:dbus-java-transport-native-unixsocket:${rootProject.property("dbus_java_version")}")
-    fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${project.property("ktor_version")}"
+    shadowMe(libs.repoparser)
+    shadowMe(libs.bundles.dbus)
 
+    fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
 
     transInclude(implementation(ktor("client-core"))!!)
     transInclude(implementation(ktor("client-java"))!!)
     transInclude(implementation(ktor("serialization-kotlinx-json"))!!)
     transInclude(implementation(ktor("client-content-negotiation"))!!)
-    modImplementation(include("io.github.cottonmc:LibGui:${project.property("libgui_version")}")!!)
 
     // Dev environment preinstalled mods
-    modRuntimeOnly("dev.architectury:architectury-fabric:8.1.79")
-    modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.property("rei_version")}") {
-        exclude(module = "architectury")
-        exclude(module = "architectury-fabric")
-    }
-    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${project.property("devauth_version")}")
-    modRuntimeOnly("maven.modrinth:modmenu:${project.property("modmenu_version")}")
+    modRuntimeOnly(libs.bundles.runtime.required)
+    modRuntimeOnly(libs.bundles.runtime.optional)
 
     transInclude.resolvedConfiguration.resolvedArtifacts.forEach {
         include(it.moduleVersion.id.toString())
