@@ -28,5 +28,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "NotEnoughApdates"
+rootProject.name = "Firmament"
 

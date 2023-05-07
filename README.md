@@ -1,8 +1,10 @@
-## NotEnoughUpdates 1.19
+## Firmament
+<small><i>Powered by NEU</i></small>
 
-> This is still very much more of a tech demo, than an actual usable project. Please do not confuse it for one.
+> Note: This is still very much more of a tech demo, than an actual usable project. Please do not confuse it for one.
+> Please do not ask for features to be added (although bug reports are welcome).
 
-This project is subject to renaming. This is not NEU, but 1.19, even tho the goal is to have some of NEUs features.
+[This project is currently being renamed.](#renaming)
 
 ### Currently working features
 
@@ -36,4 +38,12 @@ to publish this, so this is just a preliminary preview for now.
 I will not accept contributions until I am sure of under which license I want to publish this mod and some of the
 infrastructure is more defined.
 
+### Renaming
 
+This method is in the process of being renamed to Firmament from NotEnoughUpdates1.19. As such some of the branding and
+code references may still refer to NEU or NotEnoughUpdates. This mod is not related to NEU (although I am at this point
+the most active and (by line count) second most prolific NEU dev (after only Moulberry himself)). This mod is also using
+NEU data and as such can be referred to as "Firmament powered by NEU". This mod exists outside the Moulberryverse of
+mods and is not integrated into the Moulberryverse of quality control and bureaucracy. Any references to Moulberry and
+most references to NEU are due to be removed. This mod is not representing NEU in 1.19, although it does have some of
+its features.
