@@ -6,6 +6,7 @@ import net.minecraft.util.math.BlockPos
 
 object MC {
     inline val player get() = MinecraftClient.getInstance().player
+    inline val world get() = MinecraftClient.getInstance().world
 }
 
 val Coordinate.blockPos: BlockPos

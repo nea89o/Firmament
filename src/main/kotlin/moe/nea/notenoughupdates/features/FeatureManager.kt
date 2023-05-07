@@ -3,6 +3,7 @@ package moe.nea.notenoughupdates.features
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.notenoughupdates.NotEnoughUpdates
+import moe.nea.notenoughupdates.features.fishing.FishingWarning
 import moe.nea.notenoughupdates.features.world.FairySouls
 import moe.nea.notenoughupdates.util.data.DataHolder
 
@@ -24,6 +25,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
         synchronized(this) {
             if (hasAutoloaded) return
             loadFeature(FairySouls)
+            loadFeature(FishingWarning)
             hasAutoloaded = true
         }
     }

@@ -31,7 +31,7 @@ object FairySouls : NEUFeature {
     object DConfig : ProfileSpecificDataHolder<Data>(serializer(), "found-fairysouls", ::Data)
 
 
-    object TConfig : ManagedConfig("fairysouls") {
+    object TConfig : ManagedConfig("fairy-souls") {
 
         val displaySouls by toggle("show") { false }
         val resetSouls by button("reset") {

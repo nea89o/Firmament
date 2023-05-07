@@ -11,6 +11,7 @@ import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3d
 
 class RenderBlockContext private constructor(private val tesselator: Tessellator, private val matrixStack: MatrixStack) {
     private val buffer = tesselator.buffer
@@ -21,7 +22,16 @@ class RenderBlockContext private constructor(private val tesselator: Tessellator
     fun block(blockPos: BlockPos) {
         matrixStack.push()
         matrixStack.translate(blockPos.x.toFloat(), blockPos.y.toFloat(), blockPos.z.toFloat())
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram)
+        buildCube(matrixStack.peek().positionMatrix, buffer)
+        tesselator.draw()
+        matrixStack.pop()
+    }
+
+    fun tinyBlock(vec3d: Vec3d, size: Float) {
+        matrixStack.push()
+        matrixStack.translate(vec3d.x, vec3d.y, vec3d.z)
+        matrixStack.scale(size, size, size)
+        matrixStack.translate(-.5, -.5, -.5)
         buildCube(matrixStack.peek().positionMatrix, buffer)
         tesselator.draw()
         matrixStack.pop()
@@ -74,6 +84,7 @@ class RenderBlockContext private constructor(private val tesselator: Tessellator
             RenderSystem.disableDepthTest()
             RenderSystem.enableBlend()
             RenderSystem.defaultBlendFunc()
+            RenderSystem.setShader(GameRenderer::getPositionColorProgram)
 
             matrices.push()
             matrices.translate(-camera.pos.x, -camera.pos.y, -camera.pos.z)

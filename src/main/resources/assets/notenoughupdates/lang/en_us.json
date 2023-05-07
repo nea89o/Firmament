@@ -19,6 +19,8 @@
     "notenoughupdates.sbinfo.gametype": "Locraw Gametype: %s",
     "notenoughupdates.sbinfo.mode": "Locraw Mode: %s",
     "notenoughupdates.sbinfo.map": "Locraw Map: %s",
-    "neu.config.fairysouls.show": "Show Fairy Soul Waypoints",
-    "neu.config.fairysouls.reset": "Reset Collected Fairy Souls"
+    "neu.config.fairy-souls.show": "Show Fairy Soul Waypoints",
+    "neu.config.fairy-souls.reset": "Reset Collected Fairy Souls",
+    "neu.config.fishing-warning.display-warning": "Display a warning when you are about to hook a fish",
+    "neu.config.fishing-warning.highlight-wake-chain": "Highlight fishing particles"
 }

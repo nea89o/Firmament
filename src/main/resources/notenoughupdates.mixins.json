@@ -12,7 +12,9 @@
         "devenv.DisableCommonPacketWarnings"
     ],
     "mixins": [
-        "devenv.DisableInvalidFishingHook"
+        "MixinClientPacketHandler",
+        "devenv.DisableInvalidFishingHook",
+        "devenv.MixinScoreboard"
     ],
     "injectors": {
         "defaultRequire": 1
