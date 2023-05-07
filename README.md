@@ -2,7 +2,7 @@
 <small><i>Powered by NEU</i></small>
 
 > Note: This is still very much more of a tech demo, than an actual usable project. Please do not confuse it for one.
-> Please do not ask for features to be added (although bug reports are welcome).
+> Please do not ask for [features to be added](TODO.txt) (although bug reports are welcome).
 
 [This project is currently being renamed.](#renaming)
 
