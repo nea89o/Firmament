@@ -129,8 +129,8 @@ tasks.remapJar {
 tasks.processResources {
     val replacements = listOf(
         "version" to project.version,
-        "minecraft_version" to project.property("minecraft_version"),
-        "fabric_kotlin_version" to project.property("fabric_kotlin_version")
+        "minecraft_version" to libs.versions.minecraft.get(),
+        "fabric_kotlin_version" to libs.versions.fabric.kotlin.get()
     ).map { (k, v) -> k to v.toString() }
     replacements.forEach { (key, value) -> inputs.property(key, value) }
     filesMatching("**/fabric.mod.json") {
