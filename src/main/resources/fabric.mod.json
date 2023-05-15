@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "notenoughupdates",
+  "id": "firmament",
   "version": "${version}",
-  "name": "Not Enough Updates",
-  "description": "Not Enough Updates - A mod for Hypixel Skyblock",
+  "name": "Firmament",
+  "description": "Firmament powered by NEU",
   "authors": [
     {
       "name": "Linnea Gräf",
@@ -14,30 +14,30 @@
   ],
   "contact": {
     "discord": "https://discord.gg/moulberry",
-    "sources": "https://git.nea.moe/nea/NotEnoughUpdates1.19/"
+    "sources": "https://git.nea.moe/nea/firmament/"
   },
   "license": "ARR",
-  "icon": "assets/notenoughupdates/icon.png",
+  "icon": "assets/firmament/icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [
       {
         "adapter": "kotlin",
-        "value": "moe.nea.notenoughupdates.NotEnoughUpdates"
+        "value": "moe.nea.firmament.NotEnoughUpdates"
       }
     ],
     "client": [
       {
         "adapter": "kotlin",
-        "value": "moe.nea.notenoughupdates.NotEnoughUpdates"
+        "value": "moe.nea.firmament.NotEnoughUpdates"
       }
     ],
     "rei_client": [
-      "moe.nea.notenoughupdates.rei.NEUReiPlugin"
+      "moe.nea.firmament.rei.FirmamentReiPlugin"
     ]
   },
   "mixins": [
-    "notenoughupdates.mixins.json"
+    "firmament.mixins.json"
   ],
   "depends": {
     "fabric": "*",

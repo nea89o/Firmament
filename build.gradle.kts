@@ -13,13 +13,13 @@ plugins {
 
 loom {
     clientOnlyMinecraftJar()
-    accessWidenerPath.set(project.file("src/main/resources/notenoughupdates.accesswidener"))
+    accessWidenerPath.set(project.file("src/main/resources/firmament.accesswidener"))
     runs {
         removeIf { it.name != "client" }
         named("client") {
             property("devauth.enabled", "true")
             property("fabric.log.level", "info")
-            property("notenoughupdates.debug", "true")
+            property("firmament.debug", "true")
             /*
             vmArg("-XX:+AllowEnhancedClassRedefinition")
             vmArg("-XX:HotswapAgent=fatjar")
@@ -145,6 +145,6 @@ tasks.processResources {
 
 tasks.license {
     scanConfiguration(project.configurations.compileClasspath.get())
-    outputFile.set(file("$buildDir/LICENSES-NEU.json"))
+    outputFile.set(file("$buildDir/LICENSES-FIRMAMENT.json"))
     licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())
 }
