@@ -23,13 +23,13 @@
     "main": [
       {
         "adapter": "kotlin",
-        "value": "moe.nea.firmament.NotEnoughUpdates"
+        "value": "moe.nea.firmament.Firmament"
       }
     ],
     "client": [
       {
         "adapter": "kotlin",
-        "value": "moe.nea.firmament.NotEnoughUpdates"
+        "value": "moe.nea.firmament.Firmament"
       }
     ],
     "rei_client": [
