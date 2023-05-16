@@ -17,6 +17,6 @@ data class WorldRenderLastEvent(
     val gameRenderer: GameRenderer,
     val lightmapTextureManager: LightmapTextureManager,
     val positionMatrix: Matrix4f,
-) : NEUEvent() {
-    companion object : NEUEventBus<WorldRenderLastEvent>()
+) : FirmamentEvent() {
+    companion object : FirmamentEventBus<WorldRenderLastEvent>()
 }

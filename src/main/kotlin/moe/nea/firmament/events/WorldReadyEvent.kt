@@ -1,5 +1,5 @@
 package moe.nea.firmament.events
 
-class WorldReadyEvent : NEUEvent() {
-    companion object : NEUEventBus<WorldReadyEvent>()
+class WorldReadyEvent : FirmamentEvent() {
+    companion object : FirmamentEventBus<WorldReadyEvent>()
 }

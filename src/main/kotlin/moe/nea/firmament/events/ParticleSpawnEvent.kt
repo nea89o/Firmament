@@ -8,6 +8,6 @@ data class ParticleSpawnEvent(
     val position: Vec3d,
     val offset: Vec3d,
     val longDistance: Boolean,
-) : NEUEvent() {
-    companion object : NEUEventBus<ParticleSpawnEvent>()
+) : FirmamentEvent() {
+    companion object : FirmamentEventBus<ParticleSpawnEvent>()
 }

@@ -8,6 +8,6 @@ import moe.nea.firmament.util.Locraw
  * **N.B.:** This event may get fired multiple times while on the server (for example, first to null, then to the
  * correct location).
  */
-data class SkyblockServerUpdateEvent(val oldLocraw: Locraw?, val newLocraw: Locraw?) : NEUEvent() {
-    companion object : NEUEventBus<SkyblockServerUpdateEvent>()
+data class SkyblockServerUpdateEvent(val oldLocraw: Locraw?, val newLocraw: Locraw?) : FirmamentEvent() {
+    companion object : FirmamentEventBus<SkyblockServerUpdateEvent>()
 }

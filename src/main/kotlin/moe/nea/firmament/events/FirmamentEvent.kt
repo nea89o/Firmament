@@ -1,7 +1,7 @@
 package moe.nea.firmament.events
 
 /**
- * An event that can be fired by a [NEUEventBus].
+ * An event that can be fired by a [FirmamentEventBus].
  *
  * Typically, that event bus is implemented as a companion object
  *
@@ -11,11 +11,11 @@ package moe.nea.firmament.events
  * }
  * ```
  */
-abstract class NEUEvent {
+abstract class FirmamentEvent {
     /**
-     * A [NEUEvent] that can be [cancelled]
+     * A [FirmamentEvent] that can be [cancelled]
      */
-    abstract class Cancellable : NEUEvent() {
+    abstract class Cancellable : FirmamentEvent() {
         /**
          * Cancels this is event.
          *

@@ -9,7 +9,7 @@ import moe.nea.firmament.Firmament
  * [subscribe] to events [publish]ed on this event bus.
  * Subscriptions may not necessarily be delivered in the order or registering.
  */
-open class NEUEventBus<T : NEUEvent> {
+open class FirmamentEventBus<T : FirmamentEvent> {
     data class Handler<T>(val invocation: (T) -> Unit, val receivesCancelled: Boolean)
 
     private val toHandle: MutableList<Handler<T>> = CopyOnWriteArrayList()
@@ -23,7 +23,7 @@ open class NEUEventBus<T : NEUEvent> {
 
     fun publish(event: T): T {
         for (function in toHandle) {
-            if (function.receivesCancelled || event !is NEUEvent.Cancellable || !event.cancelled) {
+            if (function.receivesCancelled || event !is FirmamentEvent.Cancellable || !event.cancelled) {
                 try {
                     function.invocation(event)
                 } catch (e: Exception) {
