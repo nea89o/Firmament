@@ -4,6 +4,7 @@ import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.NEURecipeCache
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.NEURepositoryException
+import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.NEURecipe
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Conf
         })
     }
 
-    fun getNEUItem(skyblockId: SkyblockId) = neuRepo.items.getItemBySkyblockId(skyblockId.neuItem)
+    fun getNEUItem(skyblockId: SkyblockId): NEUItem? = neuRepo.items.getItemBySkyblockId(skyblockId.neuItem)
 
     fun launchAsyncUpdate(force: Boolean = false) {
         Firmament.coroutineScope.launch {

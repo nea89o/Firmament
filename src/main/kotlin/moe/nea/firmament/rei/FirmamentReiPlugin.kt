@@ -1,6 +1,5 @@
 package moe.nea.firmament.rei
 
-import io.github.moulberry.repo.data.NEUItem
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
@@ -23,7 +22,7 @@ import moe.nea.firmament.util.SkyblockId
 class FirmamentReiPlugin : REIClientPlugin {
 
     companion object {
-        fun EntryStack<NEUItem>.asItemEntry(): EntryStack<ItemStack> {
+        fun EntryStack<SBItemStack>.asItemEntry(): EntryStack<ItemStack> {
             return EntryStack.of(VanillaEntryTypes.ITEM, value.asItemStack())
         }
 
@@ -67,7 +66,7 @@ class FirmamentReiPlugin : REIClientPlugin {
     override fun registerEntries(registry: EntryRegistry) {
         RepoManager.neuRepo.items?.items?.values?.forEach {
             if (!it.isVanilla)
-                registry.addEntry(EntryStack.of(SBItemEntryDefinition, it))
+                registry.addEntry(SBItemEntryDefinition.getEntry(it))
         }
     }
 }

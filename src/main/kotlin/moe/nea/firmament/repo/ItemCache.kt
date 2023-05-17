@@ -5,13 +5,10 @@ import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
-import java.io.PrintWriter
-import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+import org.apache.logging.log4j.LogManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.writer
 import net.minecraft.SharedConstants
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.datafixer.Schemas
@@ -22,15 +19,16 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.rei.SBItemStack
 import moe.nea.firmament.util.LegacyTagParser
+import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.appendLore
 import moe.nea.firmament.util.skyblockId
 
 object ItemCache : IReloadable {
-    val dfuLog = Path.of("logs/dfulog.txt")
     private val cache: MutableMap<String, ItemStack> = ConcurrentHashMap()
     private val df = Schemas.getFixer()
-    private val dfuHandle = PrintWriter(dfuLog.writer())
+    val logger = LogManager.getLogger("${Firmament.logger.name}.ItemCache")
     var isFlawless = true
         private set
 
@@ -50,17 +48,15 @@ object ItemCache : IReloadable {
                 SharedConstants.getGameVersion().saveVersion.id
             ).value as NbtCompound
         } catch (e: Exception) {
-            if (isFlawless)
-                Firmament.logger.error("Failed to run data fixer an item. Check ${dfuLog.absolutePathString()} for more information")
             isFlawless = false
-            e.printStackTrace(dfuHandle)
+            logger.error("Could not data fix up $this", e)
             null
         }
 
-    fun brokenItemStack(neuItem: NEUItem?): ItemStack {
+    fun brokenItemStack(neuItem: NEUItem?, idHint: SkyblockId? = null): ItemStack {
         return ItemStack(Items.PAINTING).apply {
-            setCustomName(Text.literal(neuItem?.displayName ?: "null"))
-            appendLore(listOf(Text.translatable("firmament.repo.brokenitem", neuItem?.skyblockItemId)))
+            setCustomName(Text.literal(neuItem?.displayName ?: idHint?.toString() ?: "null"))
+            appendLore(listOf(Text.translatable("firmament.repo.brokenitem", neuItem?.skyblockItemId ?: idHint)))
         }
     }
 
@@ -80,8 +76,13 @@ object ItemCache : IReloadable {
         }
     }
 
-    fun NEUItem?.asItemStack(): ItemStack {
-        if (this == null) return brokenItemStack(null)
+    fun SBItemStack.asItemStack(): ItemStack {
+        return this.neuItem.asItemStack(idHint = this.skyblockId)
+            .let { if (this.stackSize != 1) it.copyWithCount(this.stackSize) else it }
+    }
+
+    fun NEUItem?.asItemStack(idHint: SkyblockId? = null): ItemStack {
+        if (this == null) return brokenItemStack(null, idHint)
         var s = cache[this.skyblockItemId]
         if (s == null) {
             s = asItemStackNow()

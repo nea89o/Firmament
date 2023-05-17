@@ -12,6 +12,10 @@ import net.minecraft.util.Identifier
 @JvmInline
 value class SkyblockId(val neuItem: String) {
     val identifier get() = Identifier("skyblockitem", neuItem.lowercase().replace(";", "__"))
+
+    companion object {
+        val NULL: SkyblockId = SkyblockId("null")
+    }
 }
 
 val NEUItem.skyblockId get() = SkyblockId(skyblockItemId)

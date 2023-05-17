@@ -27,7 +27,7 @@ inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(noinline map
     object : DynamicDisplayGenerator<D> {
         override fun getRecipeFor(entry: EntryStack<*>): Optional<List<D>> {
             if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
-            val item = entry.castValue<NEUItem>()
+            val item = entry.castValue<SBItemStack>()
             val recipes = RepoManager.getRecipesFor(item.skyblockId)
             val craftingRecipes = recipes.filterIsInstance<T>()
             return Optional.of(craftingRecipes.map(mapper))
@@ -43,7 +43,7 @@ inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(noinline map
 
         override fun getUsageFor(entry: EntryStack<*>): Optional<List<D>> {
             if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
-            val item = entry.castValue<NEUItem>()
+            val item = entry.castValue<SBItemStack>()
             val recipes = RepoManager.getUsagesFor(item.skyblockId)
             val craftingRecipes = recipes.filterIsInstance<T>()
             return Optional.of(craftingRecipes.map(mapper))

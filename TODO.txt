@@ -1,4 +1,5 @@
 - recipes
+    - more recipe categories
 - replace REI with custom renderer (if needed)
 - easy config gui builder
 - Storage Overlay

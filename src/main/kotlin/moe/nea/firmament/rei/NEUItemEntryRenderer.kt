@@ -1,6 +1,5 @@
 package moe.nea.firmament.rei
 
-import io.github.moulberry.repo.data.NEUItem
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
@@ -9,9 +8,9 @@ import me.shedaniel.rei.api.common.entry.EntryStack
 import net.minecraft.client.util.math.MatrixStack
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 
-object NEUItemEntryRenderer : EntryRenderer<NEUItem> {
+object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
     override fun render(
-        entry: EntryStack<NEUItem>,
+        entry: EntryStack<SBItemStack>,
         matrices: MatrixStack,
         bounds: Rectangle,
         mouseX: Int,
@@ -24,7 +23,7 @@ object NEUItemEntryRenderer : EntryRenderer<NEUItem> {
         matrices.pop()
     }
 
-    override fun getTooltip(entry: EntryStack<NEUItem>, tooltipContext: TooltipContext): Tooltip? {
+    override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
         return entry.asItemEntry().getTooltip(tooltipContext, false)
     }
 

@@ -16,70 +16,79 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.repo.ItemCache.asItemStack
-import moe.nea.firmament.repo.ItemCache.getIdentifier
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.skyblockId
 
-// TODO: allow stackable entries
-object SBItemEntryDefinition : EntryDefinition<NEUItem> {
-    override fun equals(o1: NEUItem?, o2: NEUItem?, context: ComparisonContext?): Boolean {
-        return o1 === o2
+// TODO: add in extra data like pet info, into this structure
+data class SBItemStack(
+    val skyblockId: SkyblockId,
+    val neuItem: NEUItem?,
+    val stackSize: Int,
+)
+
+object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
+    override fun equals(o1: SBItemStack, o2: SBItemStack, context: ComparisonContext): Boolean {
+        return o1.skyblockId == o2.skyblockId
     }
 
-    override fun cheatsAs(entry: EntryStack<NEUItem>?, value: NEUItem?): ItemStack {
-        return value.asItemStack()
+    override fun cheatsAs(entry: EntryStack<SBItemStack>?, value: SBItemStack): ItemStack {
+        return value.neuItem.asItemStack()
     }
 
-    override fun getValueType(): Class<NEUItem> = NEUItem::class.java
-    override fun getType(): EntryType<NEUItem> = EntryType.deferred(FirmamentReiPlugin.SKYBLOCK_ITEM_TYPE_ID)
+    override fun getValueType(): Class<SBItemStack> = SBItemStack::class.java
+    override fun getType(): EntryType<SBItemStack> = EntryType.deferred(FirmamentReiPlugin.SKYBLOCK_ITEM_TYPE_ID)
 
-    override fun getRenderer(): EntryRenderer<NEUItem> = NEUItemEntryRenderer
+    override fun getRenderer(): EntryRenderer<SBItemStack> = NEUItemEntryRenderer
 
-    override fun getSerializer(): EntrySerializer<NEUItem?> {
+    override fun getSerializer(): EntrySerializer<SBItemStack> {
         return NEUItemEntrySerializer
     }
 
-    override fun getTagsFor(entry: EntryStack<NEUItem>?, value: NEUItem?): Stream<out TagKey<*>>? {
+    override fun getTagsFor(entry: EntryStack<SBItemStack>?, value: SBItemStack?): Stream<out TagKey<*>>? {
         return Stream.empty()
     }
 
-    override fun asFormattedText(entry: EntryStack<NEUItem>, value: NEUItem): Text {
+    override fun asFormattedText(entry: EntryStack<SBItemStack>, value: SBItemStack): Text {
         return VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asItemStack())
     }
 
-    override fun hash(entry: EntryStack<NEUItem>, value: NEUItem?, context: ComparisonContext): Long {
+    override fun hash(entry: EntryStack<SBItemStack>, value: SBItemStack, context: ComparisonContext): Long {
         // Repo items are immutable, and get replaced entirely when loaded from disk
-        return System.identityHashCode(value) * 31L
+        return value.skyblockId.hashCode() * 31L
     }
 
-    override fun wildcard(entry: EntryStack<NEUItem>?, value: NEUItem?): NEUItem? {
+    override fun wildcard(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
+        return value.copy(stackSize = 1)
+    }
+
+    override fun normalize(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
+        return value.copy(stackSize = 1)
+    }
+
+    override fun copy(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
         return value
     }
 
-    override fun normalize(entry: EntryStack<NEUItem>?, value: NEUItem?): NEUItem? {
-        return value
+    override fun isEmpty(entry: EntryStack<SBItemStack>?, value: SBItemStack): Boolean {
+        return value.stackSize == 0
     }
 
-    override fun copy(entry: EntryStack<NEUItem>?, value: NEUItem?): NEUItem? {
-        return value
+    override fun getIdentifier(entry: EntryStack<SBItemStack>?, value: SBItemStack): Identifier {
+        return value.skyblockId.identifier
     }
 
-    override fun isEmpty(entry: EntryStack<NEUItem>?, value: NEUItem?): Boolean {
-        return false
-    }
+    fun getEntry(sbItemStack: SBItemStack): EntryStack<SBItemStack> =
+        EntryStack.of(this, sbItemStack)
 
-    override fun getIdentifier(entry: EntryStack<NEUItem>?, value: NEUItem?): Identifier {
-        return value?.getIdentifier() ?: Identifier.of("skyblockitem", "null")!!
-    }
+    fun getEntry(neuItem: NEUItem?, count: Int = 1): EntryStack<SBItemStack> =
+        getEntry(SBItemStack(neuItem?.skyblockId ?: SkyblockId.NULL, neuItem, 1))
 
-    fun getEntry(neuItem: NEUItem?): EntryStack<NEUItem> =
-        EntryStack.of(this, neuItem)
+    fun getEntry(skyblockId: SkyblockId, count: Int = 1): EntryStack<SBItemStack> =
+        getEntry(SBItemStack(skyblockId, RepoManager.getNEUItem(skyblockId), count))
 
-    fun getEntry(skyblockId: SkyblockId?): EntryStack<NEUItem> =
-        EntryStack.of(this, skyblockId?.let { RepoManager.getNEUItem(it) })
-
-    fun getEntry(ingredient: NEUIngredient?): EntryStack<NEUItem> =
-        getEntry(ingredient?.itemId?.let { SkyblockId(it) })
+    fun getEntry(ingredient: NEUIngredient): EntryStack<SBItemStack> =
+        getEntry(SkyblockId(ingredient.itemId), count = ingredient.amount)
 
 
 }
