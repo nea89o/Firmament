@@ -6,7 +6,7 @@ import kotlinx.serialization.serializer
 import moe.nea.firmament.events.ServerChatLineReceivedEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
-import moe.nea.firmament.features.NEUFeature
+import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
@@ -17,7 +17,7 @@ import moe.nea.firmament.util.render.RenderBlockContext.Companion.renderBlocks
 import moe.nea.firmament.util.unformattedString
 
 
-object FairySouls : NEUFeature {
+object FairySouls : FirmamentFeature {
 
 
     @Serializable

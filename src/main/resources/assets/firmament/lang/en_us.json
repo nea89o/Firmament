@@ -22,5 +22,8 @@
     "firmament.config.fairy-souls.show": "Show Fairy Soul Waypoints",
     "firmament.config.fairy-souls.reset": "Reset Collected Fairy Souls",
     "firmament.config.fishing-warning.display-warning": "Display a warning when you are about to hook a fish",
-    "firmament.config.fishing-warning.highlight-wake-chain": "Highlight fishing particles"
+    "firmament.config.fishing-warning.highlight-wake-chain": "Highlight fishing particles",
+    "firmament.key.slotlocking": "Lock Slot / Slot Binding",
+    "firmament.key.category": "Firmament",
+    "firmament.protectitem": "Firmament protected your item: "
 }

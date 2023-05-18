@@ -13,6 +13,9 @@
     ],
     "mixins": [
         "MixinClientPacketHandler",
+        "MixinClientPlayerEntity",
+        "MixinHandledScreen",
+        "MixinPlayerInventory",
         "devenv.DisableInvalidFishingHook",
         "devenv.MixinScoreboard"
     ],

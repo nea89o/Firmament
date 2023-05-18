@@ -13,13 +13,13 @@ import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
-import moe.nea.firmament.features.NEUFeature
+import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.config.ManagedConfig
 import moe.nea.firmament.util.render.RenderBlockContext.Companion.renderBlocks
 
-object FishingWarning : NEUFeature {
+object FishingWarning : FirmamentFeature {
     override val name: String
         get() = "Fishing Warning"
     override val identifier: String

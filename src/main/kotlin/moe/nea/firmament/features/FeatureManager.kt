@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.features.fishing.FishingWarning
+import moe.nea.firmament.features.inventory.SlotLocking
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.util.data.DataHolder
 
@@ -13,7 +14,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
         val enabledFeatures: MutableMap<String, Boolean> = mutableMapOf()
     )
 
-    private val features = mutableMapOf<String, NEUFeature>()
+    private val features = mutableMapOf<String, FirmamentFeature>()
 
     private var hasAutoloaded = false
 
@@ -26,11 +27,12 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             if (hasAutoloaded) return
             loadFeature(FairySouls)
             loadFeature(FishingWarning)
+            loadFeature(SlotLocking)
             hasAutoloaded = true
         }
     }
 
-    fun loadFeature(feature: NEUFeature) {
+    fun loadFeature(feature: FirmamentFeature) {
         synchronized(features) {
             if (feature.identifier in features) {
                 Firmament.logger.error("Double registering feature ${feature.identifier}. Ignoring second instance $feature")

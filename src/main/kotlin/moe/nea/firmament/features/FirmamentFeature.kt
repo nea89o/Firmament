@@ -2,7 +2,7 @@ package moe.nea.firmament.features
 
 import moe.nea.firmament.util.config.ManagedConfig
 
-interface NEUFeature {
+interface FirmamentFeature {
     val name: String
     val identifier: String
     val defaultEnabled: Boolean

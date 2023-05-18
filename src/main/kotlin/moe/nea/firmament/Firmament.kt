@@ -5,6 +5,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import java.awt.Taskbar.Feature
 import java.nio.file.Files
 import java.nio.file.Path
 import net.fabricmc.api.ClientModInitializer
@@ -70,7 +71,9 @@ object Firmament : ModInitializer, ClientModInitializer {
     }
 
     override fun onInitialize() {
+    }
 
+    override fun onInitializeClient() {
         dbusConnection.requestBusName("moe.nea.firmament")
         dbusConnection.exportObject(FirmamentDbusObject)
         IDataHolder.registerEvents()
@@ -85,8 +88,6 @@ object Firmament : ModInitializer, ClientModInitializer {
                 globalJob.cancel()
             }
         })
-    }
 
-    override fun onInitializeClient() {
     }
 }

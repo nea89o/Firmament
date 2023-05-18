@@ -5,7 +5,6 @@
 - Storage Overlay
 - PV
 - NEU buttons
-- Slot locking
 - Pet/Equipment hud in inventory
 - Pet Overlay
 - Price Graphs
@@ -27,6 +26,8 @@ Priority 2:
     - biome wands
     - dirt wand
     - block zapper
+- slot binding
+- uuid locking (allow items with that uuid to be moved around but not dropped/sold)
 
 Priority 3:
 - Item rarity halo

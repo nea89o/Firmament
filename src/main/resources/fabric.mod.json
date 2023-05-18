@@ -40,8 +40,9 @@
     "firmament.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
-    "fabric-language-kotlin": ">=${fabric_kotlin_version}",
-    "minecraft": ">=${minecraft_version}"
+      "fabric": "*",
+      "fabric-language-kotlin": ">=${fabric_kotlin_version}",
+      "minecraft": ">=${minecraft_version}",
+      "fabric-key-binding-api-v1": "*"
   }
 }
