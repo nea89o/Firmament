@@ -11,7 +11,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.blockPos
-import moe.nea.firmament.util.config.ManagedConfig
+import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.render.RenderBlockContext.Companion.renderBlocks
 import moe.nea.firmament.util.unformattedString

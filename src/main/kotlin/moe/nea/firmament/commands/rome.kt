@@ -1,17 +1,20 @@
 package moe.nea.firmament.commands
 
 import com.mojang.brigadier.CommandDispatcher
-import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
 import moe.nea.firmament.features.world.FairySouls
-import moe.nea.firmament.gui.repoGui
+import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SBData
-import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
 
 fun firmamentCommand() = literal("firmament") {
+    thenLiteral("config") {
+        thenExecute {
+            AllConfigsGui.showAllGuis()
+        }
+    }
     thenLiteral("repo") {
         thenLiteral("reload") {
             thenLiteral("fetch") {
@@ -24,9 +27,6 @@ fun firmamentCommand() = literal("firmament") {
                 source.sendFeedback(Text.translatable("firmament.repo.reload.disk"))
                 RepoManager.reload()
             }
-        }
-        thenExecute {
-            setScreenLater(CottonClientScreen(repoGui()))
         }
     }
     thenLiteral("dev") {

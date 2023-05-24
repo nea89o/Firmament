@@ -16,6 +16,8 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 
     private val features = mutableMapOf<String, FirmamentFeature>()
 
+    val allFeatures: Collection<FirmamentFeature> get() = features.values
+
     private var hasAutoloaded = false
 
     init {

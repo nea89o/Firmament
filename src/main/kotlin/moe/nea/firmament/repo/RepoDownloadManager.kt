@@ -50,7 +50,7 @@ object RepoDownloadManager {
 
     private suspend fun requestLatestGithubSha(): String? {
         val response =
-                Firmament.httpClient.get("https://api.github.com/repos/${RepoManager.data.user}/${RepoManager.data.repo}/commits/${RepoManager.data.branch}")
+                Firmament.httpClient.get("https://api.github.com/repos/${RepoManager.Config.username}/${RepoManager.Config.reponame}/commits/${RepoManager.Config.branch}")
         if (response.status.value != 200) {
             return null
         }
@@ -77,7 +77,7 @@ object RepoDownloadManager {
         }
         val currentSha = loadSavedVersionHash()
         if (latestSha != currentSha || force) {
-            val requestUrl = "https://github.com/${RepoManager.data.user}/${RepoManager.data.repo}/archive/$latestSha.zip"
+            val requestUrl = "https://github.com/${RepoManager.Config.username}/${RepoManager.Config.reponame}/archive/$latestSha.zip"
             logger.info("Planning to upgrade repository from $currentSha to $latestSha from $requestUrl")
             val zipFile = downloadGithubArchive(requestUrl)
             logger.info("Download repository zip file to $zipFile. Deleting old repository")

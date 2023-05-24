@@ -14,10 +14,7 @@
  - Recipe Viewer for Forge Recipes
  - Fishing Helper for Fishing particles (currently not working if you sneak because of 1.19 messing up positioning)
  - Fairy soul highlighter
-
-Not working features:
-
- - A config gui, lol. All features are sort of on all the time. There is a config gui, but it is quite barren and not well documented.
+ - Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough.
 
 
 ### Building your own 

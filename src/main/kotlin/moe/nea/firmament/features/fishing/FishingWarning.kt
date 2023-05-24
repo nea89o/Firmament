@@ -16,7 +16,7 @@ import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
-import moe.nea.firmament.util.config.ManagedConfig
+import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.render.RenderBlockContext.Companion.renderBlocks
 
 object FishingWarning : FirmamentFeature {

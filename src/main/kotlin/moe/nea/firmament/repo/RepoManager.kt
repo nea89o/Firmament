@@ -8,8 +8,6 @@ import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.NEURecipe
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.text.Text
@@ -17,16 +15,21 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.hud.ProgressBar
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.data.DataHolder
+import moe.nea.firmament.gui.config.ManagedConfig
 
-object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Config) {
-    @Serializable
-    data class Config(
-        var user: String = "NotEnoughUpdates",
-        var repo: String = "NotEnoughUpdates-REPO",
-        var autoUpdate: Boolean = true,
-        var branch: String = "dangerous",
-    )
+object RepoManager {
+    object Config : ManagedConfig("repo") {
+        var username by string("username") { "NotEnoughUpdates" }
+        var reponame by string("reponame") { "NotEnoughUpdates-REPO" }
+        var branch by string("branch") { "prerelease" }
+        val autoUpdate by toggle("autoUpdate") { true }
+        val reset by button("reset") {
+            username = "NotEnoughUpdates"
+            reponame = "NotEnoughUpdates-REPO"
+            branch = "prerelease"
+            save()
+        }
+    }
 
     val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash
 
@@ -93,7 +96,7 @@ object RepoManager : DataHolder<RepoManager.Config>(serializer(), "repo", ::Conf
     }
 
     fun initialize() {
-        if (data.autoUpdate) {
+        if (Config.autoUpdate) {
             launchAsyncUpdate()
         } else {
             reload()

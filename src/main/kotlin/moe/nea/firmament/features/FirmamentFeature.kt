@@ -1,6 +1,6 @@
 package moe.nea.firmament.features
 
-import moe.nea.firmament.util.config.ManagedConfig
+import moe.nea.firmament.gui.config.ManagedConfig
 
 interface FirmamentFeature {
     val name: String
