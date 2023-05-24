@@ -9,6 +9,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator") version "fffc76c"
     id("io.github.juuxel.loom-quiltflower") version "1.7.3"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
 }
 
 loom {
