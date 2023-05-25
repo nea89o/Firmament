@@ -26,8 +26,10 @@ import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WListPanel
 import io.github.cottonmc.cotton.gui.widget.data.Insets
+import io.ktor.http.*
 import net.minecraft.text.Text
 import moe.nea.firmament.features.FeatureManager
+import moe.nea.firmament.gui.WFixedPanel
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
@@ -39,8 +41,9 @@ object AllConfigsGui {
         lwgd.setRootPanel(WListPanel(
             listOf(
                 RepoManager.Config
-            ) + FeatureManager.allFeatures.mapNotNull { it.config }, ::WGridPanel
-        ) { config, panel ->
+            ) + FeatureManager.allFeatures.mapNotNull { it.config }, ::WFixedPanel
+        ) { config, fixedPanel ->
+            val panel = WGridPanel()
             panel.insets = Insets.ROOT_PANEL
             panel.backgroundPainter = BackgroundPainter.VANILLA
             panel.add(WLabel(Text.translatable("firmament.config.${config.name}")), 0, 0, 10, 1)
@@ -49,9 +52,8 @@ object AllConfigsGui {
                     config.showConfigEditor(screen)
                 }
             }, 0, 1, 10, 1)
-            println("Panel size: ${panel.width} ${panel.height}")
+            fixedPanel.child = panel
         }.also {
-            it.setListItemHeight(52)
             it.setSize(10 * 18 + 14 + 16, 300)
         })
         screen = CottonClientScreen(lwgd)
