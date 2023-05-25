@@ -27,15 +27,17 @@ import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WListPanel
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.ktor.http.*
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.gui.WFixedPanel
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
 object AllConfigsGui {
 
-    fun showAllGuis() {
+    fun makeScreen(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
         var screen: CottonClientScreen? = null
         lwgd.setRootPanel(WListPanel(
@@ -56,7 +58,15 @@ object AllConfigsGui {
         }.also {
             it.setSize(10 * 18 + 14 + 16, 300)
         })
-        screen = CottonClientScreen(lwgd)
-        setScreenLater(screen)
+        screen = object :  CottonClientScreen(lwgd) {
+            override fun close() {
+                MC.screen = parent
+            }
+        }
+        return screen
+    }
+
+    fun showAllGuis() {
+        setScreenLater(makeScreen())
     }
 }

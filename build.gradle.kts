@@ -78,6 +78,7 @@ dependencies {
     // Fabric dependencies
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.kotlin)
+    modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
     include(libs.libgui)
     modApi(libs.fabric.api)
@@ -119,6 +120,7 @@ tasks.withType<JavaCompile> {
 tasks.shadowJar {
     configurations = listOf(shadowMe)
     archiveClassifier.set("dev-thicc")
+    relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
 }
 
 tasks.remapJar {

@@ -26,23 +26,33 @@
         "value": "moe.nea.firmament.Firmament"
       }
     ],
-    "client": [
-      {
-        "adapter": "kotlin",
-        "value": "moe.nea.firmament.Firmament"
-      }
-    ],
-    "rei_client": [
-      "moe.nea.firmament.rei.FirmamentReiPlugin"
-    ]
+      "client": [
+          {
+              "adapter": "kotlin",
+              "value": "moe.nea.firmament.Firmament"
+          }
+      ],
+      "rei_client": [
+          "moe.nea.firmament.rei.FirmamentReiPlugin"
+      ],
+      "modmenu": [
+          "moe.nea.firmament.modmenu.FirmamentModMenuPlugin"
+      ]
   },
-  "mixins": [
-    "firmament.mixins.json"
-  ],
-  "depends": {
-      "fabric": "*",
-      "fabric-language-kotlin": ">=${fabric_kotlin_version}",
-      "minecraft": ">=${minecraft_version}",
-      "fabric-key-binding-api-v1": "*"
-  }
+    "mixins": [
+        "firmament.mixins.json"
+    ],
+    "depends": {
+        "fabric": "*",
+        "fabric-language-kotlin": ">=${fabric_kotlin_version}",
+        "minecraft": ">=${minecraft_version}",
+        "fabric-key-binding-api-v1": "*"
+    },
+    "custom": {
+        "modmenu": {
+            "links": {
+                "modmenu.discord": "https://discord.gg/64pFP94AWA"
+            }
+        }
+    }
 }
