@@ -1,5 +1,4 @@
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
-import org.apache.commons.lang3.time.CalendarUtils
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -11,6 +10,22 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator")
     id("io.github.juuxel.loom-quiltflower") version "1.7.3"
+}
+
+java {
+    withSourcesJar()
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "17"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "17"
 }
 
 loom {
@@ -99,21 +114,6 @@ group = rootProject.property("maven_group").toString()
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.release.set(17)
-}
-
-java {
-    withSourcesJar()
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
-
-// could not set to 17, up to 16
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "16"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "16"
 }
 
 tasks.shadowJar {
