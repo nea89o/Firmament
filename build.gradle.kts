@@ -1,3 +1,5 @@
+import moe.nea.licenseextractificator.LicenseDiscoveryTask
+import org.apache.commons.lang3.time.CalendarUtils
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -7,9 +9,8 @@ plugins {
     kotlin("plugin.serialization") version "1.8.10"
     id("dev.architectury.loom") version "1.1.336"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("moe.nea.licenseextractificator") version "fffc76c"
+    id("moe.nea.licenseextractificator")
     id("io.github.juuxel.loom-quiltflower") version "1.7.3"
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
 }
 
 loom {
@@ -140,12 +141,22 @@ tasks.processResources {
     filesMatching("**/lang/*.json") {
         // flattenJson(this)
     }
-    from(tasks.license)
+    from(tasks.scanLicenses)
 }
 
-
-tasks.license {
+tasks.scanLicenses {
     scanConfiguration(project.configurations.compileClasspath.get())
     outputFile.set(file("$buildDir/LICENSES-FIRMAMENT.json"))
     licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())
 }
+tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).apply {
+    outputFile.set(file("$buildDir/LICENSES-FIRMAMENT.txt"))
+    licenseFormatter.set(moe.nea.licenseextractificator.TextLicenseFormatter())
+    scanConfiguration(project.configurations.compileClasspath.get())
+    doLast {
+        println(outputFile.get().asFile.readText())
+    }
+    outputs.upToDateWhen { false }
+}
+
+licensing.addExtraLicenseMatchers()

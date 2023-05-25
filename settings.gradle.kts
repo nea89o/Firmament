@@ -17,14 +17,8 @@ pluginManagement {
             name = "jitpack"
             url = uri("https://jitpack.io")
         }
+        mavenCentral()
         gradlePluginPortal()
-    }
-    resolutionStrategy {
-        eachPlugin {
-            when (requested.id.id) {
-                "moe.nea.licenseextractificator" -> useModule("com.github.romangraef:neaslicenseextractificator:${requested.version}")
-            }
-        }
     }
 }
 

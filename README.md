@@ -21,19 +21,24 @@
 
 Use Java 17.
 
-Running `./gradlew build` will create a mod jar in `build/libs`
+Running `./gradlew :build` will create a mod jar in `build/libs`
 
 You will need the fabric api mod, the fabric kotlin language mod, the architectury mod and REI in your mods folder in order for this mod to work.
 
 ### Licensing and contribution policy
 
-Currently, this is under an All Rights Reserved sort of policy. There is currently no license im giving to anyone to make
-use of this software. All the code in this repository I wrote myself, and I am planning to make it available under some
-license pretty soon, but right now I am unsure of how some of the libraries I use will affect under what license i need
-to publish this, so this is just a preliminary preview for now.
+This mod is licensed under a GPL 3.0 or Later license. To read a full license report of all dependencies, execute
+`./gradlew :printAllLicenses`.
 
-I will not accept contributions until I am sure of under which license I want to publish this mod and some of the
-infrastructure is more defined.
+Contributions are tentatively welcomed. The mod is still in an early stage and lots of things will change and/or are
+not properly documented for other developers. If you would still like to try, make sure to add the proper 
+[copyright header](HEADER) to your file, or update existing copyright headers with your name and the current year.
+Pull requests are welcome through [GitHub](https://github.com/romangraef/Firmament) or via git send-email. Your code
+will be publicly available under a GPL license, so make sure that you have the appropriate permissions to grant that
+license, or if you are reusing code from somewhere else to properly credit the code and check if the original license
+is compatible with ours. If you want, you can license a specific file you write under a less restrictive non copyleft
+license with appropriate header, although it may at a later point be upgraded to a GPL licensed file, if another
+contributor edits that file.
 
 ### Renaming
 
