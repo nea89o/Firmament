@@ -8,6 +8,7 @@ class WFixedPanel() : WPanel() {
         set(value) {
             children.clear()
             setSize(0, 0)
+            value.parent = this
             children.add(value)
         }
         get() = children.single()

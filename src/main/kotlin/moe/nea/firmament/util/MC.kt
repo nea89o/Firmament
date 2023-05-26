@@ -31,7 +31,9 @@ object MC {
         get() = MinecraftClient.getInstance().currentScreen
         set(value) = MinecraftClient.getInstance().setScreen(value)
     inline val handledScreen: HandledScreen<*>? get() = MinecraftClient.getInstance().currentScreen as? HandledScreen<*>
+    inline val window get() = MinecraftClient.getInstance().window
 }
+
 
 val Coordinate.blockPos: BlockPos
     get() = BlockPos(x, y, z)

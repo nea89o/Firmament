@@ -28,7 +28,8 @@ data class IsSlotProtectedEvent(
 ) : FirmamentEvent() {
     companion object : FirmamentEventBus<IsSlotProtectedEvent>() {
         @JvmStatic
-        fun shouldBlockInteraction(slot: Slot): Boolean {
+        fun shouldBlockInteraction(slot: Slot?): Boolean {
+            if (slot == null) return false
             return publish(IsSlotProtectedEvent(slot)).isProtected.also {
                 if (it) {
                     MC.player?.sendMessage(Text.translatable("firmament.protectitem").append(slot.stack.name))

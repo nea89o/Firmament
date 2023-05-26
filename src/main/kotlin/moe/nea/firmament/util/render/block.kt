@@ -24,7 +24,9 @@ import net.minecraft.client.gl.VertexBuffer
 import net.minecraft.client.render.BufferBuilder
 import net.minecraft.client.render.Camera
 import net.minecraft.client.render.GameRenderer
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.Tessellator
+import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
@@ -33,6 +35,7 @@ import net.minecraft.util.math.Vec3d
 
 class RenderBlockContext private constructor(private val tesselator: Tessellator, private val matrixStack: MatrixStack) {
     private val buffer = tesselator.buffer
+
     fun color(red: Float, green: Float, blue: Float, alpha: Float) {
         RenderSystem.setShaderColor(red, green, blue, alpha)
     }
@@ -53,6 +56,10 @@ class RenderBlockContext private constructor(private val tesselator: Tessellator
         buildCube(matrixStack.peek().positionMatrix, buffer)
         tesselator.draw()
         matrixStack.pop()
+    }
+
+    fun line(vararg points: Vec3d, size: Double = 2.0) {
+
     }
 
     companion object {

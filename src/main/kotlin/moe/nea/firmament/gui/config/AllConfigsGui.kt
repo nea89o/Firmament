@@ -21,10 +21,12 @@ package moe.nea.firmament.gui.config
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
+import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WButton
 import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WLabel
-import io.github.cottonmc.cotton.gui.widget.WListPanel
+import io.github.cottonmc.cotton.gui.widget.WScrollPanel
+import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.ktor.http.*
 import net.minecraft.client.gui.screen.Screen
@@ -40,11 +42,11 @@ object AllConfigsGui {
     fun makeScreen(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
         var screen: CottonClientScreen? = null
-        lwgd.setRootPanel(WListPanel(
-            listOf(
-                RepoManager.Config
-            ) + FeatureManager.allFeatures.mapNotNull { it.config }, ::WFixedPanel
-        ) { config, fixedPanel ->
+        val configs = listOf(
+            RepoManager.Config
+        ) + FeatureManager.allFeatures.mapNotNull { it.config }
+        val box = WBox(Axis.VERTICAL)
+        configs.forEach { config ->
             val panel = WGridPanel()
             panel.insets = Insets.ROOT_PANEL
             panel.backgroundPainter = BackgroundPainter.VANILLA
@@ -54,9 +56,12 @@ object AllConfigsGui {
                     config.showConfigEditor(screen)
                 }
             }, 0, 1, 10, 1)
-            fixedPanel.child = panel
-        }.also {
-            it.setSize(10 * 18 + 14 + 16, 300)
+            box.add(WFixedPanel(panel))
+        }
+        box.insets = Insets.ROOT_PANEL
+        lwgd.setRootPanel(WScrollPanel((box)).also {
+            box.layout()
+            it.setSize(box.width + 8, MC.window.scaledHeight / 2)
         })
         screen = object :  CottonClientScreen(lwgd) {
             override fun close() {

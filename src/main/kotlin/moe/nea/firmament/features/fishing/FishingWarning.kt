@@ -25,6 +25,8 @@ import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.seconds
+import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.render.VertexConsumers
 import net.minecraft.entity.projectile.FishingBobberEntity
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.math.Vec3d
@@ -32,9 +34,9 @@ import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
+import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
-import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.render.RenderBlockContext.Companion.renderBlocks
 
 object FishingWarning : FirmamentFeature {
@@ -89,6 +91,7 @@ object FishingWarning : FirmamentFeature {
     }
 
     private fun toDegrees(d: Double) = d * 180 / Math.PI
+    private fun toRadians(d: Double) = d / 180 * Math.PI
 
     fun isHookPossible(hook: FishingBobberEntity, particlePos: Vec3d, angle1: Double, angle2: Double): Boolean {
         val dx = particlePos.x - hook.pos.x
@@ -104,6 +107,16 @@ object FishingWarning : FirmamentFeature {
 
     val recentParticles = mutableListOf<Pair<Vec3d, TimeMark>>()
 
+    data class Candidate(
+        val angle1: Double,
+        val angle2: Double,
+        val hookOrigin: Vec3d,
+        val position: Vec3d,
+        val timeMark: TimeMark = TimeMark.now()
+    )
+
+    val recentCandidates = mutableListOf<Candidate>()
+
     private fun onParticleSpawn(event: ParticleSpawnEvent) {
         if (event.particleEffect.type != ParticleTypes.FISHING) return
         if (!(abs(event.offset.y - 0.01f) < 0.001f)) return
@@ -111,6 +124,7 @@ object FishingWarning : FirmamentFeature {
         val actualOffset = event.offset
         val candidate1 = calculateAngleFromOffsets(actualOffset.x, -actualOffset.z)
         val candidate2 = calculateAngleFromOffsets(-actualOffset.x, actualOffset.z)
+        recentCandidates.add(Candidate(candidate1, candidate2, hook.pos, event.position))
 
         if (isHookPossible(hook, event.position, candidate1, candidate2)) {
             recentParticles.add(Pair(event.position, TimeMark.now()))
@@ -124,10 +138,21 @@ object FishingWarning : FirmamentFeature {
         }
         WorldRenderLastEvent.subscribe {
             recentParticles.removeIf { it.second.passedTime() > 5.seconds }
+            recentCandidates.removeIf { it.timeMark.passedTime() > 5.seconds }
             renderBlocks(it.matrices, it.camera) {
                 color(0f, 0f, 1f, 1f)
                 recentParticles.forEach {
                     tinyBlock(it.first, 0.1F)
+                }
+
+                recentCandidates.forEach {
+                    println(it)
+                    color(1f, 1f, 0f, 1f)
+                    line(it.hookOrigin, it.position)
+                    color(1f, 0f, 0f, 1f)
+                    line(it.position, Vec3d.fromPolar(0F, it.angle1.toFloat()).add(it.position))
+                    color(0f, 1f, 0f, 1f)
+                    line(it.position, Vec3d.fromPolar(0F, it.angle2.toFloat()).add(it.position))
                 }
             }
         }
