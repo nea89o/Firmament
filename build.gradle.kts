@@ -59,15 +59,17 @@ repositories {
     mavenLocal()
 }
 
-val shadowMe by configurations.creating {
-    configurations.implementation.get().extendsFrom(this)
-}
-
+val shadowMe by configurations.creating
 val transInclude by configurations.creating {
     exclude(group = "com.mojang")
     exclude(group = "org.jetbrains.kotlin")
     exclude(group = "org.jetbrains.kotlinx")
     isTransitive = true
+}
+
+val nonModImplentation by configurations.creating {
+    extendsFrom(shadowMe)
+    configurations.implementation.get().extendsFrom(this)
 }
 
 dependencies {
@@ -94,10 +96,10 @@ dependencies {
 
     fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
 
-    transInclude(implementation(ktor("client-core"))!!)
-    transInclude(implementation(ktor("client-java"))!!)
-    transInclude(implementation(ktor("serialization-kotlinx-json"))!!)
-    transInclude(implementation(ktor("client-content-negotiation"))!!)
+    transInclude(nonModImplentation(ktor("client-core"))!!)
+    transInclude(nonModImplentation(ktor("client-java"))!!)
+    transInclude(nonModImplentation(ktor("serialization-kotlinx-json"))!!)
+    transInclude(nonModImplentation(ktor("client-content-negotiation"))!!)
 
     // Dev environment preinstalled mods
     modRuntimeOnly(libs.bundles.runtime.required)
@@ -147,14 +149,16 @@ tasks.processResources {
 }
 
 tasks.scanLicenses {
-    scanConfiguration(project.configurations.compileClasspath.get())
+    scanConfiguration(nonModImplentation)
+    scanConfiguration(configurations.modCompileClasspath.get())
     outputFile.set(file("$buildDir/LICENSES-FIRMAMENT.json"))
     licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())
 }
 tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).apply {
     outputFile.set(file("$buildDir/LICENSES-FIRMAMENT.txt"))
     licenseFormatter.set(moe.nea.licenseextractificator.TextLicenseFormatter())
-    scanConfiguration(project.configurations.compileClasspath.get())
+    scanConfiguration(nonModImplentation)
+    scanConfiguration(configurations.modCompileClasspath.get())
     doLast {
         println(outputFile.get().asFile.readText())
     }
