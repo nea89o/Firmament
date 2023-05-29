@@ -77,7 +77,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 
     override fun hash(entry: EntryStack<SBItemStack>, value: SBItemStack, context: ComparisonContext): Long {
         // Repo items are immutable, and get replaced entirely when loaded from disk
-        return value.skyblockId.hashCode() * 31L + if (!context.isExact) value.stackSize else 0
+        return value.skyblockId.hashCode() * 31L
     }
 
     override fun wildcard(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
