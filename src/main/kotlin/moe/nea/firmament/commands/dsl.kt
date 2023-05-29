@@ -23,6 +23,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.SuggestionProvider
 import java.lang.reflect.ParameterizedType
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import moe.nea.firmament.util.iterate
@@ -80,6 +81,17 @@ fun <T : ArgumentBuilder<DefaultSource, T>, AT : Any> T.thenArgument(
     block: RequiredArgumentBuilder<DefaultSource, AT>.(TypeSafeArg<AT>) -> Unit
 ): T = then(argument(name, argument, block))
 
+fun <T : RequiredArgumentBuilder<DefaultSource, String>> T.suggestsList(provider: () -> Iterable<String>) {
+    suggests(SuggestionProvider<DefaultSource> { context, builder ->
+        provider()
+            .asSequence()
+            .filter { it.startsWith(builder.remaining, ignoreCase = true) }
+            .forEach {
+                builder.suggest(it)
+            }
+        builder.buildFuture()
+    })
+}
 
 fun <T : ArgumentBuilder<DefaultSource, T>> T.thenLiteral(
     name: String,

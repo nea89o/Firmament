@@ -27,11 +27,36 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
 
+/**
+ * A skyblock item id, as used by the NEU repo.
+ * This is not exactly the format used by HyPixel, but is mostly the same.
+ * Usually this id splits an id used by HyPixel into more sub items. For example `PET` becomes `$PET_ID;$PET_RARITY`,
+ * with those values extracted from other metadata.
+ */
 @JvmInline
+@Serializable
 value class SkyblockId(val neuItem: String) {
     val identifier get() = Identifier("skyblockitem", neuItem.lowercase().replace(";", "__"))
 
+    /**
+     * A bazaar stock item id, as returned by the HyPixel bazaar api endpoint.
+     * These are not equivalent to the in-game ids, or the NEU repo ids, and in fact, do not refer to items, but instead
+     * to bazaar stocks. The main difference from [SkyblockId]s is concerning enchanted books. There are probably more,
+     * but for now this holds.
+     */
+    @JvmInline
+    @Serializable
+    value class BazaarStock(val bazaarId: String) {
+        fun toRepoId(): SkyblockId {
+            bazaarEnchantmentRegex.matchEntire(bazaarId)?.let {
+                return SkyblockId("${it.groupValues[1]};${it.groupValues[2]}")
+            }
+            return SkyblockId(bazaarId.replace(":", "-"))
+        }
+    }
+
     companion object {
+        private val bazaarEnchantmentRegex = "ENCHANTMENT_(\\D*)_(\\d+)".toRegex()
         val NULL: SkyblockId = SkyblockId("null")
     }
 }

@@ -100,6 +100,8 @@ dependencies {
     transInclude(nonModImplentation(ktor("client-java"))!!)
     transInclude(nonModImplentation(ktor("serialization-kotlinx-json"))!!)
     transInclude(nonModImplentation(ktor("client-content-negotiation"))!!)
+    transInclude(nonModImplentation(ktor("client-encoding"))!!)
+    transInclude(nonModImplentation(ktor("client-logging"))!!)
 
     // Dev environment preinstalled mods
     modRuntimeOnly(libs.bundles.runtime.required)

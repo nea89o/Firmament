@@ -19,11 +19,14 @@
 package moe.nea.firmament
 
 import com.mojang.brigadier.CommandDispatcher
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
-import java.awt.Taskbar.Feature
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
 import java.nio.file.Files
 import java.nio.file.Path
 import net.fabricmc.api.ClientModInitializer
@@ -35,14 +38,21 @@ import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.plus
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlin.coroutines.EmptyCoroutineContext
 import net.minecraft.command.CommandRegistryAccess
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.dbus.FirmamentDbusObject
 import moe.nea.firmament.features.FeatureManager
+import moe.nea.firmament.repo.ItemCostData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
@@ -53,8 +63,10 @@ object Firmament : ModInitializer, ClientModInitializer {
     val DEBUG = System.getProperty("firmament.debug") == "true"
     val DATA_DIR: Path = Path.of(".firmament").also { Files.createDirectories(it) }
     val CONFIG_DIR: Path = Path.of("config/firmament").also { Files.createDirectories(it) }
-    val logger = LogManager.getLogger("Firmament")
-    val metadata: ModMetadata by lazy { FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata }
+    val logger: Logger = LogManager.getLogger("Firmament")
+    private val metadata: ModMetadata by lazy {
+        FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
+    }
     val version: Version by lazy { metadata.version }
 
     val json = Json {
@@ -68,9 +80,18 @@ object Firmament : ModInitializer, ClientModInitializer {
             install(ContentNegotiation) {
                 json(json)
             }
+            install(ContentEncoding) {
+                gzip()
+                deflate()
+            }
             install(UserAgent) {
                 agent = "Firmament/$version"
             }
+            if (DEBUG)
+                install(Logging) {
+                    level = LogLevel.INFO
+                }
+            install(HttpCache)
         }
     }
 
@@ -98,7 +119,7 @@ object Firmament : ModInitializer, ClientModInitializer {
         RepoManager.initialize()
         SBData.init()
         FeatureManager.autoload()
-
+        ItemCostData.spawnPriceLoop()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
             runBlocking {

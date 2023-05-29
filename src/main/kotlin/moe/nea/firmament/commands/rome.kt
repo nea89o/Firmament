@@ -19,12 +19,16 @@
 package moe.nea.firmament.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.arguments.StringArgumentType.getString
+import com.mojang.brigadier.arguments.StringArgumentType.string
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
+import moe.nea.firmament.repo.ItemCostData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.SkyblockId
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -44,6 +48,28 @@ fun firmamentCommand() = literal("firmament") {
             thenExecute {
                 source.sendFeedback(Text.translatable("firmament.repo.reload.disk"))
                 RepoManager.reload()
+            }
+        }
+    }
+    thenLiteral("price") {
+        thenArgument("item", string()) { item ->
+            suggestsList { RepoManager.neuRepo.items.items.keys }
+            thenExecute {
+                val itemName = SkyblockId(getString(context, "item"))
+                source.sendFeedback(Text.translatable("firmament.price", itemName.neuItem))
+                val bazaarData = ItemCostData.bazaarData[itemName]
+                if (bazaarData != null) {
+                    source.sendFeedback(Text.translatable("firmament.price.bazaar"))
+                    source.sendFeedback(Text.translatable("firmament.price.bazaar.productid", bazaarData.productId.bazaarId))
+                    source.sendFeedback(Text.translatable("firmament.price.bazaar.buy.price", bazaarData.quickStatus.buyPrice))
+                    source.sendFeedback(Text.translatable("firmament.price.bazaar.buy.order", bazaarData.quickStatus.buyOrders))
+                    source.sendFeedback(Text.translatable("firmament.price.bazaar.sell.price", bazaarData.quickStatus.sellPrice))
+                    source.sendFeedback(Text.translatable("firmament.price.bazaar.sell.order", bazaarData.quickStatus.sellOrders))
+                }
+                val lowestBin = ItemCostData.lowestBin[itemName]
+                if (lowestBin != null) {
+                    source.sendFeedback(Text.translatable("firmament.price.lowestbin", lowestBin))
+                }
             }
         }
     }

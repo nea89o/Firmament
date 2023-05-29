@@ -106,7 +106,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
         getEntry(SBItemStack(skyblockId, RepoManager.getNEUItem(skyblockId), count))
 
     fun getEntry(ingredient: NEUIngredient): EntryStack<SBItemStack> =
-        getEntry(SkyblockId(ingredient.itemId), count = ingredient.amount)
+        getEntry(SkyblockId(ingredient.itemId), count = ingredient.amount.toInt())
 
 
 }
