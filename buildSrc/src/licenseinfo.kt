@@ -20,15 +20,6 @@ fun LicenseExtension.addExtraLicenseMatchers() {
             }
             webPresence = "https://www.minecraft.net/en-us"
         }
-        if (group.endsWith("net.fabricmc.fabric-api")) useLicense {
-            name = "Fabric API ($module)"
-            description = "Essential hooks for modding with Fabric."
-            spdxLicense.`Apache-2-0`()
-            developer("FabricMC") {
-                webPresence = "https://fabricmc.net/"
-            }
-            webPresence = "https://github.com/FabricMC/fabric"
-        }
         if (module == "architectury") useLicense {
             name = "Architectury API"
             description = "An intermediary api aimed at easing development of multiplatform mods."
