@@ -2,7 +2,6 @@ package moe.nea.firmament.util.json
 
 import java.util.UUID
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -15,7 +14,11 @@ object DashlessUUIDSerializer : KSerializer<UUID> {
         PrimitiveSerialDescriptor("DashlessUUIDSerializer", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): UUID {
-        return parseDashlessUUID(decoder.decodeString())
+        val str = decoder.decodeString()
+        if ("-" in str) {
+            return UUID.fromString(str)
+        }
+        return parseDashlessUUID(str)
     }
 
     override fun serialize(encoder: Encoder, value: UUID) {

@@ -36,5 +36,19 @@
     "firmament.key.slotlocking": "Lock Slot / Slot Binding",
     "firmament.key.category": "Firmament",
     "firmament.protectitem": "Firmament protected your item: ",
-    "firmament.recipe.forge.time": "Forging Time: %s"
+    "firmament.recipe.forge.time": "Forging Time: %s",
+    "firmament.pv.skills": "Skills",
+    "firmament.pv.skills.farming": "Farming",
+    "firmament.pv.skills.foraging": "Foraging",
+    "firmament.pv.skills.mining": "Mining",
+    "firmament.pv.skills.alchemy": "Alchemy",
+    "firmament.pv.skills.taming": "Taming",
+    "firmament.pv.skills.fishing": "Fishing",
+    "firmament.pv.skills.runecrafting": "Runecrafting",
+    "firmament.pv.skills.carpentry": "Carpentry",
+    "firmament.pv.skills.combat": "Combat",
+    "firmament.pv.skills.social": "Social",
+    "firmament.pv.skills.enchanting": "Enchanting",
+    "firmament.pv.skills.total": "Total Exp: %.1f",
+    "firmament.pv.lookingup": "Looking up %s"
 }

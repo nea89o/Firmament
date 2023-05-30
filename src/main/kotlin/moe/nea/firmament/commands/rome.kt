@@ -21,14 +21,27 @@ package moe.nea.firmament.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.arguments.StringArgumentType.string
+import io.github.cottonmc.cotton.gui.client.CottonClientScreen
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.http.URLProtocol
+import io.ktor.http.path
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import kotlinx.coroutines.launch
 import net.minecraft.text.Text
+import moe.nea.firmament.Firmament
+import moe.nea.firmament.apis.Profiles
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
+import moe.nea.firmament.gui.profileviewer.ProfileViewer
 import moe.nea.firmament.repo.ItemCostData
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.unformattedString
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -51,6 +64,31 @@ fun firmamentCommand() = literal("firmament") {
             }
         }
     }
+    thenLiteral("pv") {
+        thenExecute {
+            val me = MC.player!!.uuid
+            val name = MC.player!!.name.unformattedString
+            val names = mapOf(me to name)
+            source.sendFeedback(Text.translatable("firmament.pv.lookingup", name))
+            Firmament.coroutineScope.launch {
+                val profiles = Firmament.httpClient.get {
+                    url {
+                        protocol = URLProtocol.HTTPS
+                        host = "api.hypixel.net"
+                        path("skyblock", "profiles")
+                        parameter("key", "06b68418-71eb-4c2a-bb8a-65ed8bd4d5aa")
+                        parameter("uuid", me.toString())
+                    }
+                }.body<Profiles>()
+                val profile = profiles.profiles.find { it.selected }
+                if (profile == null) {
+                    source.sendFeedback(Text.translatable("firmament.pv.noprofile", name))
+                    return@launch
+                }
+                ScreenUtil.setScreenLater(CottonClientScreen(ProfileViewer(me, names, profile)))
+            }
+        }
+    }
     thenLiteral("price") {
         thenArgument("item", string()) { item ->
             suggestsList { RepoManager.neuRepo.items.items.keys }
@@ -60,11 +98,36 @@ fun firmamentCommand() = literal("firmament") {
                 val bazaarData = ItemCostData.bazaarData[itemName]
                 if (bazaarData != null) {
                     source.sendFeedback(Text.translatable("firmament.price.bazaar"))
-                    source.sendFeedback(Text.translatable("firmament.price.bazaar.productid", bazaarData.productId.bazaarId))
-                    source.sendFeedback(Text.translatable("firmament.price.bazaar.buy.price", bazaarData.quickStatus.buyPrice))
-                    source.sendFeedback(Text.translatable("firmament.price.bazaar.buy.order", bazaarData.quickStatus.buyOrders))
-                    source.sendFeedback(Text.translatable("firmament.price.bazaar.sell.price", bazaarData.quickStatus.sellPrice))
-                    source.sendFeedback(Text.translatable("firmament.price.bazaar.sell.order", bazaarData.quickStatus.sellOrders))
+                    source.sendFeedback(
+                        Text.translatable(
+                            "firmament.price.bazaar.productid",
+                            bazaarData.productId.bazaarId
+                        )
+                    )
+                    source.sendFeedback(
+                        Text.translatable(
+                            "firmament.price.bazaar.buy.price",
+                            bazaarData.quickStatus.buyPrice
+                        )
+                    )
+                    source.sendFeedback(
+                        Text.translatable(
+                            "firmament.price.bazaar.buy.order",
+                            bazaarData.quickStatus.buyOrders
+                        )
+                    )
+                    source.sendFeedback(
+                        Text.translatable(
+                            "firmament.price.bazaar.sell.price",
+                            bazaarData.quickStatus.sellPrice
+                        )
+                    )
+                    source.sendFeedback(
+                        Text.translatable(
+                            "firmament.price.bazaar.sell.order",
+                            bazaarData.quickStatus.sellOrders
+                        )
+                    )
                 }
                 val lowestBin = ItemCostData.lowestBin[itemName]
                 if (lowestBin != null) {
