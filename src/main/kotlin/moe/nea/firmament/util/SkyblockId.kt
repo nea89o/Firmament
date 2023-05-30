@@ -56,6 +56,7 @@ value class SkyblockId(val neuItem: String) {
     }
 
     companion object {
+        val COINS: SkyblockId = SkyblockId("SKYBLOCK_COIN")
         private val bazaarEnchantmentRegex = "ENCHANTMENT_(\\D*)_(\\d+)".toRegex()
         val NULL: SkyblockId = SkyblockId("null")
     }

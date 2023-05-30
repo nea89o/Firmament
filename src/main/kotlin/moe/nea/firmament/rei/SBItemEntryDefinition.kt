@@ -33,6 +33,7 @@ import net.minecraft.registry.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
+import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
@@ -43,15 +44,17 @@ data class SBItemStack(
     val skyblockId: SkyblockId,
     val neuItem: NEUItem?,
     val stackSize: Int,
-)
+) {
+    fun asItemStack(): ItemStack? {
+        if (skyblockId == SkyblockId.COINS)
+            return ItemCache.coinItem(stackSize)
+        return neuItem.asItemStack(idHint = skyblockId).copyWithCount(stackSize)
+    }
+}
 
 object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     override fun equals(o1: SBItemStack, o2: SBItemStack, context: ComparisonContext): Boolean {
-        if (!context.isFuzzy) {
-            if (o1.stackSize != o2.stackSize)
-                return false
-        }
-        return o1.skyblockId == o2.skyblockId
+        return o1.skyblockId == o2.skyblockId && o1.stackSize == o2.stackSize
     }
 
     override fun cheatsAs(entry: EntryStack<SBItemStack>?, value: SBItemStack): ItemStack {

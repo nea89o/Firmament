@@ -18,29 +18,38 @@
 
 package moe.nea.firmament.repo
 
+import com.mojang.authlib.GameProfile
+import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.serialization.Dynamic
 import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
+import java.text.NumberFormat
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.logging.log4j.LogManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.minecraft.SharedConstants
+import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.datafixer.Schemas
 import net.minecraft.datafixer.TypeReferences
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtElement
+import net.minecraft.nbt.NbtHelper
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.rei.SBItemStack
 import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.appendLore
+import moe.nea.firmament.util.item.MinecraftProfileTextureKt
+import moe.nea.firmament.util.item.MinecraftTexturesPayloadKt
+import moe.nea.firmament.util.item.setTextures
 import moe.nea.firmament.util.skyblockId
 
 object ItemCache : IReloadable {
@@ -73,7 +82,7 @@ object ItemCache : IReloadable {
 
     fun brokenItemStack(neuItem: NEUItem?, idHint: SkyblockId? = null): ItemStack {
         return ItemStack(Items.PAINTING).apply {
-            setCustomName(Text.literal(neuItem?.displayName ?: idHint?.toString() ?: "null"))
+            setCustomName(Text.literal(neuItem?.displayName ?: idHint?.neuItem ?: "null"))
             appendLore(listOf(Text.translatable("firmament.repo.brokenitem", neuItem?.skyblockItemId ?: idHint)))
         }
     }
@@ -92,11 +101,6 @@ object ItemCache : IReloadable {
             e.printStackTrace()
             return brokenItemStack(this)
         }
-    }
-
-    fun SBItemStack.asItemStack(): ItemStack {
-        return this.neuItem.asItemStack(idHint = this.skyblockId)
-            .let { if (this.stackSize != 1) it.copyWithCount(this.stackSize) else it }
     }
 
     fun NEUItem?.asItemStack(idHint: SkyblockId? = null): ItemStack {
@@ -139,4 +143,47 @@ object ItemCache : IReloadable {
             CottonHud.remove(RepoManager.progressBar)
         }
     }
+
+    fun coinItem(coinAmount: Int): ItemStack {
+        var uuid = UUID.fromString("2070f6cb-f5db-367a-acd0-64d39a7e5d1b")
+        var texture =
+            "http://textures.minecraft.net/texture/538071721cc5b4cd406ce431a13f86083a8973e1064d2f8897869930ee6e5237"
+        if (coinAmount >= 100000) {
+            uuid = UUID.fromString("94fa2455-2881-31fe-bb4e-e3e24d58dbe3")
+            texture =
+                "http://textures.minecraft.net/texture/c9b77999fed3a2758bfeaf0793e52283817bea64044bf43ef29433f954bb52f6"
+        }
+        if (coinAmount >= 10000000) {
+            uuid = UUID.fromString("0af8df1f-098c-3b72-ac6b-65d65fd0b668")
+            texture =
+                "http://textures.minecraft.net/texture/7b951fed6a7b2cbc2036916dec7a46c4a56481564d14f945b6ebc03382766d3b"
+        }
+        val itemStack = ItemStack(Items.PLAYER_HEAD)
+        itemStack.setCustomName(Text.literal("§r§6" + NumberFormat.getInstance().format(coinAmount) + " Coins"))
+        val nbt: NbtCompound = itemStack.orCreateNbt
+        nbt[SkullBlockEntity.SKULL_OWNER_KEY] = NbtHelper.writeGameProfile(
+            NbtCompound(),
+            GameProfile(uuid, "CoolGuy123").also {
+                it.setTextures(
+                    MinecraftTexturesPayloadKt(
+                        mapOf(
+                            MinecraftProfileTexture.Type.SKIN to MinecraftProfileTextureKt(texture),
+                        ),
+                        uuid,
+                        "CoolGuy123"
+                    )
+                )
+            }
+        )
+        return itemStack
+    }
+}
+
+
+operator fun NbtCompound.set(key: String, value: String) {
+    putString(key, value)
+}
+
+operator fun NbtCompound.set(key: String, value: NbtElement) {
+    put(key, value)
 }

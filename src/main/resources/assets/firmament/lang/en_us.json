@@ -35,5 +35,6 @@
     "firmament.config.fishing-warning.highlight-wake-chain": "Highlight fishing particles",
     "firmament.key.slotlocking": "Lock Slot / Slot Binding",
     "firmament.key.category": "Firmament",
-    "firmament.protectitem": "Firmament protected your item: "
+    "firmament.protectitem": "Firmament protected your item: ",
+    "firmament.recipe.forge.time": "Forging Time: %s"
 }
