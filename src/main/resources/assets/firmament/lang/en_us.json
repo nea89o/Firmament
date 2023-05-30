@@ -1,4 +1,8 @@
 {
+    "firmament.dev.resourcerebuild.start": "Invoking gradle resource rebuild (./gradlew :processResources)",
+    "firmament.dev.resourcerebuild.done": "Gradle resource rebuild done in %s",
+    "firmament.config.developer": "Developer Settings",
+    "firmament.config.developer.auto-rebuild": "Automatically rebuild resources",
     "firmament.price": "Checking price for %s",
     "firmament.price.bazaar": "Bazaar stats:",
     "firmament.price.bazaar.productid": "Stock id: %s",
