@@ -3,23 +3,6 @@
   "plugin": "moe.nea.firmament.init.MixinPlugin",
   "package": "moe.nea.firmament.mixins",
   "compatibilityLevel": "JAVA_16",
-  "client": [
-    "MixinDownloadingTerrainScreen",
-    "MixinMessageHandler",
-    "MixinMinecraft",
-    "MixinWorldRenderer",
-    "accessor.AccessorHandledScreen",
-    "devenv.DisableCommonPacketWarnings"
-  ],
-  "mixins": [
-    "MixinClientPacketHandler",
-    "MixinClientPlayerEntity",
-    "MixinEntityIdFix",
-    "MixinHandledScreen",
-    "MixinPlayerInventory",
-    "devenv.DisableInvalidFishingHook",
-    "devenv.MixinScoreboard"
-  ],
   "injectors": {
     "defaultRequire": 1
   }

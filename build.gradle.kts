@@ -54,6 +54,11 @@ repositories {
             includeGroup("maven.modrinth")
         }
     }
+    maven("https://repo.sleeping.town") {
+        content {
+            includeGroup("com.unascribed")
+        }
+    }
     maven("https://server.bbkr.space/artifactory/libs-release")
     maven("https://repo.nea.moe/releases")
     mavenLocal()
@@ -82,6 +87,8 @@ dependencies {
     modImplementation(libs.fabric.kotlin)
     modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
+    modImplementation(libs.lib39.core)
+    include(libs.lib39.core)
     include(libs.libgui)
     modApi(libs.fabric.api)
     modApi(libs.architectury)

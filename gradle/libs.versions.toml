@@ -14,6 +14,7 @@ architectury = "8.1.79"
 neurepoparser = "1.1.0"
 qolify = "1.2.2-1.19.4"
 citresewn = "1.1.3+1.19.4"
+lib39 = "1.4.2"
 ncr = "Fabric-1.19.4-v2.1.1"
 
 [libraries]
@@ -27,6 +28,7 @@ repoparser = { module = "moe.nea:neurepoparser", version.ref = "neurepoparser" }
 dbus_java_core = { module = "com.github.hypfvieh:dbus-java-core", version.ref = "dbus_java" }
 dbus_java_unixsocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus_java" }
 libgui = { module = "io.github.cottonmc:LibGui", version.ref = "libgui" }
+lib39_core = { module = "com.unascribed:lib39-core", version.ref = "lib39" }
 
 # Runtime:
 architectury_fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
