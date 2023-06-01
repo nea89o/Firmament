@@ -1,5 +1,6 @@
 package moe.nea.firmament.gui
 
+import com.mojang.blaze3d.systems.RenderSystem
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing
 import io.github.cottonmc.cotton.gui.widget.WWidget
 import io.github.cottonmc.cotton.gui.widget.data.Texture
@@ -7,17 +8,19 @@ import me.shedaniel.math.Color
 import net.minecraft.client.util.math.MatrixStack
 import moe.nea.firmament.Firmament
 
-data class WBar(
+open class WBar(
     var progress: Double,
     val total: Double,
     val fillColor: Color,
     val emptyColor: Color,
 ) : WWidget() {
-    val resource = Firmament.identifier("textures/gui/bar.png")
-    val left = Texture(resource, 0 / 64F, 0 / 64F, 4 / 64F, 8 / 64F)
-    val middle = Texture(resource, 4 / 64F, 0 / 64F, 4 / 64F, 8 / 64F)
-    val right = Texture(resource, 8 / 64F, 0 / 64F, 4 / 64F, 8 / 64F)
-    val segmentOverlay = Texture(resource, 12 / 64F, 0 / 64F, 15 / 64F, 8 / 64F)
+    companion object {
+        val resource = Firmament.identifier("textures/gui/bar.png")
+        val left = Texture(resource, 0 / 64F, 0 / 64F, 4 / 64F, 8 / 64F)
+        val middle = Texture(resource, 4 / 64F, 0 / 64F, 8 / 64F, 8 / 64F)
+        val right = Texture(resource, 8 / 64F, 0 / 64F, 12 / 64F, 8 / 64F)
+        val segmentOverlay = Texture(resource, 12 / 64F, 0 / 64F, 15 / 64F, 8 / 64F)
+    }
 
     override fun canResize(): Boolean {
         return true
@@ -65,5 +68,6 @@ data class WBar(
             i += 4
         }
         drawSection(matrices, right, x + width - 4, y, 4, (width - 4) * total / width, total)
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F)
     }
 }

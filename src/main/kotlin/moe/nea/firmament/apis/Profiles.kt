@@ -10,6 +10,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.reflect.KProperty1
+import net.minecraft.util.DyeColor
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.json.InstantAsLongSerializer
 
@@ -30,18 +31,18 @@ data class Profile(
     val members: Map<UUID, Member>,
 )
 
-enum class Skill(val accessor: KProperty1<Member, Double>) {
-    FARMING(Member::experienceSkillFarming),
-    FORAGING(Member::experienceSkillForaging),
-    MINING(Member::experienceSkillMining),
-    ALCHEMY(Member::experienceSkillAlchemy),
-    TAMING(Member::experienceSkillTaming),
-    FISHING(Member::experienceSkillFishing),
-    RUNECRAFTING(Member::experienceSkillRunecrafting),
-    CARPENTRY(Member::experienceSkillCarpentry),
-    COMBAT(Member::experienceSkillCombat),
-    SOCIAL(Member::experienceSkillSocial),
-    ENCHANTING(Member::experienceSkillEnchanting),
+enum class Skill(val accessor: KProperty1<Member, Double>, val color: DyeColor) {
+    FARMING(Member::experienceSkillFarming, DyeColor.YELLOW),
+    FORAGING(Member::experienceSkillForaging, DyeColor.BROWN),
+    MINING(Member::experienceSkillMining, DyeColor.LIGHT_GRAY),
+    ALCHEMY(Member::experienceSkillAlchemy, DyeColor.PURPLE),
+    TAMING(Member::experienceSkillTaming, DyeColor.GREEN),
+    FISHING(Member::experienceSkillFishing, DyeColor.BLUE),
+    RUNECRAFTING(Member::experienceSkillRunecrafting, DyeColor.PINK),
+    CARPENTRY(Member::experienceSkillCarpentry, DyeColor.ORANGE),
+    COMBAT(Member::experienceSkillCombat, DyeColor.RED),
+    SOCIAL(Member::experienceSkillSocial, DyeColor.WHITE),
+    ENCHANTING(Member::experienceSkillEnchanting, DyeColor.MAGENTA),
     ;
 
     fun getMaximumLevel(leveling: Leveling) = leveling.maximumLevels[name.lowercase()] ?: TODO("Repo error")
