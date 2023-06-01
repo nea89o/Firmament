@@ -1,0 +1,5 @@
+{
+    "firmament.repo.reload.disk": "Lade Daten aus Speicher. Das könnte etwas ruckelig werden.",
+    "firmament.repo.cache": "Neu cachen von Items",
+    "firmament.repo.brokenitem": "Konnte Item nicht rendern: %s"
+}
