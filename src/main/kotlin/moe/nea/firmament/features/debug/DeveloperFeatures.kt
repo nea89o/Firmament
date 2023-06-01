@@ -6,6 +6,7 @@ import kotlin.io.path.absolute
 import kotlin.io.path.exists
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
+import moe.nea.firmament.Firmament
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
@@ -20,7 +21,7 @@ object DeveloperFeatures : FirmamentFeature {
     override val config: TConfig
         get() = TConfig
     override val defaultEnabled: Boolean
-        get() = false
+        get() = Firmament.DEBUG
 
     val gradleDir =
         Path.of(".").absolute()
