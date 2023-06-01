@@ -5,6 +5,10 @@ import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WText
 import io.github.cottonmc.cotton.gui.widget.WWidget
 import io.github.cottonmc.cotton.gui.widget.data.Insets
+import io.github.cottonmc.cotton.gui.widget.icon.Icon
+import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.text.Text
 import moe.nea.firmament.apis.Skill
 import moe.nea.firmament.gui.WBar
@@ -37,4 +41,9 @@ object SkillPage : ProfilePage {
             }
         }
     }
+
+    override val icon: Icon
+        get() = ItemIcon(ItemStack(Items.IRON_SWORD))
+    override val text: Text
+        get() = Text.translatable("firmament.pv.skills")
 }
