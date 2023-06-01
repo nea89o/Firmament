@@ -22,11 +22,10 @@ object DeveloperFeatures : FirmamentFeature {
     override val defaultEnabled: Boolean
         get() = false
 
-    val gradleDir by lazy {
+    val gradleDir =
         Path.of(".").absolute()
             .iterate { it.parent }
-            .find { it.resolve("settings.gradle.kts").exists() }!!
-    }
+            .find { it.resolve("settings.gradle.kts").exists() }
 
     object TConfig : ManagedConfig("developer") {
         val autoRebuildResources by toggle("auto-rebuild") { false }
@@ -34,7 +33,7 @@ object DeveloperFeatures : FirmamentFeature {
 
     @JvmStatic
     fun hookOnBeforeResourceReload(client: MinecraftClient): CompletableFuture<Void> {
-        val reloadFuture = if (TConfig.autoRebuildResources && isEnabled) {
+        val reloadFuture = if (TConfig.autoRebuildResources && isEnabled && gradleDir != null) {
             val builder = ProcessBuilder("./gradlew", ":processResources")
             builder.directory(gradleDir.toFile())
             builder.inheritIO()
