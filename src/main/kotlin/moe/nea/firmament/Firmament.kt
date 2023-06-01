@@ -49,6 +49,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlin.coroutines.EmptyCoroutineContext
 import net.minecraft.command.CommandRegistryAccess
+import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.dbus.FirmamentDbusObject
 import moe.nea.firmament.features.FeatureManager
@@ -129,4 +130,6 @@ object Firmament : ModInitializer, ClientModInitializer {
         })
 
     }
+
+    fun identifier(path: String) = Identifier(MOD_ID, path)
 }
