@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.reflect.KProperty1
 import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
@@ -130,6 +131,12 @@ data class PlayerData(
 ) {
     val rankPlusDyeColor = LegacyFormattingCode.values().find { it.name == rankPlusColor } ?: LegacyFormattingCode.GOLD
     val rankData get() = RepoManager.neuRepo.constants.misc.ranks[if (monthlyPackageRank == "NONE" || monthlyPackageRank == null) packageRank else monthlyPackageRank]
+    fun getDisplayName() = rankData?.let {
+        ("§${it.color}[${it.tag}${rankPlusDyeColor.modern}" +
+            "${it.plus ?: ""}§${it.color}] $playerName")
+    } ?: "${Formatting.GRAY}${playerName}"
+
+
 }
 
 @Serializable
