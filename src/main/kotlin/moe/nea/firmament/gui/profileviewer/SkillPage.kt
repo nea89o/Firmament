@@ -27,7 +27,7 @@ object SkillPage : ProfilePage {
                         profileViewer.account.rankData?.let {
                             ("§${it.color}[${it.tag}${profileViewer.account.rankPlusDyeColor.modern}" +
                                 "${it.plus ?: ""}§${it.color}] ${profileViewer.primaryName}")
-                        } ?: "§${Formatting.GRAY}${profileViewer.primaryName}"
+                        } ?: "${Formatting.GRAY}${profileViewer.primaryName}"
                     )
                 ), 0, 0, 6, 1
             )

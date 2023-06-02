@@ -58,7 +58,7 @@ enum class Skill(val accessor: KProperty1<Member, Double>, val color: DyeColor) 
 
 @Serializable
 data class Member(
-    val pets: List<Pet>,
+    val pets: List<Pet> = listOf(),
     @SerialName("coop_invitation")
     val coopInvitation: CoopInvitation? = null,
     @SerialName("experience_skill_farming")
@@ -129,7 +129,7 @@ data class PlayerData(
     val rankPlusColor: String = "GOLD"
 ) {
     val rankPlusDyeColor = LegacyFormattingCode.values().find { it.name == rankPlusColor } ?: LegacyFormattingCode.GOLD
-    val rankData get() = RepoManager.neuRepo.constants.misc.ranks[monthlyPackageRank ?: packageRank]
+    val rankData get() = RepoManager.neuRepo.constants.misc.ranks[if (monthlyPackageRank == "NONE" || monthlyPackageRank == null) packageRank else monthlyPackageRank]
 }
 
 @Serializable

@@ -59,6 +59,12 @@ fun firmamentCommand() = literal("firmament") {
         thenExecute {
             ProfileViewer.onCommand(source, MC.player!!.name.unformattedString)
         }
+        thenArgument("name", string()) { name ->
+            suggestsList { MC.world?.players?.map { it.name.unformattedString } ?: listOf() }
+            thenExecute {
+                ProfileViewer.onCommand(source, get(name))
+            }
+        }
     }
     thenLiteral("price") {
         thenArgument("item", string()) { item ->
