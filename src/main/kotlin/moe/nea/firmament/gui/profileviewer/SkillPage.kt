@@ -14,6 +14,7 @@ import net.minecraft.util.Formatting
 import moe.nea.firmament.apis.Skill
 import moe.nea.firmament.gui.WBar
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.toShedaniel
 
 object SkillPage : ProfilePage {
@@ -45,7 +46,7 @@ object SkillPage : ProfilePage {
                 ) {
                     override fun addTooltip(tooltip: TooltipBuilder) {
                         tooltip.add(Text.literal("$level/$maxLevel"))
-                        tooltip.add(Text.translatable("firmament.pv.skills.total", exp))
+                        tooltip.add(Text.translatable("firmament.pv.skills.total", FirmFormatters.toString(exp, 1)))
                     }
                 }, 4, i + 1, 4, 1)
             }
