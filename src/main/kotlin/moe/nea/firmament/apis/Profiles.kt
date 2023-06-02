@@ -11,6 +11,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.reflect.KProperty1
 import net.minecraft.util.DyeColor
+import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.json.InstantAsLongSerializer
 
@@ -105,5 +107,33 @@ data class Pet(
     val candyUsed: Int,
     val heldItem: String?,
     val skin: String?,
+)
 
-    )
+@Serializable
+data class PlayerResponse(
+    val success: Boolean,
+    val player: PlayerData,
+)
+
+@Serializable
+data class PlayerData(
+    val uuid: UUID,
+    val firstLogin: Instant,
+    val lastLogin: Instant,
+    @SerialName("playername")
+    val playerName: String,
+    val achievementsOneTime: List<String> = listOf(),
+    @SerialName("newPackageRank")
+    val packageRank: String?,
+    val monthlyPackageRank: String? = null,
+    val rankPlusColor: String = "GOLD"
+) {
+    val rankPlusDyeColor = LegacyFormattingCode.values().find { it.name == rankPlusColor } ?: LegacyFormattingCode.GOLD
+    val rankData get() = RepoManager.neuRepo.constants.misc.ranks[monthlyPackageRank ?: packageRank]
+}
+
+@Serializable
+data class AshconNameLookup(
+    val username: String,
+    val uuid: UUID,
+)

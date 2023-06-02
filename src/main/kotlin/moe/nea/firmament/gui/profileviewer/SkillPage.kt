@@ -10,6 +10,7 @@ import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import moe.nea.firmament.apis.Skill
 import moe.nea.firmament.gui.WBar
 import moe.nea.firmament.repo.RepoManager
@@ -19,7 +20,16 @@ object SkillPage : ProfilePage {
     override fun getElements(profileViewer: ProfileViewer): WWidget {
         return WGridPanel().also {
             it.insets = Insets.ROOT_PANEL
-            it.add(WText(Text.literal(profileViewer.primaryName /* with rank? */)), 0, 0, 6, 1)
+            it.add(
+                WText(
+                    Text.literal(
+                        profileViewer.account.rankData?.let {
+                            ("§${it.color}[${it.tag}${profileViewer.account.rankPlusDyeColor.modern}" +
+                                "${it.plus ?: ""}§${it.color}] ${profileViewer.primaryName}")
+                        } ?: "§${Formatting.GRAY}${profileViewer.primaryName}"
+                    )
+                ), 0, 0, 6, 1
+            )
             for ((i, skill) in Skill.values().withIndex()) {
                 val leveling = RepoManager.neuRepo.constants.leveling
                 val exp = skill.accessor.get(profileViewer.member)

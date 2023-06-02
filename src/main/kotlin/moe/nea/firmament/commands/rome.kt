@@ -66,27 +66,7 @@ fun firmamentCommand() = literal("firmament") {
     }
     thenLiteral("pv") {
         thenExecute {
-            val me = MC.player!!.uuid
-            val name = MC.player!!.name.unformattedString
-            val names = mapOf(me to name)
-            source.sendFeedback(Text.translatable("firmament.pv.lookingup", name))
-            Firmament.coroutineScope.launch {
-                val profiles = Firmament.httpClient.get {
-                    url {
-                        protocol = URLProtocol.HTTPS
-                        host = "api.hypixel.net"
-                        path("skyblock", "profiles")
-                        parameter("key", "06b68418-71eb-4c2a-bb8a-65ed8bd4d5aa")
-                        parameter("uuid", me.toString())
-                    }
-                }.body<Profiles>()
-                val profile = profiles.profiles.find { it.selected }
-                if (profile == null) {
-                    source.sendFeedback(Text.translatable("firmament.pv.noprofile", name))
-                    return@launch
-                }
-                ScreenUtil.setScreenLater(CottonClientScreen(ProfileViewer(me, names, profile)))
-            }
+            ProfileViewer.onCommand(source, MC.player!!.name.unformattedString)
         }
     }
     thenLiteral("price") {

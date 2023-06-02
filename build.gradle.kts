@@ -9,7 +9,7 @@ plugins {
     id("dev.architectury.loom") version "1.1.336"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator")
-    id("io.github.juuxel.loom-quiltflower") version "1.7.3"
+    id("io.github.juuxel.loom-quiltflower") version "1.10.0"
 }
 
 java {
