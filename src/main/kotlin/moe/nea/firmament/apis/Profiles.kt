@@ -21,7 +21,7 @@ import moe.nea.firmament.util.json.InstantAsLongSerializer
 @Serializable
 data class Profiles(
     val success: Boolean,
-    val profiles: List<Profile>
+    val profiles: List<Profile>?
 )
 
 @Serializable
@@ -120,12 +120,12 @@ data class PlayerResponse(
 data class PlayerData(
     val uuid: UUID,
     val firstLogin: Instant,
-    val lastLogin: Instant,
+    val lastLogin: Instant? = null,
     @SerialName("playername")
     val playerName: String,
     val achievementsOneTime: List<String> = listOf(),
     @SerialName("newPackageRank")
-    val packageRank: String?,
+    val packageRank: String? = null,
     val monthlyPackageRank: String? = null,
     val rankPlusColor: String = "GOLD"
 ) {
