@@ -28,23 +28,6 @@ compileTestKotlin.kotlinOptions {
     jvmTarget = "17"
 }
 
-loom {
-    clientOnlyMinecraftJar()
-    accessWidenerPath.set(project.file("src/main/resources/firmament.accesswidener"))
-    runs {
-        removeIf { it.name != "client" }
-        named("client") {
-            property("devauth.enabled", "true")
-            property("fabric.log.level", "info")
-            property("firmament.debug", "true")
-            /*
-            vmArg("-XX:+AllowEnhancedClassRedefinition")
-            vmArg("-XX:HotswapAgent=fatjar")
-             */
-        }
-    }
-}
-
 repositories {
     maven("https://maven.terraformersmc.com/releases/")
     maven("https://maven.shedaniel.me")
@@ -57,6 +40,17 @@ repositories {
     maven("https://repo.sleeping.town") {
         content {
             includeGroup("com.unascribed")
+        }
+    }
+    ivy("https://github.com/HotswapProjects/HotswapAgent/releases/download") {
+        patternLayout {
+            artifact("[revision]/[artifact]-[revision].[ext]")
+        }
+        content {
+            includeGroup("virtual.github.hotswapagent")
+        }
+        metadataSources {
+            artifact()
         }
     }
     maven("https://server.bbkr.space/artifactory/libs-release")
@@ -72,6 +66,10 @@ val transInclude by configurations.creating {
     isTransitive = true
 }
 
+val hotswap by configurations.creating {
+    isVisible = false
+}
+
 val nonModImplentation by configurations.creating {
     extendsFrom(shadowMe)
     configurations.implementation.get().extendsFrom(this)
@@ -81,6 +79,9 @@ dependencies {
     // Minecraft dependencies
     "minecraft"(libs.minecraft)
     "mappings"("net.fabricmc:yarn:${libs.versions.yarn.get()}:v2")
+
+    // Hotswap Dependency
+    hotswap(libs.hotswap)
 
     // Fabric dependencies
     modImplementation(libs.fabric.loader)
@@ -123,22 +124,46 @@ dependencies {
 version = rootProject.property("mod_version").toString()
 group = rootProject.property("maven_group").toString()
 
+loom {
+    clientOnlyMinecraftJar()
+    accessWidenerPath.set(project.file("src/main/resources/firmament.accesswidener"))
+    runs {
+        removeIf { it.name != "client" }
+        named("client") {
+            property("devauth.enabled", "true")
+            property("fabric.log.level", "info")
+            property("firmament.debug", "true")
+
+            vmArg("-ea")
+            vmArg("-XX:+AllowEnhancedClassRedefinition")
+            vmArg("-XX:HotswapAgent=external")
+            vmArg("-javaagent:${hotswap.resolve().single().absolutePath}")
+        }
+    }
+}
+
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
     options.release.set(17)
 }
 
+tasks.jar {
+    destinationDirectory.set(layout.buildDirectory.dir("badjars"))
+    archiveClassifier.set("slim")
+}
+
 tasks.shadowJar {
     configurations = listOf(shadowMe)
-    archiveClassifier.set("dev-thicc")
+    archiveClassifier.set("")
     relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
 }
 
 tasks.remapJar {
+    destinationDirectory.set(layout.buildDirectory.dir("badjars"))
     injectAccessWidener.set(true)
     inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
     dependsOn(tasks.shadowJar)
-    archiveClassifier.set("thicc")
+    archiveClassifier.set("dev")
 }
 
 tasks.processResources {
@@ -150,9 +175,6 @@ tasks.processResources {
     replacements.forEach { (key, value) -> inputs.property(key, value) }
     filesMatching("**/fabric.mod.json") {
         expand(*replacements.toTypedArray())
-    }
-    filesMatching("**/lang/*.json") {
-        // flattenJson(this)
     }
     from(tasks.scanLicenses)
 }

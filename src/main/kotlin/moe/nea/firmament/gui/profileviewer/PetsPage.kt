@@ -4,9 +4,9 @@ import io.github.cottonmc.cotton.gui.client.BackgroundPainter
 import io.github.cottonmc.cotton.gui.widget.TooltipBuilder
 import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WItem
-import io.github.cottonmc.cotton.gui.widget.WScrollPanel
 import io.github.cottonmc.cotton.gui.widget.WText
 import io.github.cottonmc.cotton.gui.widget.WWidget
+import io.github.cottonmc.cotton.gui.widget.data.InputResult
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.icon.Icon
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon
@@ -14,9 +14,9 @@ import net.minecraft.client.item.TooltipContext
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.Items
 import net.minecraft.text.Text
-import moe.nea.firmament.gui.WFixedPanel
 import moe.nea.firmament.gui.WTightScrollPanel
 import moe.nea.firmament.rei.SBItemStack
+import moe.nea.firmament.util.MC
 
 object PetsPage : ProfilePage {
     override fun getElements(profileViewer: ProfileViewer): WWidget {
