@@ -60,7 +60,9 @@ fun firmamentCommand() = literal("firmament") {
             ProfileViewer.onCommand(source, MC.player!!.name.unformattedString)
         }
         thenArgument("name", string()) { name ->
-            suggestsList { MC.world?.players?.map { it.name.unformattedString } ?: listOf() }
+            suggestsList {
+                MC.world?.players?.filter { it.uuid?.version() == 4 }?.map { it.name.unformattedString } ?: listOf()
+            }
             thenExecute {
                 ProfileViewer.onCommand(source, get(name))
             }
