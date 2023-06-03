@@ -20,6 +20,7 @@ package moe.nea.firmament.rei
 
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
+import io.github.moulberry.repo.data.Rarity
 import java.util.stream.Stream
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.common.entry.EntrySerializer
@@ -33,28 +34,64 @@ import net.minecraft.registry.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
+import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.skyblockId
 
 // TODO: add in extra data like pet info, into this structure
+data class PetData(
+    val rarity: Rarity,
+    val petId: String,
+    val exp: Double,
+) {
+    val levelData by lazy { ExpLadders.getExpLadder(petId, rarity).getPetLevel(exp) }
+}
+
 data class SBItemStack(
     val skyblockId: SkyblockId,
     val neuItem: NEUItem?,
     val stackSize: Int,
+    val petData: PetData?,
 ) {
+    constructor(skyblockId: SkyblockId, petData: PetData) : this(
+        skyblockId,
+        RepoManager.getNEUItem(skyblockId),
+        1,
+        petData
+    )
+
     constructor(skyblockId: SkyblockId, stackSize: Int = 1) : this(
         skyblockId,
         RepoManager.getNEUItem(skyblockId),
-        stackSize
+        stackSize,
+        RepoManager.getPotentialStubPetData(skyblockId)
     )
 
-    fun asItemStack(): ItemStack {
+    private val itemStack by lazy {
         if (skyblockId == SkyblockId.COINS)
-            return ItemCache.coinItem(stackSize)
-        return neuItem.asItemStack(idHint = skyblockId).copyWithCount(stackSize)
+            return@lazy ItemCache.coinItem(stackSize)
+        val replacementData = mutableMapOf<String, String>()
+        if (petData != null) {
+            val stats = RepoManager.neuRepo.constants.petNumbers[petData.petId]?.get(petData.rarity)
+                ?.interpolatedStatsAtLevel(petData.levelData.currentLevel)
+            if (stats != null) {
+                stats.otherNumbers.forEachIndexed { index, it ->
+                    replacementData[index.toString()] = FirmFormatters.toString(it, 0)
+                }
+                stats.statNumbers.forEach { (t, u) ->
+                    replacementData[t] = FirmFormatters.toString(u, 0)
+                }
+            }
+            replacementData["LVL"] = petData.levelData.currentLevel.toString()
+        }
+        return@lazy neuItem.asItemStack(idHint = skyblockId, replacementData).copyWithCount(stackSize)
+    }
+
+    fun asItemStack(): ItemStack {
+        return itemStack.copy()
     }
 }
 
@@ -112,11 +149,8 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     fun getEntry(sbItemStack: SBItemStack): EntryStack<SBItemStack> =
         EntryStack.of(this, sbItemStack)
 
-    fun getEntry(neuItem: NEUItem?, count: Int = 1): EntryStack<SBItemStack> =
-        getEntry(SBItemStack(neuItem?.skyblockId ?: SkyblockId.NULL, neuItem, 1))
-
     fun getEntry(skyblockId: SkyblockId, count: Int = 1): EntryStack<SBItemStack> =
-        getEntry(SBItemStack(skyblockId, RepoManager.getNEUItem(skyblockId), count))
+        getEntry(SBItemStack(skyblockId, count))
 
     fun getEntry(ingredient: NEUIngredient): EntryStack<SBItemStack> =
         getEntry(SkyblockId(ingredient.itemId), count = ingredient.amount.toInt())

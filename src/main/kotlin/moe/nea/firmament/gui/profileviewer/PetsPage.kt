@@ -6,7 +6,6 @@ import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WItem
 import io.github.cottonmc.cotton.gui.widget.WText
 import io.github.cottonmc.cotton.gui.widget.WWidget
-import io.github.cottonmc.cotton.gui.widget.data.InputResult
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.icon.Icon
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon
@@ -15,8 +14,8 @@ import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.Items
 import net.minecraft.text.Text
 import moe.nea.firmament.gui.WTightScrollPanel
+import moe.nea.firmament.rei.PetData
 import moe.nea.firmament.rei.SBItemStack
-import moe.nea.firmament.util.MC
 
 object PetsPage : ProfilePage {
     override fun getElements(profileViewer: ProfileViewer): WWidget {
@@ -26,7 +25,7 @@ object PetsPage : ProfilePage {
             it.add((WTightScrollPanel(WGridPanel().also {
                 it.setGaps(8, 8)
                 for ((i, pet) in profileViewer.member.pets.withIndex()) {
-                    val stack = SBItemStack(pet.itemId, 1).asItemStack()
+                    val stack = SBItemStack(pet.itemId, PetData(pet.tier, pet.type.name, pet.exp)).asItemStack()
                     it.add(object : WItem(stack) {
                         override fun paint(matrices: MatrixStack?, x: Int, y: Int, mouseX: Int, mouseY: Int) {
                             BackgroundPainter.SLOT.paintBackground(matrices, x, y, this)

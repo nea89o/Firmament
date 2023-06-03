@@ -41,12 +41,15 @@ import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtHelper
+import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtOps
+import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.appendLore
+import moe.nea.firmament.util.getOrCreateList
 import moe.nea.firmament.util.item.MinecraftProfileTextureKt
 import moe.nea.firmament.util.item.MinecraftTexturesPayloadKt
 import moe.nea.firmament.util.item.setTextures
@@ -103,15 +106,45 @@ object ItemCache : IReloadable {
         }
     }
 
-    fun NEUItem?.asItemStack(idHint: SkyblockId? = null): ItemStack {
+    fun NEUItem?.asItemStack(idHint: SkyblockId? = null, loreReplacements: Map<String, String>? = null): ItemStack {
         if (this == null) return brokenItemStack(null, idHint)
         var s = cache[this.skyblockItemId]
         if (s == null) {
             s = asItemStackNow()
             cache[this.skyblockItemId] = s
         }
+        if (!loreReplacements.isNullOrEmpty()) {
+            s.applyLoreReplacements(loreReplacements)
+            s.setCustomName(s.name.applyLoreReplacements(loreReplacements))
+        }
         return s
     }
+
+    fun ItemStack.applyLoreReplacements(loreReplacements: Map<String, String>) {
+        val component = getOrCreateSubNbt("display")
+        val lore = component.getOrCreateList("Lore", NbtString.STRING_TYPE)
+        val newLore = NbtList()
+        lore.forEach {
+            newLore.add(
+                NbtString.of(
+                    Text.Serializer.toJson(
+                        Text.Serializer.fromJson(it.asString())!!.applyLoreReplacements(loreReplacements)
+                    )
+                )
+            )
+        }
+        component["Lore"] = newLore
+    }
+
+    fun Text.applyLoreReplacements(loreReplacements: Map<String, String>): Text {
+        assert(this.siblings.isEmpty())
+        var string = this.string
+        loreReplacements.forEach { (find, replace) ->
+            string = string.replace("{$find}", replace)
+        }
+        return Text.literal(string).styled { this.style }
+    }
+
 
     fun NEUItem.getIdentifier() = skyblockId.identifier
 

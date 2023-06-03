@@ -34,7 +34,7 @@ object NEUItemEntrySerializer : EntrySerializer<SBItemStack> {
     override fun read(tag: NbtCompound): SBItemStack {
         val id = SkyblockId(tag.getString(SKYBLOCK_ID_ENTRY))
         val count = if (tag.contains(SKYBLOCK_ITEM_COUNT)) tag.getInt(SKYBLOCK_ITEM_COUNT) else 1
-        return SBItemStack(id, RepoManager.getNEUItem(id), count)
+        return SBItemStack(id, count)
     }
 
     override fun save(entry: EntryStack<SBItemStack>, value: SBItemStack): NbtCompound {

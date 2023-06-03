@@ -35,6 +35,7 @@ import moe.nea.firmament.recipes.SBForgeRecipe
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.skyblockId
 
 
 class FirmamentReiPlugin : REIClientPlugin {
@@ -73,7 +74,7 @@ class FirmamentReiPlugin : REIClientPlugin {
                 registry.group(
                     SkyblockId(parent).identifier,
                     Text.literal(RepoManager.getNEUItem(SkyblockId(parent))?.displayName ?: parent),
-                    (children + parent).map { SBItemEntryDefinition.getEntry(RepoManager.getNEUItem(SkyblockId(it))) })
+                    (children + parent).map { SBItemEntryDefinition.getEntry(SkyblockId(it)) })
             }
     }
 
@@ -84,7 +85,7 @@ class FirmamentReiPlugin : REIClientPlugin {
     override fun registerEntries(registry: EntryRegistry) {
         RepoManager.neuRepo.items?.items?.values?.forEach {
             if (!it.isVanilla)
-                registry.addEntry(SBItemEntryDefinition.getEntry(it))
+                registry.addEntry(SBItemEntryDefinition.getEntry(it.skyblockId))
         }
     }
 }

@@ -24,6 +24,7 @@ import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.NEURepositoryException
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.NEURecipe
+import io.github.moulberry.repo.data.Rarity
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
@@ -31,9 +32,10 @@ import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
-import moe.nea.firmament.hud.ProgressBar
-import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.hud.ProgressBar
+import moe.nea.firmament.rei.PetData
+import moe.nea.firmament.util.SkyblockId
 
 object RepoManager {
     object Config : ManagedConfig("repo") {
@@ -59,6 +61,7 @@ object RepoManager {
 
     val neuRepo: NEURepository = NEURepository.of(RepoDownloadManager.repoSavedLocation).apply {
         registerReloadListener(ItemCache)
+        registerReloadListener(ExpLadders)
         registerReloadListener {
             if (!trySendClientboundUpdateRecipesPacket()) {
                 logger.warn("Failed to issue a ClientboundUpdateRecipesPacket (to reload REI). This may lead to an outdated item list.")
@@ -119,6 +122,21 @@ object RepoManager {
         } else {
             reload()
         }
+    }
+
+    fun getPotentialStubPetData(skyblockId: SkyblockId): PetData? {
+        val parts = skyblockId.neuItem.split(";")
+        if (parts.size != 2) {
+            return null
+        }
+        val (petId, rarityIndex) = parts
+        if (!rarityIndex.all { it.isDigit() }) {
+            return null
+        }
+        val intIndex = rarityIndex.toInt()
+        if (intIndex !in rarityIndex.indices) return null
+        if (petId !in neuRepo.constants.petNumbers) return null
+        return PetData(Rarity.values()[intIndex], petId, 0.0)
     }
 
 }
