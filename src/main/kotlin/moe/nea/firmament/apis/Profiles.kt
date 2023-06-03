@@ -14,6 +14,7 @@ import net.minecraft.util.DyeColor
 import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.LegacyFormattingCode
+import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.json.InstantAsLongSerializer
 
@@ -108,7 +109,9 @@ data class Pet(
     val candyUsed: Int,
     val heldItem: String?,
     val skin: String?,
-)
+) {
+    val itemId get() = SkyblockId("${type.name};${tier.ordinal}")
+}
 
 @Serializable
 data class PlayerResponse(

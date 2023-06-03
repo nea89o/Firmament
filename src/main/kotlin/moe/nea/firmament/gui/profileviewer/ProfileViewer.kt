@@ -28,7 +28,7 @@ class ProfileViewer(
     init {
         val panel = WTabPanel().also { rootPanel = it }
         panel.backgroundPainter
-        listOf<ProfilePage>(SkillPage)
+        listOf<ProfilePage>(SkillPage, PetsPage)
             .forEach { page ->
                 panel.add(page.getElements(this)) {
                     it.icon(page.icon)

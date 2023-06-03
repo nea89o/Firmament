@@ -45,7 +45,13 @@ data class SBItemStack(
     val neuItem: NEUItem?,
     val stackSize: Int,
 ) {
-    fun asItemStack(): ItemStack? {
+    constructor(skyblockId: SkyblockId, stackSize: Int = 1) : this(
+        skyblockId,
+        RepoManager.getNEUItem(skyblockId),
+        stackSize
+    )
+
+    fun asItemStack(): ItemStack {
         if (skyblockId == SkyblockId.COINS)
             return ItemCache.coinItem(stackSize)
         return neuItem.asItemStack(idHint = skyblockId).copyWithCount(stackSize)
