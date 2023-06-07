@@ -20,7 +20,7 @@ package moe.nea.firmament.features.inventory
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import net.minecraft.client.gui.DrawableHelper
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.entity.player.PlayerInventory
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.events.IsSlotProtectedEvent
@@ -72,8 +72,7 @@ object SlotLocking : FirmamentFeature {
         }
         SlotRenderEvents.Before.subscribe {
             if (it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())) {
-                DrawableHelper.fill(
-                    it.matrices,
+                it.context.fill(
                     it.slot.x,
                     it.slot.y,
                     it.slot.x + 16,

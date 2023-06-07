@@ -1,22 +1,21 @@
 [versions]
-minecraft = "1.19.4"
+minecraft = "1.20"
 fabric_loader = "0.14.21"
-fabric_api = "0.83.0+1.19.4"
+fabric_api = "0.83.0+1.20"
 fabric_kotlin = "1.9.4+kotlin.1.8.21"
-yarn = "1.19.4+build.2"
-libgui = "7.1.0+1.19.4"
-rei = "11.0.597"
+yarn = "1.20+build.1"
+libgui = "8.0.0-beta.1+1.20-rc1" # TODO: Update
+rei = "12.0.613" # TODO: Update
 devauth = "1.0.0"
-modmenu = "6.2.1"
+modmenu = "7.0.0"
 ktor = "2.3.0"
 dbus_java = "4.2.1"
-architectury = "8.1.79"
+architectury = "9.0.5" # TODO: Update
 neurepoparser = "1.3.1"
-qolify = "1.2.2-1.19.4"
-citresewn = "1.1.3+1.19.4"
-lib39 = "1.4.2"
+qolify = "1.2.2-1.19.4" # TODO: Update
+citresewn = "1.1.3+1.19.4" # TODO: Update
 hotswap_agent = "1.4.2-SNAPSHOT"
-ncr = "Fabric-1.19.4-v2.1.1"
+ncr = "Fabric-1.19.4-v2.1.1" # TODO: Update
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -29,7 +28,6 @@ repoparser = { module = "moe.nea:neurepoparser", version.ref = "neurepoparser" }
 dbus_java_core = { module = "com.github.hypfvieh:dbus-java-core", version.ref = "dbus_java" }
 dbus_java_unixsocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus_java" }
 libgui = { module = "io.github.cottonmc:LibGui", version.ref = "libgui" }
-lib39_core = { module = "com.unascribed:lib39-core", version.ref = "lib39" }
 
 # Runtime:
 hotswap = { module = "virtual.github.hotswapagent:hotswap-agent", version.ref = "hotswap_agent" }
@@ -44,7 +42,12 @@ ncr = { module = "maven.modrinth:no-chat-reports", version.ref = "ncr" }
 [bundles]
 dbus = ["dbus_java_core", "dbus_java_unixsocket"]
 runtime_required = ["architectury_fabric", "rei_fabric"]
-runtime_optional = ["devauth", "qolify", "citresewn", "ncr"]
-
+runtime_optional = [
+    "devauth",
+    # Add back once updated:
+    # "qolify",
+    # "citresewn",
+    # "ncr",
+]
 
 

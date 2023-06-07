@@ -19,18 +19,15 @@
 package moe.nea.firmament
 
 import com.mojang.brigadier.CommandDispatcher
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.cache.HttpCache
-import io.ktor.client.plugins.compression.ContentEncoding
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.cache.*
+import io.ktor.client.plugins.compression.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.serialization.kotlinx.json.*
 import java.nio.file.Files
 import java.nio.file.Path
-import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -58,7 +55,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
 
-object Firmament : ModInitializer, ClientModInitializer {
+object Firmament {
     const val MOD_ID = "firmament"
 
     val DEBUG = System.getProperty("firmament.debug") == "true"
@@ -110,10 +107,12 @@ object Firmament : ModInitializer, ClientModInitializer {
         registerFirmamentCommand(dispatcher)
     }
 
-    override fun onInitialize() {
+    @JvmStatic
+    fun onInitialize() {
     }
 
-    override fun onInitializeClient() {
+    @JvmStatic
+    fun onClientInitialize() {
         dbusConnection.requestBusName("moe.nea.firmament")
         dbusConnection.exportObject(FirmamentDbusObject)
         IDataHolder.registerEvents()

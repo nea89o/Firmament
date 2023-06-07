@@ -10,6 +10,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator")
     id("io.github.juuxel.loom-quiltflower") version "1.10.0"
+    id("io.shcm.shsupercm.fabric.fletchingtable") version "1.5"
 }
 
 java {
@@ -88,8 +89,6 @@ dependencies {
     modImplementation(libs.fabric.kotlin)
     modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
-    modImplementation(libs.lib39.core)
-    include(libs.lib39.core)
     include(libs.libgui)
     modApi(libs.fabric.api)
     modApi(libs.architectury)
@@ -197,3 +196,5 @@ tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).ap
 }
 
 licensing.addExtraLicenseMatchers()
+
+fletchingTable.defaultMixinEnvironment.set("client")

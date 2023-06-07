@@ -20,17 +20,11 @@
   "icon": "assets/firmament/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      {
-        "adapter": "kotlin",
-        "value": "moe.nea.firmament.Firmament"
-      }
-    ],
+      "main": [
+          "moe.nea.firmament.Firmament::onInitialize"
+      ],
       "client": [
-          {
-              "adapter": "kotlin",
-              "value": "moe.nea.firmament.Firmament"
-          }
+          "moe.nea.firmament.Firmament::onClientInitialize"
       ],
       "rei_client": [
           "moe.nea.firmament.rei.FirmamentReiPlugin"

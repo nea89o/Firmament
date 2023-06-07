@@ -21,6 +21,7 @@ package moe.nea.firmament.mixins;
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent;
 import moe.nea.firmament.events.IsSlotProtectedEvent;
 import moe.nea.firmament.events.SlotRenderEvents;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.slot.Slot;
@@ -50,19 +51,15 @@ public class MixinHandledScreen {
     }
 
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void onAfterDrawSlot(
-        MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci,
-        int i, int j, int k, Slot slot) {
-        SlotRenderEvents.After event = new SlotRenderEvents.After(matrices, slot, mouseX, mouseY, delta);
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void onAfterDrawSlot(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, int i, int j, int k, Slot slot) {
+        SlotRenderEvents.After event = new SlotRenderEvents.After(context, slot, mouseX, mouseY, delta);
         SlotRenderEvents.After.Companion.publish(event);
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void onBeforeDrawSlot(
-        MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci,
-        int i, int j, int k, Slot slot) {
-        SlotRenderEvents.Before event = new SlotRenderEvents.Before(matrices, slot, mouseX, mouseY, delta);
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
+    public void onBeforeDrawSlot(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, int i, int j, int k, Slot slot) {
+        SlotRenderEvents.Before event = new SlotRenderEvents.Before(context, slot, mouseX, mouseY, delta);
         SlotRenderEvents.Before.Companion.publish(event);
     }
 }

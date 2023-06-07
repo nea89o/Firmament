@@ -25,6 +25,7 @@ import io.github.cottonmc.cotton.gui.widget.data.Insets
 import net.minecraft.client.util.math.MatrixStack
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import net.minecraft.client.gui.DrawContext
 
 
 val Insets.vertical get() = bottom + top
@@ -49,8 +50,8 @@ class ProgressBar(
 
     }
 
-    override fun paint(matrices: MatrixStack, x: Int, y: Int, mouseX: Int, mouseY: Int) {
-        ScreenDrawing.coloredRect(matrices, x, y, width, height, 0xFF808080.toInt())
+    override fun paint(context: DrawContext, x: Int, y: Int, mouseX: Int, mouseY: Int) {
+        ScreenDrawing.coloredRect(context, x, y, width, height, 0xFF808080.toInt())
         val (l, prog) = synchronized(this) {
             label to (progress to total)
         }
@@ -58,7 +59,7 @@ class ProgressBar(
 
         if (t == null) {
             ScreenDrawing.coloredRect(
-                matrices,
+                context,
                 (x + (1 + sin(System.currentTimeMillis().toDouble() / 1000)) * width * 3 / 4 / 2).roundToInt(),
                 y,
                 width / 4,
@@ -66,10 +67,10 @@ class ProgressBar(
                 0xFF00FF00.toInt()
             )
         } else {
-            ScreenDrawing.coloredRect(matrices, x, y, width * p / t, height, 0xFF00FF00.toInt())
+            ScreenDrawing.coloredRect(context, x, y, width * p / t, height, 0xFF00FF00.toInt())
         }
         ScreenDrawing.drawString(
-            matrices,
+            context,
             if (t != null) "$l ($p/$t)" else l,
             HorizontalAlignment.CENTER,
             x + insets.left,

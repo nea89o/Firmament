@@ -18,18 +18,18 @@
 
 package moe.nea.firmament.events
 
-import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.screen.slot.Slot
 
 interface SlotRenderEvents {
-    val matrices: MatrixStack
+    val context: DrawContext
     val slot: Slot
     val mouseX: Int
     val mouseY: Int
     val delta: Float
 
     data class Before(
-        override val matrices: MatrixStack, override val slot: Slot,
+        override val context: DrawContext, override val slot: Slot,
         override val mouseX: Int,
         override val mouseY: Int,
         override val delta: Float
@@ -39,7 +39,7 @@ interface SlotRenderEvents {
     }
 
     data class After(
-        override val matrices: MatrixStack, override val slot: Slot,
+        override val context: DrawContext, override val slot: Slot,
         override val mouseX: Int,
         override val mouseY: Int,
         override val delta: Float
