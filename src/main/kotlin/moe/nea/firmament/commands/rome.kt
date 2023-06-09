@@ -128,7 +128,7 @@ fun firmamentCommand() = literal("firmament") {
         }
         thenLiteral("sbdata") {
             thenExecute {
-                source.sendFeedback(Text.translatable("firmament.sbinfo.profile", SBData.profileCuteName))
+                source.sendFeedback(Text.translatable("firmament.sbinfo.profile", SBData.profileId))
                 val locrawInfo = SBData.locraw
                 if (locrawInfo == null) {
                     source.sendFeedback(Text.translatable("firmament.sbinfo.nolocraw"))
