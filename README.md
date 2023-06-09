@@ -1,8 +1,11 @@
 ## Firmament
 <small><i>Powered by NEU</i></small>
 
-> Note: This is still very much more of a tech demo, than an actual usable project. Please do not confuse it for one.
-> Please do not ask for [features to be added](TODO.txt) (although bug reports are welcome).
+> Firmament will soon enter its early public alpha stage. While there is still much to be done in terms of usability,
+> a lot of features are already ready.
+> 
+> In the meantime please do not ask for features to be added, [instead check the TODO list](TODO.txt) (although bug
+> reports are welcome).
 
 [This project is currently being renamed.](#renaming)
 
