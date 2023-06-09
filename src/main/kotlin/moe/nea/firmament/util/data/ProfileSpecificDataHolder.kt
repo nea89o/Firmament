@@ -19,6 +19,7 @@
 package moe.nea.firmament.util.data
 
 import java.nio.file.Path
+import java.util.UUID
 import kotlinx.serialization.KSerializer
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
@@ -37,10 +38,10 @@ abstract class ProfileSpecificDataHolder<S>(
     private val configDefault: () -> S
 ) : IDataHolder<S?> {
 
-    var allConfigs: MutableMap<String, S>
+    var allConfigs: MutableMap<UUID, S>
 
     override val data: S?
-        get() = SBData.profileCuteName?.let {
+        get() = SBData.profileId?.let {
             allConfigs.computeIfAbsent(it) { configDefault() }
         }
 
@@ -52,7 +53,7 @@ abstract class ProfileSpecificDataHolder<S>(
 
     private val configDirectory: Path get() = Firmament.CONFIG_DIR.resolve("profiles").resolve(configName)
 
-    private fun readValues(): MutableMap<String, S> {
+    private fun readValues(): MutableMap<UUID, S> {
         if (!configDirectory.exists()) {
             configDirectory.createDirectories()
         }
@@ -61,7 +62,7 @@ abstract class ProfileSpecificDataHolder<S>(
             .filter { it.extension == "json" }
             .mapNotNull {
                 try {
-                    it.nameWithoutExtension to Firmament.json.decodeFromString(dataSerializer, it.readText())
+                    UUID.fromString(it.nameWithoutExtension) to Firmament.json.decodeFromString(dataSerializer, it.readText())
                 } catch (e: Exception) { /* Expecting IOException and SerializationException, but Kotlin doesn't allow multi catches*/
                     IDataHolder.badLoads.add(configName)
                     Firmament.logger.error(
@@ -79,7 +80,7 @@ abstract class ProfileSpecificDataHolder<S>(
         }
         val c = allConfigs
         configDirectory.listDirectoryEntries().forEach {
-            if (it.nameWithoutExtension !in c) {
+            if (it.nameWithoutExtension !in c.mapKeys { it.toString() }) {
                 it.deleteExisting()
             }
         }

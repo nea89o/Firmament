@@ -18,8 +18,10 @@
 
 package moe.nea.firmament.mixins;
 
+import moe.nea.firmament.events.OutgoingPacketEvent;
 import moe.nea.firmament.events.ParticleSpawnEvent;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,5 +39,12 @@ public class MixinClientPacketHandler {
             new Vec3d(packet.getOffsetX(), packet.getOffsetY(), packet.getOffsetZ()),
             packet.isLongDistance()
         ));
+    }
+
+    @Inject(method = "sendPacket(Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"), cancellable = true)
+    public void onSendPacket(Packet<?> packet, CallbackInfo ci) {
+        if (OutgoingPacketEvent.Companion.publish(new OutgoingPacketEvent(packet)).getCancelled()) {
+            ci.cancel();
+        }
     }
 }

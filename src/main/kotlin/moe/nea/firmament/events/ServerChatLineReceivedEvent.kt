@@ -23,9 +23,9 @@ import moe.nea.firmament.util.unformattedString
 
 /**
  * This event gets published whenever the client receives a chat message from the server.
- */
+ * This event is cancellable, but should not get cancelled. Use [ClientChatLineReceivedEvent] for that instead. */
 data class ServerChatLineReceivedEvent(val text: Text) : FirmamentEvent.Cancellable() {
-    companion object : FirmamentEventBus<ServerChatLineReceivedEvent>()
-
     val unformattedString = text.unformattedString
+
+    companion object : FirmamentEventBus<ServerChatLineReceivedEvent>()
 }
