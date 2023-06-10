@@ -35,10 +35,7 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
         mouseY: Int,
         delta: Float
     ) {
-        context.matrices.push()
-        context.matrices.translate(0F, 0F, 100F)
         entry.asItemEntry().render(context, bounds, mouseX, mouseY, delta)
-        context.matrices.pop()
     }
 
     override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
