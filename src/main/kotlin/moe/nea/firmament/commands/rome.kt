@@ -72,7 +72,7 @@ fun firmamentCommand() = literal("firmament") {
         thenArgument("item", string()) { item ->
             suggestsList { RepoManager.neuRepo.items.items.keys }
             thenExecute {
-                val itemName = SkyblockId(getString(context, "item"))
+                val itemName = SkyblockId(get(item))
                 source.sendFeedback(Text.translatable("firmament.price", itemName.neuItem))
                 val bazaarData = ItemCostData.bazaarData[itemName]
                 if (bazaarData != null) {
