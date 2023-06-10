@@ -138,7 +138,6 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(Text.translatable("firmament.sbinfo.mode", locrawInfo.mode))
                     source.sendFeedback(Text.translatable("firmament.sbinfo.map", locrawInfo.map))
                 }
-
             }
         }
     }

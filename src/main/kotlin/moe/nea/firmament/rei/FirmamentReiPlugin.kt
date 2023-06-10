@@ -83,9 +83,9 @@ class FirmamentReiPlugin : REIClientPlugin {
     }
 
     override fun registerEntries(registry: EntryRegistry) {
-        RepoManager.neuRepo.items?.items?.values?.forEach {
-            if (!it.isVanilla)
-                registry.addEntry(SBItemEntryDefinition.getEntry(it.skyblockId))
+        registry.removeEntryIf { true }
+        RepoManager.neuRepo.items?.items?.values?.forEach { neuItem ->
+            registry.addEntry(SBItemEntryDefinition.getEntry(neuItem.skyblockId))
         }
     }
 }
