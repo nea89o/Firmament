@@ -1,0 +1,16 @@
+== TO BE DONE BEFORE RELEASE ==
+
+- PV:
+    - Add Collection stats
+    - Add Inventory (prio -1)
+    - Fix the layout
+        - More wider
+        - Pet level stat
+- Item List:
+    - Fix crafting recipes for vanilla items
+        - Either remove vanilla items and replace them
+        - Or remove vanilla (crafting recipes)
+    - Add other recipe types (prio -1)
+    - Fix banner data fixer (prio -1)
+
+
