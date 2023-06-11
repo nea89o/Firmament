@@ -34,6 +34,12 @@ Priority 3:
 - Item rarity halo
 - Zealot Counter using Combat XP popups
 - Use REIs "Move Item" functionality to higlight slots
+- client sided stat tracker that does not need the api
+    - skills
+    - coins
+    - bits?
+    - collection?
+    - pretty graphs!
 
 
  - and much more that i will add as i go along
