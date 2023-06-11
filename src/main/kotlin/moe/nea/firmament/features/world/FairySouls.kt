@@ -21,15 +21,16 @@ package moe.nea.firmament.features.world
 import io.github.moulberry.repo.data.Coordinate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
+import net.minecraft.util.math.Direction
 import moe.nea.firmament.events.ServerChatLineReceivedEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
+import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.blockPos
-import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.render.RenderInWorldContext.Companion.renderInWorld
 import moe.nea.firmament.util.unformattedString
@@ -131,6 +132,10 @@ object FairySouls : FirmamentFeature {
                 color(1F, 1F, 0F, 0.8F)
                 currentMissingSouls.forEach {
                     block(it.blockPos)
+                }
+                color(1f, 0f, 1f, 1f)
+                currentLocationSouls.forEach {
+                    wireframeCube(it.blockPos)
                 }
             }
         }
