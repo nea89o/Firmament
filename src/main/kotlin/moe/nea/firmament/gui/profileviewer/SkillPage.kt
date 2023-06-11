@@ -126,7 +126,7 @@ object SkillPage : ProfilePage {
         return WBox(Axis.HORIZONTAL).also {
             it.insets = Insets.ROOT_PANEL
             it.add(WGridPanel().also {
-                it.add(WText(Text.literal(profileViewer.account.getDisplayName())), 0, 0, 8, 1)
+                it.add(WText(Text.literal(profileViewer.account.getDisplayName(profileViewer.primaryName))), 0, 0, 8, 1)
                 for ((i, skill) in Skill.values().withIndex()) {
                     it.add(WText(Text.translatable("firmament.pv.skills.${skill.name.lowercase()}")), 0, i + 1, 4, 1)
                     it.add(skillBar(profileViewer, skill), 4, i + 1, 4, 1)

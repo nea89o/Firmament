@@ -167,10 +167,10 @@ data class PlayerData(
 ) {
     val rankPlusDyeColor = LegacyFormattingCode.values().find { it.name == rankPlusColor } ?: LegacyFormattingCode.GOLD
     val rankData get() = RepoManager.neuRepo.constants.misc.ranks[if (monthlyPackageRank == "NONE" || monthlyPackageRank == null) packageRank else monthlyPackageRank]
-    fun getDisplayName() = rankData?.let {
+    fun getDisplayName(name: String = playerName) = rankData?.let {
         ("§${it.color}[${it.tag}${rankPlusDyeColor.modern}" +
-            "${it.plus ?: ""}§${it.color}] $playerName")
-    } ?: "${Formatting.GRAY}${playerName}"
+            "${it.plus ?: ""}§${it.color}] $name")
+    } ?: "${Formatting.GRAY}$name"
 
 
 }

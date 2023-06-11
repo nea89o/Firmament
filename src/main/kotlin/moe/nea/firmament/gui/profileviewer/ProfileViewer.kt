@@ -46,7 +46,8 @@ class ProfileViewer(
                     source.sendError(Text.translatable("firmament.pv.noplayer", name))
                     return@launch
                 }
-                val names = mapOf(uuid to (Routes.getPlayerNameForUUID(uuid) ?: name))
+                val name = Routes.getPlayerNameForUUID(uuid) ?: name
+                val names = mapOf(uuid to (name))
                 val data = Routes.getAccountData(uuid)
                 if (data == null) {
                     source.sendError(Text.translatable("firmament.pv.noprofile", name))
