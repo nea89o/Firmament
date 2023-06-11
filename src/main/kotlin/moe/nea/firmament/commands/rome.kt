@@ -19,14 +19,13 @@
 package moe.nea.firmament.commands
 
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.arguments.StringArgumentType.getString
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.profileviewer.ProfileViewer
-import moe.nea.firmament.repo.ItemCostData
+import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
@@ -74,7 +73,7 @@ fun firmamentCommand() = literal("firmament") {
             thenExecute {
                 val itemName = SkyblockId(get(item))
                 source.sendFeedback(Text.translatable("firmament.price", itemName.neuItem))
-                val bazaarData = ItemCostData.bazaarData[itemName]
+                val bazaarData = HypixelStaticData.bazaarData[itemName]
                 if (bazaarData != null) {
                     source.sendFeedback(Text.translatable("firmament.price.bazaar"))
                     source.sendFeedback(
@@ -108,7 +107,7 @@ fun firmamentCommand() = literal("firmament") {
                         )
                     )
                 }
-                val lowestBin = ItemCostData.lowestBin[itemName]
+                val lowestBin = HypixelStaticData.lowestBin[itemName]
                 if (lowestBin != null) {
                     source.sendFeedback(
                         Text.translatable(

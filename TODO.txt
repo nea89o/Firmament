@@ -19,6 +19,7 @@
 - Dungeon Map
 
 Priority 2:
+- missing talismans / pets in pv
 - item overlays
     - tree capitator
     - builders wand

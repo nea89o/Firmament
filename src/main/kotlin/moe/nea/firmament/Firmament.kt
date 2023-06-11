@@ -50,7 +50,7 @@ import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.dbus.FirmamentDbusObject
 import moe.nea.firmament.features.FeatureManager
-import moe.nea.firmament.repo.ItemCostData
+import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
@@ -119,7 +119,7 @@ object Firmament {
         RepoManager.initialize()
         SBData.init()
         FeatureManager.autoload()
-        ItemCostData.spawnPriceLoop()
+        HypixelStaticData.spawnDataCollectionLoop()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
             runBlocking {

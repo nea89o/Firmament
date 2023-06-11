@@ -24,6 +24,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.util.math.BlockPos
 
 object MC {
+    inline val font get() = MinecraftClient.getInstance().textRenderer
     inline val soundManager get() = MinecraftClient.getInstance().soundManager
     inline val player get() = MinecraftClient.getInstance().player
     inline val world get() = MinecraftClient.getInstance().world

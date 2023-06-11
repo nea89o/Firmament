@@ -12,17 +12,22 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration.Companion.minutes
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.apis.CollectionResponse
+import moe.nea.firmament.apis.CollectionSkillData
+import moe.nea.firmament.apis.Skill
 import moe.nea.firmament.keybindings.IKeyBinding
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.async.waitForInput
 
-object ItemCostData {
-    private val logger = LogManager.getLogger("Firmament.ItemCostData")
+object HypixelStaticData {
+    private val logger = LogManager.getLogger("Firmament.HypixelStaticData")
     private val moulberryBaseUrl = "https://moulberry.codes"
     private val hypixelApiBaseUrl = "https://api.hypixel.net"
     var lowestBin: Map<SkyblockId, Double> = mapOf()
         private set
     var bazaarData: Map<SkyblockId, BazaarData> = mapOf()
+        private set
+    var collectionData: Map<Skill, CollectionSkillData> = mapOf()
         private set
 
     @Serializable
@@ -53,7 +58,9 @@ object ItemCostData {
 
     fun getPriceOfItem(item: SkyblockId): Double? = bazaarData[item]?.quickStatus?.buyPrice ?: lowestBin[item]
 
-    fun spawnPriceLoop() {
+
+    fun spawnDataCollectionLoop() {
+        Firmament.coroutineScope.launch { updateCollectionData() }
         Firmament.coroutineScope.launch {
             while (true) {
                 logger.info("Updating NEU prices")
@@ -81,6 +88,16 @@ object ItemCostData {
             logger.warn("Retrieved unsuccessful bazaar data")
         }
         bazaarData = response.products.mapKeys { it.key.toRepoId() }
+    }
+
+    private suspend fun updateCollectionData() {
+        val response =
+            Firmament.httpClient.get("$hypixelApiBaseUrl/resources/skyblock/collections").body<CollectionResponse>()
+        if (!response.success) {
+            logger.warn("Retrieved unsuccessful collection data")
+        }
+        collectionData = response.collections
+        logger.info("Downloaded ${collectionData.values.sumOf { it.items.values.size }} collections")
     }
 
 }

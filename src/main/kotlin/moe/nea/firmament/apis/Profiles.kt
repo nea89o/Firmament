@@ -20,6 +20,32 @@ import moe.nea.firmament.util.json.InstantAsLongSerializer
 
 
 @Serializable
+data class CollectionSkillData(
+    val items: Map<CollectionType, CollectionInfo>
+)
+
+@Serializable
+data class CollectionResponse(
+    val success: Boolean,
+    val collections: Map<Skill, CollectionSkillData>
+)
+
+@Serializable
+data class CollectionInfo(
+    val name: String,
+    val maxTiers: Int,
+    val tiers: List<CollectionTier>
+)
+
+@Serializable
+data class CollectionTier(
+    val tier: Int,
+    val amountRequired: Long,
+    val unlocks: List<String>,
+)
+
+
+@Serializable
 data class Profiles(
     val success: Boolean,
     val profiles: List<Profile>?
@@ -35,18 +61,18 @@ data class Profile(
     val members: Map<UUID, Member>,
 )
 
-enum class Skill(val accessor: KProperty1<Member, Double>, val color: DyeColor) {
-    FARMING(Member::experienceSkillFarming, DyeColor.YELLOW),
-    FORAGING(Member::experienceSkillForaging, DyeColor.BROWN),
-    MINING(Member::experienceSkillMining, DyeColor.LIGHT_GRAY),
-    ALCHEMY(Member::experienceSkillAlchemy, DyeColor.PURPLE),
-    TAMING(Member::experienceSkillTaming, DyeColor.GREEN),
-    FISHING(Member::experienceSkillFishing, DyeColor.BLUE),
-    RUNECRAFTING(Member::experienceSkillRunecrafting, DyeColor.PINK),
-    CARPENTRY(Member::experienceSkillCarpentry, DyeColor.ORANGE),
-    COMBAT(Member::experienceSkillCombat, DyeColor.RED),
-    SOCIAL(Member::experienceSkillSocial, DyeColor.WHITE),
-    ENCHANTING(Member::experienceSkillEnchanting, DyeColor.MAGENTA),
+enum class Skill(val accessor: KProperty1<Member, Double>, val color: DyeColor, val icon: SkyblockId) {
+    FARMING(Member::experienceSkillFarming, DyeColor.YELLOW, SkyblockId("ROOKIE_HOE")),
+    FORAGING(Member::experienceSkillForaging, DyeColor.BROWN, SkyblockId("TREECAPITATOR_AXE")),
+    MINING(Member::experienceSkillMining, DyeColor.LIGHT_GRAY, SkyblockId("DIAMOND_PICKAXE")),
+    ALCHEMY(Member::experienceSkillAlchemy, DyeColor.PURPLE, SkyblockId("BREWING_STAND")),
+    TAMING(Member::experienceSkillTaming, DyeColor.GREEN, SkyblockId("SUPER_EGG")),
+    FISHING(Member::experienceSkillFishing, DyeColor.BLUE, SkyblockId("FARMER_ROD")),
+    RUNECRAFTING(Member::experienceSkillRunecrafting, DyeColor.PINK, SkyblockId("MUSIC_RUNE;1")),
+    CARPENTRY(Member::experienceSkillCarpentry, DyeColor.ORANGE, SkyblockId("WORKBENCH")),
+    COMBAT(Member::experienceSkillCombat, DyeColor.RED, SkyblockId("UNDEAD_SWORD")),
+    SOCIAL(Member::experienceSkillSocial, DyeColor.WHITE, SkyblockId("EGG_HUNT")),
+    ENCHANTING(Member::experienceSkillEnchanting, DyeColor.MAGENTA, SkyblockId("ENCHANTMENT_TABLE")),
     ;
 
     fun getMaximumLevel(leveling: Leveling) = leveling.maximumLevels[name.lowercase()] ?: TODO("Repo error")
@@ -56,6 +82,12 @@ enum class Skill(val accessor: KProperty1<Member, Double>, val color: DyeColor) 
         if (this == RUNECRAFTING) return leveling.runecraftingExperienceRequiredPerLevel
         return leveling.skillExperienceRequiredPerLevel
     }
+}
+
+@Serializable
+@JvmInline
+value class CollectionType(val string: String) {
+    val skyblockId get() = SkyblockId(string.replace(":", "-").replace("MUSHROOM_COLLECTION", "HUGE_MUSHROOM_2"))
 }
 
 @Serializable
@@ -85,6 +117,7 @@ data class Member(
     val experienceSkillRunecrafting: Double = 0.0,
     @SerialName("experience_skill_carpentry")
     val experienceSkillCarpentry: Double = 0.0,
+    val collection: Map<CollectionType, Long> = mapOf()
 )
 
 @Serializable

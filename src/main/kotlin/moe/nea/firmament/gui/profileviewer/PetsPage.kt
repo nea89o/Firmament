@@ -14,8 +14,10 @@ import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Items
 import net.minecraft.text.Text
 import moe.nea.firmament.gui.WTightScrollPanel
+import moe.nea.firmament.gui.WTitledItem
 import moe.nea.firmament.rei.PetData
 import moe.nea.firmament.rei.SBItemStack
+import moe.nea.firmament.repo.RepoManager
 
 object PetsPage : ProfilePage {
     override fun getElements(profileViewer: ProfileViewer): WWidget {
@@ -26,16 +28,7 @@ object PetsPage : ProfilePage {
                 it.setGaps(8, 8)
                 for ((i, pet) in profileViewer.member.pets.withIndex()) {
                     val stack = SBItemStack(pet.itemId, PetData(pet.tier, pet.type.name, pet.exp)).asItemStack()
-                    it.add(object : WItem(stack) {
-                        override fun paint(context: DrawContext?, x: Int, y: Int, mouseX: Int, mouseY: Int) {
-                            BackgroundPainter.SLOT.paintBackground(context, x, y, this)
-                            super.paint(context, x, y, mouseX, mouseY)
-                        }
-
-                        override fun addTooltip(tooltip: TooltipBuilder) {
-                            tooltip.add(*stack.getTooltip(null, TooltipContext.BASIC).toTypedArray())
-                        }
-                    }, i % 5, i / 5, 1, 1)
+                    it.add(WTitledItem(stack), i % 5, i / 5, 1, 1)
                 }
                 it.layout()
             })), 0, 1, 8, 8)
