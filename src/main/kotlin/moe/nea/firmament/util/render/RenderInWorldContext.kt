@@ -24,16 +24,14 @@ import net.minecraft.client.gl.VertexBuffer
 import net.minecraft.client.render.BufferBuilder
 import net.minecraft.client.render.Camera
 import net.minecraft.client.render.GameRenderer
-import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 
-class RenderBlockContext private constructor(private val tesselator: Tessellator, private val matrixStack: MatrixStack) {
+class RenderInWorldContext private constructor(private val tesselator: Tessellator, private val matrixStack: MatrixStack) {
     private val buffer = tesselator.buffer
 
     fun color(red: Float, green: Float, blue: Float, alpha: Float) {
@@ -105,7 +103,7 @@ class RenderBlockContext private constructor(private val tesselator: Tessellator
             buf.unfixColor()
         }
 
-        fun renderBlocks(matrices: MatrixStack, camera: Camera, block: RenderBlockContext. () -> Unit) {
+        fun renderInWorld(matrices: MatrixStack, camera: Camera, block: RenderInWorldContext. () -> Unit) {
             RenderSystem.disableDepthTest()
             RenderSystem.enableBlend()
             RenderSystem.defaultBlendFunc()
@@ -114,7 +112,7 @@ class RenderBlockContext private constructor(private val tesselator: Tessellator
             matrices.push()
             matrices.translate(-camera.pos.x, -camera.pos.y, -camera.pos.z)
 
-            val ctx = RenderBlockContext(Tessellator.getInstance(), matrices)
+            val ctx = RenderInWorldContext(Tessellator.getInstance(), matrices)
             block(ctx)
 
             matrices.pop()

@@ -31,7 +31,7 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.blockPos
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
-import moe.nea.firmament.util.render.RenderBlockContext.Companion.renderBlocks
+import moe.nea.firmament.util.render.RenderInWorldContext.Companion.renderInWorld
 import moe.nea.firmament.util.unformattedString
 
 
@@ -127,7 +127,7 @@ object FairySouls : FirmamentFeature {
         }
         WorldRenderLastEvent.subscribe {
             if (!TConfig.displaySouls) return@subscribe
-            renderBlocks(it.matrices, it.camera) {
+            renderInWorld(it.matrices, it.camera) {
                 color(1F, 1F, 0F, 0.8F)
                 currentMissingSouls.forEach {
                     block(it.blockPos)
