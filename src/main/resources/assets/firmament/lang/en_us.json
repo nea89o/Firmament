@@ -8,6 +8,7 @@
     "firmament.price.bazaar.productid": "Stock id: %s",
     "firmament.price.bazaar.buy.price": "Buy Price: %s",
     "firmament.price.bazaar.buy.order": "Buy orders: %d",
+    "firmament.pv.pets": "Pets",
     "firmament.price.bazaar.sell.price": "Sell Price: %s",
     "firmament.price.bazaar.sell.order": "Sell orders: %d",
     "firmament.price.lowestbin": "Lowest BIN: %s",
