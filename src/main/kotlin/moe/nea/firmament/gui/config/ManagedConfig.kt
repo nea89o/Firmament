@@ -85,8 +85,9 @@ abstract class ManagedConfig(val name: String) {
                         e
                     )
                 }
+            } else {
+                value = default()
             }
-            value = default()
         }
 
         internal fun toJson(): JsonElement? {

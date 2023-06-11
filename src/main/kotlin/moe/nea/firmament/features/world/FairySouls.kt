@@ -51,7 +51,6 @@ object FairySouls : FirmamentFeature {
 
 
     object TConfig : ManagedConfig("fairy-souls") {
-
         val displaySouls by toggle("show") { false }
         val resetSouls by button("reset") {
             DConfig.data?.foundSouls?.clear() != null
