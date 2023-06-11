@@ -114,6 +114,7 @@ object ItemCache : IReloadable {
             cache[this.skyblockItemId] = s
         }
         if (!loreReplacements.isNullOrEmpty()) {
+            s = s.copy()!!
             s.applyLoreReplacements(loreReplacements)
             s.setCustomName(s.name.applyLoreReplacements(loreReplacements))
         }
