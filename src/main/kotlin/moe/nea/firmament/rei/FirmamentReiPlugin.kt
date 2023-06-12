@@ -24,18 +24,22 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry
+import me.shedaniel.rei.api.client.registry.transfer.TransferHandler
+import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry
 import me.shedaniel.rei.api.common.entry.EntryStack
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.recipes.SBCraftingRecipe
 import moe.nea.firmament.recipes.SBForgeRecipe
-import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.skyblockId
+import moe.nea.firmament.util.unformattedString
 
 
 class FirmamentReiPlugin : REIClientPlugin {
@@ -46,6 +50,19 @@ class FirmamentReiPlugin : REIClientPlugin {
         }
 
         val SKYBLOCK_ITEM_TYPE_ID = Identifier("firmament", "skyblockitems")
+    }
+
+    override fun registerTransferHandlers(registry: TransferHandlerRegistry) {
+        registry.register(TransferHandler { context ->
+            val screen = context.containerScreen
+            val display = context.display
+            if (display !is SBCraftingRecipe || screen !is GenericContainerScreen || screen.title?.unformattedString != "Craft Item") {
+                return@TransferHandler TransferHandler.Result.createNotApplicable()
+            }
+            if (context.isActuallyCrafting)
+                CraftingOverlay.setOverlay(screen, display)
+            return@TransferHandler TransferHandler.Result.createSuccessful()
+        })
     }
 
     override fun registerEntryTypes(registry: EntryTypeRegistry) {

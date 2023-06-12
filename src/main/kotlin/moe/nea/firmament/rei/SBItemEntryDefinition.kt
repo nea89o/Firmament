@@ -39,7 +39,10 @@ import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.FirmFormatters
+import moe.nea.firmament.util.HypixelPetInfo
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.petData
+import moe.nea.firmament.util.skyBlockId
 
 // TODO: add in extra data like pet info, into this structure
 data class PetData(
@@ -47,6 +50,12 @@ data class PetData(
     val petId: String,
     val exp: Double,
 ) {
+    companion object {
+        fun fromHypixel(petInfo: HypixelPetInfo) = PetData(
+            petInfo.tier, petInfo.type, petInfo.exp,
+        )
+    }
+
     val levelData by lazy { ExpLadders.getExpLadder(petId, rarity).getPetLevel(exp) }
 }
 
@@ -155,5 +164,13 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     fun getEntry(ingredient: NEUIngredient): EntryStack<SBItemStack> =
         getEntry(SkyblockId(ingredient.itemId), count = ingredient.amount.toInt())
 
-
+    fun getEntry(stack: ItemStack): EntryStack<SBItemStack> =
+        getEntry(
+            SBItemStack(
+                stack.skyBlockId ?: SkyblockId.NULL,
+                RepoManager.getNEUItem(stack.skyBlockId ?: SkyblockId.NULL),
+                stack.count,
+                petData = stack.petData?.let { PetData.fromHypixel(it) }
+            )
+        )
 }

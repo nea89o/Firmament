@@ -15,8 +15,6 @@
 - Dwarven Mines
 - Experimentation Solver
 - Capes
-- Dungeon Profit
-- Dungeon Map
 
 Priority 2:
 - missing talismans / pets in pv
@@ -33,7 +31,6 @@ Priority 2:
 Priority 3:
 - Item rarity halo
 - Zealot Counter using Combat XP popups
-- Use REIs "Move Item" functionality to higlight slots
 - client sided stat tracker that does not need the api
     - skills
     - coins
@@ -43,3 +40,10 @@ Priority 3:
 
 
  - and much more that i will add as i go along
+
+Dungeons (planned in another mod):
+- Dungeon Profit
+- Dungeon Map
+- Dungeon waypoints
+- Dungeon puzzle solvers
+- Talk with the big D

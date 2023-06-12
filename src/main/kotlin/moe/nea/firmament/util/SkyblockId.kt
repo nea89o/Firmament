@@ -15,17 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+@file:UseSerializers(DashlessUUIDSerializer::class)
 package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
+import java.util.UUID
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
+import moe.nea.firmament.util.json.DashlessUUIDSerializer
 
 /**
  * A skyblock item id, as used by the NEU repo.
@@ -59,6 +62,7 @@ value class SkyblockId(val neuItem: String) {
         val COINS: SkyblockId = SkyblockId("SKYBLOCK_COIN")
         private val bazaarEnchantmentRegex = "ENCHANTMENT_(\\D*)_(\\d+)".toRegex()
         val NULL: SkyblockId = SkyblockId("null")
+        val PET_NULL: SkyblockId = SkyblockId("null_pet")
     }
 }
 
@@ -68,6 +72,9 @@ val NEUItem.skyblockId get() = SkyblockId(skyblockItemId)
 data class HypixelPetInfo(
     val type: String,
     val tier: Rarity,
+    val exp: Double = 0.0,
+    val candyUsed: Int = 0,
+    val uuid: UUID? = null,
 ) {
     val skyblockId get() = SkyblockId("${type.uppercase()};${tier.ordinal}")
 }
@@ -77,20 +84,23 @@ private val jsonparser = Json { ignoreUnknownKeys = true }
 val ItemStack.extraAttributes: NbtCompound
     get() = getOrCreateSubNbt("ExtraAttributes")
 
+val ItemStack.petData: HypixelPetInfo?
+    get() {
+        val jsonString = extraAttributes.getString("petInfo")
+        if (jsonString.isNullOrBlank()) return null
+        return runCatching { jsonparser.decodeFromString<HypixelPetInfo>(jsonString) }
+            .getOrElse { return null }
+    }
+
 val ItemStack.skyBlockId: SkyblockId?
     get() {
-        when (val id = extraAttributes.getString("id")) {
+        return when (val id = extraAttributes.getString("id")) {
             "PET" -> {
-                val jsonString = extraAttributes.getString("petInfo")
-                if (jsonString.isNullOrBlank()) return null
-                val petInfo =
-                    runCatching { jsonparser.decodeFromString<HypixelPetInfo>(jsonString) }
-                        .getOrElse { return null }
-                return petInfo.skyblockId
+                petData?.skyblockId ?: SkyblockId.PET_NULL
             }
             // TODO: RUNE, ENCHANTED_BOOK, PARTY_HAT_CRAB{,_ANIMATED}, ABICASE
             else -> {
-                return SkyblockId(id)
+                SkyblockId(id)
             }
         }
     }
