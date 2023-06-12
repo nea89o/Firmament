@@ -17,6 +17,7 @@ citresewn = "1.1.3+1.20"
 hotswap_agent = "1.4.2-SNAPSHOT"
 sodium = "mc1.20-0.4.10"
 ncr = "Fabric-1.20-v2.2.0"
+mixinextras = "0.2.0-beta.8"
 
 
 [libraries]
@@ -30,6 +31,7 @@ repoparser = { module = "moe.nea:neurepoparser", version.ref = "neurepoparser" }
 dbus_java_core = { module = "com.github.hypfvieh:dbus-java-core", version.ref = "dbus_java" }
 dbus_java_unixsocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus_java" }
 libgui = { module = "io.github.cottonmc:LibGui", version.ref = "libgui" }
+mixinextras = { module = "com.github.LlamaLad7:MixinExtras", version.ref = "mixinextras" }
 
 # Runtime:
 hotswap = { module = "virtual.github.hotswapagent:hotswap-agent", version.ref = "hotswap_agent" }

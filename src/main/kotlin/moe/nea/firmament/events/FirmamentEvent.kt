@@ -24,8 +24,8 @@ package moe.nea.firmament.events
  * Typically, that event bus is implemented as a companion object
  *
  * ```
- * class SomeEvent : NEUEvent() {
- *     companion object : NEUEventBus<SomeEvent>()
+ * class SomeEvent : FirmamentEvent() {
+ *     companion object : FirmamentEventBus<SomeEvent>()
  * }
  * ```
  */

@@ -38,6 +38,11 @@ repositories {
             includeGroup("maven.modrinth")
         }
     }
+    maven("https://jitpack.io/") {
+        content {
+            includeGroupByRegex("(com|io)\\.github\\..+")
+        }
+    }
     maven("https://repo.sleeping.town") {
         content {
             includeGroup("com.unascribed")
@@ -89,6 +94,9 @@ dependencies {
     modImplementation(libs.fabric.kotlin)
     modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
+    implementation(libs.mixinextras)
+    include(libs.mixinextras)
+    annotationProcessor(libs.mixinextras)
     include(libs.libgui)
     modApi(libs.fabric.api)
     modApi(libs.architectury)
