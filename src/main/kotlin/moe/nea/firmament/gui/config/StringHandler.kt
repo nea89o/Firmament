@@ -31,7 +31,7 @@ class StringHandler(val config: ManagedConfig) : ManagedConfig.OptionHandler<Str
     }
 
     override fun fromJson(element: JsonElement): String {
-        return element.jsonPrimitive.toString()
+        return element.jsonPrimitive.content
     }
 
     override fun emitGuiElements(opt: ManagedConfig.Option<String>, guiAppender: GuiAppender) {
