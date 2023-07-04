@@ -22,22 +22,32 @@ import com.mojang.blaze3d.systems.RenderSystem
 import java.lang.Math.pow
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gl.VertexBuffer
 import net.minecraft.client.render.BufferBuilder
 import net.minecraft.client.render.Camera
 import net.minecraft.client.render.GameRenderer
+import net.minecraft.client.render.LightmapTextureManager
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.Tessellator
+import net.minecraft.client.render.VertexConsumer
+import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.util.math.MatrixStack.Entry
+import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import moe.nea.firmament.events.WorldRenderLastEvent
+import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.assertTrueOr
 
 class RenderInWorldContext private constructor(
     private val tesselator: Tessellator,
     private val matrixStack: MatrixStack,
-    private val camera: Camera
+    private val camera: Camera,
+    private val vertexConsumers: VertexConsumerProvider.Immediate,
 ) {
     private val buffer = tesselator.buffer
 
@@ -52,6 +62,59 @@ class RenderInWorldContext private constructor(
         buildCube(matrixStack.peek().positionMatrix, buffer)
         tesselator.draw()
         matrixStack.pop()
+    }
+
+    enum class VerticalAlign {
+        TOP, BOTTOM, CENTER;
+
+        fun align(index: Int, count: Int): Float {
+            return when (this) {
+                CENTER -> (index - count / 2F) * (1 + MC.font.fontHeight.toFloat())
+                BOTTOM -> (index - count) * (1 + MC.font.fontHeight.toFloat())
+                TOP -> (index) * (1 + MC.font.fontHeight.toFloat())
+            }
+        }
+    }
+
+    fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER) {
+        assertTrueOr(texts.isNotEmpty()) { return@text }
+        matrixStack.push()
+        matrixStack.translate(position.x, position.y, position.z)
+        matrixStack.multiply(camera.rotation)
+        matrixStack.scale(-0.025F, -0.025F, -1F)
+        for ((index, text) in texts.withIndex()) {
+            matrixStack.push()
+            val width = MC.font.getWidth(text)
+            matrixStack.translate(-width / 2F, verticalAlign.align(index, texts.size), 0F)
+            val vertexConsumer: VertexConsumer = vertexConsumers.getBuffer(RenderLayer.getTextBackgroundSeeThrough())
+            val matrix4f = matrixStack.peek().positionMatrix
+            vertexConsumer.vertex(matrix4f, -1.0f, -1.0f, 0.0f).color(0x70808080)
+                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+            vertexConsumer.vertex(matrix4f, -1.0f, MC.font.fontHeight.toFloat(), 0.0f).color(0x70808080)
+                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+            vertexConsumer.vertex(matrix4f, width.toFloat(), MC.font.fontHeight.toFloat(), 0.0f)
+                .color(0x70808080)
+                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+            vertexConsumer.vertex(matrix4f, width.toFloat(), -1.0f, 0.0f).color(0x70808080)
+                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+            matrixStack.translate(0F, 0F, 0.01F)
+
+            MC.font.draw(
+                text,
+                0F,
+                0F,
+                -1,
+                false,
+                matrixStack.peek().positionMatrix,
+                vertexConsumers,
+                TextRenderer.TextLayerType.SEE_THROUGH,
+                0,
+                LightmapTextureManager.MAX_LIGHT_COORDINATE
+            )
+            matrixStack.pop()
+        }
+        matrixStack.pop()
+        vertexConsumers.drawCurrentLayer()
     }
 
     fun tinyBlock(vec3d: Vec3d, size: Float) {
@@ -157,20 +220,26 @@ class RenderInWorldContext private constructor(
             buf.unfixColor()
         }
 
-        fun renderInWorld(matrices: MatrixStack, camera: Camera, block: RenderInWorldContext. () -> Unit) {
+
+        fun renderInWorld(event: WorldRenderLastEvent, block: RenderInWorldContext. () -> Unit) {
             RenderSystem.disableDepthTest()
             RenderSystem.enableBlend()
             RenderSystem.defaultBlendFunc()
             RenderSystem.disableCull()
 
-            matrices.push()
-            matrices.translate(-camera.pos.x, -camera.pos.y, -camera.pos.z)
+            event.matrices.push()
+            event.matrices.translate(-event.camera.pos.x, -event.camera.pos.y, -event.camera.pos.z)
 
-            val ctx = RenderInWorldContext(RenderSystem.renderThreadTesselator(), matrices, camera)
+            val ctx = RenderInWorldContext(
+                RenderSystem.renderThreadTesselator(),
+                event.matrices,
+                event.camera,
+                event.vertexConsumers
+            )
 
             block(ctx)
 
-            matrices.pop()
+            event.matrices.pop()
 
             RenderSystem.setShaderColor(1F, 1F, 1F, 1F)
             VertexBuffer.unbind()
