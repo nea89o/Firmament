@@ -52,6 +52,7 @@ object StorageOverlay : FirmamentFeature {
             is StorageBackingHandle.Overview -> rememberStorageOverview(handler, data)
             is StorageBackingHandle.Page -> rememberPage(handler, data)
         }
+        Data.markDirty()
     }
 
     private fun rememberStorageOverview(

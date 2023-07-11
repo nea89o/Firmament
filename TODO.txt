@@ -5,7 +5,6 @@ Priority 1:
 - recipes
     - more recipe categories
 - dfu cache
-- Storage Overlay
 - PV
 - NEU buttons
 - Pet/Equipment hud in inventory
@@ -21,6 +20,8 @@ Priority 1:
 
 Priority 2:
 - missing talismans / pets in pv
+- renameable storage pages
+- storage overlay slot handling (instead of shortcut page)
 - item overlays
     - tree capitator
     - builders wand
