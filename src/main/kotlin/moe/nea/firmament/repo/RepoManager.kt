@@ -35,6 +35,7 @@ import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.hud.ProgressBar
 import moe.nea.firmament.rei.PetData
+import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
 
 object RepoManager {
@@ -63,9 +64,11 @@ object RepoManager {
         registerReloadListener(ItemCache)
         registerReloadListener(ExpLadders)
         registerReloadListener {
-            if (!trySendClientboundUpdateRecipesPacket()) {
-                logger.warn("Failed to issue a ClientboundUpdateRecipesPacket (to reload REI). This may lead to an outdated item list.")
-                recentlyFailedToUpdateItemList = true
+            Firmament.coroutineScope.launch(MinecraftDispatcher) {
+                if (!trySendClientboundUpdateRecipesPacket()) {
+                    logger.warn("Failed to issue a ClientboundUpdateRecipesPacket (to reload REI). This may lead to an outdated item list.")
+                    recentlyFailedToUpdateItemList = true
+                }
             }
         }
     }

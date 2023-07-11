@@ -21,7 +21,14 @@ package moe.nea.firmament.features.world
 import io.github.moulberry.repo.data.Coordinate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import net.minecraft.util.math.Direction
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.RenderLayer.ALWAYS_DEPTH_TEST
+import net.minecraft.client.render.RenderLayer.MultiPhaseParameters
+import net.minecraft.client.render.RenderPhase
+import net.minecraft.client.render.VertexFormat
+import net.minecraft.client.render.VertexFormats
+import net.minecraft.text.Text
+import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.ServerChatLineReceivedEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
@@ -32,6 +39,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.blockPos
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
+import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.render.RenderInWorldContext.Companion.renderInWorld
 import moe.nea.firmament.util.unformattedString
 
@@ -59,7 +67,6 @@ object FairySouls : FirmamentFeature {
     }
 
 
-    override val name: String get() = "Fairy Souls"
     override val identifier: String get() = "fairy-souls"
 
     val playerReach = 5
@@ -107,6 +114,22 @@ object FairySouls : FirmamentFeature {
         updateMissingSouls()
     }
 
+    val NODEPTH: RenderLayer = RenderLayer.of(
+        "firmamentnodepth",
+        VertexFormats.POSITION_COLOR_TEXTURE,
+        VertexFormat.DrawMode.QUADS,
+        256,
+        true,
+        true,
+        MultiPhaseParameters.builder()
+            .program(RenderPhase.COLOR_PROGRAM)
+            .writeMaskState(RenderPhase.COLOR_MASK)
+            .depthTest(ALWAYS_DEPTH_TEST)
+            .cull(RenderPhase.DISABLE_CULLING)
+            .layering(RenderLayer.VIEW_OFFSET_Z_LAYERING)
+            .target(RenderPhase.MAIN_TARGET)
+            .build(true)
+    )
 
     override fun onLoad() {
         SkyblockServerUpdateEvent.subscribe {
@@ -127,7 +150,8 @@ object FairySouls : FirmamentFeature {
         }
         WorldRenderLastEvent.subscribe {
             if (!TConfig.displaySouls) return@subscribe
-            renderInWorld(it.matrices, it.camera) {
+            renderInWorld(it) {
+                text(Vec3d(0.0, 0.0, 0.0), Text.literal("Test String") , Text.literal("Short"), Text.literal("just lik"), verticalAlign = RenderInWorldContext.VerticalAlign.BOTTOM)
                 color(1F, 1F, 0F, 0.8F)
                 currentMissingSouls.forEach {
                     block(it.blockPos)

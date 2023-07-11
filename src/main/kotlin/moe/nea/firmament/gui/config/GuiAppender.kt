@@ -29,7 +29,7 @@ class GuiAppender(val width: Int) {
     internal val panel = WGridPanel().also { it.setGaps(4, 4) }
     internal val reloadables = mutableListOf<(() -> Unit)>()
     fun set(x: Int, y: Int, w: Int, h: Int, widget: WWidget) {
-        panel.add(widget, x, y, w, h)
+        panel.add(widget, x, y + row, w, h)
     }
 
 
@@ -50,13 +50,13 @@ class GuiAppender(val width: Int) {
 
     fun appendSplitRow(left: WWidget, right: WWidget) {
         val lw = width / 2
-        set(0, row, lw, 1, left)
-        set(lw, row, width - lw, 1, right)
+        set(0, 0, lw, 1, left)
+        set(lw, 0, width - lw, 1, right)
         skipRows(1)
     }
 
     fun appendFullRow(widget: WWidget) {
-        set(0, row, width, 1, widget)
+        set(0, 0, width, 1, widget)
         skipRows(1)
     }
 }

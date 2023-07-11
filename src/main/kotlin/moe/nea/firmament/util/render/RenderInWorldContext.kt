@@ -76,6 +76,10 @@ class RenderInWorldContext private constructor(
         }
     }
 
+    fun waypoint(position: BlockPos, label: Text) {
+        text(position.toCenterPos(), label, Text.literal("§e${MC.player?.pos?.distanceTo(position.toCenterPos())}m"))
+    }
+
     fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER) {
         assertTrueOr(texts.isNotEmpty()) { return@text }
         matrixStack.push()

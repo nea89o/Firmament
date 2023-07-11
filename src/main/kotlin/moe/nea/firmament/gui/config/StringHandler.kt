@@ -38,6 +38,7 @@ class StringHandler(val config: ManagedConfig) : ManagedConfig.OptionHandler<Str
         guiAppender.appendLabeledRow(
             opt.labelText,
             WTextField(opt.labelText).apply {
+                maxLength = 1000
                 suggestion = Text.translatableWithFallback(opt.rawLabelText + ".hint", "")
                 guiAppender.onReload { text = opt.value }
                 setChangedListener {

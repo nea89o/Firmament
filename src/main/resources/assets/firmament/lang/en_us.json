@@ -57,5 +57,14 @@
     "firmament.pv.skills.total": "Total Exp: %s",
     "firmament.pv.lookingup": "Looking up %s",
     "firmament.pv.noprofile": "%s has no SkyBlock profiles",
-    "firmament.pv.noplayer": "%s is not a Minecraft player"
+    "firmament.pv.noplayer": "%s is not a Minecraft player",
+    "firmament.config.save-cursor-position.enable": "Enable",
+    "firmament.config.save-cursor-position.tolerance": "Tolerance",
+    "firmament.config.save-cursor-position": "Save Cursor Position",
+    "firmament.config.storage-overlay": "Storage Overlay",
+    "firmament.config.storage-overlay.rows": "Rows",
+    "firmament.config.storage-overlay.padding": "Padding",
+    "firmament.config.storage-overlay.scroll-speed": "Scroll Speed",
+    "firmament.config.storage-overlay.inverse-scroll": "Invert Scroll",
+    "firmament.config.storage-overlay.margin": "Margin"
 }

@@ -19,13 +19,15 @@
 package moe.nea.firmament
 
 import com.mojang.brigadier.CommandDispatcher
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.compression.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.serialization.kotlinx.json.*
+import dev.architectury.event.events.client.ClientTickEvent
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
 import java.nio.file.Files
 import java.nio.file.Path
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
@@ -49,6 +51,7 @@ import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.dbus.FirmamentDbusObject
+import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
@@ -114,6 +117,10 @@ object Firmament {
     @JvmStatic
     fun onClientInitialize() {
         dbusConnection.requestBusName("moe.nea.firmament")
+        var tick = 0
+        ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { instance ->
+            TickEvent.publish(TickEvent(tick++))
+        })
         dbusConnection.exportObject(FirmamentDbusObject)
         IDataHolder.registerEvents()
         RepoManager.initialize()

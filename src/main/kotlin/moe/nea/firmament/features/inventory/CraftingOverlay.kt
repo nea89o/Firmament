@@ -26,8 +26,6 @@ object CraftingOverlay : FirmamentFeature {
         this.recipe = recipe
     }
 
-    override val name: String
-        get() = "Crafting Overlay"
     override val identifier: String
         get() = "crafting-overlay"
 

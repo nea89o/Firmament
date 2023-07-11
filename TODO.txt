@@ -1,7 +1,10 @@
+Prio 0 (Bugs):
+- WorldReadyEvent buggy? -> out of date locraw
+
+Priority 1:
 - recipes
     - more recipe categories
 - dfu cache
-- replace REI with custom renderer (if needed)
 - Storage Overlay
 - PV
 - NEU buttons

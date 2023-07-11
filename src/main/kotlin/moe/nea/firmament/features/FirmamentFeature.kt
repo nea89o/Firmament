@@ -21,7 +21,6 @@ package moe.nea.firmament.features
 import moe.nea.firmament.gui.config.ManagedConfig
 
 interface FirmamentFeature {
-    val name: String
     val identifier: String
     val defaultEnabled: Boolean
         get() = true

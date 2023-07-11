@@ -38,8 +38,6 @@ import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.render.RenderInWorldContext.Companion.renderInWorld
 
 object FishingWarning : FirmamentFeature {
-    override val name: String
-        get() = "Fishing Warning"
     override val identifier: String
         get() = "fishing-warning"
 
@@ -137,7 +135,7 @@ object FishingWarning : FirmamentFeature {
         WorldRenderLastEvent.subscribe {
             recentParticles.removeIf { it.second.passedTime() > 5.seconds }
             recentCandidates.removeIf { it.timeMark.passedTime() > 5.seconds }
-            renderInWorld(it.matrices, it.camera) {
+            renderInWorld(it) {
                 color(0f, 0f, 1f, 1f)
                 recentParticles.forEach {
                     tinyBlock(it.first, 0.1F)

@@ -4,8 +4,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.8.10"
-    kotlin("plugin.serialization") version "1.8.10"
+    kotlin("jvm") version "1.8.20"
+    kotlin("plugin.serialization") version "1.8.20"
+    id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
     id("dev.architectury.loom") version "1.1.336"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator")

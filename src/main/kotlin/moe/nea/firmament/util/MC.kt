@@ -24,6 +24,10 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.util.math.BlockPos
 
 object MC {
+    fun sendCommand(command: String) {
+        player?.networkHandler?.sendCommand(command)
+    }
+
     inline val font get() = MinecraftClient.getInstance().textRenderer
     inline val soundManager get() = MinecraftClient.getInstance().soundManager
     inline val player get() = MinecraftClient.getInstance().player

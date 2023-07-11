@@ -30,6 +30,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlin.time.Duration
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
@@ -137,6 +138,25 @@ abstract class ManagedConfig(val name: String) {
 
     protected fun toggle(propertyName: String, default: () -> Boolean): Option<Boolean> {
         return option(propertyName, default, BooleanHandler(this))
+    }
+
+    protected fun duration(
+        propertyName: String,
+        min: Duration,
+        max: Duration,
+        default: () -> Duration,
+    ): Option<Duration> {
+        return option(propertyName, default, DurationHandler(this, min, max))
+    }
+
+
+    protected fun integer(
+        propertyName: String,
+        min: Int,
+        max: Int,
+        default: () -> Int,
+    ): Option<Int> {
+        return option(propertyName, default, IntegerHandler(this, min, max))
     }
 
     protected fun button(propertyName: String, runnable: () -> Unit): Option<Unit> {

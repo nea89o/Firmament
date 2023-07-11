@@ -14,8 +14,6 @@ import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.iterate
 
 object DeveloperFeatures : FirmamentFeature {
-    override val name: String
-        get() = "developer"
     override val identifier: String
         get() = "developer"
     override val config: TConfig

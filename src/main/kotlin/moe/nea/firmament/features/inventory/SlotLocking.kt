@@ -33,8 +33,6 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 
 object SlotLocking : FirmamentFeature {
-    override val name: String
-        get() = "Slot Locking"
     override val identifier: String
         get() = "slot-locking"
 

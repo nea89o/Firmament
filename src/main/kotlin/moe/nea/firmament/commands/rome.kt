@@ -22,6 +22,7 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
+import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.profileviewer.ProfileViewer
@@ -30,6 +31,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.unformattedString
 
@@ -38,6 +40,12 @@ fun firmamentCommand() = literal("firmament") {
     thenLiteral("config") {
         thenExecute {
             AllConfigsGui.showAllGuis()
+        }
+    }
+    thenLiteral("storage") {
+        thenExecute {
+            ScreenUtil.setScreenLater(StorageOverlayScreen())
+            MC.player?.networkHandler?.sendChatCommand("ec")
         }
     }
     thenLiteral("repo") {

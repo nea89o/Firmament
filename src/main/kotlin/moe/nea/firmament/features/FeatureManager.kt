@@ -21,10 +21,13 @@ package moe.nea.firmament.features
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.fishing.FishingWarning
 import moe.nea.firmament.features.inventory.CraftingOverlay
+import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
+import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.util.data.DataHolder
 
@@ -50,9 +53,13 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(FairySouls)
             loadFeature(FishingWarning)
             loadFeature(SlotLocking)
+            loadFeature(StorageOverlay)
             loadFeature(CraftingOverlay)
-            if (Firmament.DEBUG)
+            loadFeature(SaveCursorPosition)
+            if (Firmament.DEBUG) {
                 loadFeature(DeveloperFeatures)
+                loadFeature(DebugView)
+            }
             hasAutoloaded = true
         }
     }
