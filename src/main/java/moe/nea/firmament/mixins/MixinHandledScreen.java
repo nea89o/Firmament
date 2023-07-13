@@ -18,12 +18,9 @@
 
 package moe.nea.firmament.mixins;
 
-import moe.nea.firmament.events.HandledScreenKeyPressedEvent;
-import moe.nea.firmament.events.IsSlotProtectedEvent;
-import moe.nea.firmament.events.SlotRenderEvents;
+import moe.nea.firmament.events.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,6 +38,18 @@ public class MixinHandledScreen {
         if (HandledScreenKeyPressedEvent.Companion.publish(new HandledScreenKeyPressedEvent(keyCode, scanCode, modifiers)).getCancelled()) {
             cir.setReturnValue(true);
         }
+    }
+
+    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+    public void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+        if (ScreenClickEvent.Companion.publish(new ScreenClickEvent((HandledScreen<?>) (Object) this, mouseX, mouseY, button)).getCancelled()) {
+            cir.setReturnValue(true);
+        }
+    }
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawForeground(Lnet/minecraft/client/gui/DrawContext;II)V", shift = At.Shift.AFTER))
+    public void onAfterRenderForeground(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        HandledScreenForegroundEvent.Companion.publish(new HandledScreenForegroundEvent((HandledScreen<?>) (Object) this, mouseX, mouseY, delta));
     }
 
     @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", at = @At("HEAD"), cancellable = true)

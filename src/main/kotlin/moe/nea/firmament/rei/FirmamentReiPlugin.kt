@@ -23,6 +23,7 @@ import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry
+import me.shedaniel.rei.api.client.registry.screen.ExclusionZones
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandler
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry
@@ -30,9 +31,11 @@ import me.shedaniel.rei.api.common.entry.EntryStack
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
+import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.recipes.SBCraftingRecipe
 import moe.nea.firmament.recipes.SBForgeRecipe
@@ -72,6 +75,10 @@ class FirmamentReiPlugin : REIClientPlugin {
     override fun registerCategories(registry: CategoryRegistry) {
         registry.add(SBCraftingRecipe.Category)
         registry.add(SBForgeRecipe.Category)
+    }
+
+    override fun registerExclusionZones(zones: ExclusionZones) {
+        zones.register(HandledScreen::class.java) { HandledScreenPushREIEvent(it).rectangles }
     }
 
     override fun registerDisplays(registry: DisplayRegistry) {
