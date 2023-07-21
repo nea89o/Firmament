@@ -173,7 +173,7 @@ abstract class ManagedConfig(val name: String) {
         latestGuiAppender?.reloadables?.forEach {it() }
     }
 
-    fun showConfigEditor(parent: Screen? = null) {
+    fun getConfigEditor(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
         val guiapp = GuiAppender(20)
         latestGuiAppender = guiapp
@@ -181,12 +181,16 @@ abstract class ManagedConfig(val name: String) {
         sortedOptions.forEach { it.appendToGui(guiapp) }
         guiapp.reloadables.forEach { it() }
         lwgd.setRootPanel(guiapp.panel)
-        setScreenLater(object : CottonClientScreen(lwgd) {
+        return object : CottonClientScreen(lwgd) {
             override fun close() {
                 latestGuiAppender = null
                 MC.screen = parent
             }
-        })
+        }
+    }
+
+    fun showConfigEditor(parent: Screen? = null) {
+        setScreenLater(getConfigEditor(parent))
     }
 
 }

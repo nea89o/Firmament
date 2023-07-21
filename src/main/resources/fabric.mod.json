@@ -31,6 +31,9 @@
       ],
       "modmenu": [
           "moe.nea.firmament.modmenu.FirmamentModMenuPlugin"
+      ],
+      "jarvis": [
+          "moe.nea.firmament.jarvis.JarvisIntegration"
       ]
   },
     "mixins": [

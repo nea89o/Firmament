@@ -101,6 +101,8 @@ dependencies {
     include(libs.libgui)
     modApi(libs.fabric.api)
     modApi(libs.architectury)
+    modImplementation(libs.jarvis.api)
+    include(libs.jarvis.fabric)
 
     // Actual dependencies
     modCompileOnly(libs.rei.api) {
@@ -120,8 +122,9 @@ dependencies {
     transInclude(nonModImplentation(ktor("client-logging"))!!)
 
     // Dev environment preinstalled mods
-    modRuntimeOnly(libs.bundles.runtime.required)
-    modRuntimeOnly(libs.bundles.runtime.optional)
+    modLocalRuntime(libs.bundles.runtime.required)
+    modLocalRuntime(libs.bundles.runtime.optional)
+    modLocalRuntime(libs.jarvis.fabric)
 
     transInclude.resolvedConfiguration.resolvedArtifacts.forEach {
         include(it.moduleVersion.id.toString())
