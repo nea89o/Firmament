@@ -1,41 +1,42 @@
 {
-  "schemaVersion": 1,
-  "id": "firmament",
-  "version": "${version}",
-  "name": "Firmament",
-  "description": "Firmament powered by NEU",
-  "authors": [
-    {
-      "name": "Linnea Gräf",
-      "contact": {
-        "email": "nea@nea89.moe"
-      }
-    }
-  ],
-  "contact": {
-    "discord": "https://discord.gg/moulberry",
-    "sources": "https://git.nea.moe/nea/firmament/"
-  },
-  "license": "ARR",
-  "icon": "assets/firmament/icon.png",
-  "environment": "client",
-  "entrypoints": {
-      "main": [
-          "moe.nea.firmament.Firmament::onInitialize"
-      ],
-      "client": [
-          "moe.nea.firmament.Firmament::onClientInitialize"
-      ],
-      "rei_client": [
-          "moe.nea.firmament.rei.FirmamentReiPlugin"
-      ],
-      "modmenu": [
-          "moe.nea.firmament.modmenu.FirmamentModMenuPlugin"
-      ],
-      "jarvis": [
-          "moe.nea.firmament.jarvis.JarvisIntegration"
-      ]
-  },
+    "schemaVersion": 1,
+    "id": "firmament",
+    "version": "${version}",
+    "name": "Firmament",
+    "description": "Firmament powered by NEU",
+    "authors": [
+        {
+            "name": "Linnea Gräf",
+            "contact": {
+                "email": "nea@nea89.moe"
+            }
+        }
+    ],
+    "contact": {
+        "discord": "https://discord.gg/moulberry",
+        "sources": "https://git.nea.moe/nea/firmament/"
+    },
+    "license": "ARR",
+    "accessWidener": "firmament.accesswidener",
+    "icon": "assets/firmament/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "main": [
+            "moe.nea.firmament.Firmament::onInitialize"
+        ],
+        "client": [
+            "moe.nea.firmament.Firmament::onClientInitialize"
+        ],
+        "rei_client": [
+            "moe.nea.firmament.rei.FirmamentReiPlugin"
+        ],
+        "modmenu": [
+            "moe.nea.firmament.modmenu.FirmamentModMenuPlugin"
+        ],
+        "jarvis": [
+            "moe.nea.firmament.jarvis.JarvisIntegration"
+        ]
+    },
     "mixins": [
         "firmament.mixins.json"
     ],
