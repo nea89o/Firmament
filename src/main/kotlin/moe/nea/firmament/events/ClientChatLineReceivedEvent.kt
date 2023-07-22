@@ -9,6 +9,7 @@ import moe.nea.firmament.util.unformattedString
  */
 data class ClientChatLineReceivedEvent(val text: Text) : FirmamentEvent.Cancellable() {
     val unformattedString = text.unformattedString
+    var replaceWith: Text = text
 
     companion object : FirmamentEventBus<ClientChatLineReceivedEvent>()
 }

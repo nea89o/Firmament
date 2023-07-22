@@ -66,5 +66,10 @@
     "firmament.config.storage-overlay.padding": "Padding",
     "firmament.config.storage-overlay.scroll-speed": "Scroll Speed",
     "firmament.config.storage-overlay.inverse-scroll": "Invert Scroll",
-    "firmament.config.storage-overlay.margin": "Margin"
+    "firmament.config.storage-overlay.margin": "Margin",
+    "firmament.config.image-preview": "Image Preview",
+    "firmament.config.image-preview.enabled": "Enable Image Preview",
+    "firmament.config.image-preview.allow-all-hosts": "Allow all Image Hosts",
+    "firmament.config.image-preview.allowed-hosts": "Allowed Image Hosts",
+    "firmament.config.image-preview.percentage": "Image Width (Percentage of screen)"
 }

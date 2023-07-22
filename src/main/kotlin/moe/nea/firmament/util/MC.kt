@@ -28,6 +28,8 @@ object MC {
         player?.networkHandler?.sendCommand(command)
     }
 
+    inline val textureManager get() = MinecraftClient.getInstance().textureManager
+    inline val inGameHud get() = MinecraftClient.getInstance().inGameHud
     inline val font get() = MinecraftClient.getInstance().textRenderer
     inline val soundManager get() = MinecraftClient.getInstance().soundManager
     inline val player get() = MinecraftClient.getInstance().player

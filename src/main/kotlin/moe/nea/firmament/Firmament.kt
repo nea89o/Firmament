@@ -20,19 +20,19 @@ package moe.nea.firmament
 
 import com.mojang.brigadier.CommandDispatcher
 import dev.architectury.event.events.client.ClientTickEvent
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.UserAgent
-import io.ktor.client.plugins.cache.HttpCache
-import io.ktor.client.plugins.compression.ContentEncoding
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.cache.*
+import io.ktor.client.plugins.compression.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.serialization.kotlinx.json.*
 import java.nio.file.Files
 import java.nio.file.Path
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
@@ -51,6 +51,7 @@ import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.dbus.FirmamentDbusObject
+import moe.nea.firmament.events.ScreenRenderPostEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.repo.HypixelStaticData
@@ -134,7 +135,12 @@ object Firmament {
                 globalJob.cancel()
             }
         })
-
+        ScreenEvents.AFTER_INIT.register(ScreenEvents.AfterInit { client, screen, scaledWidth, scaledHeight ->
+            ScreenEvents.afterRender(screen)
+                .register(ScreenEvents.AfterRender { screen, drawContext, mouseX, mouseY, tickDelta ->
+                    ScreenRenderPostEvent.publish(ScreenRenderPostEvent(screen, mouseX, mouseY, tickDelta, drawContext))
+                })
+        })
     }
 
     fun identifier(path: String) = Identifier(MOD_ID, path)

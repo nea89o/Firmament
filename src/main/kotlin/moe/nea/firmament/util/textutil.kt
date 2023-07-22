@@ -21,6 +21,7 @@ package moe.nea.firmament.util
 import net.minecraft.text.LiteralTextContent
 import net.minecraft.text.Text
 import net.minecraft.text.TextContent
+import net.minecraft.text.TranslatableTextContent
 import moe.nea.firmament.Firmament
 
 
@@ -86,3 +87,23 @@ class TextMatcher(text: Text) {
 val Text.unformattedString
     get() = string.replace("§.".toRegex(), "")
 
+
+fun Text.transformEachRecursively(function: (Text) -> Text): Text {
+    val c = this.content
+    if (c is TranslatableTextContent) {
+        return Text.translatableWithFallback(c.key, c.fallback, *c.args.map {
+            (if (it is Text) it else Text.literal(it.toString())).transformEachRecursively(function)
+        }.toTypedArray()).also { new ->
+            new.style = this.style
+            new.siblings.clear()
+            this.siblings.forEach { child ->
+                new.siblings.add(child.transformEachRecursively(function))
+            }
+        }
+    }
+    return function(this.copy().also { it.siblings.clear() }).also { tt ->
+        this.siblings.forEach {
+            tt.siblings.add(it.transformEachRecursively(function))
+        }
+    }
+}
