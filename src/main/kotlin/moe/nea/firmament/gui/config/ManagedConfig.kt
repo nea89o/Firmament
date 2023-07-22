@@ -21,6 +21,7 @@ package moe.nea.firmament.gui.config
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
 import io.github.cottonmc.cotton.gui.widget.data.Insets
+import moe.nea.jarvis.api.Point
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
@@ -150,6 +151,19 @@ abstract class ManagedConfig(val name: String) {
     }
 
 
+    protected fun position(
+        propertyName: String,
+        width: Int,
+        height: Int,
+        default: () -> Point,
+    ): Option<HudMeta> {
+        val label = Text.translatable("firmament.config.${name}.${propertyName}")
+        return option(propertyName, {
+            val p = default()
+            HudMeta(HudPosition(p.x, p.y, 1F), label, width, height)
+        }, HudMetaHandler(this, label, width, height))
+    }
+
     protected fun integer(
         propertyName: String,
         min: Int,
@@ -175,18 +189,26 @@ abstract class ManagedConfig(val name: String) {
 
     fun getConfigEditor(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
-        val guiapp = GuiAppender(20)
+        var screen: Screen? = null
+        val guiapp = GuiAppender(20, { requireNotNull(screen) { "Screen Accessor called too early" } })
         latestGuiAppender = guiapp
         guiapp.panel.insets = Insets.ROOT_PANEL
         sortedOptions.forEach { it.appendToGui(guiapp) }
         guiapp.reloadables.forEach { it() }
         lwgd.setRootPanel(guiapp.panel)
-        return object : CottonClientScreen(lwgd) {
-            override fun close() {
-                latestGuiAppender = null
-                MC.screen = parent
+        screen =
+            object : CottonClientScreen(lwgd) {
+                override fun init() {
+                    latestGuiAppender = guiapp
+                    super.init()
+                }
+
+                override fun close() {
+                    latestGuiAppender = null
+                    MC.screen = parent
+                }
             }
-        }
+        return screen
     }
 
     fun showConfigEditor(parent: Screen? = null) {

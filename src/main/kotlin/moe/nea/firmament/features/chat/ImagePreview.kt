@@ -5,8 +5,11 @@ import io.ktor.client.statement.*
 import io.ktor.utils.io.jvm.javaio.*
 import java.net.URL
 import java.util.*
+import moe.nea.jarvis.api.Point
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlin.math.max
 import kotlin.math.min
 import net.minecraft.client.gui.screen.ChatScreen
 import net.minecraft.client.texture.NativeImage
@@ -35,12 +38,13 @@ object ImagePreview : FirmamentFeature {
         val allowedHosts by string("allowed-hosts") { "cdn.discordapp.com,media.discordapp.com,media.discordapp.net,i.imgur.com" }
         val actualAllowedHosts get() = allowedHosts.split(",").map { it.trim() }
         val screenPercentage by integer("percentage", 10, 100) { 50 }
+        val position by position("position", 16 * 20, 9 * 20) { Point(0.0, 0.0) }
     }
 
-    fun isHostAllowed(host: String) =
+    private fun isHostAllowed(host: String) =
         TConfig.allowAllHosts || TConfig.actualAllowedHosts.any { it.equals(host, ignoreCase = true) }
 
-    fun isUrlAllowed(url: String) = isHostAllowed(url.removePrefix("https://").substringBefore("/"))
+    private fun isUrlAllowed(url: String) = isHostAllowed(url.removePrefix("https://").substringBefore("/"))
 
     override val config get() = TConfig
     val urlRegex = "https://[^. ]+\\.[^ ]+(\\.(png|gif|jpe?g))(\\?[^ ]*)?( |$)".toRegex()
@@ -54,7 +58,7 @@ object ImagePreview : FirmamentFeature {
     val imageCache: MutableMap<String, Deferred<Image?>> =
         Collections.synchronizedMap(mutableMapOf<String, Deferred<Image?>>())
 
-    fun tryCacheUrl(url: String) {
+    private fun tryCacheUrl(url: String) {
         if (!isUrlAllowed(url)) {
             return
         }
@@ -81,6 +85,7 @@ object ImagePreview : FirmamentFeature {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onLoad() {
         ClientChatLineReceivedEvent.subscribe {
             it.replaceWith = it.text.transformEachRecursively { child ->
@@ -122,16 +127,10 @@ object ImagePreview : FirmamentFeature {
             val imageFuture = imageCache[url] ?: return@subscribe
             if (!imageFuture.isCompleted) return@subscribe
             val image = imageFuture.getCompleted() ?: return@subscribe
-            val screen = MC.screen!!
-            val scale =
-                min(
-                    1F,
-                    min(
-                        (TConfig.screenPercentage / 100F * screen.width.toFloat()) / image.width,
-                        screen.height.toFloat() / image.height
-                    )
-                )
             it.drawContext.matrices.push()
+            val pos = TConfig.position
+            pos.applyTransformations(it.drawContext.matrices)
+            val scale = min(1F, min((9 * 20F) / image.height, (16 * 20F) / image.width))
             it.drawContext.matrices.scale(scale, scale, 1F)
             it.drawContext.drawTexture(
                 image.texture,

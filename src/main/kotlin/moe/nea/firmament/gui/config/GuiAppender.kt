@@ -22,10 +22,14 @@ import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WWidget
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 
-class GuiAppender(val width: Int) {
+class GuiAppender(val width: Int, val screenAccessor: () -> Screen) {
     private var row = 0
+
+
+
     internal val panel = WGridPanel().also { it.setGaps(4, 4) }
     internal val reloadables = mutableListOf<(() -> Unit)>()
     fun set(x: Int, y: Int, w: Int, h: Int, widget: WWidget) {
