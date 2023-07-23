@@ -19,6 +19,11 @@ Priority 1:
 - Capes
 
 Priority 2:
+- PV:
+    - Add Inventory (prio -1)
+- Fix banner data fixer (prio -1)
+
+
 - missing talismans / pets in pv
 - renameable storage pages
 - storage overlay slot handling (instead of shortcut page)

@@ -1,8 +1,0 @@
-== TO BE DONE BEFORE RELEASE ==
-
-- PV:
-    - Add Inventory (prio -1)
-- Item List:
-    - Add other recipe types (prio -1)
-    - Fix banner data fixer (prio -1)
-
