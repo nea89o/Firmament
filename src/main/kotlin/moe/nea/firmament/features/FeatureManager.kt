@@ -29,6 +29,7 @@ import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
+import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.util.data.DataHolder
 
@@ -58,6 +59,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(CraftingOverlay)
             loadFeature(ImagePreview)
             loadFeature(SaveCursorPosition)
+            loadFeature(CustomSkyBlockTextures)
             if (Firmament.DEBUG) {
                 loadFeature(DeveloperFeatures)
                 loadFeature(DebugView)

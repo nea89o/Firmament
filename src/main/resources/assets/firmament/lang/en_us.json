@@ -73,5 +73,8 @@
     "firmament.config.image-preview.allowed-hosts": "Allowed Image Hosts",
     "firmament.config.image-preview.percentage": "Image Width (Percentage of screen)",
     "firmament.config.image-preview.position": "Chat Image Preview",
-    "firmament.hud.edit": "Edit %s"
+    "firmament.hud.edit": "Edit %s",
+    "firmament.config.custom-skyblock-textures": "Custom SkyBlock Item Textures",
+    "firmament.config.custom-skyblock-textures.cache-duration": "Model Cache Duration",
+    "firmament.config.custom-skyblock-textures.enabled": "Enable Custom Item Textures"
 }

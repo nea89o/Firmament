@@ -10,7 +10,7 @@ plugins {
     id("dev.architectury.loom") version "1.1.336"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator")
-    id("io.github.juuxel.loom-quiltflower") version "1.10.0"
+    id("io.github.juuxel.loom-vineflower") version "1.11.0"
     id("io.shcm.shsupercm.fabric.fletchingtable") version "1.5"
 }
 
@@ -210,3 +210,7 @@ tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).ap
 licensing.addExtraLicenseMatchers()
 
 fletchingTable.defaultMixinEnvironment.set("client")
+
+vineflower {
+    toolVersion.set("1.9.1")
+}
