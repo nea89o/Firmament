@@ -2,16 +2,25 @@ package moe.nea.firmament.features.debug
 
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
+import org.lwjgl.glfw.GLFW
 import kotlin.io.path.absolute
 import kotlin.io.path.exists
 import net.minecraft.client.MinecraftClient
+import net.minecraft.text.ClickEvent
+import net.minecraft.text.HoverEvent
+import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.keybindings.IKeyBinding
+import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.iterate
+import moe.nea.firmament.util.skyBlockId
 
 object DeveloperFeatures : FirmamentFeature {
     override val identifier: String
@@ -50,5 +59,23 @@ object DeveloperFeatures : FirmamentFeature {
     }
 
     override fun onLoad() {
+        HandledScreenKeyPressedEvent.subscribe {
+            if (it.matches(IKeyBinding.ofKeyCode(GLFW.GLFW_KEY_K))) {
+                it.screen as AccessorHandledScreen
+                val focussedSlot = it.screen.focusedSlot_NEU ?: return@subscribe
+                val item = focussedSlot.stack ?: return@subscribe
+                val ident = item.skyBlockId?.identifier.toString()
+                MinecraftClient.getInstance().inGameHud.chatHud.addMessage(
+                    Text.translatable(
+                        "firmament.debug.skyblockid",
+                        ident
+                    ).setStyle(
+                        Style.EMPTY.withColor(Formatting.AQUA)
+                            .withClickEvent(ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ident))
+                            .withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("firmament.debug.skyblockid.copy")))
+                    )
+                )
+            }
+        }
     }
 }

@@ -5,7 +5,7 @@ import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
-import moe.nea.firmament.util.extraAttributes
+import moe.nea.firmament.util.skyBlockId
 
 object CustomSkyBlockTextures : FirmamentFeature {
     override val identifier: String
@@ -22,10 +22,8 @@ object CustomSkyBlockTextures : FirmamentFeature {
     override fun onLoad() {
         CustomItemModelEvent.subscribe {
             if (!TConfig.enabled) return@subscribe
-            val extra = it.itemStack.extraAttributes
-            val id = extra.getString("id")
-            if (id.isNotBlank())
-                it.overrideModel = ModelIdentifier("firmskyblock", id.lowercase(), "inventory")
+            val id = it.itemStack.skyBlockId ?: return@subscribe
+            it.overrideModel = ModelIdentifier("firmskyblock", id.identifier.path, "inventory")
         }
         TickEvent.subscribe {
             if (it.tickCount % TConfig.cacheDuration == 0)

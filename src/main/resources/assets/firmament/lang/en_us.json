@@ -9,6 +9,8 @@
     "firmament.price.bazaar.buy.price": "Buy Price: %s",
     "firmament.price.bazaar.buy.order": "Buy orders: %d",
     "firmament.pv.pets": "Pets",
+    "firmament.debug.skyblockid": "SkyBlock ID: %s",
+    "firmament.debug.skyblockid.copy": "Click to copy SkyBlock ID",
     "firmament.price.bazaar.sell.price": "Sell Price: %s",
     "firmament.price.bazaar.sell.order": "Sell orders: %d",
     "firmament.price.lowestbin": "Lowest BIN: %s",

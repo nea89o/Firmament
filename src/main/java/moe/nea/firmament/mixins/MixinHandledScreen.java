@@ -35,7 +35,7 @@ public class MixinHandledScreen {
 
     @Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;handleHotbarKeyPressed(II)Z", shift = At.Shift.BEFORE), cancellable = true)
     public void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        if (HandledScreenKeyPressedEvent.Companion.publish(new HandledScreenKeyPressedEvent(keyCode, scanCode, modifiers)).getCancelled()) {
+        if (HandledScreenKeyPressedEvent.Companion.publish(new HandledScreenKeyPressedEvent((HandledScreen<?>) (Object) this, keyCode, scanCode, modifiers)).getCancelled()) {
             cir.setReturnValue(true);
         }
     }
