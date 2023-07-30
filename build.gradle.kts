@@ -95,10 +95,14 @@ dependencies {
     modImplementation(libs.fabric.kotlin)
     modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
+    include(libs.libgui)
+
+
+    annotationProcessor(libs.mixinextras)
     implementation(libs.mixinextras)
     include(libs.mixinextras)
-    annotationProcessor(libs.mixinextras)
-    include(libs.libgui)
+
+
     modApi(libs.fabric.api)
     modApi(libs.architectury)
     modImplementation(libs.jarvis.api)
