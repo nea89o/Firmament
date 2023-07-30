@@ -27,6 +27,7 @@ import io.ktor.client.plugins.compression.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
+import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Path
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
@@ -39,6 +40,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
+import org.freedesktop.dbus.exceptions.DBusException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -98,8 +100,12 @@ object Firmament {
     }
 
     val globalJob = Job()
-    val dbusConnection = DBusConnectionBuilder.forSessionBus()
-        .build()
+    val dbusConnection = try {
+        DBusConnectionBuilder.forSessionBus()
+            .build()
+    } catch (e: Exception) {
+        null
+    }
     val coroutineScope =
         CoroutineScope(EmptyCoroutineContext + CoroutineName("Firmament")) + SupervisorJob(globalJob)
 
@@ -117,12 +123,16 @@ object Firmament {
 
     @JvmStatic
     fun onClientInitialize() {
-        dbusConnection.requestBusName("moe.nea.firmament")
+        try {
+            dbusConnection?.exportObject(FirmamentDbusObject)
+            dbusConnection?.requestBusName("moe.nea.firmament")
+        } catch (e: DBusException) {
+            // :(
+        }
         var tick = 0
         ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { instance ->
             TickEvent.publish(TickEvent(tick++))
         })
-        dbusConnection.exportObject(FirmamentDbusObject)
         IDataHolder.registerEvents()
         RepoManager.initialize()
         SBData.init()

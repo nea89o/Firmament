@@ -23,8 +23,11 @@ import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
 import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WButton
+import io.github.cottonmc.cotton.gui.widget.WClippedPanel
 import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WLabel
+import io.github.cottonmc.cotton.gui.widget.WPanel
+import io.github.cottonmc.cotton.gui.widget.WPanelWithInsets
 import io.github.cottonmc.cotton.gui.widget.WScrollPanel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
@@ -33,6 +36,7 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.gui.WFixedPanel
+import moe.nea.firmament.gui.WTightScrollPanel
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
@@ -58,12 +62,18 @@ object AllConfigsGui {
             }, 0, 1, 10, 1)
             box.add(WFixedPanel(panel))
         }
-        box.insets = Insets.ROOT_PANEL
-        lwgd.setRootPanel(WScrollPanel((box)).also {
+        lwgd.setRootPanel(WBox(
+            Axis.VERTICAL
+        ).also {
+            it.insets = Insets.ROOT_PANEL
             box.layout()
-            it.setSize(box.width + 8, MC.window.scaledHeight / 2)
+            it.add(WFixedPanel((WTightScrollPanel((box)).also {
+                it.setSize(0, MC.window.scaledHeight / 2)
+            })))
+            it.setSize(0, MC.window.scaledHeight / 2)
         })
-        screen = object :  CottonClientScreen(lwgd) {
+
+        screen = object : CottonClientScreen(lwgd) {
             override fun close() {
                 MC.screen = parent
             }
