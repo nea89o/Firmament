@@ -27,7 +27,7 @@ object HypixelStaticData {
         private set
     var bazaarData: Map<SkyblockId, BazaarData> = mapOf()
         private set
-    var collectionData: Map<Skill, CollectionSkillData> = mapOf()
+    var collectionData: Map<String, CollectionSkillData> = mapOf()
         private set
 
     @Serializable
@@ -60,7 +60,10 @@ object HypixelStaticData {
 
 
     fun spawnDataCollectionLoop() {
-        Firmament.coroutineScope.launch { updateCollectionData() }
+        Firmament.coroutineScope.launch {
+            logger.info("Updating collection data")
+            updateCollectionData()
+        }
         Firmament.coroutineScope.launch {
             while (true) {
                 logger.info("Updating NEU prices")

@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.DyeColor
 import net.minecraft.util.Formatting
 import moe.nea.firmament.apis.CollectionInfo
 import moe.nea.firmament.apis.CollectionType
@@ -56,7 +57,7 @@ object SkillPage : ProfilePage {
         }
     }
 
-    private fun collectionItem(type: CollectionType, info: CollectionInfo, skill: Skill, member: Member): WWidget {
+    private fun collectionItem(type: CollectionType, info: CollectionInfo, color: DyeColor, member: Member): WWidget {
         val collectionCount = member.collection[type] ?: 0
         val unlockedTiers = info.tiers.count { it.amountRequired <= collectionCount }
         return WTitledItem(
@@ -65,7 +66,7 @@ object SkillPage : ProfilePage {
                     it.setCustomName(
                         Text.literal(info.name).fillStyle(
                             Style.EMPTY.withItalic(false).withBold(true)
-                                .withColor(skill.color.toTextColor())
+                                .withColor(color.toTextColor())
                         )
                     )
                     it.modifyLore { old ->
@@ -91,6 +92,9 @@ object SkillPage : ProfilePage {
             val data = HypixelStaticData.collectionData
             val panels = mutableListOf<WPanel>()
             for ((skill, collections) in data.entries) {
+                val skillT = Skill.values().find { it.name == skill }
+                val color = skillT?.color ?: DyeColor.BLACK
+                val icon = skillT?.icon?.let { RepoManager.getNEUItem(it).asItemStack() } ?: ItemStack(Items.ITEM_FRAME)
                 val panel = WBox(Axis.HORIZONTAL).also {
                     it.horizontalAlignment = HorizontalAlignment.CENTER
                     it.add(WFixedPanel(WGridPanel().also {
@@ -99,7 +103,7 @@ object SkillPage : ProfilePage {
                         var x = 0
                         var y = 0
                         for (item in collections.items) {
-                            it.add(collectionItem(item.key, item.value, skill, profileViewer.member), x, y, 1, 1)
+                            it.add(collectionItem(item.key, item.value, color, profileViewer.member), x, y, 1, 1)
                             x++
                             if (x == 5) {
                                 x = 0
@@ -111,9 +115,9 @@ object SkillPage : ProfilePage {
                 panels.add(panel)
                 it.add(panel) {
                     it.tooltip(
-                        Text.translatable("firmament.pv.skills.${skill.name.lowercase()}")
-                            .styled { it.withColor(skill.color.toTextColor()) })
-                    it.icon(ItemIcon(RepoManager.getNEUItem(skill.icon).asItemStack()))
+                        Text.translatable("firmament.pv.skills.${skill.lowercase()}")
+                            .styled { it.withColor(color.toTextColor()) })
+                    it.icon(ItemIcon(icon))
                 }
             }
             it.layout()

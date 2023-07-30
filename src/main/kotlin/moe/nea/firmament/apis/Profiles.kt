@@ -27,7 +27,7 @@ data class CollectionSkillData(
 @Serializable
 data class CollectionResponse(
     val success: Boolean,
-    val collections: Map<Skill, CollectionSkillData>
+    val collections: Map<String, CollectionSkillData>
 )
 
 @Serializable
