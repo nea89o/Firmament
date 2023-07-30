@@ -37,7 +37,6 @@ object ImagePreview : FirmamentFeature {
         val allowAllHosts by toggle("allow-all-hosts") { false }
         val allowedHosts by string("allowed-hosts") { "cdn.discordapp.com,media.discordapp.com,media.discordapp.net,i.imgur.com" }
         val actualAllowedHosts get() = allowedHosts.split(",").map { it.trim() }
-        val screenPercentage by integer("percentage", 10, 100) { 50 }
         val position by position("position", 16 * 20, 9 * 20) { Point(0.0, 0.0) }
     }
 

@@ -73,7 +73,6 @@
     "firmament.config.image-preview.enabled": "Enable Image Preview",
     "firmament.config.image-preview.allow-all-hosts": "Allow all Image Hosts",
     "firmament.config.image-preview.allowed-hosts": "Allowed Image Hosts",
-    "firmament.config.image-preview.percentage": "Image Width (Percentage of screen)",
     "firmament.config.image-preview.position": "Chat Image Preview",
     "firmament.hud.edit": "Edit %s",
     "firmament.config.custom-skyblock-textures": "Custom SkyBlock Item Textures",
