@@ -25,6 +25,7 @@ import moe.nea.firmament.features.chat.ImagePreview
 import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.fishing.FishingWarning
+import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
@@ -60,6 +61,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(ImagePreview)
             loadFeature(SaveCursorPosition)
             loadFeature(CustomSkyBlockTextures)
+            loadFeature(Fixes)
             if (Firmament.DEBUG) {
                 loadFeature(DeveloperFeatures)
                 loadFeature(DebugView)
