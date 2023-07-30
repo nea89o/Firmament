@@ -11,13 +11,20 @@
 
 ### Currently working features
 
- - Item List of all SkyBlock Items
- - Grouping Items that belong together like minions
- - Recipe Viewer for Crafting Recipes
- - Recipe Viewer for Forge Recipes
- - Fishing Helper for Fishing particles (currently not working if you sneak because of 1.19 messing up positioning)
- - Fairy soul highlighter
- - Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough.
+- Item List of all SkyBlock Items
+- Grouping Items that belong together like minions
+- Recipe Viewer for Crafting Recipes
+- Recipe Viewer for Forge Recipes
+- Image Preview in chat
+- A storage overview (not a full on overlay that allows you to interact with all pages, but that is planned)
+- A crafting overlay when clicking the "Move Item" plus in a crafting recipe
+- Cursor position saver
+- Slot locking
+- Support for custom texture packs (loads item models from `firmskyblock:<skyblock id>` before the vanilla model gets loaded)
+- Fairy soul highlighter
+- A hud editor powered by [Jarvis](https://github.com/romangraef/jarvis)
+- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.19 messing up positioning)
+- Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough.
 
 
 ### Building your own 
