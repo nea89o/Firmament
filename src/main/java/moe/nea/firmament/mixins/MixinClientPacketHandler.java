@@ -22,6 +22,7 @@ import moe.nea.firmament.events.OutgoingPacketEvent;
 import moe.nea.firmament.events.ParticleSpawnEvent;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,6 +40,11 @@ public class MixinClientPacketHandler {
             new Vec3d(packet.getOffsetX(), packet.getOffsetY(), packet.getOffsetZ()),
             packet.isLongDistance()
         ));
+    }
+
+    @Inject(method = "onEntityPosition", at = @At(value = "TAIL"))
+    public void onEntityPosition(EntityPositionS2CPacket packet, CallbackInfo ci) {
+        System.out.printf("Got position update for %d", packet.getId());
     }
 
     @Inject(method = "sendPacket(Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"), cancellable = true)
