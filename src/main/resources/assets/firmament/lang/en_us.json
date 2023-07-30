@@ -77,5 +77,7 @@
     "firmament.hud.edit": "Edit %s",
     "firmament.config.custom-skyblock-textures": "Custom SkyBlock Item Textures",
     "firmament.config.custom-skyblock-textures.cache-duration": "Model Cache Duration",
-    "firmament.config.custom-skyblock-textures.enabled": "Enable Custom Item Textures"
+    "firmament.config.custom-skyblock-textures.enabled": "Enable Custom Item Textures",
+    "firmament.config.fixes": "Fixes",
+    "firmament.config.fixes.player-skins": "Fix unsigned Player Skins"
 }

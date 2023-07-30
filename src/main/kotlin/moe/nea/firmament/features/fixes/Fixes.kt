@@ -11,6 +11,9 @@ object Fixes : FirmamentFeature {
         val fixUnsignedPlayerSkins by toggle("player-skins") { true }
     }
 
+    override val config: ManagedConfig
+        get() = TConfig
+
     override fun onLoad() {
     }
 }
