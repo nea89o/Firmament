@@ -165,16 +165,16 @@ tasks.jar {
 
 tasks.shadowJar {
     configurations = listOf(shadowMe)
-    archiveClassifier.set("")
+    archiveClassifier.set("dev")
     relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
+    destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 }
 
 tasks.remapJar {
-    destinationDirectory.set(layout.buildDirectory.dir("badjars"))
     injectAccessWidener.set(true)
     inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
     dependsOn(tasks.shadowJar)
-    archiveClassifier.set("dev")
+    archiveClassifier.set("")
 }
 
 tasks.processResources {
