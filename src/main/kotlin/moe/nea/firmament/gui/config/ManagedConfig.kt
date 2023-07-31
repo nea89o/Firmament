@@ -20,7 +20,12 @@ package moe.nea.firmament.gui.config
 
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
+import io.github.cottonmc.cotton.gui.widget.WBox
+import io.github.cottonmc.cotton.gui.widget.WButton
+import io.github.cottonmc.cotton.gui.widget.WLabel
+import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
+import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
 import moe.nea.jarvis.api.Point
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -193,6 +198,16 @@ abstract class ManagedConfig(val name: String) {
         val guiapp = GuiAppender(20, { requireNotNull(screen) { "Screen Accessor called too early" } })
         latestGuiAppender = guiapp
         guiapp.panel.insets = Insets.ROOT_PANEL
+        guiapp.appendFullRow(WBox(Axis.HORIZONTAL).also {
+            it.add(WButton(Text.literal("←")).also {
+                it.setOnClick {
+                    AllConfigsGui.showAllGuis()
+                }
+            })
+            it.add(WLabel(Text.translatable("firmament.config.${name}")).also {
+                it.verticalAlignment = VerticalAlignment.CENTER
+            })
+        })
         sortedOptions.forEach { it.appendToGui(guiapp) }
         guiapp.reloadables.forEach { it() }
         lwgd.setRootPanel(guiapp.panel)
