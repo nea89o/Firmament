@@ -9,6 +9,10 @@
 
 [This project is currently being renamed.](#renaming)
 
+[![Forum Thread](https://img.shields.io/badge/Forum%20Thread-blue?style=flat-square)](https://hypixel.net/threads/firmament-a-skyblock-mod-for-1-20-1.5446366/)
+[![Discord](https://img.shields.io/discord/1088154030628417616?style=flat-square&logo=discord)](https://discord.gg/64pFP94AWA)
+[![Modrinth](https://img.shields.io/modrinth/dt/IJNUBZ2a?style=flat-square&logo=modrinth)](https://modrinth.com/mod/firmament)
+
 ## Currently working features
 
 - Item List of all SkyBlock Items
