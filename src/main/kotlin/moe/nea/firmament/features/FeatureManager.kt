@@ -54,7 +54,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
         synchronized(this) {
             if (hasAutoloaded) return
             loadFeature(FairySouls)
-            loadFeature(FishingWarning)
+            // TODO: loadFeature(FishingWarning)
             loadFeature(SlotLocking)
             loadFeature(StorageOverlay)
             loadFeature(CraftingOverlay)
