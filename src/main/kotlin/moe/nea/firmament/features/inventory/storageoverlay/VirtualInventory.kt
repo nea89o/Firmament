@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 package moe.nea.firmament.features.inventory.storageoverlay
 
 import io.ktor.util.decodeBase64Bytes

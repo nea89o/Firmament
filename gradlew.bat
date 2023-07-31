@@ -1,3 +1,7 @@
+REM SPDX-FileCopyrightText: 2023 Gradle, Inc.
+REM
+REM SPDX-License-Identifier: Apache-2.0
+
 @rem
 @rem Copyright 2015 the original author or authors.
 @rem

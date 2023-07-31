@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+//
+// SPDX-License-Identifier: CC0-1.0
+
 plugins {
     kotlin("jvm") version "1.8.10"
     `kotlin-dsl`

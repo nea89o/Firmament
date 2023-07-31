@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+//
+// SPDX-License-Identifier: CC0-1.0
+
 import moe.nea.licenseextractificator.LicenseExtension
 
 fun LicenseExtension.addExtraLicenseMatchers() {
