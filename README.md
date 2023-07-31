@@ -1,4 +1,4 @@
-## Firmament
+# Firmament
 <small><i>Powered by NEU</i></small>
 
 > Firmament will soon enter its early public alpha stage. While there is still much to be done in terms of usability,
@@ -9,7 +9,7 @@
 
 [This project is currently being renamed.](#renaming)
 
-### Currently working features
+## Currently working features
 
 - Item List of all SkyBlock Items
 - Grouping Items that belong together like minions
@@ -23,9 +23,12 @@
 - Support for custom texture packs (loads item models from `firmskyblock:<skyblock id>` before the vanilla model gets loaded)
 - Fairy soul highlighter
 - A hud editor powered by [Jarvis](https://github.com/romangraef/jarvis)
-- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.20 messing up positioning)
-- Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough.
+- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.20 messing up positioning, but 
+  there will be a fix for that once i get confirmation by an admin that that fix is allowed)
+- Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough. You can also use `/jarvis options` to search through all config options
 
+
+## Infos about the development
 
 ### Building your own 
 

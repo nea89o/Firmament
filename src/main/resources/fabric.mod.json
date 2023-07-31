@@ -8,17 +8,17 @@
         {
             "name": "Linnea Gräf",
             "contact": {
-                "email": "nea@nea89.moe"
+                "email": "nea@nea.moe"
             }
         }
     ],
     "contact": {
-        "discord": "https://discord.gg/moulberry",
+        "discord": "https://discord.gg/64pFP94AWA",
         "sources": "https://git.nea.moe/nea/firmament/"
     },
-    "license": "ARR",
+    "license": "GPL 3.0 or Later",
     "accessWidener": "firmament.accesswidener",
-    "icon": "assets/firmament/icon.png",
+    "icon": "assets/firmament/logo.png",
     "environment": "client",
     "entrypoints": {
         "main": [
@@ -43,8 +43,7 @@
     "depends": {
         "fabric": "*",
         "fabric-language-kotlin": ">=${fabric_kotlin_version}",
-        "minecraft": ">=${minecraft_version}",
-        "fabric-key-binding-api-v1": "*"
+        "minecraft": ">=${minecraft_version}"
     },
     "custom": {
         "modmenu": {
