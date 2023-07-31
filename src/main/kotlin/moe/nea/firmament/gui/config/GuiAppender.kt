@@ -30,7 +30,7 @@ import moe.nea.firmament.gui.WFixedPanel
 import moe.nea.firmament.gui.WSplitPanel
 
 class GuiAppender(val width: Int, val screenAccessor: () -> Screen) {
-    internal val panel = WBox(Axis.VERTICAL).also {
+    val panel = WBox(Axis.VERTICAL).also {
         it.setSize(width, 200)
     }
     internal val reloadables = mutableListOf<(() -> Unit)>()

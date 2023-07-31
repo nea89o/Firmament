@@ -32,10 +32,12 @@ import io.github.cottonmc.cotton.gui.widget.WScrollPanel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.ktor.http.*
+import kotlin.streams.asSequence
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.gui.WFixedPanel
+import moe.nea.firmament.gui.WSplitPanel
 import moe.nea.firmament.gui.WTightScrollPanel
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
@@ -51,26 +53,30 @@ object AllConfigsGui {
         ) + FeatureManager.allFeatures.mapNotNull { it.config }
         val box = WBox(Axis.VERTICAL)
         configs.forEach { config ->
-            val panel = WGridPanel()
+            val panel = WSplitPanel(
+                WLabel(Text.translatable("firmament.config.${config.name}")),
+                WButton(Text.translatable("firmanent.config.edit")).also {
+                    it.setOnClick {
+                        config.showConfigEditor(screen)
+                    }
+                    it.setSize(40, 18)
+                }
+            )
             panel.insets = Insets.ROOT_PANEL
             panel.backgroundPainter = BackgroundPainter.VANILLA
-            panel.add(WLabel(Text.translatable("firmament.config.${config.name}")), 0, 0, 10, 1)
-            panel.add(WButton(Text.translatable("firmanent.config.edit")).also {
-                it.setOnClick {
-                    config.showConfigEditor(screen)
-                }
-            }, 0, 1, 10, 1)
-            box.add(WFixedPanel(panel))
+            box.add((panel))
         }
+        box.streamChildren().asSequence()
+            .forEach { it.setSize(380, 0) }
         lwgd.setRootPanel(WBox(
             Axis.VERTICAL
         ).also {
             it.insets = Insets.ROOT_PANEL
             box.layout()
-            it.add(WFixedPanel((WTightScrollPanel((box)).also {
-                it.setSize(0, MC.window.scaledHeight / 2)
+            it.add(WFixedPanel((WScrollPanel((box)).also {
+                it.setSize(400, 300)
             })))
-            it.setSize(0, MC.window.scaledHeight / 2)
+            it.setSize(400, 300)
         })
 
         screen = object : CottonClientScreen(lwgd) {

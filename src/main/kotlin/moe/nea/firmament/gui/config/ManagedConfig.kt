@@ -23,6 +23,7 @@ import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
 import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WButton
 import io.github.cottonmc.cotton.gui.widget.WLabel
+import io.github.cottonmc.cotton.gui.widget.WScrollPanel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
@@ -40,6 +41,7 @@ import kotlin.time.Duration
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.gui.WTightScrollPanel
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
@@ -195,7 +197,7 @@ abstract class ManagedConfig(val name: String) {
     fun getConfigEditor(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
         var screen: Screen? = null
-        val guiapp = GuiAppender(400, { requireNotNull(screen) { "Screen Accessor called too early" } })
+        val guiapp = GuiAppender(400) { requireNotNull(screen) { "Screen Accessor called too early" } }
         latestGuiAppender = guiapp
         guiapp.panel.insets = Insets.ROOT_PANEL
         guiapp.appendFullRow(WBox(Axis.HORIZONTAL).also {
@@ -210,7 +212,9 @@ abstract class ManagedConfig(val name: String) {
         })
         sortedOptions.forEach { it.appendToGui(guiapp) }
         guiapp.reloadables.forEach { it() }
-        lwgd.setRootPanel(guiapp.panel)
+        lwgd.setRootPanel(WTightScrollPanel(guiapp.panel).also {
+            it.setSize(400, 300)
+        })
         screen =
             object : CottonClientScreen(lwgd) {
                 override fun init() {
