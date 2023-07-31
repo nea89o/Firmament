@@ -1,5 +1,6 @@
 package moe.nea.firmament.gui.config
 
+import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WSlider
 import io.github.cottonmc.cotton.gui.widget.data.Axis
@@ -9,7 +10,9 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
+import kotlin.time.Duration.Companion.milliseconds
 import net.minecraft.text.Text
+import moe.nea.firmament.util.FirmFormatters
 
 class IntegerHandler(val config: ManagedConfig, val min: Int, val max: Int) : ManagedConfig.OptionHandler<Int> {
     override fun toJson(element: Int): JsonElement? {
@@ -21,20 +24,11 @@ class IntegerHandler(val config: ManagedConfig, val min: Int, val max: Int) : Ma
     }
 
     override fun emitGuiElements(opt: ManagedConfig.Option<Int>, guiAppender: GuiAppender) {
-        val lw = guiAppender.width / 2
-        guiAppender.set(
-            0, 0, lw, 1,
-            WLabel(opt.labelText).setVerticalAlignment(VerticalAlignment.CENTER)
-        )
         val label =
             WLabel(Text.literal(opt.value.toString())).setVerticalAlignment(VerticalAlignment.CENTER)
-        guiAppender.set(lw, 0, 2, 1, label)
-        guiAppender.set(
-            lw + 2,
-            0,
-            lw - 2,
-            1,
-            WSlider(min, max, Axis.HORIZONTAL).apply {
+        guiAppender.appendLabeledRow(opt.labelText, WBox(Axis.HORIZONTAL).also {
+            it.add(label, 40, 18)
+            it.add(WSlider(min, max, Axis.HORIZONTAL).apply {
                 valueChangeListener = IntConsumer {
                     opt.value = it
                     label.text = Text.literal(opt.value.toString())
@@ -44,8 +38,8 @@ class IntegerHandler(val config: ManagedConfig, val min: Int, val max: Int) : Ma
                     value = opt.value
                     label.text = Text.literal(opt.value.toString())
                 }
-            })
-        guiAppender.skipRows(1)
+            }, 130, 18)
+        })
     }
 
 }

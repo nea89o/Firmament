@@ -18,31 +18,25 @@
 
 package moe.nea.firmament.gui.config
 
+import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WWidget
+import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
+import moe.nea.firmament.gui.WFixedPanel
+import moe.nea.firmament.gui.WSplitPanel
 
 class GuiAppender(val width: Int, val screenAccessor: () -> Screen) {
-    private var row = 0
-
-
-
-    internal val panel = WGridPanel().also { it.setGaps(4, 4) }
-    internal val reloadables = mutableListOf<(() -> Unit)>()
-    fun set(x: Int, y: Int, w: Int, h: Int, widget: WWidget) {
-        panel.add(widget, x, y + row, w, h)
+    internal val panel = WBox(Axis.VERTICAL).also {
+        it.setSize(width, 200)
     }
-
+    internal val reloadables = mutableListOf<(() -> Unit)>()
 
     fun onReload(reloadable: () -> Unit) {
         reloadables.add(reloadable)
-    }
-
-    fun skipRows(r: Int) {
-        row += r
     }
 
     fun appendLabeledRow(label: Text, right: WWidget) {
@@ -53,14 +47,10 @@ class GuiAppender(val width: Int, val screenAccessor: () -> Screen) {
     }
 
     fun appendSplitRow(left: WWidget, right: WWidget) {
-        val lw = width / 2
-        set(0, 0, lw, 1, left)
-        set(lw, 0, width - lw, 1, right)
-        skipRows(1)
+        appendFullRow(WSplitPanel(left.also { it.setSize(width / 2, 18) }, right.also { it.setSize(width / 2, 18) }))
     }
 
     fun appendFullRow(widget: WWidget) {
-        set(0, 0, width, 1, widget)
-        skipRows(1)
+        panel.add(widget, width, 18)
     }
 }

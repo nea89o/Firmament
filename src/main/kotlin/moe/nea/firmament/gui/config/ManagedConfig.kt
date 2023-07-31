@@ -195,7 +195,7 @@ abstract class ManagedConfig(val name: String) {
     fun getConfigEditor(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
         var screen: Screen? = null
-        val guiapp = GuiAppender(20, { requireNotNull(screen) { "Screen Accessor called too early" } })
+        val guiapp = GuiAppender(400, { requireNotNull(screen) { "Screen Accessor called too early" } })
         latestGuiAppender = guiapp
         guiapp.panel.insets = Insets.ROOT_PANEL
         guiapp.appendFullRow(WBox(Axis.HORIZONTAL).also {

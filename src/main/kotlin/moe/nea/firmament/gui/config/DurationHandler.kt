@@ -1,5 +1,6 @@
 package moe.nea.firmament.gui.config
 
+import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WSlider
 import io.github.cottonmc.cotton.gui.widget.data.Axis
@@ -27,20 +28,11 @@ class DurationHandler(val config: ManagedConfig, val min: Duration, val max: Dur
     }
 
     override fun emitGuiElements(opt: ManagedConfig.Option<Duration>, guiAppender: GuiAppender) {
-        val lw = guiAppender.width / 2
-        guiAppender.set(
-            0, 0, lw, 1,
-            WLabel(opt.labelText).setVerticalAlignment(VerticalAlignment.CENTER)
-        )
         val label =
             WLabel(Text.literal(FirmFormatters.formatTimespan(opt.value))).setVerticalAlignment(VerticalAlignment.CENTER)
-        guiAppender.set(lw, 0, 2, 1, label)
-        guiAppender.set(
-            lw + 2,
-            0,
-            lw - 2,
-            1,
-            WSlider(min.inWholeMilliseconds.toInt(), max.inWholeMilliseconds.toInt(), Axis.HORIZONTAL).apply {
+        guiAppender.appendLabeledRow(opt.labelText, WBox(Axis.HORIZONTAL).also {
+            it.add(label, 40, 18)
+            it.add(WSlider(min.inWholeMilliseconds.toInt(), max.inWholeMilliseconds.toInt(), Axis.HORIZONTAL).apply {
                 valueChangeListener = IntConsumer {
                     opt.value = it.milliseconds
                     label.text = Text.literal(FirmFormatters.formatTimespan(opt.value))
@@ -50,8 +42,8 @@ class DurationHandler(val config: ManagedConfig, val min: Duration, val max: Dur
                     value = opt.value.inWholeMilliseconds.toInt()
                     label.text = Text.literal(FirmFormatters.formatTimespan(opt.value))
                 }
-            })
-        guiAppender.skipRows(1)
+            }, 130, 18)
+        })
     }
 
 }
