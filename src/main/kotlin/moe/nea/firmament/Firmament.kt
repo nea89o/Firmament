@@ -19,7 +19,6 @@
 package moe.nea.firmament
 
 import com.mojang.brigadier.CommandDispatcher
-import dev.architectury.event.events.client.ClientTickEvent
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
@@ -33,6 +32,7 @@ import java.nio.file.Path
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
@@ -130,7 +130,7 @@ object Firmament {
             // :(
         }
         var tick = 0
-        ClientTickEvent.CLIENT_POST.register(ClientTickEvent.Client { instance ->
+        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
             TickEvent.publish(TickEvent(tick++))
         })
         IDataHolder.registerEvents()
