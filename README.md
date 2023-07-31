@@ -20,23 +20,49 @@
 - A crafting overlay when clicking the "Move Item" plus in a crafting recipe
 - Cursor position saver
 - Slot locking
-- Support for custom texture packs (loads item models from `firmskyblock:<skyblock id>` before the vanilla model gets loaded)
+- Support for custom texture packs (loads item models from `firmskyblock:<skyblock id>` before the vanilla model gets
+  loaded)
 - Fairy soul highlighter
 - A hud editor powered by [Jarvis](https://github.com/romangraef/jarvis)
-- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.20 messing up positioning, but 
+- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.20 messing up positioning, but
   there will be a fix for that once i get confirmation by an admin that that fix is allowed)
-- Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough. You can also use `/jarvis options` to search through all config options
+- Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough. You can also
+  use `/jarvis options` to search through all config options
 
+## Installation
+
+Firmament needs the following libraries to work:
+
+- [RoughlyEnoughItems](https://modrinth.com/mod/rei)
+- [Architectury](https://modrinth.com/mod/architectury-api)
+- [Cloth Config](https://modrinth.com/mod/cloth-config)
+- [Fabric API](https://modrinth.com/mod/fabric-api)
+- [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
+
+You can download Firmament itself on [Modrinth](https://modrinth.com/mod/firmament) or on
+[GitHub](https://github.com/romangraef/firmament/releases).
+
+### Usage
+
+Everything is configurable via either `/firm config`, or via `/jarvis options`.
+
+### Recommendations
+
+- [DulkirMod-Fabric](https://github.com/inglettronald/DulkirMod-fabric), a versatile SkyBlock mod.
+- [Sodium](https://modrinth.com/mod/sodium) and [Lithium](https://modrinth.com/mod/lithium), both excellent performance mods.
+- [ModMenu](https://modrinth.com/mod/modmenu), just to see which mods you have installed, and to configure some of them.
+- [Zoomify](https://modrinth.com/mod/zoomify), a very basic, but very tidy zoom mod.
 
 ## Infos about the development
 
-### Building your own 
+### Building your own
 
 Use Java 17.
 
 Running `./gradlew :build` will create a mod jar in `build/libs`
 
-You will need the fabric api mod, the fabric kotlin language mod, the architectury mod and REI in your mods folder in order for this mod to work.
+You will need the fabric api mod, the fabric kotlin language mod, the architectury mod and REI in your mods folder in
+order for this mod to work.
 
 ### Licensing and contribution policy
 
