@@ -9,11 +9,11 @@ import moe.nea.jarvis.api.Point
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlin.math.max
 import kotlin.math.min
 import net.minecraft.client.gui.screen.ChatScreen
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
+import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -28,12 +28,13 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.transformEachRecursively
 import moe.nea.firmament.util.unformattedString
 
-object ImagePreview : FirmamentFeature {
+object ChatLinks : FirmamentFeature {
     override val identifier: String
-        get() = "image-preview"
+        get() = "chat-links"
 
     object TConfig : ManagedConfig(identifier) {
-        val enabled by toggle("enabled") { true }
+        val enableLinks by toggle("links-enabled") { true }
+        val imageEnabled by toggle("image-enabled") { true }
         val allowAllHosts by toggle("allow-all-hosts") { false }
         val allowedHosts by string("allowed-hosts") { "cdn.discordapp.com,media.discordapp.com,media.discordapp.net,i.imgur.com" }
         val actualAllowedHosts get() = allowedHosts.split(",").map { it.trim() }
@@ -46,7 +47,7 @@ object ImagePreview : FirmamentFeature {
     private fun isUrlAllowed(url: String) = isHostAllowed(url.removePrefix("https://").substringBefore("/"))
 
     override val config get() = TConfig
-    val urlRegex = "https://[^. ]+\\.[^ ]+(\\.(png|gif|jpe?g))(\\?[^ ]*)?( |$)".toRegex()
+    val urlRegex = "https://[^. ]+\\.[^ ]+( |$)".toRegex()
 
     data class Image(
         val texture: Identifier,
@@ -84,45 +85,54 @@ object ImagePreview : FirmamentFeature {
         }
     }
 
+    val imageExtensions = listOf("jpg", "png", "gif", "jpeg")
+    fun isImageUrl(url: String): Boolean {
+        return (url.substringAfterLast('.').lowercase() in imageExtensions)
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onLoad() {
         ClientChatLineReceivedEvent.subscribe {
-            it.replaceWith = it.text.transformEachRecursively { child ->
-                val text = child.string
-                if ("://" !in text) return@transformEachRecursively child
-                val s = Text.empty().setStyle(child.style)
-                var index = 0
-                while (index < text.length) {
-                    val nextMatch = urlRegex.find(text, index)
-                    if (nextMatch == null) {
-                        s.append(Text.literal(text.substring(index, text.length)))
-                        break
-                    }
-                    val range = nextMatch.groups[0]!!.range
-                    val url = nextMatch.groupValues[0]
-                    s.append(Text.literal(text.substring(index, range.first)))
-                    s.append(
-                        Text.literal(url).setStyle(
-                            Style.EMPTY.withUnderline(true).withColor(
-                                Formatting.AQUA
-                            ).withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(url)))
+            if (TConfig.enableLinks)
+                it.replaceWith = it.text.transformEachRecursively { child ->
+                    val text = child.string
+                    if ("://" !in text) return@transformEachRecursively child
+                    val s = Text.empty().setStyle(child.style)
+                    var index = 0
+                    while (index < text.length) {
+                        val nextMatch = urlRegex.find(text, index)
+                        if (nextMatch == null) {
+                            s.append(Text.literal(text.substring(index, text.length)))
+                            break
+                        }
+                        val range = nextMatch.groups[0]!!.range
+                        val url = nextMatch.groupValues[0]
+                        s.append(Text.literal(text.substring(index, range.first)))
+                        s.append(
+                            Text.literal(url).setStyle(
+                                Style.EMPTY.withUnderline(true).withColor(
+                                    Formatting.AQUA
+                                ).withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(url)))
+                                    .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, url))
+                            )
                         )
-                    )
-                    tryCacheUrl(url)
-                    index = range.last + 1
+                        if (isImageUrl(url))
+                            tryCacheUrl(url)
+                        index = range.last + 1
+                    }
+                    s
                 }
-                s
-            }
         }
 
         ScreenRenderPostEvent.subscribe {
-            if (!TConfig.enabled) return@subscribe
+            if (!TConfig.imageEnabled) return@subscribe
             if (it.screen !is ChatScreen) return@subscribe
             val hoveredComponent =
                 MC.inGameHud.chatHud.getTextStyleAt(it.mouseX.toDouble(), it.mouseY.toDouble()) ?: return@subscribe
             val hoverEvent = hoveredComponent.hoverEvent ?: return@subscribe
             val value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT) ?: return@subscribe
             val url = urlRegex.matchEntire(value.unformattedString)?.groupValues?.get(0) ?: return@subscribe
+            if (!isImageUrl(url)) return@subscribe
             val imageFuture = imageCache[url] ?: return@subscribe
             if (!imageFuture.isCompleted) return@subscribe
             val image = imageFuture.getCompleted() ?: return@subscribe

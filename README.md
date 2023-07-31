@@ -23,7 +23,7 @@
 - Support for custom texture packs (loads item models from `firmskyblock:<skyblock id>` before the vanilla model gets loaded)
 - Fairy soul highlighter
 - A hud editor powered by [Jarvis](https://github.com/romangraef/jarvis)
-- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.19 messing up positioning)
+- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.20 messing up positioning)
 - Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough.
 
 

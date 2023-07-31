@@ -21,7 +21,7 @@ package moe.nea.firmament.features
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.features.chat.ImagePreview
+import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.fishing.FishingWarning
@@ -58,7 +58,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(SlotLocking)
             loadFeature(StorageOverlay)
             loadFeature(CraftingOverlay)
-            loadFeature(ImagePreview)
+            loadFeature(ChatLinks)
             loadFeature(SaveCursorPosition)
             loadFeature(CustomSkyBlockTextures)
             loadFeature(Fixes)
