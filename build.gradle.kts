@@ -105,7 +105,7 @@ dependencies {
 
     modApi(libs.fabric.api)
     modApi(libs.architectury)
-    modImplementation(libs.jarvis.api)
+    modCompileOnly(libs.jarvis.api)
     include(libs.jarvis.fabric)
 
     // Actual dependencies
