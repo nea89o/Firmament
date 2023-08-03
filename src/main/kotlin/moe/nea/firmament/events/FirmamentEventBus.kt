@@ -13,7 +13,7 @@ import moe.nea.firmament.Firmament
  * A pubsub event bus.
  *
  * [subscribe] to events [publish]ed on this event bus.
- * Subscriptions may not necessarily be delivered in the order or registering.
+ * Subscriptions may not necessarily be delivered in the order of registering.
  */
 open class FirmamentEventBus<T : FirmamentEvent> {
     data class Handler<T>(val invocation: (T) -> Unit, val receivesCancelled: Boolean)
@@ -33,7 +33,7 @@ open class FirmamentEventBus<T : FirmamentEvent> {
                 try {
                     function.invocation(event)
                 } catch (e: Exception) {
-                    Firmament.logger.error("Caught exception during processing event $event", e)
+                    Firmament.logger.error("Caught exception during processing event $event by $function", e)
                 }
             }
         }
