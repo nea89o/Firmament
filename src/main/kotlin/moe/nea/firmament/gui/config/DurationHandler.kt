@@ -33,7 +33,7 @@ class DurationHandler(val config: ManagedConfig, val min: Duration, val max: Dur
         return element.jsonPrimitive.long.toDuration(DurationUnit.MILLISECONDS)
     }
 
-    override fun emitGuiElements(opt: ManagedConfig.Option<Duration>, guiAppender: GuiAppender) {
+    override fun emitGuiElements(opt: ManagedOption<Duration>, guiAppender: GuiAppender) {
         val label =
             WLabel(Text.literal(FirmFormatters.formatTimespan(opt.value))).setVerticalAlignment(VerticalAlignment.CENTER)
         guiAppender.appendLabeledRow(opt.labelText, WBox(Axis.HORIZONTAL).also {

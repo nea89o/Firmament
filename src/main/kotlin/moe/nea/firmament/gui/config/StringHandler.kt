@@ -6,7 +6,6 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WTextField
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
@@ -22,7 +21,7 @@ class StringHandler(val config: ManagedConfig) : ManagedConfig.OptionHandler<Str
         return element.jsonPrimitive.content
     }
 
-    override fun emitGuiElements(opt: ManagedConfig.Option<String>, guiAppender: GuiAppender) {
+    override fun emitGuiElements(opt: ManagedOption<String>, guiAppender: GuiAppender) {
         guiAppender.appendLabeledRow(
             opt.labelText,
             WTextField(opt.labelText).apply {

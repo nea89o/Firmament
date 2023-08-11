@@ -21,7 +21,7 @@ class BooleanHandler(val config: ManagedConfig) : ManagedConfig.OptionHandler<Bo
         return element.jsonPrimitive.boolean
     }
 
-    override fun emitGuiElements(opt: ManagedConfig.Option<Boolean>, guiAppender: GuiAppender) {
+    override fun emitGuiElements(opt: ManagedOption<Boolean>, guiAppender: GuiAppender) {
         guiAppender.appendLabeledRow(
             opt.labelText,
             WToggleButton(opt.labelText).apply {

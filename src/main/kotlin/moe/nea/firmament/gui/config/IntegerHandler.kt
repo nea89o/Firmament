@@ -16,9 +16,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
-import kotlin.time.Duration.Companion.milliseconds
 import net.minecraft.text.Text
-import moe.nea.firmament.util.FirmFormatters
 
 class IntegerHandler(val config: ManagedConfig, val min: Int, val max: Int) : ManagedConfig.OptionHandler<Int> {
     override fun toJson(element: Int): JsonElement? {
@@ -29,7 +27,7 @@ class IntegerHandler(val config: ManagedConfig, val min: Int, val max: Int) : Ma
         return element.jsonPrimitive.int
     }
 
-    override fun emitGuiElements(opt: ManagedConfig.Option<Int>, guiAppender: GuiAppender) {
+    override fun emitGuiElements(opt: ManagedOption<Int>, guiAppender: GuiAppender) {
         val label =
             WLabel(Text.literal(opt.value.toString())).setVerticalAlignment(VerticalAlignment.CENTER)
         guiAppender.appendLabeledRow(opt.labelText, WBox(Axis.HORIZONTAL).also {

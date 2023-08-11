@@ -26,7 +26,7 @@ class HudMetaHandler(val config: ManagedConfig, val label: MutableText, val widt
         return HudMeta(Json.decodeFromJsonElement(element), label, width, height)
     }
 
-    override fun emitGuiElements(opt: ManagedConfig.Option<HudMeta>, guiAppender: GuiAppender) {
+    override fun emitGuiElements(opt: ManagedOption<HudMeta>, guiAppender: GuiAppender) {
         guiAppender.appendLabeledRow(opt.labelText, WButton(Text.translatable("firmament.hud.edit", label))
             .also {
                 it.setOnClick {

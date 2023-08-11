@@ -11,7 +11,6 @@ import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
 import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WButton
 import io.github.cottonmc.cotton.gui.widget.WLabel
-import io.github.cottonmc.cotton.gui.widget.WScrollPanel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
@@ -23,8 +22,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 import kotlin.time.Duration
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
@@ -33,67 +30,12 @@ import moe.nea.firmament.gui.WTightScrollPanel
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
-abstract class ManagedConfig(val name: String) {
+abstract class ManagedConfig(override val name: String) : ManagedConfigElement() {
 
     interface OptionHandler<T : Any> {
         fun toJson(element: T): JsonElement?
         fun fromJson(element: JsonElement): T
-        fun emitGuiElements(opt: Option<T>, guiAppender: GuiAppender)
-    }
-
-    inner class Option<T : Any> internal constructor(
-        val config: ManagedConfig,
-        val propertyName: String,
-        val default: () -> T,
-        val handler: OptionHandler<T>
-    ) : ReadWriteProperty<Any?, T> {
-
-        val rawLabelText = "firmament.config.${config.name}.${propertyName}"
-        val labelText = Text.translatable(rawLabelText)
-
-        private lateinit var _value: T
-        private var loaded = false
-        var value: T
-            get() {
-                if (!loaded)
-                    load()
-                return _value
-            }
-            set(value) {
-                loaded = true
-                _value = value
-            }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            this.value = value
-        }
-
-        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            return value
-        }
-
-        private fun load() {
-            if (data.containsKey(propertyName)) {
-                try {
-                    value = handler.fromJson(data[propertyName]!!)
-                } catch (e: Exception) {
-                    Firmament.logger.error(
-                        "Exception during loading of config file $name. This will reset this config.",
-                        e
-                    )
-                }
-            } else {
-                value = default()
-            }
-        }
-
-        internal fun toJson(): JsonElement? {
-            return handler.toJson(value)
-        }
-
-        fun appendToGui(guiapp: GuiAppender) {
-            handler.emitGuiElements(this, guiapp)
-        }
+        fun emitGuiElements(opt: ManagedOption<T>, guiAppender: GuiAppender)
     }
 
     val file = Firmament.CONFIG_DIR.resolve("$name.json")
@@ -119,20 +61,25 @@ abstract class ManagedConfig(val name: String) {
     }
 
 
-    val allOptions = mutableMapOf<String, Option<*>>()
-    val sortedOptions = mutableListOf<Option<*>>()
+    val allOptions = mutableMapOf<String, ManagedOption<*>>()
+    val sortedOptions = mutableListOf<ManagedOption<*>>()
 
     private var latestGuiAppender: GuiAppender? = null
 
-    protected fun <T : Any> option(propertyName: String, default: () -> T, handler: OptionHandler<T>): Option<T> {
+    protected fun <T : Any> option(
+        propertyName: String,
+        default: () -> T,
+        handler: OptionHandler<T>
+    ): ManagedOption<T> {
         if (propertyName in allOptions) error("Cannot register the same name twice")
-        return Option(this, propertyName, default, handler).also {
+        return ManagedOption(this, propertyName, default, handler).also {
+            it.load(data)
             allOptions[propertyName] = it
             sortedOptions.add(it)
         }
     }
 
-    protected fun toggle(propertyName: String, default: () -> Boolean): Option<Boolean> {
+    protected fun toggle(propertyName: String, default: () -> Boolean): ManagedOption<Boolean> {
         return option(propertyName, default, BooleanHandler(this))
     }
 
@@ -141,7 +88,7 @@ abstract class ManagedConfig(val name: String) {
         min: Duration,
         max: Duration,
         default: () -> Duration,
-    ): Option<Duration> {
+    ): ManagedOption<Duration> {
         return option(propertyName, default, DurationHandler(this, min, max))
     }
 
@@ -151,7 +98,7 @@ abstract class ManagedConfig(val name: String) {
         width: Int,
         height: Int,
         default: () -> Point,
-    ): Option<HudMeta> {
+    ): ManagedOption<HudMeta> {
         val label = Text.translatable("firmament.config.${name}.${propertyName}")
         return option(propertyName, {
             val p = default()
@@ -164,18 +111,17 @@ abstract class ManagedConfig(val name: String) {
         min: Int,
         max: Int,
         default: () -> Int,
-    ): Option<Int> {
+    ): ManagedOption<Int> {
         return option(propertyName, default, IntegerHandler(this, min, max))
     }
 
-    protected fun button(propertyName: String, runnable: () -> Unit): Option<Unit> {
+    protected fun button(propertyName: String, runnable: () -> Unit): ManagedOption<Unit> {
         return option(propertyName, { }, ClickHandler(this, runnable))
     }
 
-    protected fun string(propertyName: String, default: () -> String): Option<String> {
+    protected fun string(propertyName: String, default: () -> String): ManagedOption<String> {
         return option(propertyName, default, StringHandler(this))
     }
-
 
 
     fun reloadGui() {
