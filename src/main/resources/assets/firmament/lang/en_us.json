@@ -28,6 +28,8 @@
     "firmament.config.repo.branch": "Repo Branch",
     "firmament.config.repo.branch.hint": "dangerous",
     "firmament.config.repo.reset": "Reset",
+    "firmament.ursa.debugrequest.start": "Ursa request launched",
+    "firmament.ursa.debugrequest.result": "Ursa request succeeded: %s",
     "firmament.sbinfo.nolocraw": "No locraw data available",
     "firmament.sbinfo.profile": "Current profile cutename: %s",
     "firmament.sbinfo.server": "Locraw Server: %s",

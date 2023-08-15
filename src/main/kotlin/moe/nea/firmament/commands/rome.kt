@@ -8,8 +8,10 @@ package moe.nea.firmament.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
+import io.ktor.client.statement.*
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
+import moe.nea.firmament.apis.UrsaManager
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
@@ -132,6 +134,15 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(Text.translatable("firmament.sbinfo.gametype", locrawInfo.gametype))
                     source.sendFeedback(Text.translatable("firmament.sbinfo.mode", locrawInfo.mode))
                     source.sendFeedback(Text.translatable("firmament.sbinfo.map", locrawInfo.map))
+                }
+            }
+        }
+        thenLiteral("callUrsa") {
+            thenArgument("path", string()) { path ->
+                thenExecute {
+                    source.sendFeedback(Text.translatable("firmament.ursa.debugrequest.start"))
+                    val text = UrsaManager.request(this[path].split("/")).bodyAsText()
+                    source.sendFeedback(Text.translatable("firmament.ursa.debugrequest.result", text))
                 }
             }
         }

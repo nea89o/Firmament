@@ -16,6 +16,9 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import kotlinx.coroutines.launch
+import moe.nea.firmament.Firmament
+import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.iterate
 
 
@@ -105,9 +108,11 @@ fun <T : ArgumentBuilder<DefaultSource, T>> T.thenLiteral(
 fun <T : ArgumentBuilder<DefaultSource, T>> T.then(node: ArgumentBuilder<DefaultSource, *>, block: T.() -> Unit): T =
     then(node).also(block)
 
-fun <T : ArgumentBuilder<DefaultSource, T>> T.thenExecute(block: CommandContext<DefaultSource>.() -> Unit): T =
+fun <T : ArgumentBuilder<DefaultSource, T>> T.thenExecute(block: suspend CommandContext<DefaultSource>.() -> Unit): T =
     executes {
-        block(it)
+        Firmament.coroutineScope.launch(MinecraftDispatcher) {
+            block(it)
+        }
         1
     }
 
