@@ -155,6 +155,7 @@ loom {
             property("devauth.enabled", "true")
             property("fabric.log.level", "info")
             property("firmament.debug", "true")
+            property("mixin.debug", "true")
 
             vmArg("-ea")
             vmArg("-XX:+AllowEnhancedClassRedefinition")
