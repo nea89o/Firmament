@@ -28,7 +28,7 @@ import moe.nea.firmament.util.json.DashlessUUIDSerializer
 @JvmInline
 @Serializable
 value class SkyblockId(val neuItem: String) {
-    val identifier get() = Identifier("skyblockitem", neuItem.lowercase().replace(";", "__"))
+    val identifier get() = Identifier("skyblockitem", neuItem.lowercase().replace(";", "__").replace(":", "___"))
 
     /**
      * A bazaar stock item id, as returned by the HyPixel bazaar api endpoint.

@@ -82,7 +82,6 @@ val hotswap by configurations.creating {
 }
 
 val nonModImplentation by configurations.creating {
-    extendsFrom(shadowMe)
     configurations.implementation.get().extendsFrom(this)
 }
 
@@ -106,6 +105,8 @@ dependencies {
     implementation(libs.mixinextras)
     include(libs.mixinextras)
 
+    nonModImplentation(libs.nealisp)
+    shadowMe(libs.nealisp)
 
     modApi(libs.fabric.api)
     modApi(libs.architectury)
@@ -117,7 +118,9 @@ dependencies {
         exclude(module = "architectury")
         exclude(module = "architectury-fabric")
     }
+    nonModImplentation(libs.repoparser)
     shadowMe(libs.repoparser)
+    nonModImplentation(libs.bundles.dbus)
     shadowMe(libs.bundles.dbus)
 
     fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"

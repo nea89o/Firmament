@@ -42,6 +42,10 @@ class JarvisIntegration : JarvisPlugin {
         }
     }
 
+    override fun onHudEditorClosed() {
+        configs.forEach { it.save() }
+    }
+
     override fun getAllConfigOptions(): List<JarvisConfigOption> {
         return configs.flatMap { config ->
             config.sortedOptions.map {

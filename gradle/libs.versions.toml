@@ -24,6 +24,7 @@ freecammod = "1.2.0-mc1.20"
 ncr = "Fabric-1.20-v2.2.0"
 mixinextras = "0.2.0-beta.9"
 jarvis = "1.1.1"
+nealisp = "1.0.0"
 
 
 [libraries]
@@ -40,6 +41,7 @@ libgui = { module = "io.github.cottonmc:LibGui", version.ref = "libgui" }
 mixinextras = { module = "com.github.llamalad7.mixinextras:mixinextras-fabric", version.ref = "mixinextras" }
 jarvis_api = { module = "moe.nea.jarvis:jarvis-api", version.ref = "jarvis" }
 jarvis_fabric = { module = "moe.nea.jarvis:jarvis-fabric", version.ref = "jarvis" }
+nealisp = { module = "moe.nea:nealisp", version.ref = "nealisp" }
 
 # Runtime:
 hotswap = { module = "virtual.github.hotswapagent:hotswap-agent", version.ref = "hotswap_agent" }

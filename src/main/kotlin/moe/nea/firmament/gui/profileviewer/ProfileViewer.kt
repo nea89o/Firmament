@@ -9,7 +9,7 @@ package moe.nea.firmament.gui.profileviewer
 import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
 import io.github.cottonmc.cotton.gui.widget.WTabPanel
-import java.util.UUID
+import java.util.*
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import kotlinx.coroutines.launch
 import net.minecraft.text.Text

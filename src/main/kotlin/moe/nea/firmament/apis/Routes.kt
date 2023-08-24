@@ -6,23 +6,23 @@
 
 package moe.nea.firmament.apis
 
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
-import io.ktor.http.URLProtocol
-import io.ktor.http.isSuccess
-import io.ktor.http.path
-import io.ktor.util.CaseInsensitiveMap
-import java.util.UUID
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.util.*
+import java.util.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.collections.MutableMap
+import kotlin.collections.listOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.MinecraftDispatcher
 
 object Routes {
-    val apiKey = "e721a103-96e0-400f-af2a-73b2a91007b1"
     private val nameToUUID: MutableMap<String, Deferred<UUID?>> = CaseInsensitiveMap()
     private val profiles: MutableMap<UUID, Deferred<Profiles?>> = mutableMapOf()
     private val accounts: MutableMap<UUID, Deferred<PlayerData?>> = mutableMapOf()
@@ -64,15 +64,7 @@ object Routes {
         return withContext(MinecraftDispatcher) {
             accounts.computeIfAbsent(uuid) {
                 async(Firmament.coroutineScope.coroutineContext) {
-                    val response = Firmament.httpClient.get {
-                        url {
-                            protocol = URLProtocol.HTTPS
-                            host = "api.hypixel.net"
-                            path("player")
-                            parameter("key", apiKey)
-                            parameter("uuid", uuid)
-                        }
-                    }
+                    val response = UrsaManager.request(listOf("v1", "hypixel","player", uuid.toString()))
                     if (!response.status.isSuccess()) {
                         launch(MinecraftDispatcher) {
                             @Suppress("DeferredResultUnused")
@@ -90,15 +82,7 @@ object Routes {
         return withContext(MinecraftDispatcher) {
             profiles.computeIfAbsent(uuid) {
                 async(Firmament.coroutineScope.coroutineContext) {
-                    val response = Firmament.httpClient.get {
-                        url {
-                            protocol = URLProtocol.HTTPS
-                            host = "api.hypixel.net"
-                            path("skyblock", "profiles")
-                            parameter("key", apiKey)
-                            parameter("uuid", uuid)
-                        }
-                    }
+                    val response = UrsaManager.request(listOf("v1", "hypixel","profiles", uuid.toString()))
                     if (!response.status.isSuccess()) {
                         launch(MinecraftDispatcher) {
                             @Suppress("DeferredResultUnused")
