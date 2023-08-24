@@ -10,7 +10,7 @@ package moe.nea.firmament.apis
 
 import io.github.moulberry.repo.constants.Leveling
 import io.github.moulberry.repo.data.Rarity
-import java.util.UUID
+import java.util.*
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -88,6 +88,15 @@ enum class Skill(val accessor: KProperty1<Member, Double>, val color: DyeColor, 
         if (this == RUNECRAFTING) return leveling.runecraftingExperienceRequiredPerLevel
         return leveling.skillExperienceRequiredPerLevel
     }
+}
+
+enum class CollectionCategory(val skill: Skill?, val color: DyeColor, val icon: SkyblockId) {
+    FARMING(Skill.FARMING, DyeColor.YELLOW, SkyblockId("ROOKIE_HOE")),
+    FORAGING(Skill.FORAGING, DyeColor.BROWN, SkyblockId("TREECAPITATOR_AXE")),
+    MINING(Skill.MINING, DyeColor.LIGHT_GRAY, SkyblockId("DIAMOND_PICKAXE")),
+    FISHING(Skill.FISHING, DyeColor.BLUE, SkyblockId("FARMER_ROD")),
+    COMBAT(Skill.COMBAT, DyeColor.RED, SkyblockId("UNDEAD_SWORD")),
+    RIFT(null, DyeColor.PURPLE, SkyblockId("SKYBLOCK_MOTE")),
 }
 
 @Serializable

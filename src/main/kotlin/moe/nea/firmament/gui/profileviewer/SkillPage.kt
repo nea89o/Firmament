@@ -24,6 +24,7 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Formatting
+import moe.nea.firmament.apis.CollectionCategory
 import moe.nea.firmament.apis.CollectionInfo
 import moe.nea.firmament.apis.CollectionType
 import moe.nea.firmament.apis.Member
@@ -97,9 +98,9 @@ object SkillPage : ProfilePage {
         return WTabPanel().also {
             val data = HypixelStaticData.collectionData
             val panels = mutableListOf<WPanel>()
-            for ((skill, collections) in data.entries) {
-                val skillT = Skill.values().find { it.name == skill }
-                val color = skillT?.color ?: DyeColor.BLACK
+            for ((collectionKind, collections) in data.entries) {
+                val skillT = CollectionCategory.values().find { it.name == collectionKind }
+                val color = skillT?.color ?: DyeColor.WHITE
                 val icon = skillT?.icon?.let { RepoManager.getNEUItem(it).asItemStack() } ?: ItemStack(Items.ITEM_FRAME)
                 val panel = WBox(Axis.HORIZONTAL).also {
                     it.horizontalAlignment = HorizontalAlignment.CENTER
@@ -121,7 +122,7 @@ object SkillPage : ProfilePage {
                 panels.add(panel)
                 it.add(panel) {
                     it.tooltip(
-                        Text.translatable("firmament.pv.skills.${skill.lowercase()}")
+                        Text.translatable("firmament.pv.skills.${collectionKind.lowercase()}")
                             .styled { it.withColor(color.toTextColor()) })
                     it.icon(ItemIcon(icon))
                 }
