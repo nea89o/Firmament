@@ -50,6 +50,7 @@ Priority 3:
     - bits?
     - collection?
     - pretty graphs!
+- Maintain scroll percentage in vanilla guis when reinitializing
 
 
  - and much more that i will add as i go along

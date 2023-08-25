@@ -6,10 +6,10 @@
 
 package moe.nea.firmament.util
 
-import moe.nea.firmament.Firmament
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
+import moe.nea.firmament.Firmament
 
 object ScreenUtil {
     init {
@@ -29,10 +29,10 @@ object ScreenUtil {
 
     private var nextOpenedGui: Screen? = null
 
-    fun setScreenLater(nextScreen: Screen) {
+    fun setScreenLater(nextScreen: Screen?) {
         val nog = nextOpenedGui
         if (nog != null) {
-            Firmament.logger.warn("Setting screen ${nextScreen::class.qualifiedName} to be opened later, but ${nog::class.qualifiedName} is already queued.")
+            Firmament.logger.warn("Setting screen ${if (nextScreen == null) "null" else nextScreen::class.qualifiedName} to be opened later, but ${nog::class.qualifiedName} is already queued.")
             return
         }
         nextOpenedGui = nextScreen

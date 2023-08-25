@@ -12,7 +12,6 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
-import moe.nea.firmament.features.fishing.FishingWarning
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.SaveCursorPosition
@@ -54,6 +53,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
                 loadFeature(DeveloperFeatures)
                 loadFeature(DebugView)
             }
+            allFeatures.forEach { it.config }
             hasAutoloaded = true
         }
     }

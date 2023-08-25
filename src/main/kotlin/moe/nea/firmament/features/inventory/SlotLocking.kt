@@ -8,17 +8,17 @@ package moe.nea.firmament.features.inventory
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.entity.player.PlayerInventory
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.events.IsSlotProtectedEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
-import moe.nea.firmament.keybindings.FirmamentKeyBindings
+import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.CommonSoundEffects
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
+import net.minecraft.entity.player.PlayerInventory
+import org.lwjgl.glfw.GLFW
 
 object SlotLocking : FirmamentFeature {
     override val identifier: String
@@ -29,13 +29,19 @@ object SlotLocking : FirmamentFeature {
         val lockedSlots: MutableSet<Int> = mutableSetOf(),
     )
 
+    object TConfig : ManagedConfig(identifier) {
+        val lock by keyBinding("lock") { GLFW.GLFW_KEY_L }
+    }
+
+    override val config: TConfig
+            get() = TConfig
+
     object DConfig : ProfileSpecificDataHolder<Data>(serializer(), "locked-slots", ::Data)
 
-    val keyBinding by FirmamentKeyBindings::SLOT_LOCKING
     val lockedSlots get() = DConfig.data?.lockedSlots
     override fun onLoad() {
         HandledScreenKeyPressedEvent.subscribe {
-            if (!it.matches(keyBinding)) return@subscribe
+            if (!it.matches(TConfig.lock)) return@subscribe
             val inventory = MC.handledScreen ?: return@subscribe
             inventory as AccessorHandledScreen
 

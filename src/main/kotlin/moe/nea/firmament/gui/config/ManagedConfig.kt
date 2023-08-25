@@ -14,21 +14,22 @@ import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
-import moe.nea.jarvis.api.Point
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import moe.nea.firmament.Firmament
+import moe.nea.firmament.gui.WTightScrollPanel
+import moe.nea.firmament.keybindings.SavedKeyBinding
+import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.ScreenUtil.setScreenLater
+import moe.nea.jarvis.api.Point
+import net.minecraft.client.gui.screen.Screen
+import net.minecraft.text.Text
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.time.Duration
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
-import moe.nea.firmament.Firmament
-import moe.nea.firmament.gui.WTightScrollPanel
-import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
 abstract class ManagedConfig(override val name: String) : ManagedConfigElement() {
 
@@ -106,6 +107,18 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
         }, HudMetaHandler(this, label, width, height))
     }
 
+    protected fun keyBinding(
+        propertyName: String,
+        default: () -> Int,
+    ): ManagedOption<SavedKeyBinding> = keyBindingWithDefaultModifiers(propertyName) { SavedKeyBinding(default()) }
+
+    protected fun keyBindingWithDefaultModifiers(
+        propertyName: String,
+        default: () -> SavedKeyBinding,
+    ): ManagedOption<SavedKeyBinding> {
+        return option(propertyName, default, KeyBindingHandler("firmament.config.${name}.${propertyName}", this))
+    }
+
     protected fun integer(
         propertyName: String,
         min: Int,
@@ -125,7 +138,7 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
 
 
     fun reloadGui() {
-        latestGuiAppender?.reloadables?.forEach {it() }
+        latestGuiAppender?.reloadables?.forEach { it() }
     }
 
     fun getConfigEditor(parent: Screen? = null): CottonClientScreen {
@@ -137,7 +150,11 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
         guiapp.appendFullRow(WBox(Axis.HORIZONTAL).also {
             it.add(WButton(Text.literal("←")).also {
                 it.setOnClick {
-                    AllConfigsGui.showAllGuis()
+                    if (parent != null) {
+                        setScreenLater(parent)
+                    } else {
+                        AllConfigsGui.showAllGuis()
+                    }
                 }
             })
             it.add(WLabel(Text.translatable("firmament.config.${name}")).also {

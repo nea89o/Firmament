@@ -7,17 +7,24 @@
 package moe.nea.firmament.keybindings
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
-import org.lwjgl.glfw.GLFW
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
+import moe.nea.firmament.features.inventory.SlotLocking
+import moe.nea.firmament.gui.config.ManagedConfig
 
 object FirmamentKeyBindings {
-    val SLOT_LOCKING = KeyBindingHelper.registerKeyBinding(
-        KeyBinding(
-            "firmament.key.slotlocking",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_L,
-            "firmament.key.category"
+    fun registerKeyBinding(name: String, config: ManagedConfig) {
+        val vanillaKeyBinding = KeyBindingHelper.registerKeyBinding(
+            KeyBinding(
+                name,
+                InputUtil.Type.KEYSYM,
+                -1,
+                "firmament.key.category"
+            )
         )
-    )
+        keyBindings[vanillaKeyBinding] = config
+    }
+
+    val keyBindings = mutableMapOf<KeyBinding, ManagedConfig>()
+
 }
