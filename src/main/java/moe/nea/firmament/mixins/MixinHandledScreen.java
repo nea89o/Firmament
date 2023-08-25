@@ -9,9 +9,15 @@ package moe.nea.firmament.mixins;
 import moe.nea.firmament.events.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.Text;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,7 +25,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(HandledScreen.class)
-public class MixinHandledScreen {
+public abstract class MixinHandledScreen<T extends ScreenHandler> {
+
+    @Shadow
+    @Final
+    protected T handler;
+
+    @Shadow
+    public abstract T getScreenHandler();
+
+    @Unique
+    PlayerInventory playerInventory;
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    public void savePlayerInventory(ScreenHandler handler, PlayerInventory inventory, Text title, CallbackInfo ci) {
+        this.playerInventory = inventory;
+    }
 
     @Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;handleHotbarKeyPressed(II)Z", shift = At.Shift.BEFORE), cancellable = true)
     public void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
@@ -44,6 +65,11 @@ public class MixinHandledScreen {
     public void onMouseClickedSlot(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo ci) {
         if (IsSlotProtectedEvent.shouldBlockInteraction(slot)) {
             ci.cancel();
+        }
+        if (actionType == SlotActionType.SWAP && 0 <= button && button < 9) {
+            if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0))) {
+                ci.cancel();
+            }
         }
     }
 
