@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-package moe.nea.firmament.recipes
+package moe.nea.firmament.rei.recipes
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUIngredient

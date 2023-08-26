@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.util.Formatting
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
-import moe.nea.firmament.recipes.SBCraftingRecipe
+import moe.nea.firmament.rei.recipes.SBCraftingRecipe
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.rei.SBItemEntryDefinition
 import moe.nea.firmament.util.MC

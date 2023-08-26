@@ -25,8 +25,8 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
-import moe.nea.firmament.recipes.SBCraftingRecipe
-import moe.nea.firmament.recipes.SBForgeRecipe
+import moe.nea.firmament.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.skyblockId
@@ -52,7 +52,7 @@ class FirmamentReiPlugin : REIClientPlugin {
             }
             if (context.isActuallyCrafting)
                 CraftingOverlay.setOverlay(screen, display)
-            return@TransferHandler TransferHandler.Result.createSuccessful()
+            return@TransferHandler TransferHandler.Result.createSuccessful().blocksFurtherHandling(true)
         })
     }
 

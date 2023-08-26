@@ -15,8 +15,8 @@ import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.entry.EntryStack
-import moe.nea.firmament.recipes.SBCraftingRecipe
-import moe.nea.firmament.recipes.SBForgeRecipe
+import moe.nea.firmament.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.skyblockId
 
