@@ -69,7 +69,13 @@ repositories {
     mavenLocal()
 }
 
-val shadowMe by configurations.creating
+val shadowMe by configurations.creating {
+    exclude(group = "org.jetbrains.kotlin")
+    exclude(group = "org.jetbrains.kotlinx")
+    exclude(group = "org.jetbrains")
+    exclude(module = "gson")
+    exclude(group = "org.slf4j")
+}
 val transInclude by configurations.creating {
     exclude(group = "com.mojang")
     exclude(group = "org.jetbrains.kotlin")
@@ -178,6 +184,11 @@ tasks.jar {
 tasks.shadowJar {
     configurations = listOf(shadowMe)
     archiveClassifier.set("dev")
+    doLast {
+        configurations.forEach {
+            println("Copying files into jar: ${it.files}")
+        }
+    }
     relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 }
@@ -199,6 +210,7 @@ tasks.processResources {
     filesMatching("**/fabric.mod.json") {
         expand(*replacements.toTypedArray())
     }
+    exclude("**/*.license")
     from(tasks.scanLicenses)
 }
 
