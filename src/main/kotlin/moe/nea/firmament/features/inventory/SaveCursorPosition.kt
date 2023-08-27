@@ -8,7 +8,6 @@ package moe.nea.firmament.features.inventory
 
 import kotlin.math.absoluteValue
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import net.minecraft.client.util.InputUtil
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -48,7 +47,8 @@ object SaveCursorPosition : FirmamentFeature {
 
     @JvmStatic
     fun loadCursor(middleX: Double, middleY: Double): Pair<Double, Double>? {
-        val lastPosition = savedPosition?.takeIf { it.savedAt.passedTime() < 1.seconds }
+        if (!TConfig.enable) return null
+        val lastPosition = savedPosition?.takeIf { it.savedAt.passedTime() < TConfig.tolerance }
         savedPosition = null
         if (lastPosition != null &&
             (lastPosition.middle.first - middleX).absoluteValue < 1 &&
@@ -67,6 +67,7 @@ object SaveCursorPosition : FirmamentFeature {
 
     @JvmStatic
     fun saveCursorMiddle(middleX: Double, middleY: Double) {
+        if (!TConfig.enable) return
         val cursorPos = assertNotNullOr(savedPositionedP1) { return }
         savedPosition = SavedPosition(Pair(middleX, middleY), cursorPos)
     }
