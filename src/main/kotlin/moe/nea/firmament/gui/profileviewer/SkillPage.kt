@@ -6,29 +6,13 @@
 
 package moe.nea.firmament.gui.profileviewer
 
-import io.github.cottonmc.cotton.gui.widget.TooltipBuilder
-import io.github.cottonmc.cotton.gui.widget.WBox
-import io.github.cottonmc.cotton.gui.widget.WGridPanel
-import io.github.cottonmc.cotton.gui.widget.WPanel
-import io.github.cottonmc.cotton.gui.widget.WTabPanel
-import io.github.cottonmc.cotton.gui.widget.WText
-import io.github.cottonmc.cotton.gui.widget.WWidget
+import io.github.cottonmc.cotton.gui.widget.*
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.icon.Icon
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.text.Style
-import net.minecraft.text.Text
-import net.minecraft.util.DyeColor
-import net.minecraft.util.Formatting
-import moe.nea.firmament.apis.CollectionCategory
-import moe.nea.firmament.apis.CollectionInfo
-import moe.nea.firmament.apis.CollectionType
-import moe.nea.firmament.apis.Member
-import moe.nea.firmament.apis.Skill
+import moe.nea.firmament.apis.*
 import moe.nea.firmament.gui.WBar
 import moe.nea.firmament.gui.WFixedPanel
 import moe.nea.firmament.gui.WTitledItem
@@ -42,6 +26,12 @@ import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.modifyLore
 import moe.nea.firmament.util.toShedaniel
 import moe.nea.firmament.util.toTextColor
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.text.Style
+import net.minecraft.text.Text
+import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
 
 object SkillPage : ProfilePage {
 
@@ -64,8 +54,8 @@ object SkillPage : ProfilePage {
         }
     }
 
-    private fun collectionItem(type: CollectionType, info: CollectionInfo, color: DyeColor, member: Member): WWidget {
-        val collectionCount = member.collection[type] ?: 0
+    private fun collectionItem(type: CollectionType, info: CollectionInfo, color: DyeColor, profile: Profile): WWidget {
+        val collectionCount = profile.members.values.sumOf { it.collection[type] ?: 0 }
         val unlockedTiers = info.tiers.count { it.amountRequired <= collectionCount }
         return WTitledItem(
             SBItemEntryDefinition.getEntry(type.skyblockId).asItemEntry().value.copy()
@@ -79,7 +69,7 @@ object SkillPage : ProfilePage {
                     it.modifyLore { old ->
                         listOf(
                             Text.literal("${info.name} Collection: $collectionCount / ${info.tiers.last().amountRequired}"),
-                            Text.literal("Tiers unlocked: $unlockedTiers")
+                            Text.literal("Tiers unlocked: $unlockedTiers / ${info.tiers.size}")
                         ).map {
                             it.fillStyle(
                                 Style.EMPTY.withItalic(false).withColor(Formatting.GRAY)
@@ -110,7 +100,7 @@ object SkillPage : ProfilePage {
                         var x = 0
                         var y = 0
                         for (item in collections.items) {
-                            it.add(collectionItem(item.key, item.value, color, profileViewer.member), x, y, 1, 1)
+                            it.add(collectionItem(item.key, item.value, color, profileViewer.profile), x, y, 1, 1)
                             x++
                             if (x == 5) {
                                 x = 0
