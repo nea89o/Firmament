@@ -6,7 +6,7 @@
 
 package moe.nea.firmament.util
 
-import java.util.UUID
+import java.util.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlin.time.Duration
@@ -78,6 +78,8 @@ object SBData {
         val lastLocraw = locraw
         val n = Firmament.json.decodeFromString<Locraw>(unformattedString)
         if (update) {
+            if (n.gametype != "SKYBLOCK")
+                profileId = null
             locraw = n
             SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, locraw))
         }
