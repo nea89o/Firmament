@@ -76,10 +76,10 @@ data class SBItemStack(
                 ?.interpolatedStatsAtLevel(petData.levelData.currentLevel)
             if (stats != null) {
                 stats.otherNumbers.forEachIndexed { index, it ->
-                    replacementData[index.toString()] = FirmFormatters.toString(it, 1)
+                    replacementData[index.toString()] = FirmFormatters.formatCurrency(it, 1)
                 }
                 stats.statNumbers.forEach { (t, u) ->
-                    replacementData[t] = FirmFormatters.toString(u, 1)
+                    replacementData[t] = FirmFormatters.formatCurrency(u, 1)
                 }
             }
             replacementData["LVL"] = petData.levelData.currentLevel.toString()

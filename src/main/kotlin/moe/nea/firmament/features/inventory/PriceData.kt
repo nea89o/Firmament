@@ -38,13 +38,13 @@ object PriceData : FirmamentFeature {
                 it.lines.add(
                     Text.translatable(
                         "firmament.tooltip.bazaar.sell-order",
-                        FirmFormatters.toString(bazaarData.quickStatus.sellPrice, 1)
+                        FirmFormatters.formatCurrency(bazaarData.quickStatus.sellPrice, 1)
                     )
                 )
                 it.lines.add(
                     Text.translatable(
                         "firmament.tooltip.bazaar.buy-order",
-                        FirmFormatters.toString(bazaarData.quickStatus.buyPrice, 1)
+                        FirmFormatters.formatCurrency(bazaarData.quickStatus.buyPrice, 1)
                     )
                 )
             } else if (lowestBin != null) {
@@ -52,7 +52,7 @@ object PriceData : FirmamentFeature {
                 it.lines.add(
                     Text.translatable(
                         "firmament.tooltip.ah.lowestbin",
-                        FirmFormatters.toString(lowestBin, 1)
+                        FirmFormatters.formatCurrency(lowestBin, 1)
                     )
                 )
             }

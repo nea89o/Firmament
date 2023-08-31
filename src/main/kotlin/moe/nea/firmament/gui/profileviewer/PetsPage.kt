@@ -73,7 +73,7 @@ object PetsPage : ProfilePage {
                 Text.literal("Magic Find: ").styled { it.withColor(Formatting.AQUA) }
                     .append(
                         Text.literal(
-                            FirmFormatters.toString(
+                            FirmFormatters.formatCurrency(
                                 RepoManager.neuRepo.constants.bonuses.getPetRewards(
                                     petScore
                                 )["magic_find"] ?: 0.0F, 1

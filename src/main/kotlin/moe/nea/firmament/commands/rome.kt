@@ -83,7 +83,7 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(
                         Text.translatable(
                             "firmament.price.bazaar.buy.price",
-                            FirmFormatters.toString(bazaarData.quickStatus.buyPrice, 1)
+                            FirmFormatters.formatCurrency(bazaarData.quickStatus.buyPrice, 1)
                         )
                     )
                     source.sendFeedback(
@@ -95,7 +95,7 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(
                         Text.translatable(
                             "firmament.price.bazaar.sell.price",
-                            FirmFormatters.toString(bazaarData.quickStatus.sellPrice, 1)
+                            FirmFormatters.formatCurrency(bazaarData.quickStatus.sellPrice, 1)
                         )
                     )
                     source.sendFeedback(
@@ -110,7 +110,7 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(
                         Text.translatable(
                             "firmament.price.lowestbin",
-                            FirmFormatters.toString(lowestBin, 1)
+                            FirmFormatters.formatCurrency(lowestBin, 1)
                         )
                     )
                 }
