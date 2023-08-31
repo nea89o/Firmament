@@ -38,25 +38,8 @@ data class SavedKeyBinding(
         }
     }
 
-    fun hasShiftDown(): Boolean {
-        return InputUtil.isKeyPressed(
-            MinecraftClient.getInstance().window.handle,
-            GLFW.GLFW_KEY_LEFT_SHIFT
-        ) || InputUtil.isKeyPressed(
-            MinecraftClient.getInstance().window.handle, GLFW.GLFW_KEY_RIGHT_SHIFT
-        )
-    }
-
-    fun hasAltDown(): Boolean {
-        return InputUtil.isKeyPressed(
-            MinecraftClient.getInstance().window.handle,
-            GLFW.GLFW_KEY_LEFT_ALT
-        ) || InputUtil.isKeyPressed(
-            MinecraftClient.getInstance().window.handle, GLFW.GLFW_KEY_RIGHT_ALT
-        )
-    }
-
     fun isPressed(): Boolean {
+        if (this.keyCode == GLFW.GLFW_KEY_UNKNOWN) return false
         val h = MC.window.handle
         if (!InputUtil.isKeyPressed(h, keyCode)) return false
 
@@ -76,6 +59,7 @@ data class SavedKeyBinding(
     }
 
     override fun matches(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        if (this.keyCode == GLFW.GLFW_KEY_UNKNOWN) return false
         return keyCode == this.keyCode && getMods(modifiers) == Triple(shift, ctrl, alt)
     }
 

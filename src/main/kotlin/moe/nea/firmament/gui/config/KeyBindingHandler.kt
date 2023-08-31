@@ -8,16 +8,16 @@ package moe.nea.firmament.gui.config
 
 import io.github.cottonmc.cotton.gui.widget.WButton
 import io.github.cottonmc.cotton.gui.widget.data.InputResult
+import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
-import moe.nea.firmament.keybindings.FirmamentKeyBindings
-import moe.nea.firmament.keybindings.SavedKeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import org.lwjgl.glfw.GLFW
+import moe.nea.firmament.keybindings.FirmamentKeyBindings
+import moe.nea.firmament.keybindings.SavedKeyBinding
 
 class KeyBindingHandler(name: String, managedConfig: ManagedConfig) : ManagedConfig.OptionHandler<SavedKeyBinding> {
     init {
@@ -46,6 +46,7 @@ class KeyBindingHandler(name: String, managedConfig: ManagedConfig) : ManagedCon
                     lastPressedNonModifier = 0
                     editing = false
                     lastPressed = 0
+                    opt.value = SavedKeyBinding(GLFW.GLFW_KEY_UNKNOWN)
                     updateButton!!()
                     return InputResult.PROCESSED
                 }
