@@ -14,13 +14,13 @@ import io.ktor.client.plugins.compression.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
-import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Path
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
@@ -41,6 +41,7 @@ import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.dbus.FirmamentDbusObject
+import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.events.ScreenRenderPostEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FeatureManager
@@ -133,6 +134,9 @@ object Firmament {
                 globalJob.cancel()
             }
         })
+        ItemTooltipCallback.EVENT.register { a, b, c ->
+            ItemTooltipEvent.publish(ItemTooltipEvent(a, b, c))
+        }
         ScreenEvents.AFTER_INIT.register(ScreenEvents.AfterInit { client, screen, scaledWidth, scaledHeight ->
             ScreenEvents.afterRender(screen)
                 .register(ScreenEvents.AfterRender { screen, drawContext, mouseX, mouseY, tickDelta ->

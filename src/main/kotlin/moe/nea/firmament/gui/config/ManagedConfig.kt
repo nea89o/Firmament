@@ -14,22 +14,23 @@ import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
+import moe.nea.jarvis.api.Point
+import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlin.io.path.createDirectories
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
+import kotlin.time.Duration
+import net.minecraft.client.gui.screen.Screen
+import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.WTightScrollPanel
 import moe.nea.firmament.keybindings.SavedKeyBinding
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
-import moe.nea.jarvis.api.Point
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
-import kotlin.io.path.createDirectories
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
-import kotlin.time.Duration
 
 abstract class ManagedConfig(override val name: String) : ManagedConfigElement() {
 
@@ -110,13 +111,19 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
     protected fun keyBinding(
         propertyName: String,
         default: () -> Int,
-    ): ManagedOption<SavedKeyBinding> = keyBindingWithDefaultModifiers(propertyName) { SavedKeyBinding(default()) }
+    ): ManagedOption<SavedKeyBinding> = keyBindingWithOutDefaultModifiers(propertyName) { SavedKeyBinding(default()) }
 
-    protected fun keyBindingWithDefaultModifiers(
+    protected fun keyBindingWithOutDefaultModifiers(
         propertyName: String,
         default: () -> SavedKeyBinding,
     ): ManagedOption<SavedKeyBinding> {
         return option(propertyName, default, KeyBindingHandler("firmament.config.${name}.${propertyName}", this))
+    }
+
+    protected fun keyBindingWithDefaultUnbound(
+        propertyName: String,
+    ): ManagedOption<SavedKeyBinding> {
+        return keyBindingWithOutDefaultModifiers(propertyName) { SavedKeyBinding(GLFW.GLFW_KEY_UNKNOWN) }
     }
 
     protected fun integer(

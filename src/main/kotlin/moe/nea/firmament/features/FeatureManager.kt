@@ -14,6 +14,7 @@ import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
+import moe.nea.firmament.features.inventory.PriceData
 import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
@@ -48,6 +49,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(ChatLinks)
             loadFeature(SaveCursorPosition)
             loadFeature(CustomSkyBlockTextures)
+            loadFeature(PriceData)
             loadFeature(Fixes)
             if (Firmament.DEBUG) {
                 loadFeature(DeveloperFeatures)

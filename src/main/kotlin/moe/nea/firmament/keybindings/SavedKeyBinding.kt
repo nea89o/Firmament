@@ -6,8 +6,11 @@
 
 package moe.nea.firmament.keybindings
 
-import kotlinx.serialization.Serializable
 import org.lwjgl.glfw.GLFW
+import kotlinx.serialization.Serializable
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.util.InputUtil
+import moe.nea.firmament.util.MC
 
 @Serializable
 data class SavedKeyBinding(
@@ -33,6 +36,43 @@ data class SavedKeyBinding(
                 modifiers and GLFW.GLFW_MOD_ALT != 0
             )
         }
+    }
+
+    fun hasShiftDown(): Boolean {
+        return InputUtil.isKeyPressed(
+            MinecraftClient.getInstance().window.handle,
+            GLFW.GLFW_KEY_LEFT_SHIFT
+        ) || InputUtil.isKeyPressed(
+            MinecraftClient.getInstance().window.handle, GLFW.GLFW_KEY_RIGHT_SHIFT
+        )
+    }
+
+    fun hasAltDown(): Boolean {
+        return InputUtil.isKeyPressed(
+            MinecraftClient.getInstance().window.handle,
+            GLFW.GLFW_KEY_LEFT_ALT
+        ) || InputUtil.isKeyPressed(
+            MinecraftClient.getInstance().window.handle, GLFW.GLFW_KEY_RIGHT_ALT
+        )
+    }
+
+    fun isPressed(): Boolean {
+        val h = MC.window.handle
+        if (!InputUtil.isKeyPressed(h, keyCode)) return false
+
+        val ctrl = if (MinecraftClient.IS_SYSTEM_MAC) {
+            InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SUPER)
+                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SUPER)
+        } else InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_CONTROL)
+            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_CONTROL)
+        val shift = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SHIFT)
+            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
+        val alt = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_ALT)
+            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_ALT)
+
+        return (ctrl == this.ctrl) &&
+            (alt == this.alt) &&
+            (shift == this.shift)
     }
 
     override fun matches(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
