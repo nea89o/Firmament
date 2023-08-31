@@ -27,4 +27,18 @@ jobs:
               uses: actions/upload-artifact@v3
               with:
                   path: build/libs/Firmament-*.jar
+            - name: Move build artifact around
+              id: artifact-rename
+              run: |
+                  rm -f build/libs/*sources*.jar
+                  newfilename=build/libs/Firmament-$(git rev-parse --short HEAD).jar
+                  echo filename=$newfilename >>"$GITHUB_OUTPUT"
+                  mv build/libs/Firmament-*.jar $newfilename
+            - name: Upload artifact to discord
+              if: ${{ github.ref == 'refs/heads/master' }}
+              uses: tsickert/discord-webhook@v5.3.0
+              with:
+                  webhook-url: ${{ secrets.WEBHOOK_URL }}
+                  filename: ${{ steps.artifact-rename.outputs.filename }}
+
 
