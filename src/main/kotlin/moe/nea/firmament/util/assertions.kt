@@ -9,8 +9,11 @@ package moe.nea.firmament.util
 /**
  * Less aggressive version of `require(obj != null)`, which fails in devenv but continues at runtime.
  */
-inline fun <T : Any> assertNotNullOr(obj: T?, block: () -> T): T {
-    assert(obj != null)
+inline fun <T : Any> assertNotNullOr(obj: T?, message: String? = null, block: () -> T): T {
+    if (message == null)
+        assert(obj != null)
+    else
+        assert(obj != null) { message }
     return obj ?: block()
 }
 

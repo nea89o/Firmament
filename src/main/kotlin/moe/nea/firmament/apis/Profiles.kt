@@ -10,19 +10,20 @@ package moe.nea.firmament.apis
 
 import io.github.moulberry.repo.constants.Leveling
 import io.github.moulberry.repo.data.Rarity
-import java.util.*
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import kotlin.reflect.KProperty1
-import net.minecraft.util.DyeColor
-import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.assertNotNullOr
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.json.InstantAsLongSerializer
+import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
+import java.util.*
+import kotlin.reflect.KProperty1
 
 
 @Serializable
@@ -81,7 +82,7 @@ enum class Skill(val accessor: KProperty1<Member, Double>, val color: DyeColor, 
     ENCHANTING(Member::experienceSkillEnchanting, DyeColor.MAGENTA, SkyblockId("ENCHANTMENT_TABLE")),
     ;
 
-    fun getMaximumLevel(leveling: Leveling) = leveling.maximumLevels[name.lowercase()] ?: TODO("Repo error")
+    fun getMaximumLevel(leveling: Leveling) = assertNotNullOr(leveling.maximumLevels[name.lowercase()]) { 50 }
 
     fun getLadder(leveling: Leveling): List<Int> {
         if (this == SOCIAL) return leveling.socialExperienceRequiredPerLevel
@@ -149,14 +150,14 @@ value class PetType(val name: String)
 
 @Serializable
 data class Pet(
-    val uuid: UUID?,
+    val uuid: UUID? = null,
     val type: PetType,
-    val exp: Double,
-    val active: Boolean,
+    val exp: Double = 0.0,
+    val active: Boolean = false,
     val tier: Rarity,
-    val candyUsed: Int,
-    val heldItem: String?,
-    val skin: String?,
+    val candyUsed: Int = 0,
+    val heldItem: String? = null,
+    val skin: String? = null,
 ) {
     val itemId get() = SkyblockId("${type.name};${tier.ordinal}")
 }
@@ -184,7 +185,7 @@ data class PlayerData(
     val rankData get() = RepoManager.neuRepo.constants.misc.ranks[if (monthlyPackageRank == "NONE" || monthlyPackageRank == null) packageRank else monthlyPackageRank]
     fun getDisplayName(name: String = playerName) = rankData?.let {
         ("§${it.color}[${it.tag}${rankPlusDyeColor.modern}" +
-            "${it.plus ?: ""}§${it.color}] $name")
+                "${it.plus ?: ""}§${it.color}] $name")
     } ?: "${Formatting.GRAY}$name"
 
 

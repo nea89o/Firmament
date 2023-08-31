@@ -9,14 +9,14 @@ package moe.nea.firmament.apis
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import java.time.Duration
-import java.time.Instant
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
-import net.minecraft.client.MinecraftClient
 import moe.nea.firmament.Firmament
+import net.minecraft.client.MinecraftClient
+import java.time.Duration
+import java.time.Instant
+import java.util.*
 
 object UrsaManager {
     private data class Token(
@@ -63,6 +63,9 @@ object UrsaManager {
                 val validUntil = response.headers["x-ursa-expires"]?.toLongOrNull()?.let { Instant.ofEpochMilli(it) }
                     ?: (Instant.now() + Duration.ofMinutes(55))
                 currentToken = Token(validUntil, savedToken, host)
+            }
+            if (response.status.value != 200) {
+                Firmament.logger.error("Failed to contact ursa minor: ${response.bodyAsText()}")
             }
             return response
         } finally {
