@@ -20,10 +20,10 @@ open class FirmamentEventBus<T : FirmamentEvent> {
 
     private val toHandle: MutableList<Handler<T>> = CopyOnWriteArrayList()
     fun subscribe(handle: (T) -> Unit) {
-        subscribe(handle, false)
+        subscribe(false, handle)
     }
 
-    fun subscribe(handle: (T) -> Unit, receivesCancelled: Boolean) {
+    fun subscribe(receivesCancelled: Boolean, handle: (T) -> Unit) {
         toHandle.add(Handler(handle, receivesCancelled))
     }
 

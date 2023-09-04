@@ -12,6 +12,7 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
+import moe.nea.firmament.features.debug.MinorTrolling
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.PriceData
@@ -41,6 +42,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
     fun autoload() {
         synchronized(this) {
             if (hasAutoloaded) return
+            loadFeature(MinorTrolling)
             loadFeature(FairySouls)
             // TODO: loadFeature(FishingWarning)
             loadFeature(SlotLocking)

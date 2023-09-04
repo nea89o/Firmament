@@ -26,7 +26,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.events.ClientChatLineReceivedEvent
+import moe.nea.firmament.events.ModifyChatEvent
 import moe.nea.firmament.events.ScreenRenderPostEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -98,9 +98,9 @@ object ChatLinks : FirmamentFeature {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onLoad() {
-        ClientChatLineReceivedEvent.subscribe {
+        ModifyChatEvent.subscribe {
             if (TConfig.enableLinks)
-                it.replaceWith = it.text.transformEachRecursively { child ->
+                it.replaceWith = it.replaceWith.transformEachRecursively { child ->
                     val text = child.string
                     if ("://" !in text) return@transformEachRecursively child
                     val s = Text.empty().setStyle(child.style)

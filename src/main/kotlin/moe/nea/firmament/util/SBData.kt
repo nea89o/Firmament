@@ -6,18 +6,17 @@
 
 package moe.nea.firmament.util
 
-import java.util.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.events.ClientChatLineReceivedEvent
 import moe.nea.firmament.events.OutgoingPacketEvent
-import moe.nea.firmament.events.ServerChatLineReceivedEvent
+import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldReadyEvent
+import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
+import java.util.*
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 object SBData {
     private val profileRegex = "Profile ID: ([a-z0-9\\-]+)".toRegex()
@@ -38,7 +37,7 @@ object SBData {
                 anyLocrawSent.markNow()
             }
         }
-        ServerChatLineReceivedEvent.subscribe { event ->
+        ProcessChatEvent.subscribe(receivesCancelled = true) { event ->
             val profileMatch = profileRegex.matchEntire(event.unformattedString)
             if (profileMatch != null) {
                 try {
@@ -54,16 +53,14 @@ object SBData {
             }
             if (event.unformattedString.startsWith("{")) {
                 if (tryReceiveLocraw(event.unformattedString)) {
+                    if (lastLocrawSent.timePassed() < locrawRoundtripTime) {
+                        lastLocrawSent.markFarPast()
+                        event.cancel()
+                    }
                     if (!hasValidLocraw && !hasSentLocraw && hasReceivedProfile) {
                         sendLocraw()
                     }
                 }
-            }
-        }
-        ClientChatLineReceivedEvent.subscribe { event ->
-            if (event.unformattedString.startsWith("{") && tryReceiveLocraw(event.unformattedString) && lastLocrawSent.timePassed() < locrawRoundtripTime) {
-                lastLocrawSent.markFarPast()
-                event.cancel()
             }
         }
 
@@ -71,6 +68,7 @@ object SBData {
             locraw = null
             hasSentLocraw = false
             hasReceivedProfile = false
+            profileId = null
         }
     }
 

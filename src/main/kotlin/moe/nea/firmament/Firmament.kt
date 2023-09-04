@@ -14,8 +14,19 @@ import io.ktor.client.plugins.compression.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
-import java.nio.file.Files
-import java.nio.file.Path
+import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
+import moe.nea.firmament.commands.registerFirmamentCommand
+import moe.nea.firmament.dbus.FirmamentDbusObject
+import moe.nea.firmament.events.ItemTooltipEvent
+import moe.nea.firmament.events.ScreenRenderPostEvent
+import moe.nea.firmament.events.TickEvent
+import moe.nea.firmament.events.registration.registerFirmamentChatEvents
+import moe.nea.firmament.features.FeatureManager
+import moe.nea.firmament.repo.HypixelStaticData
+import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.data.IDataHolder
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -25,30 +36,15 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
+import net.minecraft.command.CommandRegistryAccess
+import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
 import org.freedesktop.dbus.exceptions.DBusException
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.plus
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.coroutines.EmptyCoroutineContext
-import net.minecraft.command.CommandRegistryAccess
-import net.minecraft.util.Identifier
-import moe.nea.firmament.commands.registerFirmamentCommand
-import moe.nea.firmament.dbus.FirmamentDbusObject
-import moe.nea.firmament.events.ItemTooltipEvent
-import moe.nea.firmament.events.ScreenRenderPostEvent
-import moe.nea.firmament.events.TickEvent
-import moe.nea.firmament.features.FeatureManager
-import moe.nea.firmament.repo.HypixelStaticData
-import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.util.SBData
-import moe.nea.firmament.util.data.IDataHolder
 
 object Firmament {
     const val MOD_ID = "firmament"
@@ -134,6 +130,7 @@ object Firmament {
                 globalJob.cancel()
             }
         })
+        registerFirmamentChatEvents()
         ItemTooltipCallback.EVENT.register { a, b, c ->
             ItemTooltipEvent.publish(ItemTooltipEvent(a, b, c))
         }
@@ -144,6 +141,7 @@ object Firmament {
                 })
         })
     }
+
 
     fun identifier(path: String) = Identifier(MOD_ID, path)
 }

@@ -17,7 +17,7 @@ import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.text.Text
 import net.minecraft.util.math.Vec3d
-import moe.nea.firmament.events.ServerChatLineReceivedEvent
+import moe.nea.firmament.events.AllowChatEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -125,7 +125,7 @@ object FairySouls : FirmamentFeature {
             updateWorldSouls()
             updateMissingSouls()
         }
-        ServerChatLineReceivedEvent.subscribe {
+        AllowChatEvent.subscribe {
             when (it.text.unformattedString) {
                 "You have already found that Fairy Soul!" -> {
                     markNearestSoul()
