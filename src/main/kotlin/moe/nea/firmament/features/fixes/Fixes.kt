@@ -20,6 +20,7 @@ object Fixes : FirmamentFeature {
     object TConfig : ManagedConfig(identifier) {
         val fixUnsignedPlayerSkins by toggle("player-skins") { true }
         val autoSprint by toggle("auto-sprint") { false }
+        val peekChat by keyBindingWithDefaultUnbound("peek-chat")
     }
 
     override val config: ManagedConfig
@@ -34,5 +35,9 @@ object Fixes : FirmamentFeature {
     }
 
     override fun onLoad() {
+    }
+
+    fun shouldPeekChat(): Boolean {
+        return TConfig.peekChat.isPressed(atLeast = true)
     }
 }
