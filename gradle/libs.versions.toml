@@ -63,7 +63,7 @@ runtime_optional = [
     "freecammod",
     "sodium",
     "qolify",
-    "citresewn",
+#    "citresewn",
     "ncr",
 ]
 

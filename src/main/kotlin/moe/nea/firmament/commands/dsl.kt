@@ -8,7 +8,6 @@ package moe.nea.firmament.commands
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
@@ -32,9 +31,9 @@ operator fun <T : Any, C : CommandContext<*>> C.get(arg: TypeSafeArg<T>): T {
 
 fun literal(
     name: String,
-    block: LiteralArgumentBuilder<DefaultSource>.() -> Unit
-): LiteralArgumentBuilder<DefaultSource> =
-    LiteralArgumentBuilder.literal<DefaultSource>(name).also(block)
+    block: CaseInsensitiveLiteralCommandNode.Builder<DefaultSource>.() -> Unit
+): CaseInsensitiveLiteralCommandNode.Builder<DefaultSource> =
+    CaseInsensitiveLiteralCommandNode.Builder<DefaultSource>(name).also(block)
 
 
 private fun normalizeGeneric(argument: Type): Class<*> {
@@ -101,7 +100,7 @@ fun <T : RequiredArgumentBuilder<DefaultSource, String>> T.suggestsList(provider
 
 fun <T : ArgumentBuilder<DefaultSource, T>> T.thenLiteral(
     name: String,
-    block: LiteralArgumentBuilder<DefaultSource>.() -> Unit
+    block: CaseInsensitiveLiteralCommandNode.Builder<DefaultSource>.() -> Unit
 ): T =
     then(literal(name, block))
 
