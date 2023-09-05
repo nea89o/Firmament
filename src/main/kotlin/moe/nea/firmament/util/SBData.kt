@@ -65,7 +65,9 @@ object SBData {
         }
 
         WorldReadyEvent.subscribe {
+            val lastLocraw = locraw
             locraw = null
+            SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, null))
             hasSentLocraw = false
             hasReceivedProfile = false
             profileId = null
