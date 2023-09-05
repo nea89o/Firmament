@@ -9,7 +9,6 @@ package moe.nea.firmament.rei
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
-import java.util.stream.Stream
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.common.entry.EntrySerializer
 import me.shedaniel.rei.api.common.entry.EntryStack
@@ -17,20 +16,17 @@ import me.shedaniel.rei.api.common.entry.comparison.ComparisonContext
 import me.shedaniel.rei.api.common.entry.type.EntryDefinition
 import me.shedaniel.rei.api.common.entry.type.EntryType
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
-import net.minecraft.item.ItemStack
-import net.minecraft.registry.tag.TagKey
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.util.FirmFormatters
-import moe.nea.firmament.util.HypixelPetInfo
-import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.petData
-import moe.nea.firmament.util.skyBlockId
+import moe.nea.firmament.util.*
+import net.minecraft.item.ItemStack
+import net.minecraft.registry.tag.TagKey
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
+import java.util.stream.Stream
 
 // TODO: add in extra data like pet info, into this structure
 data class PetData(
@@ -67,7 +63,7 @@ data class SBItemStack(
         RepoManager.getPotentialStubPetData(skyblockId)
     )
 
-    private val itemStack by lazy {
+    private val itemStack by lazy(LazyThreadSafetyMode.NONE) {
         if (skyblockId == SkyblockId.COINS)
             return@lazy ItemCache.coinItem(stackSize)
         val replacementData = mutableMapOf<String, String>()
@@ -85,6 +81,10 @@ data class SBItemStack(
             replacementData["LVL"] = petData.levelData.currentLevel.toString()
         }
         return@lazy neuItem.asItemStack(idHint = skyblockId, replacementData).copyWithCount(stackSize)
+    }
+
+    fun asImmutableItemStack(): ItemStack {
+        return itemStack
     }
 
     fun asItemStack(): ItemStack {

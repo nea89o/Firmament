@@ -37,7 +37,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 
     companion object {
         fun EntryStack<SBItemStack>.asItemEntry(): EntryStack<ItemStack> {
-            return EntryStack.of(VanillaEntryTypes.ITEM, value.asItemStack())
+            return EntryStack.of(VanillaEntryTypes.ITEM, value.asImmutableItemStack())
         }
 
         val SKYBLOCK_ITEM_TYPE_ID = Identifier("firmament", "skyblockitems")
