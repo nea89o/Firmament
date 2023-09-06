@@ -148,6 +148,8 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
         latestGuiAppender?.reloadables?.forEach { it() }
     }
 
+    val labelText = Text.translatable("firmament.config.${name}")
+
     fun getConfigEditor(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
         var screen: Screen? = null
@@ -165,7 +167,7 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
                     }
                 }
             })
-            it.add(WLabel(Text.translatable("firmament.config.${name}")).also {
+            it.add(WLabel(labelText).also {
                 it.verticalAlignment = VerticalAlignment.CENTER
             })
         })

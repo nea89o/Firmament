@@ -11,14 +11,14 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
-import java.lang.reflect.TypeVariable
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import kotlinx.coroutines.launch
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.iterate
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
 
 
 typealias DefaultSource = FabricClientCommandSource
@@ -68,7 +68,14 @@ data class TypeSafeArg<T : Any>(val name: String, val argument: ArgumentType<T>)
 
 
     fun <S> get(ctx: CommandContext<S>): T {
-        return ctx.getArgument(name, argClass) as T
+        try {
+            return ctx.getArgument(name, argClass) as T
+        } catch (e: Exception) {
+            if (ctx.child != null) {
+                return get(ctx.child)
+            }
+            throw e
+        }
     }
 }
 
@@ -86,9 +93,9 @@ fun <T : ArgumentBuilder<DefaultSource, T>, AT : Any> T.thenArgument(
     block: RequiredArgumentBuilder<DefaultSource, AT>.(TypeSafeArg<AT>) -> Unit
 ): T = then(argument(name, argument, block))
 
-fun <T : RequiredArgumentBuilder<DefaultSource, String>> T.suggestsList(provider: () -> Iterable<String>) {
+fun <T : RequiredArgumentBuilder<DefaultSource, String>> T.suggestsList(provider: CommandContext<DefaultSource>.() -> Iterable<String>) {
     suggests(SuggestionProvider<DefaultSource> { context, builder ->
-        provider()
+        provider(context)
             .asSequence()
             .filter { it.startsWith(builder.remaining, ignoreCase = true) }
             .forEach {

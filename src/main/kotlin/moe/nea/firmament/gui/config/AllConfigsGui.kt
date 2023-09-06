@@ -11,34 +11,31 @@ import io.github.cottonmc.cotton.gui.client.CottonClientScreen
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
 import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WButton
-import io.github.cottonmc.cotton.gui.widget.WClippedPanel
-import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WLabel
-import io.github.cottonmc.cotton.gui.widget.WPanel
-import io.github.cottonmc.cotton.gui.widget.WPanelWithInsets
 import io.github.cottonmc.cotton.gui.widget.WScrollPanel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.Insets
-import io.ktor.http.*
-import kotlin.streams.asSequence
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
 import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.gui.WFixedPanel
 import moe.nea.firmament.gui.WSplitPanel
-import moe.nea.firmament.gui.WTightScrollPanel
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
+import net.minecraft.client.gui.screen.Screen
+import net.minecraft.text.Text
+import kotlin.streams.asSequence
 
 object AllConfigsGui {
+
+    val allConfigs
+        get() = listOf(
+            RepoManager.Config
+        ) + FeatureManager.allFeatures.mapNotNull { it.config }
 
     fun makeScreen(parent: Screen? = null): CottonClientScreen {
         val lwgd = LightweightGuiDescription()
         var screen: CottonClientScreen? = null
-        val configs = listOf(
-            RepoManager.Config
-        ) + FeatureManager.allFeatures.mapNotNull { it.config }
+        val configs = allConfigs
         val box = WBox(Axis.VERTICAL)
         configs.forEach { config ->
             val panel = WSplitPanel(

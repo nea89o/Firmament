@@ -9,21 +9,18 @@ package moe.nea.firmament.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import io.ktor.client.statement.*
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.minecraft.text.Text
 import moe.nea.firmament.apis.UrsaManager
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
+import moe.nea.firmament.gui.config.BooleanHandler
+import moe.nea.firmament.gui.config.ManagedOption
 import moe.nea.firmament.gui.profileviewer.ProfileViewer
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.util.FirmFormatters
-import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.SBData
-import moe.nea.firmament.util.ScreenUtil
-import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.unformattedString
+import moe.nea.firmament.util.*
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.minecraft.text.Text
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -31,11 +28,65 @@ fun firmamentCommand() = literal("firmament") {
         thenExecute {
             AllConfigsGui.showAllGuis()
         }
+        thenLiteral("toggle") {
+            thenArgument("config", string()) { config ->
+                suggestsList {
+                    AllConfigsGui.allConfigs.asSequence().map { it.name }.asIterable()
+                }
+                thenArgument("property", string()) { property ->
+                    suggestsList {
+                        (AllConfigsGui.allConfigs.find { it.name == this[config] }?:return@suggestsList listOf())
+                            .allOptions.entries.asSequence().filter { it.value.handler is BooleanHandler }.map { it.key }
+                            .asIterable()
+                    }
+                    thenExecute {
+                        val config = this[config]
+                        val property = this[property]
+
+                        val configObj = AllConfigsGui.allConfigs.find { it.name == config }
+                        if (configObj == null) {
+                            source.sendFeedback(Text.translatable("firmament.command.toggle.no-config-found", config))
+                            return@thenExecute
+                        }
+                        val propertyObj = configObj.allOptions[property]
+                        if (propertyObj == null) {
+                            source.sendFeedback(
+                                Text.translatable(
+                                    "firmament.command.toggle.no-property-found",
+                                    property
+                                )
+                            )
+                            return@thenExecute
+                        }
+                        if (propertyObj.handler !is BooleanHandler) {
+                            source.sendFeedback(
+                                Text.translatable(
+                                    "firmament.command.toggle.not-a-toggle",
+                                    property
+                                )
+                            )
+                            return@thenExecute
+                        }
+                        propertyObj as ManagedOption<Boolean>
+                        propertyObj.value = !propertyObj.value
+                        configObj.save()
+                        source.sendFeedback(
+                            Text.translatable(
+                                "firmament.command.toggle.toggled",
+                                configObj.labelText,
+                                propertyObj.labelText,
+                                Text.translatable("firmament.toggle.${propertyObj.value}")
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
     thenLiteral("storage") {
         thenExecute {
             ScreenUtil.setScreenLater(StorageOverlayScreen())
-            MC.player?.networkHandler?.sendChatCommand("ec")
+            MC.player?.networkHandler?.sendChatCommand("storage")
         }
     }
     thenLiteral("repo") {
