@@ -6,11 +6,15 @@
 
 package moe.nea.firmament.features.fixes
 
+import moe.nea.firmament.events.HudRenderEvent
+import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
+import moe.nea.jarvis.api.Point
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
+import net.minecraft.text.Text
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 object Fixes : FirmamentFeature {
@@ -19,7 +23,9 @@ object Fixes : FirmamentFeature {
 
     object TConfig : ManagedConfig(identifier) {
         val fixUnsignedPlayerSkins by toggle("player-skins") { true }
-        val autoSprint by toggle("auto-sprint") { false }
+        var autoSprint by toggle("auto-sprint") { false }
+        val autoSprintKeyBinding by keyBindingWithDefaultUnbound("auto-sprint-keybinding")
+        val autoSprintHud by position("auto-sprint-hud", 80, 10) { Point(0.0, 1.0) }
         val peekChat by keyBindingWithDefaultUnbound("peek-chat")
     }
 
@@ -35,6 +41,27 @@ object Fixes : FirmamentFeature {
     }
 
     override fun onLoad() {
+        WorldKeyboardEvent.subscribe {
+            if (it.matches(TConfig.autoSprintKeyBinding)) {
+                TConfig.autoSprint = !TConfig.autoSprint
+            }
+        }
+        HudRenderEvent.subscribe {
+            if (!TConfig.autoSprintKeyBinding.isBound) return@subscribe
+            it.context.matrices.push()
+            TConfig.autoSprintHud.applyTransformations(it.context.matrices)
+            it.context.drawText(
+                MC.font, Text.translatable(
+                    if (TConfig.autoSprint)
+                        "firmament.fixes.auto-sprint.on"
+                    else if (MC.player?.isSprinting == true)
+                        "firmament.fixes.auto-sprint.sprinting"
+                    else
+                        "firmament.fixes.auto-sprint.not-sprinting"
+                ), 0, 0, -1, false
+            )
+            it.context.matrices.pop()
+        }
     }
 
     fun shouldPeekChat(): Boolean {

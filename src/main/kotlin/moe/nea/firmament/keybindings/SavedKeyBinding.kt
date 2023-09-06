@@ -19,6 +19,8 @@ data class SavedKeyBinding(
     val ctrl: Boolean = false,
     val alt: Boolean = false,
 ) : IKeyBinding {
+    val isBound: Boolean get() = keyCode != GLFW.GLFW_KEY_UNKNOWN
+
     constructor(keyCode: Int, mods: Triple<Boolean, Boolean, Boolean>) : this(
         keyCode,
         mods.first && keyCode != GLFW.GLFW_KEY_LEFT_SHIFT && keyCode != GLFW.GLFW_KEY_RIGHT_SHIFT,
@@ -39,7 +41,7 @@ data class SavedKeyBinding(
     }
 
     fun isPressed(atLeast: Boolean = false): Boolean {
-        if (this.keyCode == GLFW.GLFW_KEY_UNKNOWN) return false
+        if (!isBound) return false
         val h = MC.window.handle
         if (!InputUtil.isKeyPressed(h, keyCode)) return false
 
