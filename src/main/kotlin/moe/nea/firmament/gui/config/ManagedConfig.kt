@@ -158,6 +158,7 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
             it.add(WButton(Text.literal("←")).also {
                 it.setOnClick {
                     if (parent != null) {
+                        save()
                         setScreenLater(parent)
                     } else {
                         AllConfigsGui.showAllGuis()
@@ -182,6 +183,7 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
 
                 override fun close() {
                     latestGuiAppender = null
+                    save()
                     MC.screen = parent
                 }
             }

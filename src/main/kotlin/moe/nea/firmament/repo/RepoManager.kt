@@ -13,11 +13,7 @@ import io.github.moulberry.repo.NEURepositoryException
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.NEURecipe
 import io.github.moulberry.repo.data.Rarity
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
-import net.minecraft.client.MinecraftClient
-import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
-import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -25,6 +21,10 @@ import moe.nea.firmament.hud.ProgressBar
 import moe.nea.firmament.rei.PetData
 import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.minecraft.client.MinecraftClient
+import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
+import net.minecraft.text.Text
 
 object RepoManager {
     object Config : ManagedConfig("repo") {
@@ -37,6 +37,16 @@ object RepoManager {
             reponame = "NotEnoughUpdates-REPO"
             branch = "prerelease"
             save()
+        }
+
+        val disableItemGroups by toggle("disable-item-groups") { false }
+        val reload by button("reload") {
+            save()
+            RepoManager.reload()
+        }
+        val redownload by button("redownload") {
+            save()
+            RepoManager.launchAsyncUpdate(true)
         }
     }
 

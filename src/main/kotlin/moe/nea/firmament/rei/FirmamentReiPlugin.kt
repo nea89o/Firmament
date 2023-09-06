@@ -18,11 +18,6 @@ import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry
 import me.shedaniel.rei.api.common.entry.EntryStack
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
-import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.item.ItemStack
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.rei.recipes.SBCraftingRecipe
@@ -31,6 +26,11 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.unformattedString
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
+import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.item.ItemStack
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 
 
 class FirmamentReiPlugin : REIClientPlugin {
@@ -81,13 +81,14 @@ class FirmamentReiPlugin : REIClientPlugin {
     }
 
     override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {
-        RepoManager.neuRepo.constants.parents.parents
-            .forEach { (parent, children) ->
-                registry.group(
-                    SkyblockId(parent).identifier,
-                    Text.literal(RepoManager.getNEUItem(SkyblockId(parent))?.displayName ?: parent),
-                    (children + parent).map { SBItemEntryDefinition.getEntry(SkyblockId(it)) })
-            }
+        if (!RepoManager.Config.disableItemGroups)
+            RepoManager.neuRepo.constants.parents.parents
+                .forEach { (parent, children) ->
+                    registry.group(
+                        SkyblockId(parent).identifier,
+                        Text.literal(RepoManager.getNEUItem(SkyblockId(parent))?.displayName ?: parent),
+                        (children + parent).map { SBItemEntryDefinition.getEntry(SkyblockId(it)) })
+                }
     }
 
     override fun registerScreens(registry: ScreenRegistry) {
