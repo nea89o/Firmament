@@ -25,8 +25,8 @@ Priority 1:
 Priority 2:
 - PV:
     - Add Inventory (prio -1)
+    - pet skins
 - Fix banner data fixer (prio -1)
-
 
 - missing talismans / pets in pv
 - renameable storage pages
@@ -44,6 +44,9 @@ Priority 2:
 Priority 3:
 - Item rarity halo
 - Zealot Counter using Combat XP popups
+- in world retexturing
+    - skull
+    - blocks?
 - client sided stat tracker that does not need the api
     - skills
     - coins
