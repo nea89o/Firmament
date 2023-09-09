@@ -53,7 +53,7 @@ object ChatLinks : FirmamentFeature {
     private fun isUrlAllowed(url: String) = isHostAllowed(url.removePrefix("https://").substringBefore("/"))
 
     override val config get() = TConfig
-    val urlRegex = "https://[^. ]+\\.[^ ]+(\\.? |$)".toRegex()
+    val urlRegex = "https://[^. ]+\\.[^ ]+(\\.?( |$))".toRegex()
 
     data class Image(
         val texture: Identifier,
