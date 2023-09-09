@@ -6,17 +6,24 @@
 
 package moe.nea.firmament.features.debug
 
+import net.minecraft.block.SkullBlock
+import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
+import net.minecraft.util.hit.BlockHitResult
+import net.minecraft.util.hit.HitResult
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.events.ScreenOpenEvent
 import moe.nea.firmament.events.TickEvent
+import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.features.FirmamentFeature
+import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ClipboardUtils
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.skyBlockId
 
 object PowerUserTools : FirmamentFeature {
@@ -28,6 +35,7 @@ object PowerUserTools : FirmamentFeature {
         val copyItemId by keyBindingWithDefaultUnbound("copy-item-id")
         val copyTexturePackId by keyBindingWithDefaultUnbound("copy-texture-pack-id")
         val copyNbtData by keyBindingWithDefaultUnbound("copy-nbt-data")
+        val copySkullTexture by keyBindingWithDefaultUnbound("copy-skull-texture")
     }
 
     override val config
@@ -54,6 +62,29 @@ object PowerUserTools : FirmamentFeature {
             }
             lastCopiedStackViewTime = true
             it.lines.add(text)
+        }
+        WorldKeyboardEvent.subscribe {
+            if (it.matches(TConfig.copySkullTexture)) {
+                val p = MC.camera ?: return@subscribe
+                val blockHit = p.raycast(20.0, 0.0f, false) ?: return@subscribe
+                if (blockHit.type != HitResult.Type.BLOCK || blockHit !is BlockHitResult) {
+                    MC.sendChat(Text.translatable("firmament.tooltip.copied.skull.fail"))
+                    return@subscribe
+                }
+                val blockAt = p.world.getBlockState(blockHit.blockPos)?.block
+                val entity = p.world.getBlockEntity(blockHit.blockPos)
+                if (blockAt !is SkullBlock || entity !is SkullBlockEntity || entity.owner == null) {
+                    MC.sendChat(Text.translatable("firmament.tooltip.copied.skull.fail"))
+                    return@subscribe
+                }
+                val id = CustomSkyBlockTextures.getSkullTexture(entity.owner!!)
+                if (id == null) {
+                    MC.sendChat(Text.translatable("firmament.tooltip.copied.skull.fail"))
+                } else {
+                    ClipboardUtils.setTextContent(id.toString())
+                    MC.sendChat(Text.translatable("firmament.tooltip.copied.skull", id.toString()))
+                }
+            }
         }
         TickEvent.subscribe {
             if (!lastCopiedStackViewTime)

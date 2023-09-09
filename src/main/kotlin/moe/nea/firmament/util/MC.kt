@@ -7,21 +7,44 @@
 package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.Coordinate
+import java.util.concurrent.ConcurrentLinkedQueue
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
+import moe.nea.firmament.events.TickEvent
 
 object MC {
+
+    private val messageQueue = ConcurrentLinkedQueue<Text>()
+
+    init {
+        TickEvent.subscribe {
+            while (true) {
+                inGameHud.chatHud.addMessage(messageQueue.poll() ?: break)
+            }
+        }
+    }
+
+    fun sendChat(text: Text) {
+        if (instance.isOnThread)
+            inGameHud.chatHud.addMessage(text)
+        else
+            messageQueue.add(text)
+    }
+
     fun sendCommand(command: String) {
         player?.networkHandler?.sendCommand(command)
     }
 
+    inline val instance get() = MinecraftClient.getInstance()
     inline val keyboard get() = MinecraftClient.getInstance().keyboard
     inline val textureManager get() = MinecraftClient.getInstance().textureManager
     inline val inGameHud get() = MinecraftClient.getInstance().inGameHud
     inline val font get() = MinecraftClient.getInstance().textRenderer
     inline val soundManager get() = MinecraftClient.getInstance().soundManager
     inline val player get() = MinecraftClient.getInstance().player
+    inline val camera get() = MinecraftClient.getInstance().cameraEntity
     inline val world get() = MinecraftClient.getInstance().world
     inline var screen
         get() = MinecraftClient.getInstance().currentScreen

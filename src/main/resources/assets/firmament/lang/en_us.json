@@ -107,11 +107,13 @@
     "firmament.config.custom-skyblock-textures": "Custom SkyBlock Item Textures",
     "firmament.config.custom-skyblock-textures.cache-duration": "Model Cache Duration",
     "firmament.config.custom-skyblock-textures.enabled": "Enable Custom Item Textures",
+    "firmament.config.custom-skyblock-textures.skulls-enabled": "Enable Custom Placed Skull Textures",
     "firmament.config.fixes": "Fixes",
     "firmament.config.fixes.player-skins": "Fix unsigned Player Skins",
     "firmament.config.power-user.show-item-id": "Show SkyBlock Ids",
     "firmament.config.power-user.copy-item-id": "Copy SkyBlock Id",
     "firmament.config.power-user.copy-texture-pack-id": "Copy Texture Pack Id",
+    "firmament.config.power-user.copy-skull-texture": "Copy Placed Skull Id",
     "firmament.config.power-user.copy-nbt-data": "Copy NBT data",
     "firmament.config.power-user": "Power Users",
     "firmament.tooltip.skyblockid": "SkyBlock Id: %s",
@@ -119,5 +121,7 @@
     "firmament.tooltip.copied.skyblockid": "Copied SkyBlock Id: %s",
     "firmament.tooltip.copied.modelid.fail": "Failed to copy Texture Id",
     "firmament.tooltip.copied.modelid": "Copied Texture Id: %s",
+    "firmament.tooltip.copied.skull": "Copied Skull Id: %s",
+    "firmament.tooltip.copied.skull.fail": "Failed to copy skull id.",
     "firmament.tooltip.copied.nbt": "Copied NBT data"
 }

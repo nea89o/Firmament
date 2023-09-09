@@ -60,6 +60,7 @@ object Firmament {
 
     val json = Json {
         prettyPrint = DEBUG
+        isLenient = true
         ignoreUnknownKeys = true
         encodeDefaults = true
     }
