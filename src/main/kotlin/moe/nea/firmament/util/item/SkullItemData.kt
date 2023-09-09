@@ -47,14 +47,18 @@ fun GameProfile.setTextures(textures: MinecraftTexturesPayloadKt) {
 
 fun decodeProfileTextureProperty(property: Property): MinecraftTexturesPayloadKt? {
     assertTrueOr(property.name == PlayerSkinProvider.TEXTURES) { return null }
-    try {
-        val json = java.util.Base64.getDecoder().decode(property.value).decodeToString()
-        return Firmament.json.decodeFromString<MinecraftTexturesPayloadKt>(json)
+    return try {
+        var encodedF: String = property.value
+        while (encodedF.length % 4 != 0 && encodedF.last() == '=') {
+            encodedF = encodedF.substring(0, encodedF.length - 1)
+        }
+        val json = java.util.Base64.getDecoder().decode(encodedF).decodeToString()
+        Firmament.json.decodeFromString<MinecraftTexturesPayloadKt>(json)
     } catch (e: Exception) {
         // Malformed profile data
         if (Firmament.DEBUG)
             e.printStackTrace()
-        return null
+        null
     }
 }
 
