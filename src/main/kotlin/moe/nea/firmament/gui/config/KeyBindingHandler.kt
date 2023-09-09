@@ -19,7 +19,7 @@ import net.minecraft.util.Formatting
 import moe.nea.firmament.keybindings.FirmamentKeyBindings
 import moe.nea.firmament.keybindings.SavedKeyBinding
 
-class KeyBindingHandler(name: String, managedConfig: ManagedConfig) : ManagedConfig.OptionHandler<SavedKeyBinding> {
+class KeyBindingHandler(name: String, val managedConfig: ManagedConfig) : ManagedConfig.OptionHandler<SavedKeyBinding> {
     init {
         FirmamentKeyBindings.registerKeyBinding(name, managedConfig)
     }
@@ -106,6 +106,7 @@ class KeyBindingHandler(name: String, managedConfig: ManagedConfig) : ManagedCon
             if (editing)
                 stroke.styled { it.withColor(Formatting.YELLOW) }
             button.setLabel(stroke)
+            managedConfig.save()
         }
         updateButton = ::updateLabel
         updateButton()
