@@ -16,5 +16,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface AccessorHandledScreen {
     @Accessor("focusedSlot")
     @Nullable
-    Slot getFocusedSlot_NEU();
+    Slot getFocusedSlot_Firmament();
 }

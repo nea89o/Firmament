@@ -45,7 +45,7 @@ object SlotLocking : FirmamentFeature {
             val inventory = MC.handledScreen ?: return@subscribe
             inventory as AccessorHandledScreen
 
-            val slot = inventory.focusedSlot_NEU ?: return@subscribe
+            val slot = inventory.focusedSlot_Firmament ?: return@subscribe
             val lockedSlots = lockedSlots ?: return@subscribe
             if (slot.inventory is PlayerInventory) {
                 if (slot.index in lockedSlots) {

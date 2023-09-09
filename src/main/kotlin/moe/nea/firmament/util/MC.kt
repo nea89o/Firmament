@@ -16,6 +16,7 @@ object MC {
         player?.networkHandler?.sendCommand(command)
     }
 
+    inline val keyboard get() = MinecraftClient.getInstance().keyboard
     inline val textureManager get() = MinecraftClient.getInstance().textureManager
     inline val inGameHud get() = MinecraftClient.getInstance().inGameHud
     inline val font get() = MinecraftClient.getInstance().textRenderer

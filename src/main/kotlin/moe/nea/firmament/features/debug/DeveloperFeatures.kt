@@ -68,7 +68,7 @@ object DeveloperFeatures : FirmamentFeature {
         HandledScreenKeyPressedEvent.subscribe {
             if (it.matches(IKeyBinding.ofKeyCode(GLFW.GLFW_KEY_K))) {
                 it.screen as AccessorHandledScreen
-                val focussedSlot = it.screen.focusedSlot_NEU ?: return@subscribe
+                val focussedSlot = it.screen.focusedSlot_Firmament ?: return@subscribe
                 val item = focussedSlot.stack ?: return@subscribe
                 val ident = item.skyBlockId?.identifier.toString()
                 MinecraftClient.getInstance().inGameHud.chatHud.addMessage(

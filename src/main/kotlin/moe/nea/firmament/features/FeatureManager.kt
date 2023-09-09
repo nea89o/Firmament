@@ -13,6 +13,7 @@ import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.MinorTrolling
+import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.PriceData
@@ -48,6 +49,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(SlotLocking)
             loadFeature(StorageOverlay)
             loadFeature(CraftingOverlay)
+            loadFeature(PowerUserTools)
             loadFeature(ChatLinks)
             loadFeature(SaveCursorPosition)
             loadFeature(CustomSkyBlockTextures)
