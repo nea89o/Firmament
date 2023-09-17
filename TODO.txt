@@ -64,3 +64,7 @@ Dungeons (planned in another mod):
 - Dungeon waypoints
 - Dungeon puzzle solvers
 - Talk with the big D
+
+
+Custom animations for certain skyblock items. (vibrating drills for breaking, custom animations for right click and
+spell casting weapons)
