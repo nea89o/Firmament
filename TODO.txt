@@ -68,3 +68,5 @@ Dungeons (planned in another mod):
 
 Custom animations for certain skyblock items. (vibrating drills for breaking, custom animations for right click and
 spell casting weapons)
+better explosions
+client side inventory sorting
