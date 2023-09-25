@@ -123,5 +123,8 @@
     "firmament.tooltip.copied.modelid": "Copied Texture Id: %s",
     "firmament.tooltip.copied.skull": "Copied Skull Id: %s",
     "firmament.tooltip.copied.skull.fail": "Failed to copy skull id.",
-    "firmament.tooltip.copied.nbt": "Copied NBT data"
+    "firmament.tooltip.copied.nbt": "Copied NBT data",
+    "firmament.config.compatibility": "Intermod Features",
+    "firmament.config.compatibility.explosion-enabled": "Redirect Enhanced Explosions",
+    "firmament.config.compatibility.explosion-power": "Enhanced Explosion Power"
 }

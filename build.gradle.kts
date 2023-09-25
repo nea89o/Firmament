@@ -104,6 +104,7 @@ dependencies {
     modImplementation(libs.fabric.kotlin)
     modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
+    modCompileOnly(libs.explosiveenhancement)
     include(libs.libgui)
 
 

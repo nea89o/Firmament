@@ -14,6 +14,7 @@ data class ParticleSpawnEvent(
     val position: Vec3d,
     val offset: Vec3d,
     val longDistance: Boolean,
-) : FirmamentEvent() {
+    val count: Int,
+) : FirmamentEvent.Cancellable() {
     companion object : FirmamentEventBus<ParticleSpawnEvent>()
 }
