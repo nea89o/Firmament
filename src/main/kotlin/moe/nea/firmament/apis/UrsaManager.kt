@@ -50,8 +50,8 @@ object UrsaManager {
                     withContext(Dispatchers.IO) {
                         val mc = MinecraftClient.getInstance()
                         val serverId = UUID.randomUUID().toString()
-                        mc.sessionService.joinServer(mc.session.profile, mc.session.accessToken, serverId)
-                        header("x-ursa-username", mc.session.profile.name)
+                        mc.sessionService.joinServer(mc.session.uuidOrNull, mc.session.accessToken, serverId)
+                        header("x-ursa-username", mc.session.username)
                         header("x-ursa-serverid", serverId)
                     }
                 } else {

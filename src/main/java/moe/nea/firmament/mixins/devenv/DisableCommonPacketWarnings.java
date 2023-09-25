@@ -7,21 +7,24 @@
 package moe.nea.firmament.mixins.devenv;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Objects;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class DisableCommonPacketWarnings {
 
-    @Redirect(method = "onCustomPayload", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V", remap = false))
-    public void onCustomPacket(Logger instance, String s, Object o) {
-        if (!Objects.equals(o, Identifier.of("badlion", "mods"))) {
-            instance.warn(s, o);
+    @Inject(method = "method_52801", at = @At("HEAD"))
+    public void onCustomPacketError(CustomPayload customPayload, CallbackInfo ci) {
+        if (Objects.equals(customPayload.id(), Identifier.of("badlion", "mods"))) {
+            ci.cancel();
         }
     }
 

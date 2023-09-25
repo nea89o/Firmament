@@ -102,9 +102,14 @@ class StorageOverlayScreen() : Screen(Text.empty()) {
         return page.inventory?.rows?.let { it * 19 + MC.font.fontHeight + 2 } ?: 60
     }
 
-    override fun mouseScrolled(mouseX: Double, mouseY: Double, amount: Double): Boolean {
+    override fun mouseScrolled(
+        mouseX: Double,
+        mouseY: Double,
+        horizontalAmount: Double,
+        verticalAmount: Double
+    ): Boolean {
         scroll =
-            (scroll + amount * StorageOverlay.config.scrollSpeed *
+            (scroll + horizontalAmount * StorageOverlay.config.scrollSpeed *
                 (if (StorageOverlay.config.inverseScroll) 1 else -1)).toInt()
                 .coerceAtMost(lastRenderedHeight - height + 2 * StorageOverlay.config.margin).coerceAtLeast(0)
         return true
