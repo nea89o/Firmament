@@ -126,5 +126,10 @@
     "firmament.tooltip.copied.nbt": "Copied NBT data",
     "firmament.config.compatibility": "Intermod Features",
     "firmament.config.compatibility.explosion-enabled": "Redirect Enhanced Explosions",
-    "firmament.config.compatibility.explosion-power": "Enhanced Explosion Power"
+    "firmament.config.compatibility.explosion-power": "Enhanced Explosion Power",
+    "firmament.quick-commands.join.unknown": "Could not find instance for %s",
+    "firmament.quick-commands.join.success": "Joining: %s",
+    "firmament.quick-commands.join.explain": "Join a dungeon or kuudra floor by using commands like /join f1, /join m7, /join fe or /join khot",
+    "firmament.quick-commands.join.unknown-kuudra": "Unknown kuudra floor %s",
+    "firmament.quick-commands.join.unknown-catacombs": "Unknown catacombs floor %s"
 }

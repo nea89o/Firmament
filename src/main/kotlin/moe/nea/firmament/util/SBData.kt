@@ -30,6 +30,7 @@ object SBData {
     var locraw: Locraw? = null
     val skyblockLocation: String? get() = locraw?.skyblockLocation
     val hasValidLocraw get() = locraw?.server !in listOf("limbo", null)
+    val isOnSkyblock get() = locraw?.gametype == "SKYBLOCK"
 
     fun init() {
         OutgoingPacketEvent.subscribe { event ->

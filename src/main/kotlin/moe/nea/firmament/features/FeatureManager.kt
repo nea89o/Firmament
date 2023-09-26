@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.features.chat.ChatLinks
+import moe.nea.firmament.features.chat.QuickCommands
 import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.MinorTrolling
@@ -53,6 +54,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(PowerUserTools)
             loadFeature(ChatLinks)
             loadFeature(CompatibliltyFeatures)
+            loadFeature(QuickCommands)
             loadFeature(SaveCursorPosition)
             loadFeature(CustomSkyBlockTextures)
             loadFeature(PriceData)
