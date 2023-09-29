@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import moe.nea.firmament.events.TickEvent
+import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 
 object MC {
 

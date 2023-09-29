@@ -10,6 +10,7 @@ import moe.nea.firmament.events.IsSlotProtectedEvent;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +25,7 @@ public abstract class MixinClientPlayerEntity extends PlayerEntity {
     @Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
     public void onDropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
         Slot fakeSlot = new Slot(getInventory(), getInventory().selectedSlot, 0, 0);
-        if (IsSlotProtectedEvent.shouldBlockInteraction(fakeSlot)) {
+        if (IsSlotProtectedEvent.shouldBlockInteraction(fakeSlot, SlotActionType.THROW)) {
             cir.setReturnValue(false);
         }
     }

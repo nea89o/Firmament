@@ -5,11 +5,12 @@
  */
 
 @file:UseSerializers(DashlessUUIDSerializer::class)
+
 package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
-import java.util.UUID
+import java.util.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.decodeFromString
@@ -72,6 +73,12 @@ private val jsonparser = Json { ignoreUnknownKeys = true }
 
 val ItemStack.extraAttributes: NbtCompound
     get() = getOrCreateSubNbt("ExtraAttributes")
+
+val ItemStack.skyblockUUIDString: String?
+    get() = extraAttributes.getString("uuid")?.takeIf { it.isNotBlank() }
+
+val ItemStack.skyblockUUID: UUID?
+    get() = skyblockUUIDString?.let { UUID.fromString(it) }
 
 val ItemStack.petData: HypixelPetInfo?
     get() {

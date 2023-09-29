@@ -10,6 +10,7 @@ import moe.nea.firmament.events.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -63,11 +64,19 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> {
 
     @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", at = @At("HEAD"), cancellable = true)
     public void onMouseClickedSlot(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo ci) {
-        if (IsSlotProtectedEvent.shouldBlockInteraction(slot)) {
+        if (slotId == -999 && getScreenHandler() != null && actionType == SlotActionType.PICKUP) { // -999 is code for "clicked outside the main window"
+            ItemStack cursorStack = getScreenHandler().getCursorStack();
+            if (cursorStack != null && IsSlotProtectedEvent.shouldBlockInteraction(slot, SlotActionType.THROW, cursorStack)) {
+                ci.cancel();
+                return;
+            }
+        }
+        if (IsSlotProtectedEvent.shouldBlockInteraction(slot, actionType)) {
             ci.cancel();
+            return;
         }
         if (actionType == SlotActionType.SWAP && 0 <= button && button < 9) {
-            if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0))) {
+            if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0), actionType)) {
                 ci.cancel();
             }
         }
