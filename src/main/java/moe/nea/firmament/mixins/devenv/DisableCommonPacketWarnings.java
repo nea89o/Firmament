@@ -21,7 +21,7 @@ import java.util.Objects;
 @Mixin(ClientPlayNetworkHandler.class)
 public class DisableCommonPacketWarnings {
 
-    @Inject(method = "method_52801", at = @At("HEAD"))
+    @Inject(method = "method_52801", at = @At("HEAD"), cancellable = true)
     public void onCustomPacketError(CustomPayload customPayload, CallbackInfo ci) {
         if (Objects.equals(customPayload.id(), Identifier.of("badlion", "mods"))) {
             ci.cancel();
