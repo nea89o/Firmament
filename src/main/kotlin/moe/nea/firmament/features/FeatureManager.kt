@@ -18,6 +18,7 @@ import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.fixes.CompatibliltyFeatures
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
+import moe.nea.firmament.features.inventory.ItemRarityCosmetics
 import moe.nea.firmament.features.inventory.PriceData
 import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
@@ -59,6 +60,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(CustomSkyBlockTextures)
             loadFeature(PriceData)
             loadFeature(Fixes)
+            loadFeature(ItemRarityCosmetics)
             if (Firmament.DEBUG) {
                 loadFeature(DeveloperFeatures)
                 loadFeature(DebugView)

@@ -46,6 +46,7 @@ object MC {
     inline val soundManager get() = MinecraftClient.getInstance().soundManager
     inline val player get() = MinecraftClient.getInstance().player
     inline val camera get() = MinecraftClient.getInstance().cameraEntity
+    inline val guiAtlasManager get() = MinecraftClient.getInstance().guiAtlasManager
     inline val world get() = MinecraftClient.getInstance().world
     inline var screen
         get() = MinecraftClient.getInstance().currentScreen

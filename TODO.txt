@@ -38,8 +38,6 @@ Priority 2:
     - biome wands
     - dirt wand
     - block zapper
-- slot binding
-- uuid locking (allow items with that uuid to be moved around but not dropped/sold)
 
 Priority 3:
 - Item rarity halo
@@ -68,5 +66,4 @@ Dungeons (planned in another mod):
 
 Custom animations for certain skyblock items. (vibrating drills for breaking, custom animations for right click and
 spell casting weapons)
-better explosions
 client side inventory sorting
