@@ -109,7 +109,7 @@ class StorageOverlayScreen() : Screen(Text.empty()) {
         verticalAmount: Double
     ): Boolean {
         scroll =
-            (scroll + horizontalAmount * StorageOverlay.config.scrollSpeed *
+            (scroll + verticalAmount * StorageOverlay.config.scrollSpeed *
                 (if (StorageOverlay.config.inverseScroll) 1 else -1)).toInt()
                 .coerceAtMost(lastRenderedHeight - height + 2 * StorageOverlay.config.margin).coerceAtLeast(0)
         return true
