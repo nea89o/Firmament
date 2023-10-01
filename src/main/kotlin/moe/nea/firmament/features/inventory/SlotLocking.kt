@@ -117,7 +117,7 @@ object SlotLocking : FirmamentFeature {
         }
         SlotRenderEvents.Before.subscribe {
             val isSlotLocked = it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())
-            val isUUIDLocked = (it.slot.stack?.skyblockUUID ?: return@subscribe) in (lockedUUIDs ?: setOf())
+            val isUUIDLocked = (it.slot.stack?.skyblockUUID) in (lockedUUIDs ?: setOf())
             if (isSlotLocked || isUUIDLocked) {
                 it.context.fill(
                     it.slot.x,
