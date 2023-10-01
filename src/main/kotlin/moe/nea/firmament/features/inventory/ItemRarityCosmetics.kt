@@ -31,8 +31,8 @@ object ItemRarityCosmetics : FirmamentFeature {
         get() = TConfig
 
     private val rarityToColor = mapOf(
-        "COMMON" to Formatting.WHITE,
         "UNCOMMON" to Formatting.GREEN,
+        "COMMON" to Formatting.WHITE,
         "RARE" to Formatting.DARK_BLUE,
         "EPIC" to Formatting.DARK_PURPLE,
         "LEGENDARY" to Formatting.GOLD,
