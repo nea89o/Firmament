@@ -11,9 +11,13 @@ import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 
+fun textFromNbt() {
+
+}
+
 val ItemStack.loreAccordingToNbt
     get() = getOrCreateSubNbt(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE.toInt())
-        .map { Text.Serializer.fromJson((it as NbtString).asString()) }
+        .map { lazy(LazyThreadSafetyMode.NONE) { Text.Serializer.fromJson((it as NbtString).asString()) } }
 
 val ItemStack.displayNameAccordingToNbt
     get() = getOrCreateSubNbt(ItemStack.DISPLAY_KEY).let {

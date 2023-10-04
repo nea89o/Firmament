@@ -18,10 +18,18 @@ data class IsSlotProtectedEvent(
     val actionType: SlotActionType,
     var isProtected: Boolean,
     val itemStackOverride: ItemStack?,
+    var silent: Boolean = false,
 ) : FirmamentEvent() {
     val itemStack get() = itemStackOverride ?: slot!!.stack
 
     fun protect() {
+        isProtected = true
+    }
+
+    fun protectSilent() {
+        if (!isProtected) {
+            silent = true
+        }
         isProtected = true
     }
 
@@ -31,12 +39,12 @@ data class IsSlotProtectedEvent(
         fun shouldBlockInteraction(slot: Slot?, action: SlotActionType, itemStackOverride: ItemStack? = null): Boolean {
             if (slot == null && itemStackOverride == null) return false
             val event = IsSlotProtectedEvent(slot, action, false, itemStackOverride)
-            return publish(event).isProtected.also {
-                if (it) {
-                    MC.player?.sendMessage(Text.translatable("firmament.protectitem").append(event.itemStack.name))
-                    CommonSoundEffects.playFailure()
-                }
+            publish(event)
+            if (event.isProtected && !event.silent) {
+                MC.player?.sendMessage(Text.translatable("firmament.protectitem").append(event.itemStack.name))
+                CommonSoundEffects.playFailure()
             }
+            return event.isProtected
         }
     }
 }

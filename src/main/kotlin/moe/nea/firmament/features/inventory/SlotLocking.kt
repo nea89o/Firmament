@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.serializer
+import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.slot.SlotActionType
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
@@ -25,8 +26,11 @@ import moe.nea.firmament.util.CommonSoundEffects
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
+import moe.nea.firmament.util.item.displayNameAccordingToNbt
+import moe.nea.firmament.util.item.loreAccordingToNbt
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.skyblockUUID
+import moe.nea.firmament.util.unformattedString
 
 object SlotLocking : FirmamentFeature {
     override val identifier: String
@@ -60,6 +64,31 @@ object SlotLocking : FirmamentFeature {
             null -> null
             else -> DConfig.data?.lockedSlots
         }
+
+    fun isSalvageScreen(screen: HandledScreen<*>?): Boolean {
+        if (screen == null) return false
+        return screen.title.unformattedString.contains("Salvage Item")
+    }
+
+    fun isTradeScreen(screen: HandledScreen<*>?): Boolean {
+        if (screen == null) return false
+        val handler = screen.screenHandler
+        if (handler.slots.size < 9) return false
+        val middlePane = handler.getSlot(4)
+        if (!middlePane.hasStack()) return false
+        return middlePane.stack.displayNameAccordingToNbt?.unformattedString == "⇦ Your stuff"
+    }
+
+    fun isNpcShop(screen: HandledScreen<*>?): Boolean {
+        if (screen == null) return false
+        val handler = screen.screenHandler
+        if (handler.slots.size < 9) return false
+        val sellItem = handler.getSlot(handler.slots.size - 5)
+        if (!sellItem.hasStack()) return false
+        if (sellItem.stack.displayNameAccordingToNbt?.unformattedString == "Sell Item") return true
+        val lore = sellItem.stack.loreAccordingToNbt
+        return (lore.lastOrNull() ?: return false).value?.unformattedString == "Click to buyback!"
+    }
 
     override fun onLoad() {
         HandledScreenKeyPressedEvent.subscribe {
@@ -101,18 +130,35 @@ object SlotLocking : FirmamentFeature {
                 it.protect()
             }
         }
-        IsSlotProtectedEvent.subscribe {
-            if (it.actionType == SlotActionType.SWAP
-                || it.actionType == SlotActionType.PICKUP
-                || it.actionType == SlotActionType.QUICK_MOVE
-                || it.actionType == SlotActionType.QUICK_CRAFT
-                || it.actionType == SlotActionType.CLONE
-                || it.actionType == SlotActionType.PICKUP_ALL
-            ) return@subscribe
-            val stack = it.itemStack ?: return@subscribe
+        IsSlotProtectedEvent.subscribe { event ->
+            val doesNotDeleteItem = event.actionType == SlotActionType.SWAP
+                || event.actionType == SlotActionType.PICKUP
+                || event.actionType == SlotActionType.QUICK_MOVE
+                || event.actionType == SlotActionType.QUICK_CRAFT
+                || event.actionType == SlotActionType.CLONE
+                || event.actionType == SlotActionType.PICKUP_ALL
+            val isSellOrTradeScreen =
+                isNpcShop(MC.handledScreen) || isTradeScreen(MC.handledScreen) || isSalvageScreen(MC.handledScreen)
+            if (!isSellOrTradeScreen && doesNotDeleteItem) return@subscribe
+            val stack = event.itemStack ?: return@subscribe
             val uuid = stack.skyblockUUID ?: return@subscribe
             if (uuid in (lockedUUIDs ?: return@subscribe)) {
-                it.protect()
+                event.protect()
+            }
+        }
+        IsSlotProtectedEvent.subscribe { event ->
+            if (event.slot == null) return@subscribe
+            if (!event.slot.hasStack()) return@subscribe
+            if (event.slot.stack.displayNameAccordingToNbt?.unformattedString != "Salvage Items") return@subscribe
+            val inv = event.slot.inventory
+            var anyBlocked = false
+            for (i in 0 until event.slot.index) {
+                val stack = inv.getStack(i)
+                if (IsSlotProtectedEvent.shouldBlockInteraction(null, SlotActionType.THROW, stack))
+                    anyBlocked = true
+            }
+            if(anyBlocked) {
+                event.protectSilent()
             }
         }
         SlotRenderEvents.Before.subscribe {
