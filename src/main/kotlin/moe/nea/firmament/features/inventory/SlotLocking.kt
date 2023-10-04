@@ -7,6 +7,7 @@
 
 package moe.nea.firmament.features.inventory
 
+import com.mojang.blaze3d.systems.RenderSystem
 import java.util.*
 import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.Serializable
@@ -15,6 +16,7 @@ import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.slot.SlotActionType
+import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.events.IsSlotProtectedEvent
 import moe.nea.firmament.events.SlotRenderEvents
@@ -157,25 +159,31 @@ object SlotLocking : FirmamentFeature {
                 if (IsSlotProtectedEvent.shouldBlockInteraction(null, SlotActionType.THROW, stack))
                     anyBlocked = true
             }
-            if(anyBlocked) {
+            if (anyBlocked) {
                 event.protectSilent()
             }
         }
-        SlotRenderEvents.Before.subscribe {
+        SlotRenderEvents.After.subscribe {
             val isSlotLocked = it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())
             val isUUIDLocked = (it.slot.stack?.skyblockUUID) in (lockedUUIDs ?: setOf())
             if (isSlotLocked || isUUIDLocked) {
-                it.context.fill(
-                    it.slot.x,
-                    it.slot.y,
-                    it.slot.x + 16,
-                    it.slot.y + 16,
-                    when {
-                        isSlotLocked -> 0xFFFF0000.toInt()
-                        isUUIDLocked -> 0xFF00FF00.toInt()
-                        else -> error("Slot is locked, but not by slot or uuid")
-                    }
+                RenderSystem.disableDepthTest()
+                it.context.drawSprite(
+                    it.slot.x, it.slot.y, 0,
+                    16, 16,
+                    MC.guiAtlasManager.getSprite(
+                        when {
+                            isSlotLocked ->
+                                (Identifier("firmament:slot_locked"))
+
+                            isUUIDLocked ->
+                                (Identifier("firmament:uuid_locked"))
+                            else ->
+                                error("unreachable")
+                        }
+                    )
                 )
+                RenderSystem.enableDepthTest()
             }
         }
     }
