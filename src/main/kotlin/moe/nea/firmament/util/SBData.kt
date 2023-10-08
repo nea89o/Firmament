@@ -71,7 +71,6 @@ object SBData {
             SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, null))
             hasSentLocraw = false
             hasReceivedProfile = false
-            profileId = null
         }
     }
 
