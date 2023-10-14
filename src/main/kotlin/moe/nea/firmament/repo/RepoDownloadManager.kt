@@ -110,12 +110,13 @@ object RepoDownloadManager {
                                 entry.name.substringAfter('/', missingDelimiterValue = "")
                         )
                 if (repoSavedLocation !in extractedLocation.iterate { it.parent }) {
-                    logger.error("Not Enough Updates detected an invalid zip file. This is a potential security risk, please report this in the Moulberry discord.")
-                    throw RuntimeException("Not Enough Updates detected an invalid zip file. This is a potential security risk, please report this in the Moulberry discord.")
+                    logger.error("Firmament detected an invalid zip file. This is a potential security risk, please report this in the Firmament discord.")
+                    throw RuntimeException("Firmament detected an invalid zip file. This is a potential security risk, please report this in the Firmament discord.")
                 }
                 extractedLocation.parent.createDirectories()
-                cis.copyTo(extractedLocation.outputStream())
-                cis.closeEntry()
+                cis.use {
+                    extractedLocation.outputStream().use { cis.copyTo(it) }
+                }
             }
         }
     }
