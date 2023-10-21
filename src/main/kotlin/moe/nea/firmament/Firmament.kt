@@ -49,6 +49,7 @@ import moe.nea.firmament.events.registration.registerFirmamentChatEvents
 import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
 
@@ -107,7 +108,7 @@ object Firmament {
         ctx: CommandRegistryAccess
     ) {
         registerFirmamentCommand(dispatcher)
-        CommandEvent.publish(CommandEvent(dispatcher, ctx))
+        CommandEvent.publish(CommandEvent(dispatcher, ctx, MC.networkHandler?.commandDispatcher))
     }
 
     @JvmStatic

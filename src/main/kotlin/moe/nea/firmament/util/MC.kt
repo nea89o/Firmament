@@ -7,13 +7,16 @@
 package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.Coordinate
+import java.time.Instant
 import java.util.concurrent.ConcurrentLinkedQueue
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.network.message.ArgumentSignatureDataMap
+import net.minecraft.network.message.LastSeenMessagesCollector.LastSeenMessages
+import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import moe.nea.firmament.events.TickEvent
-import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 
 object MC {
 
@@ -34,10 +37,25 @@ object MC {
             messageQueue.add(text)
     }
 
+    fun sendServerCommand(command: String) {
+        val nh = player?.networkHandler ?: return
+        val lastSeenMessages: LastSeenMessages = nh.lastSeenMessagesCollector.collect()
+        nh.sendPacket(
+            CommandExecutionC2SPacket(
+                command,
+                Instant.now(),
+                0L,
+                ArgumentSignatureDataMap.EMPTY,
+                lastSeenMessages.update()
+            )
+        )
+    }
+
     fun sendCommand(command: String) {
         player?.networkHandler?.sendCommand(command)
     }
 
+    inline val networkHandler get() = player?.networkHandler
     inline val instance get() = MinecraftClient.getInstance()
     inline val keyboard get() = MinecraftClient.getInstance().keyboard
     inline val textureManager get() = MinecraftClient.getInstance().textureManager

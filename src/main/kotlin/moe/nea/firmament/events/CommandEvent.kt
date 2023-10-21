@@ -16,8 +16,14 @@ import moe.nea.firmament.commands.literal
 data class CommandEvent(
     val dispatcher: CommandDispatcher<DefaultSource>,
     val ctx: CommandRegistryAccess,
+    val serverCommands: CommandDispatcher<*>?,
 ) : FirmamentEvent() {
     companion object : FirmamentEventBus<CommandEvent>()
+
+    fun deleteCommand(name: String) {
+        dispatcher.root.children.removeIf { it.name.equals(name, ignoreCase = false) }
+        serverCommands?.root?.children?.removeIf { it.name.equals(name, ignoreCase = false) }
+    }
 
     fun register(
         name: String,

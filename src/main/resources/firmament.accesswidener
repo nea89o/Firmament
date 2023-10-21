@@ -5,3 +5,4 @@ accessible class net/minecraft/client/font/TextRenderer$Drawer
 accessible class net/minecraft/client/render/model/ModelLoader$BakerImpl
 accessible method net/minecraft/client/render/model/ModelLoader$BakerImpl <init> (Lnet/minecraft/client/render/model/ModelLoader;Ljava/util/function/BiFunction;Lnet/minecraft/util/Identifier;)V
 accessible field net/minecraft/client/texture/PlayerSkinProvider TEXTURES Ljava/lang/String;
+accessible field net/minecraft/client/network/ClientPlayNetworkHandler lastSeenMessagesCollector Lnet/minecraft/network/message/LastSeenMessagesCollector;

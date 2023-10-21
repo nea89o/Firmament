@@ -31,17 +31,17 @@ object RepoDownloadManager {
     val repoMetadataLocation = Firmament.DATA_DIR.resolve("loaded-repo-sha.txt")
 
     private fun loadSavedVersionHash(): String? =
-            if (repoSavedLocation.exists()) {
-                if (repoMetadataLocation.exists()) {
-                    try {
-                        repoMetadataLocation.readText().trim()
-                    } catch (e: IOException) {
-                        null
-                    }
-                } else {
+        if (repoSavedLocation.exists()) {
+            if (repoMetadataLocation.exists()) {
+                try {
+                    repoMetadataLocation.readText().trim()
+                } catch (e: IOException) {
                     null
                 }
-            } else null
+            } else {
+                null
+            }
+        } else null
 
     private fun saveVersionHash(versionHash: String) {
         latestSavedVersionHash = versionHash
@@ -56,7 +56,7 @@ object RepoDownloadManager {
 
     private suspend fun requestLatestGithubSha(): String? {
         val response =
-                Firmament.httpClient.get("https://api.github.com/repos/${RepoManager.Config.username}/${RepoManager.Config.reponame}/commits/${RepoManager.Config.branch}")
+            Firmament.httpClient.get("https://api.github.com/repos/${RepoManager.Config.username}/${RepoManager.Config.reponame}/commits/${RepoManager.Config.branch}")
         if (response.status.value != 200) {
             return null
         }
@@ -83,7 +83,8 @@ object RepoDownloadManager {
         }
         val currentSha = loadSavedVersionHash()
         if (latestSha != currentSha || force) {
-            val requestUrl = "https://github.com/${RepoManager.Config.username}/${RepoManager.Config.reponame}/archive/$latestSha.zip"
+            val requestUrl =
+                "https://github.com/${RepoManager.Config.username}/${RepoManager.Config.reponame}/archive/$latestSha.zip"
             logger.info("Planning to upgrade repository from $currentSha to $latestSha from $requestUrl")
             val zipFile = downloadGithubArchive(requestUrl)
             logger.info("Download repository zip file to $zipFile. Deleting old repository")
@@ -106,17 +107,15 @@ object RepoDownloadManager {
                 val entry = cis.nextEntry ?: break
                 if (entry.isDirectory) continue
                 val extractedLocation =
-                        repoSavedLocation.resolve(
-                                entry.name.substringAfter('/', missingDelimiterValue = "")
-                        )
+                    repoSavedLocation.resolve(
+                        entry.name.substringAfter('/', missingDelimiterValue = "")
+                    )
                 if (repoSavedLocation !in extractedLocation.iterate { it.parent }) {
                     logger.error("Firmament detected an invalid zip file. This is a potential security risk, please report this in the Firmament discord.")
                     throw RuntimeException("Firmament detected an invalid zip file. This is a potential security risk, please report this in the Firmament discord.")
                 }
                 extractedLocation.parent.createDirectories()
-                cis.use {
-                    extractedLocation.outputStream().use { cis.copyTo(it) }
-                }
+                extractedLocation.outputStream().use { cis.copyTo(it) }
             }
         }
     }

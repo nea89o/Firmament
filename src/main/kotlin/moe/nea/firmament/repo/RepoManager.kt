@@ -99,8 +99,13 @@ object RepoManager {
         Firmament.coroutineScope.launch {
             progressBar.reportProgress("Downloading", 0, null)
             CottonHud.add(progressBar)
-            RepoDownloadManager.downloadUpdate(force)
-            progressBar.reportProgress("Download complete", 1, 1)
+            try {
+                RepoDownloadManager.downloadUpdate(force)
+                progressBar.reportProgress("Download complete", 1, 1)
+            } finally {
+                CottonHud.remove(progressBar)
+
+            }
             reload()
         }
     }

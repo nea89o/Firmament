@@ -9,6 +9,7 @@ package moe.nea.firmament.features
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.features.chat.AutoCompletions
 import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.chat.QuickCommands
 import moe.nea.firmament.features.debug.DebugView
@@ -48,6 +49,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             if (hasAutoloaded) return
             loadFeature(MinorTrolling)
             loadFeature(FairySouls)
+            loadFeature(AutoCompletions)
             // TODO: loadFeature(FishingWarning)
             loadFeature(SlotLocking)
             loadFeature(StorageOverlay)
