@@ -7,7 +7,6 @@
 package moe.nea.firmament.util
 
 import java.util.Optional
-import net.minecraft.scoreboard.Scoreboard
 import net.minecraft.scoreboard.ScoreboardDisplaySlot
 import net.minecraft.scoreboard.Team
 import net.minecraft.text.StringVisitable
