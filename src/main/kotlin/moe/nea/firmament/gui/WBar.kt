@@ -12,7 +12,6 @@ import io.github.cottonmc.cotton.gui.widget.WWidget
 import io.github.cottonmc.cotton.gui.widget.data.Texture
 import me.shedaniel.math.Color
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.util.math.MatrixStack
 import moe.nea.firmament.Firmament
 
 open class WBar(
