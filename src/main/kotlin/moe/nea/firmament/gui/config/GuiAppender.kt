@@ -7,14 +7,12 @@
 package moe.nea.firmament.gui.config
 
 import io.github.cottonmc.cotton.gui.widget.WBox
-import io.github.cottonmc.cotton.gui.widget.WGridPanel
 import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.WWidget
 import io.github.cottonmc.cotton.gui.widget.data.Axis
 import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
-import moe.nea.firmament.gui.WFixedPanel
 import moe.nea.firmament.gui.WSplitPanel
 
 class GuiAppender(val width: Int, val screenAccessor: () -> Screen) {
