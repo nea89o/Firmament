@@ -28,10 +28,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (!Boolean.getBoolean("firmament.debug") && mixinClassName.contains("devenv.")) {
-            return false;
-        }
-        return true;
+        return Boolean.getBoolean("firmament.debug") || !mixinClassName.contains("devenv.");
     }
 
     @Override
