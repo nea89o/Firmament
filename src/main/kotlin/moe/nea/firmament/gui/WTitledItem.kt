@@ -10,10 +10,6 @@ import com.mojang.blaze3d.systems.RenderSystem
 import io.github.cottonmc.cotton.gui.client.BackgroundPainter
 import io.github.cottonmc.cotton.gui.widget.TooltipBuilder
 import io.github.cottonmc.cotton.gui.widget.WWidget
-import org.joml.AxisAngle4d
-import org.joml.Quaternionf
-import org.joml.Vector3f
-import kotlin.math.PI
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.ItemStack
