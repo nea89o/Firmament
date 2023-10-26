@@ -16,7 +16,6 @@ import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.entity.projectile.FishingBobberEntity
 import net.minecraft.particle.ParticleTypes
-import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.events.ParticleSpawnEvent
