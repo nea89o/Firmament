@@ -9,7 +9,6 @@ package moe.nea.firmament.rei
 import me.shedaniel.rei.api.common.entry.EntrySerializer
 import me.shedaniel.rei.api.common.entry.EntryStack
 import net.minecraft.nbt.NbtCompound
-import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
 
 object NEUItemEntrySerializer : EntrySerializer<SBItemStack> {
