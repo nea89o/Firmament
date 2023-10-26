@@ -42,9 +42,7 @@ public class MixinKeybindsScreen {
     public ButtonWidget.PressAction onInit(ButtonWidget.PressAction action) {
         ManagedConfig config = FirmamentKeyBindings.INSTANCE.getKeyBindings().get(binding);
         if (config == null) return action;
-        return button -> {
-            config.showConfigEditor(MinecraftClient.getInstance().currentScreen);
-        };
+        return button -> config.showConfigEditor(MinecraftClient.getInstance().currentScreen);
     }
 
     @Inject(method = "update", at = @At("HEAD"), cancellable = true)
