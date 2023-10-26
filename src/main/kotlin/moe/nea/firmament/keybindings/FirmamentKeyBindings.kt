@@ -9,7 +9,6 @@ package moe.nea.firmament.keybindings
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
-import moe.nea.firmament.features.inventory.SlotLocking
 import moe.nea.firmament.gui.config.ManagedConfig
 
 object FirmamentKeyBindings {
