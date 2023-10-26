@@ -22,7 +22,6 @@ import kotlinx.coroutines.launch
 import net.minecraft.SharedConstants
 import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.client.resource.language.I18n
-import net.minecraft.client.texture.PlayerSkinProvider
 import net.minecraft.datafixer.Schemas
 import net.minecraft.datafixer.TypeReferences
 import net.minecraft.item.ItemStack
