@@ -109,7 +109,7 @@ object FishingWarning : FirmamentFeature {
 
     private fun onParticleSpawn(event: ParticleSpawnEvent) {
         if (event.particleEffect.type != ParticleTypes.FISHING) return
-        if (!(abs(event.offset.y - 0.01f) < 0.001f)) return
+        if ((abs(event.offset.y - 0.01f) >= 0.001f)) return
         val hook = MC.player?.fishHook ?: return
         val actualOffset = event.offset
         val candidate1 = calculateAngleFromOffsets(-actualOffset.x, (-actualOffset.z))
