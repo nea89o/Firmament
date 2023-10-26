@@ -8,7 +8,6 @@ package moe.nea.firmament.rei
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUForgeRecipe
-import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.NEURecipe
 import java.util.*
 import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator
@@ -18,7 +17,6 @@ import me.shedaniel.rei.api.common.entry.EntryStack
 import moe.nea.firmament.rei.recipes.SBCraftingRecipe
 import moe.nea.firmament.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.util.skyblockId
 
 
 val SkyblockCraftingRecipeDynamicGenerator = neuDisplayGenerator<SBCraftingRecipe, NEUCraftingRecipe> {
