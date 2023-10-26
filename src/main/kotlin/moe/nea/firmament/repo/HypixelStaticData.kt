@@ -20,7 +20,6 @@ import kotlin.time.Duration.Companion.minutes
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.apis.CollectionResponse
 import moe.nea.firmament.apis.CollectionSkillData
-import moe.nea.firmament.apis.Skill
 import moe.nea.firmament.keybindings.IKeyBinding
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.async.waitForInput
