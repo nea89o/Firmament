@@ -75,10 +75,9 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> {
             ci.cancel();
             return;
         }
-        if (actionType == SlotActionType.SWAP && 0 <= button && button < 9) {
-            if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0), actionType)) {
-                ci.cancel();
-            }
+        if (actionType == SlotActionType.SWAP && 0 <= button && button < 9 &&
+            IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0), actionType)) {
+            ci.cancel();
         }
     }
 
