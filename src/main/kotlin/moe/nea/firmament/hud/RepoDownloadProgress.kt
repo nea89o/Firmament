@@ -10,7 +10,6 @@ import io.github.cottonmc.cotton.gui.client.ScreenDrawing
 import io.github.cottonmc.cotton.gui.widget.WWidget
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment
 import io.github.cottonmc.cotton.gui.widget.data.Insets
-import net.minecraft.client.util.math.MatrixStack
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import net.minecraft.client.gui.DrawContext
