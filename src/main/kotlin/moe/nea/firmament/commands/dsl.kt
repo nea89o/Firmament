@@ -37,14 +37,11 @@ fun literal(
 
 
 private fun normalizeGeneric(argument: Type): Class<*> {
-    return if (argument is Class<*>) {
-        argument
-    } else if (argument is TypeVariable<*>) {
-        normalizeGeneric(argument.bounds[0])
-    } else if (argument is ParameterizedType) {
-        normalizeGeneric(argument.rawType)
-    } else {
-        Any::class.java
+    return when (argument) {
+        is Class<*> -> argument
+        is TypeVariable<*> -> normalizeGeneric(argument.bounds[0])
+        is ParameterizedType -> normalizeGeneric(argument.rawType)
+        else -> Any::class.java
     }
 }
 
