@@ -9,21 +9,12 @@ package moe.nea.firmament.features.debug
 import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.cottonmc.cotton.gui.widget.WBox
 import io.github.cottonmc.cotton.gui.widget.WDynamicLabel
-import io.github.cottonmc.cotton.gui.widget.WLabel
 import io.github.cottonmc.cotton.gui.widget.data.Axis
-import java.util.Optional
 import java.util.stream.Collectors
 import kotlin.time.Duration.Companion.seconds
-import net.minecraft.scoreboard.Scoreboard
-import net.minecraft.scoreboard.Team
-import net.minecraft.text.StringVisitable
-import net.minecraft.text.Style
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
-import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
 
 object DebugView : FirmamentFeature {
