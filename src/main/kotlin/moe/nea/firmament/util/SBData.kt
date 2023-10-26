@@ -52,15 +52,13 @@ object SBData {
                     e.printStackTrace()
                 }
             }
-            if (event.unformattedString.startsWith("{")) {
-                if (tryReceiveLocraw(event.unformattedString)) {
-                    if (lastLocrawSent.timePassed() < locrawRoundtripTime) {
-                        lastLocrawSent.markFarPast()
-                        event.cancel()
-                    }
-                    if (!hasValidLocraw && !hasSentLocraw && hasReceivedProfile) {
-                        sendLocraw()
-                    }
+            if (event.unformattedString.startsWith("{") && tryReceiveLocraw(event.unformattedString)) {
+                if (lastLocrawSent.timePassed() < locrawRoundtripTime) {
+                    lastLocrawSent.markFarPast()
+                    event.cancel()
+                }
+                if (!hasValidLocraw && !hasSentLocraw && hasReceivedProfile) {
+                    sendLocraw()
                 }
             }
         }
