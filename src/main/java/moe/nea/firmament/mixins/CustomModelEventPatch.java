@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemModels.class)
-public class MixinItemModels {
+public class CustomModelEventPatch {
     @Shadow
     @Final
     private BakedModelManager modelManager;

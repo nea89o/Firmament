@@ -15,7 +15,7 @@ import net.minecraft.util.hit.HitResult
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.events.ItemTooltipEvent
-import moe.nea.firmament.events.ScreenOpenEvent
+import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -91,7 +91,7 @@ object PowerUserTools : FirmamentFeature {
                 lastCopiedStack = null
             lastCopiedStackViewTime = false
         }
-        ScreenOpenEvent.subscribe {
+        ScreenChangeEvent.subscribe {
             lastCopiedStack = null
         }
         HandledScreenKeyPressedEvent.subscribe {

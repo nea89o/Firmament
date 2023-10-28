@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
-public class MixinInGameHud {
+public class HudRenderEvents {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getSleepTimer()I"))
     public void renderCallBack(DrawContext context, float tickDelta, CallbackInfo ci) {
         HudRenderEvent.Companion.publish(new HudRenderEvent(context, tickDelta));

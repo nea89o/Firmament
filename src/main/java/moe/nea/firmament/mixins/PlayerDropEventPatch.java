@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class MixinClientPlayerEntity extends PlayerEntity {
-    public MixinClientPlayerEntity() {
+public abstract class PlayerDropEventPatch extends PlayerEntity {
+    public PlayerDropEventPatch() {
         super(null, null, 0, null);
     }
 

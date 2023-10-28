@@ -13,7 +13,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.server.command.CommandOutput
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.events.ScreenOpenEvent
+import moe.nea.firmament.events.ScreenChangeEvent
 
 interface IDataHolder<T> {
     companion object {
@@ -60,7 +60,7 @@ interface IDataHolder<T> {
         }
 
         fun registerEvents() {
-            ScreenOpenEvent.subscribe { event ->
+            ScreenChangeEvent.subscribe { event ->
                 performSaves()
                 val p = MinecraftClient.getInstance().player
                 if (p != null) {

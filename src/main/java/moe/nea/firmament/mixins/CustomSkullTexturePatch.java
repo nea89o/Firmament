@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SkullBlockEntityRenderer.class)
-public class MixinSkullBlockEntityRenderer {
+public class CustomSkullTexturePatch {
     @Inject(method = "getRenderLayer", at = @At("HEAD"), cancellable = true)
     private static void onGetRenderLayer(SkullBlock.SkullType type, GameProfile profile, CallbackInfoReturnable<RenderLayer> cir) {
         CustomSkyBlockTextures.INSTANCE.modifySkullTexture(type, profile, cir);

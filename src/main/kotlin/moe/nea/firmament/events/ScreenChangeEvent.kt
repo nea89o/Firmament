@@ -8,6 +8,6 @@ package moe.nea.firmament.events
 
 import net.minecraft.client.gui.screen.Screen
 
-data class ScreenOpenEvent(val old: Screen?, val new: Screen?) : FirmamentEvent.Cancellable() {
-    companion object : FirmamentEventBus<ScreenOpenEvent>()
+data class ScreenChangeEvent(val old: Screen?, val new: Screen?) : FirmamentEvent.Cancellable() {
+    companion object : FirmamentEventBus<ScreenChangeEvent>()
 }

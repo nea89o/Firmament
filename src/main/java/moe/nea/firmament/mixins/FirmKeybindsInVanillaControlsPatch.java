@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ControlsListWidget.KeyBindingEntry.class)
-public class MixinKeybindsScreen {
+public class FirmKeybindsInVanillaControlsPatch {
 
     @Mutable
     @Shadow

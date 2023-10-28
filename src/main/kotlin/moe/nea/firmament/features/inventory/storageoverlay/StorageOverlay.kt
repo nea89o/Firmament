@@ -8,7 +8,7 @@ package moe.nea.firmament.features.inventory.storageoverlay
 
 import java.util.*
 import kotlinx.serialization.serializer
-import moe.nea.firmament.events.ScreenOpenEvent
+import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -36,7 +36,7 @@ object StorageOverlay : FirmamentFeature {
     var currentHandler: StorageBackingHandle? = StorageBackingHandle.None
 
     override fun onLoad() {
-        ScreenOpenEvent.subscribe { event ->
+        ScreenChangeEvent.subscribe { event ->
             currentHandler = StorageBackingHandle.fromScreen(event.new)
             if (event.old is StorageOverlayScreen && !event.old.isClosing) {
                 event.old.setHandler(currentHandler)

@@ -22,12 +22,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 
 @Mixin(EntityIdFix.class)
-public abstract class MixinEntityIdFix extends DataFix {
+public abstract class DFUEntityIdFixPatch extends DataFix {
     @Shadow
     @Final
     private static Map<String, String> RENAMED_ENTITIES;
 
-    public MixinEntityIdFix(Schema outputSchema, boolean changesType) {
+    public DFUEntityIdFixPatch(Schema outputSchema, boolean changesType) {
         super(outputSchema, changesType);
     }
 

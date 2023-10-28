@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(KeyBinding.class)
-public class MixinKeyBinding {
+public class ToggleSprintPatch {
     @Inject(method = "isPressed", at = @At("HEAD"), cancellable = true)
     public void onIsPressed(CallbackInfoReturnable<Boolean> cir) {
         Fixes.INSTANCE.handleIsPressed((KeyBinding) (Object) this, cir);

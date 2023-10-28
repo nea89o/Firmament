@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 @Mixin(ModelLoader.class)
-public abstract class MixinModelLoader {
+public abstract class CustomModelBakerPatch {
 
     @Shadow
     protected abstract void addModel(ModelIdentifier modelId);

@@ -6,7 +6,7 @@
 
 package moe.nea.firmament.mixins;
 
-import moe.nea.firmament.events.ScreenOpenEvent;
+import moe.nea.firmament.events.ScreenChangeEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import org.jetbrains.annotations.Nullable;
@@ -17,15 +17,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
-public abstract class MixinMinecraft {
+public abstract class ScreenChangeEventPatch {
     @Shadow
     @Nullable
     public Screen currentScreen;
 
     @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
     public void onScreenChange(Screen screen, CallbackInfo ci) {
-        var event = new ScreenOpenEvent(currentScreen, screen);
-        if (ScreenOpenEvent.Companion.publish(event).getCancelled()) {
+        var event = new ScreenChangeEvent(currentScreen, screen);
+        if (ScreenChangeEvent.Companion.publish(event).getCancelled()) {
             ci.cancel();
         }
     }
