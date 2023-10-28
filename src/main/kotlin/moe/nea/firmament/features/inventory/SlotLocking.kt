@@ -15,6 +15,7 @@ import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
@@ -74,21 +75,21 @@ object SlotLocking : FirmamentFeature {
 
     fun isTradeScreen(screen: HandledScreen<*>?): Boolean {
         if (screen == null) return false
-        val handler = screen.screenHandler
-        if (handler.slots.size < 9) return false
-        val middlePane = handler.getSlot(4)
-        if (!middlePane.hasStack()) return false
-        return middlePane.stack.displayNameAccordingToNbt?.unformattedString == "⇦ Your stuff"
+        val handler = screen.screenHandler as? GenericContainerScreenHandler ?: return false
+        if (handler.inventory.size() < 9) return false
+        val middlePane = handler.inventory.getStack(handler.inventory.size() - 5)
+        if (middlePane == null) return false
+        return middlePane.displayNameAccordingToNbt?.unformattedString == "⇦ Your stuff"
     }
 
     fun isNpcShop(screen: HandledScreen<*>?): Boolean {
         if (screen == null) return false
-        val handler = screen.screenHandler
-        if (handler.slots.size < 9) return false
-        val sellItem = handler.getSlot(handler.slots.size - 5)
-        if (!sellItem.hasStack()) return false
-        if (sellItem.stack.displayNameAccordingToNbt?.unformattedString == "Sell Item") return true
-        val lore = sellItem.stack.loreAccordingToNbt
+        val handler = screen.screenHandler as? GenericContainerScreenHandler ?: return false
+        if (handler.inventory.size() < 9) return false
+        val sellItem = handler.inventory.getStack(handler.inventory.size() - 5)
+        if (sellItem == null) return false
+        if (sellItem.displayNameAccordingToNbt?.unformattedString == "Sell Item") return true
+        val lore = sellItem.loreAccordingToNbt
         return (lore.lastOrNull() ?: return false).value?.unformattedString == "Click to buyback!"
     }
 
@@ -178,6 +179,7 @@ object SlotLocking : FirmamentFeature {
 
                             isUUIDLocked ->
                                 (Identifier("firmament:uuid_locked"))
+
                             else ->
                                 error("unreachable")
                         }
