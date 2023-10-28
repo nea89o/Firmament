@@ -64,6 +64,7 @@ object DeveloperFeatures : FirmamentFeature {
         return reloadFuture.thenCompose { client.reloadResources() }
     }
 
+
     override fun onLoad() {
         HandledScreenKeyPressedEvent.subscribe {
             if (it.matches(IKeyBinding.ofKeyCode(GLFW.GLFW_KEY_K))) {
@@ -78,10 +79,16 @@ object DeveloperFeatures : FirmamentFeature {
                     ).setStyle(
                         Style.EMPTY.withColor(Formatting.AQUA)
                             .withClickEvent(ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ident))
-                            .withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("firmament.debug.skyblockid.copy")))
+                            .withHoverEvent(
+                                HoverEvent(
+                                    HoverEvent.Action.SHOW_TEXT,
+                                    Text.translatable("firmament.debug.skyblockid.copy")
+                                )
+                            )
                     )
                 )
             }
         }
     }
 }
+

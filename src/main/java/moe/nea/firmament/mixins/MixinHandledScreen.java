@@ -35,6 +35,10 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> {
     @Shadow
     public abstract T getScreenHandler();
 
+    @Shadow
+    protected int y;
+    @Shadow
+    protected int x;
     @Unique
     PlayerInventory playerInventory;
 
@@ -52,14 +56,17 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> {
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        if (ScreenClickEvent.Companion.publish(new ScreenClickEvent((HandledScreen<?>) (Object) this, mouseX, mouseY, button)).getCancelled()) {
+        if (HandledScreenClickEvent.Companion.publish(new HandledScreenClickEvent((HandledScreen<?>) (Object) this, mouseX, mouseY, button)).getCancelled()) {
             cir.setReturnValue(true);
         }
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawForeground(Lnet/minecraft/client/gui/DrawContext;II)V", shift = At.Shift.AFTER))
     public void onAfterRenderForeground(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        HandledScreenForegroundEvent.Companion.publish(new HandledScreenForegroundEvent((HandledScreen<?>) (Object) this, mouseX, mouseY, delta));
+        context.getMatrices().push();
+        context.getMatrices().translate(-x, -y, 0);
+        HandledScreenForegroundEvent.Companion.publish(new HandledScreenForegroundEvent((HandledScreen<?>) (Object) this, context, mouseX, mouseY, delta));
+        context.getMatrices().pop();
     }
 
     @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", at = @At("HEAD"), cancellable = true)

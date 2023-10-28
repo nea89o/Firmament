@@ -26,6 +26,7 @@ mixinextras = "0.2.0-rc.5"
 jarvis = "1.1.1"
 nealisp = "1.0.0"
 explosiveenhancement = "1.2.1-1.20.x"
+moulconfig = "2.4.0"
 
 
 [libraries]
@@ -35,6 +36,7 @@ fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fab
 fabric_kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric_kotlin" }
 architectury = { module = "dev.architectury:architectury", version.ref = "architectury" }
 rei_api = { module = "me.shedaniel:RoughlyEnoughItems-api", version.ref = "rei" }
+moulconfig = { module = "org.notenoughupdates.moulconfig:modern", version.ref = "moulconfig" }
 repoparser = { module = "moe.nea:neurepoparser", version.ref = "neurepoparser" }
 dbus_java_core = { module = "com.github.hypfvieh:dbus-java-core", version.ref = "dbus_java" }
 dbus_java_unixsocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus_java" }

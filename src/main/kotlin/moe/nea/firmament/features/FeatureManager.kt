@@ -23,6 +23,7 @@ import moe.nea.firmament.features.inventory.ItemRarityCosmetics
 import moe.nea.firmament.features.inventory.PriceData
 import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
+import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.features.world.FairySouls
@@ -56,6 +57,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(CraftingOverlay)
             loadFeature(PowerUserTools)
             loadFeature(ChatLinks)
+            loadFeature(InventoryButtons)
             loadFeature(CompatibliltyFeatures)
             loadFeature(QuickCommands)
             loadFeature(SaveCursorPosition)

@@ -66,6 +66,7 @@ repositories {
     }
     maven("https://server.bbkr.space/artifactory/libs-release")
     maven("https://repo.nea.moe/releases")
+    maven("https://maven.notenoughupdates.org/releases")
     mavenLocal()
 }
 
@@ -104,8 +105,10 @@ dependencies {
     modImplementation(libs.fabric.kotlin)
     modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
+    modImplementation(libs.moulconfig)
     modCompileOnly(libs.explosiveenhancement)
     include(libs.libgui)
+    include(libs.moulconfig)
 
 
     annotationProcessor(libs.mixinextras)

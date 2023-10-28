@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: CC0-1.0
 
 Prio 0 (Bugs):
-- WorldReadyEvent buggy? -> out of date locraw
+- Figure out how to do translations in moulconfig
+
 
 Priority 1:
 - recipes

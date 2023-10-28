@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<Root xmlns="http://notenoughupdates.org/moulconfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://notenoughupdates.org/moulconfig https://raw.githubusercontent.com/NotEnoughUpdates/MoulConfig/master/MoulConfig.xsd">
+    <Panel>
+        <Column>
+            <Row>
+                <ItemStack value="@getItemIcon"/>
+                <Text text="Icon"/>
+            </Row>
+            <Hover lines="Put your display item in here.;Can be any SkyBlock item id.">
+                <TextField value="@icon" width="180"/>
+            </Hover>
+            <Text text="Command"/>
+            <Hover lines="Put the command in here.;The text box should not start with a /">
+                <Row>
+                    <Text text="/"/>
+                    <TextField value="@command" width="180"/>
+                </Row>
+            </Hover>
+            <Button onClick="@delete">
+                <Text text="Delete"/>
+            </Button>
+        </Column>
+    </Panel>
+</Root>

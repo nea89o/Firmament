@@ -21,6 +21,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.*
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
+import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -81,6 +82,11 @@ fun firmamentCommand() = literal("firmament") {
                     }
                 }
             }
+        }
+    }
+    thenLiteral("buttons") {
+        thenExecute {
+            InventoryButtons.openEditor()
         }
     }
     thenLiteral("storage") {

@@ -42,7 +42,6 @@ class FirmamentReiPlugin : REIClientPlugin {
 
         val SKYBLOCK_ITEM_TYPE_ID = Identifier("firmament", "skyblockitems")
     }
-
     override fun registerTransferHandlers(registry: TransferHandlerRegistry) {
         registry.register(TransferHandler { context ->
             val screen = context.containerScreen
@@ -66,7 +65,7 @@ class FirmamentReiPlugin : REIClientPlugin {
     }
 
     override fun registerExclusionZones(zones: ExclusionZones) {
-        zones.register(HandledScreen::class.java) { HandledScreenPushREIEvent(it).rectangles }
+        zones.register(HandledScreen::class.java) { HandledScreenPushREIEvent.publish(HandledScreenPushREIEvent(it)).rectangles }
     }
 
     override fun registerDisplays(registry: DisplayRegistry) {
