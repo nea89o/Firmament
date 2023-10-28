@@ -6,16 +6,19 @@
 
 package moe.nea.firmament.features.fixes
 
+import moe.nea.jarvis.api.Point
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.option.KeyBinding
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.text.Text
+import net.minecraft.util.Arm
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
-import moe.nea.jarvis.api.Point
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.option.KeyBinding
-import net.minecraft.text.Text
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
+import moe.nea.firmament.util.errorBoundary
 
 object Fixes : FirmamentFeature {
     override val identifier: String
@@ -27,6 +30,7 @@ object Fixes : FirmamentFeature {
         val autoSprintKeyBinding by keyBindingWithDefaultUnbound("auto-sprint-keybinding")
         val autoSprintHud by position("auto-sprint-hud", 80, 10) { Point(0.0, 1.0) }
         val peekChat by keyBindingWithDefaultUnbound("peek-chat")
+        val useClientSidedHandedness by toggle("clientside-lefthand") { true }
     }
 
     override val config: ManagedConfig
@@ -38,6 +42,12 @@ object Fixes : FirmamentFeature {
     ) {
         if (keyBinding === MinecraftClient.getInstance().options.sprintKey && TConfig.autoSprint && MC.player?.isSprinting != true)
             cir.returnValue = true
+    }
+
+    fun isLeftHandedHook(entity: PlayerEntity, cit: CallbackInfoReturnable<Arm>) = errorBoundary {
+        if (TConfig.useClientSidedHandedness && entity.isMainPlayer) {
+            cit.returnValue = MC.instance.options.mainArm.value
+        }
     }
 
     override fun onLoad() {
