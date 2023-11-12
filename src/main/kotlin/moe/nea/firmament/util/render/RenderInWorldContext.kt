@@ -8,8 +8,10 @@ package moe.nea.firmament.util.render
 
 import com.mojang.blaze3d.systems.RenderSystem
 import java.lang.Math.pow
+import java.lang.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import kotlin.math.tan
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gl.VertexBuffer
 import net.minecraft.client.render.BufferBuilder
@@ -28,6 +30,8 @@ import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.WorldRenderLastEvent
+import moe.nea.firmament.mixins.accessor.AccessorGameRenderer
+import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.assertTrueOr
 
@@ -35,9 +39,12 @@ class RenderInWorldContext private constructor(
     private val tesselator: Tessellator,
     private val matrixStack: MatrixStack,
     private val camera: Camera,
+    private val tickDelta: Float,
     private val vertexConsumers: VertexConsumerProvider.Immediate,
 ) {
     private val buffer = tesselator.buffer
+    val effectiveFov = (MC.instance.gameRenderer as AccessorGameRenderer).getFov_firmament(camera, tickDelta, true)
+    val effectiveFovScaleFactor = 1 / tan(toRadians(effectiveFov) / 2)
 
     fun color(red: Float, green: Float, blue: Float, alpha: Float) {
         RenderSystem.setShaderColor(red, green, blue, alpha)
@@ -65,15 +72,24 @@ class RenderInWorldContext private constructor(
     }
 
     fun waypoint(position: BlockPos, label: Text) {
-        text(position.toCenterPos(), label, Text.literal("§e${MC.player?.pos?.distanceTo(position.toCenterPos())}m"))
+        text(
+            position.toCenterPos(),
+            label,
+            Text.literal("§e${FirmFormatters.formatDistance(MC.player?.pos?.distanceTo(position.toCenterPos()) ?: 42069.0)}")
+        )
     }
 
     fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER) {
         assertTrueOr(texts.isNotEmpty()) { return@text }
         matrixStack.push()
         matrixStack.translate(position.x, position.y, position.z)
+        val actualCameraDistance = position.distanceTo(camera.pos)
+        val distanceToMoveTowardsCamera = if (actualCameraDistance < 10) 0.0 else -(actualCameraDistance - 10.0)
+        val vec = position.subtract(camera.pos).multiply(distanceToMoveTowardsCamera / actualCameraDistance)
+        matrixStack.translate(vec.x, vec.y, vec.z)
         matrixStack.multiply(camera.rotation)
         matrixStack.scale(-0.025F, -0.025F, -1F)
+
         for ((index, text) in texts.withIndex()) {
             matrixStack.push()
             val width = MC.font.getWidth(text)
@@ -145,7 +161,16 @@ class RenderInWorldContext private constructor(
     }
 
     companion object {
-        private fun doLine(matrix: Entry, buf: BufferBuilder, i: Number, j: Number, k: Number, x: Number, y: Number, z: Number) {
+        private fun doLine(
+            matrix: Entry,
+            buf: BufferBuilder,
+            i: Number,
+            j: Number,
+            k: Number,
+            x: Number,
+            y: Number,
+            z: Number
+        ) {
             val normal = Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
                 .sub(i.toFloat(), j.toFloat(), k.toFloat())
                 .mul(-1F)
@@ -226,6 +251,7 @@ class RenderInWorldContext private constructor(
                 RenderSystem.renderThreadTesselator(),
                 event.matrices,
                 event.camera,
+                event.tickDelta,
                 event.vertexConsumers
             )
 

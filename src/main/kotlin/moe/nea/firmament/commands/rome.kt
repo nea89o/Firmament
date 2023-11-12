@@ -36,8 +36,9 @@ fun firmamentCommand() = literal("firmament") {
                 }
                 thenArgument("property", string()) { property ->
                     suggestsList {
-                        (AllConfigsGui.allConfigs.find { it.name == this[config] }?:return@suggestsList listOf())
-                            .allOptions.entries.asSequence().filter { it.value.handler is BooleanHandler }.map { it.key }
+                        (AllConfigsGui.allConfigs.find { it.name == this[config] } ?: return@suggestsList listOf())
+                            .allOptions.entries.asSequence().filter { it.value.handler is BooleanHandler }
+                            .map { it.key }
                             .asIterable()
                     }
                     thenExecute {
@@ -87,6 +88,12 @@ fun firmamentCommand() = literal("firmament") {
     thenLiteral("buttons") {
         thenExecute {
             InventoryButtons.openEditor()
+        }
+    }
+    thenLiteral("sendcoords") {
+        thenExecute {
+            val p = MC.player ?: return@thenExecute
+            MC.sendServerChat("x: ${p.blockX}, y: ${p.blockY}, z: ${p.blockZ}")
         }
     }
     thenLiteral("storage") {

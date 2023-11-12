@@ -51,6 +51,10 @@ object MC {
         )
     }
 
+    fun sendServerChat(text: String) {
+        player?.networkHandler?.sendChatMessage(text)
+    }
+
     fun sendCommand(command: String) {
         player?.networkHandler?.sendCommand(command)
     }

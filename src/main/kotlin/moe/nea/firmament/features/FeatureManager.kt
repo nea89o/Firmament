@@ -27,6 +27,7 @@ import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.features.world.FairySouls
+import moe.nea.firmament.features.world.Waypoints
 import moe.nea.firmament.util.data.DataHolder
 
 object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "features", ::Config) {
@@ -56,6 +57,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(StorageOverlay)
             loadFeature(CraftingOverlay)
             loadFeature(PowerUserTools)
+            loadFeature(Waypoints)
             loadFeature(ChatLinks)
             loadFeature(InventoryButtons)
             loadFeature(CompatibliltyFeatures)

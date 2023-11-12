@@ -28,6 +28,12 @@ object FirmFormatters {
         return formatCurrency(long) + (if (digits.isEmpty()) "" else ".$digits")
     }
 
+    fun formatDistance(distance: Double): String {
+        if (distance < 10)
+            return "%.1fm".format(distance)
+        return "%dm".format(distance.toInt())
+    }
+
     fun formatTimespan(duration: Duration): String {
         return duration.toString()
     }
