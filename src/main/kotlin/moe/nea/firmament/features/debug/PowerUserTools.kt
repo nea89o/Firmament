@@ -24,6 +24,7 @@ import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.focusedItemStack
 import moe.nea.firmament.util.skyBlockId
 
 object PowerUserTools : FirmamentFeature {
@@ -56,7 +57,7 @@ object PowerUserTools : FirmamentFeature {
                 it.lines.add(Text.translatable("firmament.tooltip.skyblockid", id.neuItem))
             }
             val (item, text) = lastCopiedStack ?: return@subscribe
-            if (item != it.stack) {
+            if (!ItemStack.areEqual(item, it.stack)) {
                 lastCopiedStack = null
                 return@subscribe
             }
@@ -96,7 +97,7 @@ object PowerUserTools : FirmamentFeature {
         }
         HandledScreenKeyPressedEvent.subscribe {
             if (it.screen !is AccessorHandledScreen) return@subscribe
-            val item = it.screen.focusedSlot_Firmament?.stack ?: return@subscribe
+            val item = it.screen.focusedItemStack ?: return@subscribe
             if (it.matches(TConfig.copyItemId)) {
                 val sbId = item.skyBlockId
                 if (sbId == null) {
