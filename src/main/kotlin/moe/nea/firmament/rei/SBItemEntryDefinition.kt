@@ -6,9 +6,11 @@
 
 package moe.nea.firmament.rei
 
+import io.github.moulberry.repo.constants.PetNumbers
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
+import java.util.stream.Stream
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.common.entry.EntrySerializer
 import me.shedaniel.rei.api.common.entry.EntryStack
@@ -16,23 +18,27 @@ import me.shedaniel.rei.api.common.entry.comparison.ComparisonContext
 import me.shedaniel.rei.api.common.entry.type.EntryDefinition
 import me.shedaniel.rei.api.common.entry.type.EntryType
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
+import net.minecraft.item.ItemStack
+import net.minecraft.registry.tag.TagKey
+import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.util.*
-import net.minecraft.item.ItemStack
-import net.minecraft.registry.tag.TagKey
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import java.util.stream.Stream
+import moe.nea.firmament.util.FirmFormatters
+import moe.nea.firmament.util.HypixelPetInfo
+import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.petData
+import moe.nea.firmament.util.skyBlockId
 
 // TODO: add in extra data like pet info, into this structure
 data class PetData(
     val rarity: Rarity,
     val petId: String,
     val exp: Double,
+    val isStub: Boolean = false,
 ) {
     companion object {
         fun fromHypixel(petInfo: HypixelPetInfo) = PetData(
@@ -63,23 +69,44 @@ data class SBItemStack(
         RepoManager.getPotentialStubPetData(skyblockId)
     )
 
+    private fun injectReplacementDataForPetLevel(
+        petInfo: PetNumbers,
+        level: Int,
+        replacementData: MutableMap<String, String>
+    ) {
+        val stats = petInfo.interpolatedStatsAtLevel(level) ?: return
+        stats.otherNumbers.forEachIndexed { index, it ->
+            replacementData[index.toString()] = FirmFormatters.formatCurrency(it, 1)
+        }
+        stats.statNumbers.forEach { (t, u) ->
+            replacementData[t] = FirmFormatters.formatCurrency(u, 1)
+        }
+    }
+
+    private fun injectReplacementDataForPets(replacementData: MutableMap<String, String>) {
+        if (petData == null) return
+        val petInfo = RepoManager.neuRepo.constants.petNumbers[petData.petId]?.get(petData.rarity) ?: return
+        if (petData.isStub) {
+            val mapLow = mutableMapOf<String, String>()
+            injectReplacementDataForPetLevel(petInfo, petInfo.lowLevel, mapLow)
+            val mapHigh = mutableMapOf<String, String>()
+            injectReplacementDataForPetLevel(petInfo, petInfo.highLevel, mapHigh)
+            mapHigh.forEach { (key, highValue) ->
+                mapLow.merge(key, highValue) { a, b -> "$a → $b" }
+            }
+            replacementData.putAll(mapLow)
+            replacementData["LVL"] = "${petInfo.lowLevel} → ${petInfo.highLevel}"
+        } else {
+            injectReplacementDataForPetLevel(petInfo, petData.levelData.currentLevel, replacementData)
+            replacementData["LVL"] = petData.levelData.currentLevel.toString()
+        }
+    }
+
     private val itemStack by lazy(LazyThreadSafetyMode.NONE) {
         if (skyblockId == SkyblockId.COINS)
             return@lazy ItemCache.coinItem(stackSize)
         val replacementData = mutableMapOf<String, String>()
-        if (petData != null) {
-            val stats = RepoManager.neuRepo.constants.petNumbers[petData.petId]?.get(petData.rarity)
-                ?.interpolatedStatsAtLevel(petData.levelData.currentLevel)
-            if (stats != null) {
-                stats.otherNumbers.forEachIndexed { index, it ->
-                    replacementData[index.toString()] = FirmFormatters.formatCurrency(it, 1)
-                }
-                stats.statNumbers.forEach { (t, u) ->
-                    replacementData[t] = FirmFormatters.formatCurrency(u, 1)
-                }
-            }
-            replacementData["LVL"] = petData.levelData.currentLevel.toString()
-        }
+        injectReplacementDataForPets(replacementData)
         return@lazy neuItem.asItemStack(idHint = skyblockId, replacementData).copyWithCount(stackSize)
     }
 
@@ -98,7 +125,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     }
 
     override fun cheatsAs(entry: EntryStack<SBItemStack>?, value: SBItemStack): ItemStack {
-        return value.neuItem.asItemStack()
+        return value.asItemStack()
     }
 
     override fun getValueType(): Class<SBItemStack> = SBItemStack::class.java

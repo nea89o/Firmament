@@ -142,9 +142,9 @@ object RepoManager {
             return null
         }
         val intIndex = rarityIndex.toInt()
-        if (intIndex !in rarityIndex.indices) return null
+        if (intIndex !in Rarity.values().indices) return null
         if (petId !in neuRepo.constants.petNumbers) return null
-        return PetData(Rarity.values()[intIndex], petId, 0.0)
+        return PetData(Rarity.values()[intIndex], petId, 0.0, true)
     }
 
 }
