@@ -208,10 +208,6 @@ class LegacyTagParser private constructor(string: String) {
         if (textForm.isEmpty()) {
             racer.error("Expected numeric tag (starting with either -, +, . or a digit")
         }
-        val doubleMatch = Patterns.DOUBLE.matchEntire(textForm) ?: Patterns.DOUBLE_UNTYPED.matchEntire(textForm)
-        if (doubleMatch != null) {
-            return NbtDouble.of(doubleMatch.groups[1]!!.value.toDouble())
-        }
         val floatMatch = Patterns.FLOAT.matchEntire(textForm)
         if (floatMatch != null) {
             return NbtFloat.of(floatMatch.groups[1]!!.value.toFloat())
@@ -231,6 +227,10 @@ class LegacyTagParser private constructor(string: String) {
         val integerMatch = Patterns.INTEGER.matchEntire(textForm)
         if (integerMatch != null) {
             return NbtInt.of(integerMatch.groups[1]!!.value.toInt())
+        }
+        val doubleMatch = Patterns.DOUBLE.matchEntire(textForm) ?: Patterns.DOUBLE_UNTYPED.matchEntire(textForm)
+        if (doubleMatch != null) {
+            return NbtDouble.of(doubleMatch.groups[1]!!.value.toDouble())
         }
         throw IllegalStateException("Could not properly parse numeric tag '$textForm', despite passing rough verification. This is a bug in the LegacyTagParser")
     }
