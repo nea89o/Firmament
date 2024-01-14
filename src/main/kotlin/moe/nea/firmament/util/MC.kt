@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.network.message.ArgumentSignatureDataMap
 import net.minecraft.network.message.LastSeenMessagesCollector.LastSeenMessages
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
+import net.minecraft.resource.ReloadableResourceManagerImpl
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import moe.nea.firmament.events.TickEvent
@@ -59,6 +60,7 @@ object MC {
         player?.networkHandler?.sendCommand(command)
     }
 
+    inline val resourceManager get() = (MinecraftClient.getInstance().resourceManager as ReloadableResourceManagerImpl)
     inline val networkHandler get() = player?.networkHandler
     inline val instance get() = MinecraftClient.getInstance()
     inline val keyboard get() = MinecraftClient.getInstance().keyboard

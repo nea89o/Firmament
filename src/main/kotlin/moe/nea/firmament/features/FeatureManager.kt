@@ -25,6 +25,7 @@ import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
+import moe.nea.firmament.features.mining.PristineProfitTracker
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.features.world.Waypoints
@@ -55,6 +56,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             // TODO: loadFeature(FishingWarning)
             loadFeature(SlotLocking)
             loadFeature(StorageOverlay)
+            loadFeature(PristineProfitTracker)
             loadFeature(CraftingOverlay)
             loadFeature(PowerUserTools)
             loadFeature(Waypoints)

@@ -7,22 +7,42 @@
 package moe.nea.firmament.util
 
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-import kotlin.time.TimeSource
+import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalTime::class)
-class TimeMark private constructor(private val timeMark: TimeSource.Monotonic.ValueTimeMark?) : Comparable<TimeMark> {
-    fun passedTime() = timeMark?.elapsedNow() ?: Duration.INFINITE
+class TimeMark private constructor(private val timeMark: Long) : Comparable<TimeMark> {
+    fun passedTime() = if (timeMark == 0L) Duration.INFINITE else (System.currentTimeMillis() - timeMark).milliseconds
+
+    operator fun minus(other: TimeMark): Duration {
+        if (other.timeMark == timeMark)
+            return 0.milliseconds
+        if (other.timeMark == 0L)
+            return Duration.INFINITE
+        if (timeMark == 0L)
+            return -Duration.INFINITE
+        return (timeMark - other.timeMark).milliseconds
+    }
 
     companion object {
-        fun now() = TimeMark(TimeSource.Monotonic.markNow())
-        fun farPast() = TimeMark(null)
+        fun now() = TimeMark(System.currentTimeMillis())
+        fun farPast() = TimeMark(0L)
+        fun ago(timeDelta: Duration): TimeMark {
+            if (timeDelta.isFinite()) {
+                return TimeMark(System.currentTimeMillis() - timeDelta.inWholeMilliseconds)
+            }
+            require(timeDelta.isPositive())
+            return farPast()
+        }
+    }
+
+    override fun hashCode(): Int {
+        return timeMark.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is TimeMark && other.timeMark == timeMark
     }
 
     override fun compareTo(other: TimeMark): Int {
-        if (this.timeMark == other.timeMark) return 0
-        if (this.timeMark == null) return -1
-        if (other.timeMark == null) return -1
         return this.timeMark.compareTo(other.timeMark)
     }
 }

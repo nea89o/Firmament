@@ -91,7 +91,7 @@ abstract class FragmentGuiScreen(
         verticalAmount: Double
     ): Boolean {
         return ifPopup {
-            it.mouseScrolled(mouseX, mouseY, verticalAmount)
+            it.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
         }
     }
 }

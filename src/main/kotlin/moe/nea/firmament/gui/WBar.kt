@@ -16,9 +16,9 @@ import moe.nea.firmament.Firmament
 
 open class WBar(
     var progress: Double,
-    val total: Double,
+    var total: Double,
     val fillColor: Color,
-    val emptyColor: Color,
+    val emptyColor: Color = fillColor.darker(2.0),
 ) : WWidget() {
     companion object {
         val resource = Firmament.identifier("textures/gui/bar.png")

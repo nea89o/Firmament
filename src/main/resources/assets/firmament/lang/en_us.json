@@ -5,6 +5,8 @@
     "firmament.command.toggle.no-property-found": "Could not find property %s",
     "firmament.command.toggle.not-a-toggle": "Property %s is not a toggle",
     "firmament.command.toggle.toggled": "Toggled %s / %s %s",
+    "firmament.pristine-profit.collection": "Collection: %s/h",
+    "firmament.pristine-profit.money": "Money: %s/h",
     "firmament.toggle.true": "On",
     "firmament.toggle.false": "Off",
     "firmament.config.developer": "Developer Settings",
