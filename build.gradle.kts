@@ -67,7 +67,6 @@ repositories {
     maven("https://server.bbkr.space/artifactory/libs-release")
     maven("https://repo.nea.moe/releases")
     maven("https://maven.notenoughupdates.org/releases")
-    mavenLocal()
 }
 
 val shadowMe by configurations.creating {

@@ -147,12 +147,16 @@ class RenderInWorldContext private constructor(
     }
 
     fun line(vararg points: Vec3d, lineWidth: Float = 10F) {
+        line(points.toList(), lineWidth)
+    }
+
+    fun line(points: List<Vec3d>, lineWidth: Float = 10F) {
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram)
         RenderSystem.lineWidth(lineWidth / pow(camera.pos.squaredDistanceTo(points.first()), 0.25).toFloat())
         buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
         buffer.fixedColor(255, 255, 255, 255)
 
-        points.toList().zipWithNext().forEach { (a, b) ->
+        points.zipWithNext().forEach { (a, b) ->
             doLine(matrixStack.peek(), buffer, a.x, a.y, a.z, b.x, b.y, b.z)
         }
         buffer.unfixColor()
@@ -173,7 +177,7 @@ class RenderInWorldContext private constructor(
         ) {
             val normal = Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
                 .sub(i.toFloat(), j.toFloat(), k.toFloat())
-                .mul(-1F)
+                .normalize()
             buf.vertex(matrix.positionMatrix, i.toFloat(), j.toFloat(), k.toFloat())
                 .normal(matrix.normalMatrix, normal.x, normal.y, normal.z).next()
             buf.vertex(matrix.positionMatrix, x.toFloat(), y.toFloat(), z.toFloat())

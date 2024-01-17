@@ -26,7 +26,7 @@ mixinextras = "0.2.0-rc.5"
 jarvis = "1.1.1"
 nealisp = "1.0.0"
 explosiveenhancement = "1.2.1-1.20.x"
-moulconfig = "9999.9999.9999"
+moulconfig = "3.0.0-beta.2"
 
 
 [libraries]
