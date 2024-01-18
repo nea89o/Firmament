@@ -14,9 +14,12 @@ import me.shedaniel.math.Rectangle
 import org.lwjgl.glfw.GLFW
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.widget.ButtonWidget
+import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
+import net.minecraft.util.math.MathHelper
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.FragmentGuiScreen
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils
 
 class InventoryButtonEditor(
@@ -119,8 +122,12 @@ class InventoryButtonEditor(
         val my = mouseY.toInt()
         val anchorRight = mx > lastGuiRect.maxX
         val anchorBottom = my > lastGuiRect.maxY
-        val offsetX = mx - if (anchorRight) lastGuiRect.maxX else lastGuiRect.minX
-        val offsetY = my - if (anchorBottom) lastGuiRect.maxY else lastGuiRect.minY
+        var offsetX = mx - if (anchorRight) lastGuiRect.maxX else lastGuiRect.minX
+        var offsetY = my - if (anchorBottom) lastGuiRect.maxY else lastGuiRect.minY
+        if (InputUtil.isKeyPressed(MC.window.handle, InputUtil.GLFW_KEY_LEFT_SHIFT)) {
+            offsetX = MathHelper.floor(offsetX / 20F) * 20
+            offsetY = MathHelper.floor(offsetY / 20F) * 20
+        }
         buttons.add(InventoryButton(offsetX, offsetY, anchorRight, anchorBottom, null, null))
         return true
     }

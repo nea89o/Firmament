@@ -23,7 +23,11 @@ object InventoryButtons : FirmamentFeature {
     override val identifier: String
         get() = "inventory-buttons"
 
-    object TConfig : ManagedConfig(identifier) {}
+    object TConfig : ManagedConfig(identifier) {
+        val _openEditor by button("open-editor") {
+            openEditor()
+        }
+    }
     object DConfig : DataHolder<Data>(serializer(), identifier, ::Data)
 
     @Serializable

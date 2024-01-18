@@ -73,6 +73,7 @@
     "firmament.inventory-buttons.load-preset": "Load Preset",
     "firmament.inventory-buttons.import-failed": "One of your buttons could only be imported partially",
     "firmament.config.inventory-buttons": "Inventory buttons",
+    "firmament.config.inventory-buttons.open-editor": "Open Editor",
     "firmament.waypoint.temporary": "Temporary Waypoint: %s",
     "firmament.config.waypoints": "Waypoints",
     "firmament.config.waypoints.temp-waypoint-duration": "Temporary Waypoint Duration",
