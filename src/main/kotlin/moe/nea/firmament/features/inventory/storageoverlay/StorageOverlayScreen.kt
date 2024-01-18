@@ -91,6 +91,7 @@ class StorageOverlayScreen() : Screen(Text.empty()) {
             val ry = mouseY - y
             if (rx in (0.0..pageWidth.toDouble()) && ry in (0.0..getStorePageHeight(p).toDouble())) {
                 close()
+                StorageOverlay.lastStorageOverlay = this
                 k.navigateTo()
                 return true
             }

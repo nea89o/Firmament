@@ -8,10 +8,12 @@ package moe.nea.firmament.features.inventory.storageoverlay
 
 import java.util.*
 import kotlinx.serialization.serializer
+import net.minecraft.client.gui.screen.Screen
 import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.util.ScreenUtil.setScreenLater
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 
 object StorageOverlay : FirmamentFeature {
@@ -33,9 +35,25 @@ object StorageOverlay : FirmamentFeature {
     override val config: TConfig
         get() = TConfig
 
+    var lastStorageOverlay: Screen? = null
+    var shouldReturnToStorageOverlayFrom: Screen? = null
+    var shouldReturnToStorageOverlay: Screen? = null
     var currentHandler: StorageBackingHandle? = StorageBackingHandle.None
 
     override fun onLoad() {
+        ScreenChangeEvent.subscribe {
+            if (lastStorageOverlay != null && it.new != null) {
+                shouldReturnToStorageOverlay = lastStorageOverlay
+                shouldReturnToStorageOverlayFrom = it.new
+                lastStorageOverlay = null
+            } else if (it.old === shouldReturnToStorageOverlayFrom) {
+                if (shouldReturnToStorageOverlay != null && it.new == null)
+                    setScreenLater(shouldReturnToStorageOverlay)
+                shouldReturnToStorageOverlay = null
+                shouldReturnToStorageOverlayFrom = null
+            }
+        }
+
         ScreenChangeEvent.subscribe { event ->
             currentHandler = StorageBackingHandle.fromScreen(event.new)
             if (event.old is StorageOverlayScreen && !event.old.isClosing) {
