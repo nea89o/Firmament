@@ -11,6 +11,7 @@ import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.SoundReceiveEvent
 import moe.nea.firmament.events.UseBlockEvent
+import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -22,6 +23,7 @@ object DianaWaypoints : FirmamentFeature {
 
     object TConfig : ManagedConfig(identifier) {
         val ancestralSpadeSolver by toggle("ancestral-spade") { true }
+        val ancestralSpadeTeleport by keyBindingWithDefaultUnbound("ancestral-teleport")
         val nearbyWaypoints by toggle("nearby-waypoints") { true }
     }
 
@@ -38,6 +40,7 @@ object DianaWaypoints : FirmamentFeature {
         ProcessChatEvent.subscribe(NearbyBurrowsSolver::onChatEvent)
 
 
+        WorldKeyboardEvent.subscribe(AncestralSpadeSolver::onKeyBind)
         ParticleSpawnEvent.subscribe(AncestralSpadeSolver::onParticleSpawn)
         SoundReceiveEvent.subscribe(AncestralSpadeSolver::onPlaySound)
         WorldRenderLastEvent.subscribe(AncestralSpadeSolver::onWorldRender)

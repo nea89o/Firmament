@@ -13,9 +13,11 @@ import net.minecraft.sound.SoundEvents
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.events.SoundReceiveEvent
+import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.TimeMark
+import moe.nea.firmament.util.WarpUtil
 import moe.nea.firmament.util.render.RenderInWorldContext
 
 object AncestralSpadeSolver {
@@ -25,6 +27,17 @@ object AncestralSpadeSolver {
     val particlePositions = mutableListOf<Vec3d>()
     var nextGuess: Vec3d? = null
         private set
+
+    private var lastTeleportAttempt = TimeMark.farPast()
+
+    fun onKeyBind(event: WorldKeyboardEvent) {
+        if (!DianaWaypoints.TConfig.ancestralSpadeSolver) return
+        if (!event.matches(DianaWaypoints.TConfig.ancestralSpadeTeleport)) return
+
+        if (lastTeleportAttempt.passedTime() < 3.seconds) return
+        WarpUtil.teleportToNearestWarp("hub", nextGuess ?: return)
+        lastTeleportAttempt = TimeMark.now()
+    }
 
     fun onParticleSpawn(event: ParticleSpawnEvent) {
         if (!DianaWaypoints.TConfig.ancestralSpadeSolver) return
@@ -57,7 +70,7 @@ object AncestralSpadeSolver {
         }
 
         val averagePitchDelta =
-            if (pitches.isEmpty()) 0.0
+            if (pitches.isEmpty()) return
             else pitches
                 .zipWithNext { a, b -> b - a }
                 .average()
@@ -86,7 +99,7 @@ object AncestralSpadeSolver {
                 val cameraForward = Vector3f(0f, 0f, 1f).rotate(event.camera.rotation)
                 line(event.camera.pos.add(Vec3d(cameraForward)), it, lineWidth = 3f)
             }
-            if (particlePositions.size > 2 && lastDing.passedTime() < 10.seconds) {
+            if (particlePositions.size > 2 && lastDing.passedTime() < 10.seconds && nextGuess != null) {
                 color(0f, 1f, 0f, 0.7f)
                 line(*particlePositions.toTypedArray())
             }
