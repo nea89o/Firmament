@@ -125,13 +125,21 @@ git commit -m 'Prepare release '"$newversion"'
 [no changelog]'
 echo Tagging release commit
 git tag "$newversion"
-releasenotes="$basedir/build/releasenotes.md"
+mkdir -p "$basedir/.gradle"
+releasenotes="$basedir/.gradle/releasenotes.md"
 
 echo Building release notes
 echo "**Full Changelog**: https://github.com/nea89o/Firmament/compare/$oldversion...$newversion" > "$releasenotes"
 echo >> "$releasenotes"
 git log --pretty='- %s' --grep '[no changelog]' --invert-grep --fixed-strings "$oldversion..$newversion" | tac >> "$releasenotes"
 echo >> "$releasenotes"
+
+echo Check Release notes:
+echo ----------------------------------------------
+cat "$releasenotes"
+echo ----------------------------------------------
+echo Press Enter to resume
+read
 
 echo Building JAR
 "$basedir"/gradlew clean build
