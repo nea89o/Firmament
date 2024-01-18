@@ -17,11 +17,12 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 
 object DianaWaypoints : FirmamentFeature {
-    override val identifier get() = "diana-waypoints"
+    override val identifier get() = "diana"
     override val config get() = TConfig
 
     object TConfig : ManagedConfig(identifier) {
-        val ancestralSpadeSolver by toggle("ancestral-spade") { false }
+        val ancestralSpadeSolver by toggle("ancestral-spade") { true }
+        val nearbyWaypoints by toggle("nearby-waypoints") { true }
     }
 
     override fun onLoad() {

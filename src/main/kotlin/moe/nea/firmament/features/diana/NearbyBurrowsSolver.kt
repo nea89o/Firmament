@@ -63,6 +63,7 @@ object NearbyBurrowsSolver {
     }
 
     fun onParticles(event: ParticleSpawnEvent) {
+        if (!DianaWaypoints.TConfig.nearbyWaypoints) return
 
         val position: BlockPos = event.position.toBlockPos().down()
 
@@ -106,6 +107,7 @@ object NearbyBurrowsSolver {
     }
 
     fun onRender(event: WorldRenderLastEvent) {
+        if (!DianaWaypoints.TConfig.nearbyWaypoints) return
         renderInWorld(event) {
             for ((location, burrow) in burrows) {
                 when (burrow) {
@@ -126,6 +128,8 @@ object NearbyBurrowsSolver {
     }
 
     fun onBlockClick(blockPos: BlockPos) {
+        if (!DianaWaypoints.TConfig.nearbyWaypoints) return
+        burrows.remove(blockPos)
         lastBlockClick = blockPos
     }
 }
