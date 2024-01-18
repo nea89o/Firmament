@@ -6,26 +6,41 @@
 
 package moe.nea.firmament.features.diana
 
+import moe.nea.firmament.events.AttackBlockEvent
 import moe.nea.firmament.events.ParticleSpawnEvent
+import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.SoundReceiveEvent
+import moe.nea.firmament.events.UseBlockEvent
+import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 
 object DianaWaypoints : FirmamentFeature {
-    override val identifier: String
-        get() = "diana-waypoints"
-    override val config: ManagedConfig?
-        get() = TConfig
+    override val identifier get() = "diana-waypoints"
+    override val config get() = TConfig
 
     object TConfig : ManagedConfig(identifier) {
         val ancestralSpadeSolver by toggle("ancestral-spade") { false }
     }
 
     override fun onLoad() {
+        ParticleSpawnEvent.subscribe(NearbyBurrowsSolver::onParticles)
+        WorldReadyEvent.subscribe(NearbyBurrowsSolver::onSwapWorld)
+        WorldRenderLastEvent.subscribe(NearbyBurrowsSolver::onRender)
+        UseBlockEvent.subscribe {
+            NearbyBurrowsSolver.onBlockClick(it.hitResult.blockPos)
+        }
+        AttackBlockEvent.subscribe {
+            NearbyBurrowsSolver.onBlockClick(it.blockPos)
+        }
+        ProcessChatEvent.subscribe(NearbyBurrowsSolver::onChatEvent)
+
+
         ParticleSpawnEvent.subscribe(AncestralSpadeSolver::onParticleSpawn)
         SoundReceiveEvent.subscribe(AncestralSpadeSolver::onPlaySound)
         WorldRenderLastEvent.subscribe(AncestralSpadeSolver::onWorldRender)
+        WorldReadyEvent.subscribe(AncestralSpadeSolver::onSwapWorld)
     }
 }
 

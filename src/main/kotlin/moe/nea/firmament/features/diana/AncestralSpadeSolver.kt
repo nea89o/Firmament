@@ -13,6 +13,7 @@ import net.minecraft.sound.SoundEvents
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.events.SoundReceiveEvent
+import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.render.RenderInWorldContext
@@ -28,6 +29,8 @@ object AncestralSpadeSolver {
     fun onParticleSpawn(event: ParticleSpawnEvent) {
         if (!DianaWaypoints.TConfig.ancestralSpadeSolver) return
         if (event.particleEffect != ParticleTypes.DRIPPING_LAVA) return
+        if (event.offset.x != 0.0F || event.offset.y != 0F || event.offset.z != 0F)
+            return
         particlePositions.add(event.position)
         if (particlePositions.size > 20) {
             particlePositions.removeFirst()
@@ -88,6 +91,13 @@ object AncestralSpadeSolver {
                 line(*particlePositions.toTypedArray())
             }
         }
+    }
+
+    fun onSwapWorld(event: WorldReadyEvent) {
+        nextGuess = null
+        particlePositions.clear()
+        pitches.clear()
+        lastDing = TimeMark.farPast()
     }
 
 }

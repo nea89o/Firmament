@@ -13,6 +13,7 @@ import moe.nea.firmament.events.ParticleSpawnEvent;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,9 +34,10 @@ public abstract class IncomingPacketListenerPatches {
         var event = new ParticleSpawnEvent(
             packet.getParameters(),
             new Vec3d(packet.getX(), packet.getY(), packet.getZ()),
-            new Vec3d(packet.getOffsetX(), packet.getOffsetY(), packet.getOffsetZ()),
+            new Vector3f(packet.getOffsetX(), packet.getOffsetY(), packet.getOffsetZ()),
             packet.isLongDistance(),
-            packet.getCount()
+            packet.getCount(),
+            packet.getSpeed()
         );
         ParticleSpawnEvent.Companion.publish(event);
         if (event.getCancelled())
