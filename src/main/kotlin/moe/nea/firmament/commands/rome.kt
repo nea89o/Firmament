@@ -9,7 +9,10 @@ package moe.nea.firmament.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import io.ktor.client.statement.*
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.minecraft.text.Text
 import moe.nea.firmament.apis.UrsaManager
+import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
@@ -18,10 +21,12 @@ import moe.nea.firmament.gui.config.ManagedOption
 import moe.nea.firmament.gui.profileviewer.ProfileViewer
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.util.*
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import net.minecraft.text.Text
-import moe.nea.firmament.features.inventory.buttons.InventoryButtons
+import moe.nea.firmament.util.FirmFormatters
+import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.ScreenUtil
+import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.unformattedString
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -94,6 +99,12 @@ fun firmamentCommand() = literal("firmament") {
         thenExecute {
             val p = MC.player ?: return@thenExecute
             MC.sendServerChat("x: ${p.blockX}, y: ${p.blockY}, z: ${p.blockZ}")
+        }
+        thenArgument("rest", RestArgumentType) { rest ->
+            thenExecute {
+                val p = MC.player ?: return@thenExecute
+                MC.sendServerChat("x: ${p.blockX}, y: ${p.blockY}, z: ${p.blockZ} ${this[rest]}")
+            }
         }
     }
     thenLiteral("storage") {
