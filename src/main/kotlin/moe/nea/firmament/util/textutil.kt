@@ -6,9 +6,8 @@
 
 package moe.nea.firmament.util
 
-import net.minecraft.text.LiteralTextContent
+import net.minecraft.text.PlainTextContent
 import net.minecraft.text.Text
-import net.minecraft.text.TextContent
 import net.minecraft.text.TranslatableTextContent
 import moe.nea.firmament.Firmament
 
@@ -33,8 +32,7 @@ class TextMatcher(text: Text) {
         state.offset = 0
         state.currentText = firstOrNull
         state.textContent = when (val content = firstOrNull.content) {
-            is LiteralTextContent -> content.string
-            TextContent.EMPTY -> ""
+            is PlainTextContent.Literal -> content.string
             else -> {
                 Firmament.logger.warn("TextContent of type ${content.javaClass} not understood.")
                 return false

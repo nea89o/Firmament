@@ -116,8 +116,8 @@ object ItemCache : IReloadable {
         lore.forEach {
             newLore.add(
                 NbtString.of(
-                    Text.Serializer.toJson(
-                        Text.Serializer.fromJson(it.asString())!!.applyLoreReplacements(loreReplacements)
+                    Text.Serialization.toJsonString(
+                        Text.Serialization.fromJson(it.asString())!!.applyLoreReplacements(loreReplacements)
                     )
                 )
             )

@@ -21,6 +21,7 @@ import net.minecraft.nbt.NbtIo
 import net.minecraft.nbt.NbtList
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import net.minecraft.nbt.NbtSizeTracker
 
 @Serializable(with = VirtualInventory.Serializer::class)
 data class VirtualInventory(
@@ -41,7 +42,7 @@ data class VirtualInventory(
 
         override fun deserialize(decoder: Decoder): VirtualInventory {
             val s = decoder.decodeString()
-            val n = NbtIo.readCompressed(ByteArrayInputStream(s.decodeBase64Bytes()))
+            val n = NbtIo.readCompressed(ByteArrayInputStream(s.decodeBase64Bytes()), NbtSizeTracker.of(100_000_000))
             val items = n.getList(INVENTORY, NbtCompound.COMPOUND_TYPE.toInt())
             return VirtualInventory(items.map { ItemStack.fromNbt(it as NbtCompound) })
         }

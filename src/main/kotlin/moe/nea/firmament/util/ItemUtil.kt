@@ -17,17 +17,17 @@ fun ItemStack.appendLore(args: List<Text>) {
     val compoundTag = getOrCreateSubNbt("display")
     val loreList = compoundTag.getOrCreateList("Lore", NbtString.STRING_TYPE)
     for (arg in args) {
-        loreList.add(NbtString.of(Text.Serializer.toJson(arg)))
+        loreList.add(NbtString.of(Text.Serialization.toJsonString(arg)))
     }
 }
 
 fun ItemStack.modifyLore(update: (List<Text>) -> List<Text>) {
     val compoundTag = getOrCreateSubNbt("display")
     val loreList = compoundTag.getOrCreateList("Lore", NbtString.STRING_TYPE)
-    val parsed = loreList.map { Text.Serializer.fromJson(it.asString())!! }
+    val parsed = loreList.map { Text.Serialization.fromJson(it.asString())!! }
     val updated = update(parsed)
     loreList.clear()
-    loreList.addAll(updated.map { NbtString.of(Text.Serializer.toJson(it)) })
+    loreList.addAll(updated.map { NbtString.of(Text.Serialization.toJsonString(it)) })
 }
 
 

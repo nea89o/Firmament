@@ -20,6 +20,7 @@ import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.IdentityCharacteristics
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.item.decodeProfileTextureProperty
 import moe.nea.firmament.util.skyBlockId
 
@@ -53,10 +54,9 @@ object CustomSkyBlockTextures : FirmamentFeature {
     private val skullTextureCache = mutableMapOf<IdentityCharacteristics<GameProfile>, Any>()
     private val sentinelPresentInvalid = Object()
 
-    val mcUrlRegex = "https?://textures.minecraft.net/texture/([a-fA-F0-9]+)".toRegex()
+    private val mcUrlRegex = "https?://textures.minecraft.net/texture/([a-fA-F0-9]+)".toRegex()
     fun getSkullId(profile: GameProfile): String? {
-        val textures = profile.properties.get(PlayerSkinProvider.TEXTURES)
-        val textureProperty = textures.singleOrNull() ?: return null
+        val textureProperty = MC.instance.sessionService.getPackedTextures(profile) ?: return null
         val texture = decodeProfileTextureProperty(textureProperty) ?: return null
         val textureUrl =
             texture.textures[MinecraftProfileTexture.Type.SKIN]?.url ?: return null

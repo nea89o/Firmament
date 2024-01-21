@@ -42,11 +42,13 @@ data class MinecraftTexturesPayloadKt(
 fun GameProfile.setTextures(textures: MinecraftTexturesPayloadKt) {
     val json = Firmament.json.encodeToString(textures)
     val encoded = java.util.Base64.getEncoder().encodeToString(json.encodeToByteArray())
-    properties.put(PlayerSkinProvider.TEXTURES, Property(PlayerSkinProvider.TEXTURES, encoded))
+    properties.put(propertyTextures, Property(propertyTextures, encoded))
 }
 
+private val propertyTextures = "textures"
+
 fun decodeProfileTextureProperty(property: Property): MinecraftTexturesPayloadKt? {
-    assertTrueOr(property.name == PlayerSkinProvider.TEXTURES) { return null }
+    assertTrueOr(property.name == propertyTextures) { return null }
     return try {
         var encodedF: String = property.value
         while (encodedF.length % 4 != 0 && encodedF.last() == '=') {
