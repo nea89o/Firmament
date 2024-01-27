@@ -154,7 +154,7 @@ git push "$REMOTE" "$BRANCH" "$newversion"
 
 if command -v gh; then
     echo Creating github release
-    (set -x; gh release create "$newversion" -F "$releasenotes" "$basedir/build/libs/Firmament-$newversion.jar")
+    (set -x; gh release create -t "Firmament $newversion" "$newversion" -F "$releasenotes" "$basedir/build/libs/Firmament-$newversion.jar")
 else
     echo Could not find github command utility. Opening github releases
     xdg-open "https://github.com/nea89o/firmament/releases/new"

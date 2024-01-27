@@ -12,16 +12,11 @@ import java.lang.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import kotlin.math.tan
-import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gl.VertexBuffer
 import net.minecraft.client.render.BufferBuilder
-import net.minecraft.client.render.BufferRenderer
 import net.minecraft.client.render.Camera
 import net.minecraft.client.render.GameRenderer
-import net.minecraft.client.render.LightmapTextureManager
-import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
@@ -36,14 +31,14 @@ import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.mixins.accessor.AccessorGameRenderer
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.assertTrueOr
 
+@RenderContextDSL
 class RenderInWorldContext private constructor(
     private val tesselator: Tessellator,
-    private val matrixStack: MatrixStack,
+    val matrixStack: MatrixStack,
     private val camera: Camera,
     private val tickDelta: Float,
-    private val vertexConsumers: VertexConsumerProvider.Immediate,
+    val vertexConsumers: VertexConsumerProvider.Immediate,
 ) {
     private val buffer = tesselator.buffer
     val effectiveFov = (MC.instance.gameRenderer as AccessorGameRenderer).getFov_firmament(camera, tickDelta, true)
@@ -82,7 +77,7 @@ class RenderInWorldContext private constructor(
         )
     }
 
-    fun withFacingThePlayer(position: Vec3d, block: () -> Unit) {
+    fun withFacingThePlayer(position: Vec3d, block: FacingThePlayerContext.() -> Unit) {
         matrixStack.push()
         matrixStack.translate(position.x, position.y, position.z)
         val actualCameraDistance = position.distanceTo(camera.pos)
@@ -92,7 +87,7 @@ class RenderInWorldContext private constructor(
         matrixStack.multiply(camera.rotation)
         matrixStack.scale(-0.025F, -0.025F, -1F)
 
-        block()
+        FacingThePlayerContext(this).run(block)
 
         matrixStack.pop()
         vertexConsumers.drawCurrentLayer()
@@ -110,62 +105,13 @@ class RenderInWorldContext private constructor(
         u2: Float, v2: Float,
     ) {
         withFacingThePlayer(position) {
-            RenderSystem.setShaderTexture(0, texture)
-            RenderSystem.setShader(GameRenderer::getPositionColorTexProgram)
-            val hw = width / 2F
-            val hh = height / 2F
-            val matrix4f: Matrix4f = matrixStack.peek().positionMatrix
-            val buf = Tessellator.getInstance().buffer
-            buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE)
-            buf.fixedColor(255, 255, 255, 255)
-            buf.vertex(matrix4f, -hw, -hh, 0F)
-                .texture(u1, v1).next()
-            buf.vertex(matrix4f, -hw, +hh, 0F)
-                .texture(u1, v2).next()
-            buf.vertex(matrix4f, +hw, +hh, 0F)
-                .texture(u2, v2).next()
-            buf.vertex(matrix4f, +hw, -hh, 0F)
-                .texture(u2, v1).next()
-            buf.unfixColor()
-            BufferRenderer.drawWithGlobalProgram(buf.end())
+            texture(texture, width, height, u1, v1, u2, v2)
         }
     }
 
     fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER) {
-        assertTrueOr(texts.isNotEmpty()) { return@text }
         withFacingThePlayer(position) {
-            for ((index, text) in texts.withIndex()) {
-                matrixStack.push()
-                val width = MC.font.getWidth(text)
-                matrixStack.translate(-width / 2F, verticalAlign.align(index, texts.size), 0F)
-                val vertexConsumer: VertexConsumer =
-                    vertexConsumers.getBuffer(RenderLayer.getTextBackgroundSeeThrough())
-                val matrix4f = matrixStack.peek().positionMatrix
-                vertexConsumer.vertex(matrix4f, -1.0f, -1.0f, 0.0f).color(0x70808080)
-                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-                vertexConsumer.vertex(matrix4f, -1.0f, MC.font.fontHeight.toFloat(), 0.0f).color(0x70808080)
-                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-                vertexConsumer.vertex(matrix4f, width.toFloat(), MC.font.fontHeight.toFloat(), 0.0f)
-                    .color(0x70808080)
-                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-                vertexConsumer.vertex(matrix4f, width.toFloat(), -1.0f, 0.0f).color(0x70808080)
-                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-                matrixStack.translate(0F, 0F, 0.01F)
-
-                MC.font.draw(
-                    text,
-                    0F,
-                    0F,
-                    -1,
-                    false,
-                    matrixStack.peek().positionMatrix,
-                    vertexConsumers,
-                    TextRenderer.TextLayerType.SEE_THROUGH,
-                    0,
-                    LightmapTextureManager.MAX_LIGHT_COORDINATE
-                )
-                matrixStack.pop()
-            }
+            text(*texts, verticalAlign = verticalAlign)
         }
     }
 

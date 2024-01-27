@@ -9,7 +9,6 @@ package moe.nea.firmament.features.world
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.WorldReadyEvent
@@ -36,19 +35,40 @@ object Waypoints : FirmamentFeature {
     override val config get() = TConfig
 
     val temporaryWaypointList = mutableMapOf<String, TemporaryWaypoint>()
-    val temporaryWaypointMatcher = "x: (-?[0-9]+),? y: (-?[0-9]+),? z: (-?[0-9]+)".toPattern()
+    val temporaryWaypointMatcher = "(?i)x: (-?[0-9]+),? y: (-?[0-9]+),? z: (-?[0-9]+)".toPattern()
     override fun onLoad() {
-        WorldRenderLastEvent.subscribe {
+        WorldRenderLastEvent.subscribe { event ->
             temporaryWaypointList.entries.removeIf { it.value.postedAt.passedTime() > TConfig.tempWaypointDuration }
             if (temporaryWaypointList.isNotEmpty())
-                RenderInWorldContext.renderInWorld(it) {
+                RenderInWorldContext.renderInWorld(event) {
                     color(1f, 1f, 0f, 1f)
                     temporaryWaypointList.forEach { (player, waypoint) ->
                         block(waypoint.pos)
                     }
                     color(1f, 1f, 1f, 1f)
                     temporaryWaypointList.forEach { (player, waypoint) ->
-                        waypoint(waypoint.pos, Text.translatable("firmament.waypoint.temporary", player))
+                        val skin =
+                            MC.networkHandler?.listedPlayerListEntries?.find { it.profile.name == player }
+                                ?.skinTextures
+                                ?.texture
+                        withFacingThePlayer(waypoint.pos.toCenterPos()) {
+                            waypoint(waypoint.pos, Text.translatable("firmament.waypoint.temporary", player))
+                            if (skin != null) {
+                                matrixStack.translate(0F, -20F, 0F)
+                                // Head front
+                                texture(
+                                    skin, 16, 16,
+                                    1 / 8f, 1 / 8f,
+                                    2 / 8f, 2 / 8f,
+                                )
+                                // Head overlay
+                                texture(
+                                    skin, 16, 16,
+                                    5 / 8f, 1 / 8f,
+                                    6 / 8f, 2 / 8f,
+                                )
+                            }
+                        }
                     }
                 }
         }
@@ -58,15 +78,13 @@ object Waypoints : FirmamentFeature {
         ProcessChatEvent.subscribe {
             val matcher = temporaryWaypointMatcher.matcher(it.unformattedString)
             if (it.nameHeuristic != null && TConfig.tempWaypointDuration > 0.seconds && matcher.find()) {
-                temporaryWaypointList.put(
-                    it.nameHeuristic, TemporaryWaypoint(
-                        BlockPos(
-                            matcher.group(1).toInt(),
-                            matcher.group(2).toInt(),
-                            matcher.group(3).toInt(),
-                        ),
-                        TimeMark.now()
-                    )
+                temporaryWaypointList[it.nameHeuristic] = TemporaryWaypoint(
+                    BlockPos(
+                        matcher.group(1).toInt(),
+                        matcher.group(2).toInt(),
+                        matcher.group(3).toInt(),
+                    ),
+                    TimeMark.now()
                 )
             }
         }
