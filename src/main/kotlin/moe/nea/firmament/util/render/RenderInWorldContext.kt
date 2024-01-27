@@ -15,6 +15,7 @@ import kotlin.math.tan
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gl.VertexBuffer
 import net.minecraft.client.render.BufferBuilder
+import net.minecraft.client.render.BufferRenderer
 import net.minecraft.client.render.Camera
 import net.minecraft.client.render.GameRenderer
 import net.minecraft.client.render.LightmapTextureManager
@@ -24,9 +25,11 @@ import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
+import net.minecraft.client.texture.Sprite
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.util.math.MatrixStack.Entry
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.WorldRenderLastEvent
@@ -79,8 +82,7 @@ class RenderInWorldContext private constructor(
         )
     }
 
-    fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER) {
-        assertTrueOr(texts.isNotEmpty()) { return@text }
+    fun withFacingThePlayer(position: Vec3d, block: () -> Unit) {
         matrixStack.push()
         matrixStack.translate(position.x, position.y, position.z)
         val actualCameraDistance = position.distanceTo(camera.pos)
@@ -90,39 +92,81 @@ class RenderInWorldContext private constructor(
         matrixStack.multiply(camera.rotation)
         matrixStack.scale(-0.025F, -0.025F, -1F)
 
-        for ((index, text) in texts.withIndex()) {
-            matrixStack.push()
-            val width = MC.font.getWidth(text)
-            matrixStack.translate(-width / 2F, verticalAlign.align(index, texts.size), 0F)
-            val vertexConsumer: VertexConsumer = vertexConsumers.getBuffer(RenderLayer.getTextBackgroundSeeThrough())
-            val matrix4f = matrixStack.peek().positionMatrix
-            vertexConsumer.vertex(matrix4f, -1.0f, -1.0f, 0.0f).color(0x70808080)
-                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-            vertexConsumer.vertex(matrix4f, -1.0f, MC.font.fontHeight.toFloat(), 0.0f).color(0x70808080)
-                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-            vertexConsumer.vertex(matrix4f, width.toFloat(), MC.font.fontHeight.toFloat(), 0.0f)
-                .color(0x70808080)
-                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-            vertexConsumer.vertex(matrix4f, width.toFloat(), -1.0f, 0.0f).color(0x70808080)
-                .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
-            matrixStack.translate(0F, 0F, 0.01F)
+        block()
 
-            MC.font.draw(
-                text,
-                0F,
-                0F,
-                -1,
-                false,
-                matrixStack.peek().positionMatrix,
-                vertexConsumers,
-                TextRenderer.TextLayerType.SEE_THROUGH,
-                0,
-                LightmapTextureManager.MAX_LIGHT_COORDINATE
-            )
-            matrixStack.pop()
-        }
         matrixStack.pop()
         vertexConsumers.drawCurrentLayer()
+    }
+
+    fun sprite(position: Vec3d, sprite: Sprite, width: Int, height: Int) {
+        texture(
+            position, sprite.atlasId, width, height, sprite.minU, sprite.minV, sprite.maxU, sprite.maxV
+        )
+    }
+
+    fun texture(
+        position: Vec3d, texture: Identifier, width: Int, height: Int,
+        u1: Float, v1: Float,
+        u2: Float, v2: Float,
+    ) {
+        withFacingThePlayer(position) {
+            RenderSystem.setShaderTexture(0, texture)
+            RenderSystem.setShader(GameRenderer::getPositionColorTexProgram)
+            val hw = width / 2F
+            val hh = height / 2F
+            val matrix4f: Matrix4f = matrixStack.peek().positionMatrix
+            val buf = Tessellator.getInstance().buffer
+            buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE)
+            buf.fixedColor(255, 255, 255, 255)
+            buf.vertex(matrix4f, -hw, -hh, 0F)
+                .texture(u1, v1).next()
+            buf.vertex(matrix4f, -hw, +hh, 0F)
+                .texture(u1, v2).next()
+            buf.vertex(matrix4f, +hw, +hh, 0F)
+                .texture(u2, v2).next()
+            buf.vertex(matrix4f, +hw, -hh, 0F)
+                .texture(u2, v1).next()
+            buf.unfixColor()
+            BufferRenderer.drawWithGlobalProgram(buf.end())
+        }
+    }
+
+    fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER) {
+        assertTrueOr(texts.isNotEmpty()) { return@text }
+        withFacingThePlayer(position) {
+            for ((index, text) in texts.withIndex()) {
+                matrixStack.push()
+                val width = MC.font.getWidth(text)
+                matrixStack.translate(-width / 2F, verticalAlign.align(index, texts.size), 0F)
+                val vertexConsumer: VertexConsumer =
+                    vertexConsumers.getBuffer(RenderLayer.getTextBackgroundSeeThrough())
+                val matrix4f = matrixStack.peek().positionMatrix
+                vertexConsumer.vertex(matrix4f, -1.0f, -1.0f, 0.0f).color(0x70808080)
+                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+                vertexConsumer.vertex(matrix4f, -1.0f, MC.font.fontHeight.toFloat(), 0.0f).color(0x70808080)
+                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+                vertexConsumer.vertex(matrix4f, width.toFloat(), MC.font.fontHeight.toFloat(), 0.0f)
+                    .color(0x70808080)
+                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+                vertexConsumer.vertex(matrix4f, width.toFloat(), -1.0f, 0.0f).color(0x70808080)
+                    .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE).next()
+                matrixStack.translate(0F, 0F, 0.01F)
+
+                MC.font.draw(
+                    text,
+                    0F,
+                    0F,
+                    -1,
+                    false,
+                    matrixStack.peek().positionMatrix,
+                    vertexConsumers,
+                    TextRenderer.TextLayerType.SEE_THROUGH,
+                    0,
+                    LightmapTextureManager.MAX_LIGHT_COORDINATE
+                )
+                matrixStack.pop()
+            }
+        }
     }
 
     fun tinyBlock(vec3d: Vec3d, size: Float) {
