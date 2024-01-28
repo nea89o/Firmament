@@ -74,11 +74,24 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
     }
 
 
+    /**
+     * @param texture texture identifier
+     * @param width width the texture shall be rendered with
+     * @param height height the texture shall be rendered with
+     * @param transparency how transparent should the texture be rendered in. 1f for completely invisible
+     * @param red how much red shall the texture be rendered in. normal is 1
+     * @param green how much green shall the texture be rendered in. normal is 1
+     * @param blue how much blue shall the texture be rendered in. normal is 1
+     * */
     fun texture(
         texture: Identifier, width: Int, height: Int,
-        u1: Float, v1: Float,
-        u2: Float, v2: Float,
+        u1: Float=0f, v1: Float=0f,
+        u2: Float=1f, v2: Float=1f,
+        transparency: Float = 0f,
+        red: Float = 1.0f, green: Float = 1.0f, blue: Float = 1.0f,
     ) {
+        val backupColor = RenderSystem.getShaderColor()
+        worldContext.color(red, green, blue, 1f - transparency)
         RenderSystem.setShaderTexture(0, texture)
         RenderSystem.setShader(GameRenderer::getPositionColorTexProgram)
         val hw = width / 2F
@@ -97,6 +110,7 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
             .texture(u2, v1).next()
         buf.unfixColor()
         BufferRenderer.drawWithGlobalProgram(buf.end())
+        RenderSystem.setShaderColor(backupColor[0], backupColor[1], backupColor[2], backupColor[3])
     }
 
 }

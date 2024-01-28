@@ -41,7 +41,6 @@ object Waypoints : FirmamentFeature {
             temporaryWaypointList.entries.removeIf { it.value.postedAt.passedTime() > TConfig.tempWaypointDuration }
             if (temporaryWaypointList.isNotEmpty())
                 RenderInWorldContext.renderInWorld(event) {
-                    color(1f, 1f, 0f, 1f)
                     temporaryWaypointList.forEach { (player, waypoint) ->
                         block(waypoint.pos)
                     }
