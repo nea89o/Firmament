@@ -44,31 +44,31 @@ class ProfileViewer(
 
     companion object {
         suspend fun onCommand(source: FabricClientCommandSource, name: String) {
-            source.sendFeedback(Text.translatable("firmament.pv.lookingup", name))
+            source.sendFeedback(Text.stringifiedTranslatable("firmament.pv.lookingup", name))
             try {
                 val uuid = Routes.getUUIDForPlayerName(name)
                 if (uuid == null) {
-                    source.sendError(Text.translatable("firmament.pv.noplayer", name))
+                    source.sendError(Text.stringifiedTranslatable("firmament.pv.noplayer", name))
                     return
                 }
                 val name = Routes.getPlayerNameForUUID(uuid) ?: name
                 val names = mapOf(uuid to (name))
                 val data = Routes.getAccountData(uuid)
                 if (data == null) {
-                    source.sendError(Text.translatable("firmament.pv.noprofile", name))
+                    source.sendError(Text.stringifiedTranslatable("firmament.pv.noprofile", name))
                     return
                 }
                 val accountData = mapOf(data.uuid to data)
                 val profiles = Routes.getProfiles(uuid)
                 val profile = profiles?.profiles?.find { it.selected }
                 if (profile == null) {
-                    source.sendFeedback(Text.translatable("firmament.pv.noprofile", name))
+                    source.sendFeedback(Text.stringifiedTranslatable("firmament.pv.noprofile", name))
                     return
                 }
                 ScreenUtil.setScreenLater(CottonClientScreen(ProfileViewer(uuid, names, accountData, profile)))
             } catch (e: Exception) {
                 Firmament.logger.error("Error loading profile data for $name", e)
-                source.sendError(Text.translatable("firmament.pv.badprofile", name, e.message))
+                source.sendError(Text.stringifiedTranslatable("firmament.pv.badprofile", name, e.message))
             }
         }
     }

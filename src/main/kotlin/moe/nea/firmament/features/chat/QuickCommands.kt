@@ -46,9 +46,9 @@ object QuickCommands : FirmamentFeature {
                         }
                         val joinName = getNameForFloor(what.replace(" ", "").lowercase())
                         if (joinName == null) {
-                            source.sendFeedback(Text.translatable("firmament.quick-commands.join.unknown",what))
+                            source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown", what))
                         } else {
-                            source.sendFeedback(Text.translatable("firmament.quick-commands.join.success", joinName))
+                            source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.success", joinName))
                             MC.sendCommand("joininstance $joinName")
                         }
                     }
@@ -70,7 +70,7 @@ object QuickCommands : FirmamentFeature {
                 )
             }
             if (l !in kuudraLevelNames.indices) {
-                source.sendFeedback(Text.translatable("firmament.quick-commands.join.unknown-kuudra", kuudraLevel))
+                source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown-kuudra", kuudraLevel))
                 return null
             }
             return "KUUDRA_${kuudraLevelNames[l]}"
@@ -90,7 +90,7 @@ object QuickCommands : FirmamentFeature {
                 return "CATACOMBS_ENTRANCE"
             }
             if (l !in dungeonLevelNames.indices) {
-                source.sendFeedback(Text.translatable("firmament.quick-commands.join.unknown-catacombs", kuudraLevel))
+                source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown-catacombs", kuudraLevel))
                 return null
             }
             return "${if (masterLevel != null) "MASTER_" else ""}CATACOMBS_FLOOR_${dungeonLevelNames[l]}"

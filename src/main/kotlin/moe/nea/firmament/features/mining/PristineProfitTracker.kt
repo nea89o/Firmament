@@ -97,15 +97,9 @@ object PristineProfitTracker : FirmamentFeature {
         val moneyPerSecond = moneyHistogram.averagePer({ it }, 1.seconds)
         if (collectionPerSecond == null || moneyPerSecond == null) return
         ProfitHud.collectionCurrent = collectionPerSecond
-        ProfitHud.collectionText = Text.translatable(
-            "firmament.pristine-profit.collection",
-            formatCurrency(collectionPerSecond * SECONDS_PER_HOUR, 1)
-        ).formattedString()
+        ProfitHud.collectionText = Text.stringifiedTranslatable("firmament.pristine-profit.collection", formatCurrency(collectionPerSecond * SECONDS_PER_HOUR, 1)).formattedString()
         ProfitHud.moneyCurrent = moneyPerSecond
-        ProfitHud.moneyText = Text.translatable(
-            "firmament.pristine-profit.money",
-            formatCurrency(moneyPerSecond * SECONDS_PER_HOUR, 1)
-        ).formattedString()
+        ProfitHud.moneyText = Text.stringifiedTranslatable("firmament.pristine-profit.money", formatCurrency(moneyPerSecond * SECONDS_PER_HOUR, 1)).formattedString()
         val data = DConfig.data
         if (data != null) {
             if (data.maxCollectionPerSecond < collectionPerSecond && collectionHistogram.oldestUpdate()

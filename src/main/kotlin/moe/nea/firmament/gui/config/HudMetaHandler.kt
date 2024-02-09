@@ -27,7 +27,7 @@ class HudMetaHandler(val config: ManagedConfig, val label: MutableText, val widt
     }
 
     override fun emitGuiElements(opt: ManagedOption<HudMeta>, guiAppender: GuiAppender) {
-        guiAppender.appendLabeledRow(opt.labelText, WButton(Text.translatable("firmament.hud.edit", label))
+        guiAppender.appendLabeledRow(opt.labelText, WButton(Text.stringifiedTranslatable("firmament.hud.edit", label))
             .also {
                 it.setOnClick {
                     MC.screen = JarvisIntegration.jarvis.getHudEditor(

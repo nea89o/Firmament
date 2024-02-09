@@ -52,7 +52,7 @@ object Waypoints : FirmamentFeature {
                                 ?.skinTextures
                                 ?.texture
                         withFacingThePlayer(waypoint.pos.toCenterPos()) {
-                            waypoint(waypoint.pos, Text.translatable("firmament.waypoint.temporary", player))
+                            waypoint(waypoint.pos, Text.stringifiedTranslatable("firmament.waypoint.temporary", player))
                             if (skin != null) {
                                 matrixStack.translate(0F, -20F, 0F)
                                 // Head front

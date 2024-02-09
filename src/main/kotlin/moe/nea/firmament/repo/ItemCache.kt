@@ -14,7 +14,7 @@ import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
 import java.text.NumberFormat
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.logging.log4j.LogManager
 import kotlinx.coroutines.Job
@@ -74,7 +74,14 @@ object ItemCache : IReloadable {
     fun brokenItemStack(neuItem: NEUItem?, idHint: SkyblockId? = null): ItemStack {
         return ItemStack(Items.PAINTING).apply {
             setCustomName(Text.literal(neuItem?.displayName ?: idHint?.neuItem ?: "null"))
-            appendLore(listOf(Text.translatable("firmament.repo.brokenitem", neuItem?.skyblockItemId ?: idHint)))
+            appendLore(
+                listOf(
+                    Text.stringifiedTranslatable(
+                        "firmament.repo.brokenitem",
+                        (neuItem?.skyblockItemId ?: idHint)
+                    )
+                )
+            )
         }
     }
 

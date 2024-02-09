@@ -47,7 +47,7 @@ object DeveloperFeatures : FirmamentFeature {
             MC.player?.sendMessage(Text.translatable("firmament.dev.resourcerebuild.start"))
             val startTime = TimeMark.now()
             process.toHandle().onExit().thenApply {
-                MC.player?.sendMessage(Text.translatable("firmament.dev.resourcerebuild.done", startTime.passedTime()))
+                MC.player?.sendMessage(Text.stringifiedTranslatable("firmament.dev.resourcerebuild.done", startTime.passedTime()))
                 Unit
             }
         } else {

@@ -65,7 +65,7 @@ object WarpUtil {
             ) {
                 DConfig.data?.excludedWarps?.add(lastAttemptedWarp)
                 DConfig.markDirty()
-                MC.sendChat(Text.translatable("firmament.warp-util.mark-excluded", lastAttemptedWarp))
+                MC.sendChat(Text.stringifiedTranslatable("firmament.warp-util.mark-excluded", lastAttemptedWarp))
                 lastWarpAttempt = TimeMark.farPast()
             }
             if (it.unformattedString == "You may now fast travel to") {

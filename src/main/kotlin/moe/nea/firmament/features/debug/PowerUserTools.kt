@@ -54,7 +54,7 @@ object PowerUserTools : FirmamentFeature {
         ItemTooltipEvent.subscribe {
             if (TConfig.showItemIds) {
                 val id = it.stack.skyBlockId ?: return@subscribe
-                it.lines.add(Text.translatable("firmament.tooltip.skyblockid", id.neuItem))
+                it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.skyblockid", id.neuItem))
             }
             val (item, text) = lastCopiedStack ?: return@subscribe
             if (!ItemStack.areEqual(item, it.stack)) {
@@ -83,7 +83,7 @@ object PowerUserTools : FirmamentFeature {
                     MC.sendChat(Text.translatable("firmament.tooltip.copied.skull.fail"))
                 } else {
                     ClipboardUtils.setTextContent(id.toString())
-                    MC.sendChat(Text.translatable("firmament.tooltip.copied.skull", id.toString()))
+                    MC.sendChat(Text.stringifiedTranslatable("firmament.tooltip.copied.skull", id.toString()))
                 }
             }
         }
@@ -105,7 +105,7 @@ object PowerUserTools : FirmamentFeature {
                     return@subscribe
                 }
                 ClipboardUtils.setTextContent(sbId.neuItem)
-                lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skyblockid", sbId.neuItem))
+                lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skyblockid", sbId.neuItem))
             } else if (it.matches(TConfig.copyTexturePackId)) {
                 val model = CustomItemModelEvent.getModelIdentifier(item)
                 if (model == null) {
@@ -113,7 +113,7 @@ object PowerUserTools : FirmamentFeature {
                     return@subscribe
                 }
                 ClipboardUtils.setTextContent(model.toString())
-                lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.modelid", model.toString()))
+                lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.modelid", model.toString()))
             } else if (it.matches(TConfig.copyNbtData)) {
                 val nbt = item.orCreateNbt.toString()
                 ClipboardUtils.setTextContent(nbt)

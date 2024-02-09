@@ -52,25 +52,19 @@ fun firmamentCommand() = literal("firmament") {
 
                         val configObj = AllConfigsGui.allConfigs.find { it.name == config }
                         if (configObj == null) {
-                            source.sendFeedback(Text.translatable("firmament.command.toggle.no-config-found", config))
+                            source.sendFeedback(Text.stringifiedTranslatable("firmament.command.toggle.no-config-found", config))
                             return@thenExecute
                         }
                         val propertyObj = configObj.allOptions[property]
                         if (propertyObj == null) {
                             source.sendFeedback(
-                                Text.translatable(
-                                    "firmament.command.toggle.no-property-found",
-                                    property
-                                )
+                                Text.stringifiedTranslatable("firmament.command.toggle.no-property-found", property)
                             )
                             return@thenExecute
                         }
                         if (propertyObj.handler !is BooleanHandler) {
                             source.sendFeedback(
-                                Text.translatable(
-                                    "firmament.command.toggle.not-a-toggle",
-                                    property
-                                )
+                                Text.stringifiedTranslatable("firmament.command.toggle.not-a-toggle", property)
                             )
                             return@thenExecute
                         }
@@ -78,12 +72,9 @@ fun firmamentCommand() = literal("firmament") {
                         propertyObj.value = !propertyObj.value
                         configObj.save()
                         source.sendFeedback(
-                            Text.translatable(
-                                "firmament.command.toggle.toggled",
-                                configObj.labelText,
-                                propertyObj.labelText,
-                                Text.translatable("firmament.toggle.${propertyObj.value}")
-                            )
+                            Text.stringifiedTranslatable("firmament.command.toggle.toggled",configObj.labelText,
+                            propertyObj.labelText,
+                            Text.translatable("firmament.toggle.${propertyObj.value}"))
                         )
                     }
                 }
@@ -145,48 +136,30 @@ fun firmamentCommand() = literal("firmament") {
             suggestsList { RepoManager.neuRepo.items.items.keys }
             thenExecute {
                 val itemName = SkyblockId(get(item))
-                source.sendFeedback(Text.translatable("firmament.price", itemName.neuItem))
+                source.sendFeedback(Text.stringifiedTranslatable("firmament.price", itemName.neuItem))
                 val bazaarData = HypixelStaticData.bazaarData[itemName]
                 if (bazaarData != null) {
                     source.sendFeedback(Text.translatable("firmament.price.bazaar"))
                     source.sendFeedback(
-                        Text.translatable(
-                            "firmament.price.bazaar.productid",
-                            bazaarData.productId.bazaarId
-                        )
+                        Text.stringifiedTranslatable("firmament.price.bazaar.productid", bazaarData.productId.bazaarId)
                     )
                     source.sendFeedback(
-                        Text.translatable(
-                            "firmament.price.bazaar.buy.price",
-                            FirmFormatters.formatCurrency(bazaarData.quickStatus.buyPrice, 1)
-                        )
+                        Text.stringifiedTranslatable("firmament.price.bazaar.buy.price", FirmFormatters.formatCurrency(bazaarData.quickStatus.buyPrice, 1))
                     )
                     source.sendFeedback(
-                        Text.translatable(
-                            "firmament.price.bazaar.buy.order",
-                            bazaarData.quickStatus.buyOrders
-                        )
+                        Text.stringifiedTranslatable("firmament.price.bazaar.buy.order", bazaarData.quickStatus.buyOrders)
                     )
                     source.sendFeedback(
-                        Text.translatable(
-                            "firmament.price.bazaar.sell.price",
-                            FirmFormatters.formatCurrency(bazaarData.quickStatus.sellPrice, 1)
-                        )
+                        Text.stringifiedTranslatable("firmament.price.bazaar.sell.price", FirmFormatters.formatCurrency(bazaarData.quickStatus.sellPrice, 1))
                     )
                     source.sendFeedback(
-                        Text.translatable(
-                            "firmament.price.bazaar.sell.order",
-                            bazaarData.quickStatus.sellOrders
-                        )
+                        Text.stringifiedTranslatable("firmament.price.bazaar.sell.order", bazaarData.quickStatus.sellOrders)
                     )
                 }
                 val lowestBin = HypixelStaticData.lowestBin[itemName]
                 if (lowestBin != null) {
                     source.sendFeedback(
-                        Text.translatable(
-                            "firmament.price.lowestbin",
-                            FirmFormatters.formatCurrency(lowestBin, 1)
-                        )
+                        Text.stringifiedTranslatable("firmament.price.lowestbin", FirmFormatters.formatCurrency(lowestBin, 1))
                     )
                 }
             }
@@ -200,15 +173,15 @@ fun firmamentCommand() = literal("firmament") {
         }
         thenLiteral("sbdata") {
             thenExecute {
-                source.sendFeedback(Text.translatable("firmament.sbinfo.profile", SBData.profileId))
+                source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.profile", SBData.profileId))
                 val locrawInfo = SBData.locraw
                 if (locrawInfo == null) {
                     source.sendFeedback(Text.translatable("firmament.sbinfo.nolocraw"))
                 } else {
-                    source.sendFeedback(Text.translatable("firmament.sbinfo.server", locrawInfo.server))
-                    source.sendFeedback(Text.translatable("firmament.sbinfo.gametype", locrawInfo.gametype))
-                    source.sendFeedback(Text.translatable("firmament.sbinfo.mode", locrawInfo.mode))
-                    source.sendFeedback(Text.translatable("firmament.sbinfo.map", locrawInfo.map))
+                    source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.server", locrawInfo.server))
+                    source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.gametype", locrawInfo.gametype))
+                    source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.mode", locrawInfo.mode))
+                    source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.map", locrawInfo.map))
                 }
             }
         }
@@ -217,7 +190,7 @@ fun firmamentCommand() = literal("firmament") {
                 thenExecute {
                     source.sendFeedback(Text.translatable("firmament.ursa.debugrequest.start"))
                     val text = UrsaManager.request(this[path].split("/")).bodyAsText()
-                    source.sendFeedback(Text.translatable("firmament.ursa.debugrequest.result", text))
+                    source.sendFeedback(Text.stringifiedTranslatable("firmament.ursa.debugrequest.result", text))
                 }
             }
         }

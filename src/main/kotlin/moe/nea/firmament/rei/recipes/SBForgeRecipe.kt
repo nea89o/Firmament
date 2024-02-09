@@ -43,7 +43,7 @@ class SBForgeRecipe(override val neuRecipe: NEUForgeRecipe) : SBRecipe() {
                 add(Widgets.createResultSlotBackground(Point(bounds.minX + 124, bounds.minY + 46)))
                 val arrow = Widgets.createArrow(Point(bounds.minX + 90, bounds.minY + 54 - 18 / 2))
                 add(arrow)
-                add(Widgets.createTooltip(arrow.bounds, Text.translatable("firmament.recipe.forge.time", display.neuRecipe.duration.seconds)))
+                add(Widgets.createTooltip(arrow.bounds, Text.stringifiedTranslatable("firmament.recipe.forge.time", display.neuRecipe.duration.seconds)))
                 val ingredientsCenter = Point(bounds.minX + 49 - 8, bounds.minY + 54 - 8)
                 val count = display.neuRecipe.inputs.size
                 if (count == 1) {

@@ -49,7 +49,7 @@ object SkillPage : ProfilePage {
         ) {
             override fun addTooltip(tooltip: TooltipBuilder) {
                 tooltip.add(Text.literal("$level/$maxLevel"))
-                tooltip.add(Text.translatable("firmament.pv.skills.total", FirmFormatters.formatCurrency(exp, 1)))
+                tooltip.add(Text.stringifiedTranslatable("firmament.pv.skills.total", FirmFormatters.formatCurrency(exp, 1)))
             }
         }
     }
