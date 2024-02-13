@@ -16,7 +16,10 @@ import moe.nea.firmament.Firmament
  * Subscriptions may not necessarily be delivered in the order of registering.
  */
 open class FirmamentEventBus<T : FirmamentEvent> {
-    data class Handler<T>(val invocation: (T) -> Unit, val receivesCancelled: Boolean)
+    data class Handler<T>(
+        val invocation: (T) -> Unit, val receivesCancelled: Boolean,
+        var knownErrors: MutableSet<Class<*>> = mutableSetOf(),
+    )
 
     private val toHandle: MutableList<Handler<T>> = CopyOnWriteArrayList()
     fun subscribe(handle: (T) -> Unit) {
@@ -33,7 +36,11 @@ open class FirmamentEventBus<T : FirmamentEvent> {
                 try {
                     function.invocation(event)
                 } catch (e: Exception) {
-                    Firmament.logger.error("Caught exception during processing event $event by $function", e)
+                    val klass = e.javaClass
+                    if (!function.knownErrors.contains(klass) || Firmament.DEBUG) {
+                        function.knownErrors.add(klass)
+                        Firmament.logger.error("Caught exception during processing event $event by $function", e)
+                    }
                 }
             }
         }
