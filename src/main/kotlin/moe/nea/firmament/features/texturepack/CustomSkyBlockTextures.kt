@@ -44,7 +44,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
             it.overrideModel = ModelIdentifier("firmskyblock", id.identifier.path, "inventory")
         }
         TickEvent.subscribe {
-            if (it.tickCount % TConfig.cacheDuration == 0) {
+            if (TConfig.cacheDuration < 1 || it.tickCount % TConfig.cacheDuration == 0) {
                 CustomItemModelEvent.clearCache()
                 skullTextureCache.clear()
             }
