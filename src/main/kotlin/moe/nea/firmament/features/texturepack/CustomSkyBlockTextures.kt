@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -44,7 +45,6 @@ object CustomSkyBlockTextures : FirmamentFeature {
             it.overrideModel = ModelIdentifier("firmskyblock", id.identifier.path, "inventory")
         }
         TickEvent.subscribe {
-            throw RuntimeException()
             if (TConfig.cacheDuration < 1 || it.tickCount % TConfig.cacheDuration == 0) {
                 CustomItemModelEvent.clearCache()
                 skullTextureCache.clear()
