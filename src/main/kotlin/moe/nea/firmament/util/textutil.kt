@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -69,9 +70,30 @@ class TextMatcher(text: Text) {
     }
 }
 
+val formattingChars = "kmolnrKMOLNR".toSet()
+fun CharSequence.removeColorCodes(keepNonColorCodes: Boolean = false): String {
+    var nextParagraph = indexOf('§')
+    if (nextParagraph < 0) return this.toString()
+    val stringBuffer = StringBuilder(this.length)
+    var readIndex = 0
+    while (nextParagraph >= 0) {
+        stringBuffer.append(this, readIndex, nextParagraph)
+        if (keepNonColorCodes && nextParagraph + 1 < length && this[nextParagraph + 1] in formattingChars) {
+            readIndex = nextParagraph
+            nextParagraph = indexOf('§', startIndex = readIndex + 1)
+        } else {
+            readIndex = nextParagraph + 2
+            nextParagraph = indexOf('§', startIndex = readIndex)
+        }
+        if (readIndex > this.length)
+            readIndex = this.length
+    }
+    stringBuffer.append(this, readIndex, this.length)
+    return stringBuffer.toString()
+}
 
-val Text.unformattedString
-    get() = string.replace("§.".toRegex(), "")
+val Text.unformattedString: String
+    get() = string.removeColorCodes().toString()
 
 
 fun Text.transformEachRecursively(function: (Text) -> Text): Text {

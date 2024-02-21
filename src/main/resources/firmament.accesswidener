@@ -8,3 +8,5 @@ accessible method net/minecraft/client/render/model/ModelLoader$BakerImpl <init>
 accessible field net/minecraft/client/network/ClientPlayNetworkHandler lastSeenMessagesCollector Lnet/minecraft/network/message/LastSeenMessagesCollector;
 accessible field net/minecraft/client/gui/hud/InGameHud SCOREBOARD_ENTRY_COMPARATOR Ljava/util/Comparator;
 
+accessible class net/minecraft/client/render/model/json/ModelOverride$Deserializer
+accessible class net/minecraft/client/render/model/json/ModelOverrideList$BakedOverride

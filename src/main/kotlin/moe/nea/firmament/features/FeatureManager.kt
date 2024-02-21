@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -9,6 +10,7 @@ package moe.nea.firmament.features
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.events.FeaturesInitializedEvent
 import moe.nea.firmament.features.chat.AutoCompletions
 import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.chat.QuickCommands
@@ -76,6 +78,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
                 loadFeature(DebugView)
             }
             allFeatures.forEach { it.config }
+            FeaturesInitializedEvent.publish(FeaturesInitializedEvent(allFeatures.toList()))
             hasAutoloaded = true
         }
     }

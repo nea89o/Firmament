@@ -1,6 +1,10 @@
-// SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
-//
-// SPDX-License-Identifier: CC0-1.0
+/*
+ * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+ *
+ * SPDX-License-Identifier: CC0-1.0
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -149,8 +153,14 @@ dependencies {
     transInclude.resolvedConfiguration.resolvedArtifacts.forEach {
         include(it.moduleVersion.id.toString())
     }
+
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
 
 version = rootProject.property("mod_version").toString()
 group = rootProject.property("maven_group").toString()
@@ -187,11 +197,6 @@ tasks.jar {
 tasks.shadowJar {
     configurations = listOf(shadowMe)
     archiveClassifier.set("dev")
-    doLast {
-        configurations.forEach {
-            println("Copying files into jar: ${it.files}")
-        }
-    }
     relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 }
@@ -205,10 +210,10 @@ tasks.remapJar {
 
 tasks.processResources {
     val replacements = listOf(
-        "version" to project.version,
+        "version" to project.version.toString(),
         "minecraft_version" to libs.versions.minecraft.get(),
         "fabric_kotlin_version" to libs.versions.fabric.kotlin.get()
-    ).map { (k, v) -> k to v.toString() }
+    )
     replacements.forEach { (key, value) -> inputs.property(key, value) }
     filesMatching("**/fabric.mod.json") {
         expand(*replacements.toTypedArray())

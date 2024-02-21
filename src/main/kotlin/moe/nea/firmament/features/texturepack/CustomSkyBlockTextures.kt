@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import net.minecraft.block.SkullBlock
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.texture.PlayerSkinProvider
 import net.minecraft.client.util.ModelIdentifier
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.CustomItemModelEvent
@@ -33,6 +32,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
         val enabled by toggle("enabled") { true }
         val skullsEnabled by toggle("skulls-enabled") { true }
         val cacheDuration by integer("cache-duration", 0, 20) { 1 }
+        val enableModelOverrides by toggle("model-overrides") { true }
     }
 
     override val config: ManagedConfig
