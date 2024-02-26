@@ -16,6 +16,7 @@ import moe.nea.firmament.events.SoundReceiveEvent
 import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
+import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.WarpUtil
 import moe.nea.firmament.util.render.RenderInWorldContext
@@ -30,8 +31,10 @@ object AncestralSpadeSolver {
 
     private var lastTeleportAttempt = TimeMark.farPast()
 
+    fun isEnabled() =
+        DianaWaypoints.TConfig.ancestralSpadeSolver && SBData.skyblockLocation == "hub"
     fun onKeyBind(event: WorldKeyboardEvent) {
-        if (!DianaWaypoints.TConfig.ancestralSpadeSolver) return
+        if (!isEnabled()) return
         if (!event.matches(DianaWaypoints.TConfig.ancestralSpadeTeleport)) return
 
         if (lastTeleportAttempt.passedTime() < 3.seconds) return
@@ -40,7 +43,7 @@ object AncestralSpadeSolver {
     }
 
     fun onParticleSpawn(event: ParticleSpawnEvent) {
-        if (!DianaWaypoints.TConfig.ancestralSpadeSolver) return
+        if (!isEnabled()) return
         if (event.particleEffect != ParticleTypes.DRIPPING_LAVA) return
         if (event.offset.x != 0.0F || event.offset.y != 0F || event.offset.z != 0F)
             return
@@ -51,7 +54,7 @@ object AncestralSpadeSolver {
     }
 
     fun onPlaySound(event: SoundReceiveEvent) {
-        if (!DianaWaypoints.TConfig.ancestralSpadeSolver) return
+        if (!isEnabled()) return
         if (!SoundEvents.BLOCK_NOTE_BLOCK_HARP.matchesId(event.sound.value().id)) return
 
         if (lastDing.passedTime() > 1.seconds) {
@@ -90,7 +93,7 @@ object AncestralSpadeSolver {
     }
 
     fun onWorldRender(event: WorldRenderLastEvent) {
-        if (!DianaWaypoints.TConfig.ancestralSpadeSolver) return
+        if (!isEnabled()) return
         RenderInWorldContext.renderInWorld(event) {
             nextGuess?.let {
                 color(1f, 1f, 0f, 0.5f)
