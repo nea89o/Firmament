@@ -6,7 +6,7 @@
 
 package moe.nea.firmament.util
 
-import io.github.moulberry.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.gui.GuiContext
 import me.shedaniel.math.Dimension
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle

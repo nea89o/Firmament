@@ -6,7 +6,7 @@
 
 package moe.nea.firmament.features.mining
 
-import io.github.moulberry.moulconfig.xml.Bind
+import io.github.notenoughupdates.moulconfig.xml.Bind
 import moe.nea.jarvis.api.Point
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer

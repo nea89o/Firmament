@@ -6,12 +6,12 @@
 
 package moe.nea.firmament.util
 
-import io.github.moulberry.moulconfig.common.MyResourceLocation
-import io.github.moulberry.moulconfig.gui.GuiContext
-import io.github.moulberry.moulconfig.xml.ChildCount
-import io.github.moulberry.moulconfig.xml.XMLContext
-import io.github.moulberry.moulconfig.xml.XMLGuiLoader
-import io.github.moulberry.moulconfig.xml.XMLUniverse
+import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
+import io.github.notenoughupdates.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.xml.ChildCount
+import io.github.notenoughupdates.moulconfig.xml.XMLContext
+import io.github.notenoughupdates.moulconfig.xml.XMLGuiLoader
+import io.github.notenoughupdates.moulconfig.xml.XMLUniverse
 import javax.xml.namespace.QName
 import me.shedaniel.math.Color
 import org.w3c.dom.Element

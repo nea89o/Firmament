@@ -6,12 +6,11 @@
 
 package moe.nea.firmament.util
 
-import io.github.moulberry.moulconfig.gui.GuiContext
-import io.github.moulberry.moulconfig.gui.GuiImmediateContext
 import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
+import io.github.notenoughupdates.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
 import me.shedaniel.math.Point
 import net.minecraft.client.gui.DrawContext
-import moe.nea.firmament.util.MC
 
 class MoulConfigFragment(
     context: GuiContext,

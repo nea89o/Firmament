@@ -9,11 +9,11 @@ package moe.nea.firmament.gui
 import com.mojang.blaze3d.systems.RenderSystem
 import io.github.cottonmc.cotton.gui.client.ScreenDrawing
 import io.github.cottonmc.cotton.gui.widget.data.Texture
-import io.github.moulberry.moulconfig.common.MyResourceLocation
-import io.github.moulberry.moulconfig.common.RenderContext
-import io.github.moulberry.moulconfig.gui.GuiComponent
-import io.github.moulberry.moulconfig.gui.GuiImmediateContext
-import io.github.moulberry.moulconfig.observer.GetSetter
+import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
+import io.github.notenoughupdates.moulconfig.common.RenderContext
+import io.github.notenoughupdates.moulconfig.gui.GuiComponent
+import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import io.github.notenoughupdates.moulconfig.platform.ModernRenderContext
 import me.shedaniel.math.Color
 import net.minecraft.client.gui.DrawContext

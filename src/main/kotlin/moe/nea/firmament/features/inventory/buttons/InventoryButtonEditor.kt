@@ -6,8 +6,8 @@
 
 package moe.nea.firmament.features.inventory.buttons
 
-import io.github.moulberry.moulconfig.common.IItemStack
-import io.github.moulberry.moulconfig.xml.Bind
+import io.github.notenoughupdates.moulconfig.common.IItemStack
+import io.github.notenoughupdates.moulconfig.xml.Bind
 import io.github.notenoughupdates.moulconfig.platform.ModernItemStack
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle

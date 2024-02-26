@@ -6,8 +6,8 @@
 
 package moe.nea.firmament.gui.hud
 
-import io.github.moulberry.moulconfig.gui.GuiContext
-import io.github.moulberry.moulconfig.gui.component.TextComponent
+import io.github.notenoughupdates.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
 import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SynchronousResourceReloader
