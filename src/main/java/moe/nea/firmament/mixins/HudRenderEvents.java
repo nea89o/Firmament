@@ -26,7 +26,7 @@ public class HudRenderEvents {
 
     @Inject(method = "renderHotbarItem", at = @At("HEAD"))
     public void onRenderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed,CallbackInfo ci) {
-        if (stack != null)
+        if (stack != null && !stack.isEmpty())
             HotbarItemRenderEvent.Companion.publish(new HotbarItemRenderEvent(stack, context, x, y, tickDelta));
     }
 }
