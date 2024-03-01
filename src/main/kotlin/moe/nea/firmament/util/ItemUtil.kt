@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -14,6 +15,7 @@ import net.minecraft.text.Text
 
 
 fun ItemStack.appendLore(args: List<Text>) {
+    if (args.isEmpty()) return
     val compoundTag = getOrCreateSubNbt("display")
     val loreList = compoundTag.getOrCreateList("Lore", NbtString.STRING_TYPE)
     for (arg in args) {

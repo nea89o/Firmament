@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -18,8 +19,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import net.minecraft.client.texture.PlayerSkinProvider
+import net.minecraft.block.entity.SkullBlockEntity
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtHelper
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.assertTrueOr
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.json.InstantAsLongSerializer
@@ -46,6 +52,38 @@ fun GameProfile.setTextures(textures: MinecraftTexturesPayloadKt) {
 }
 
 private val propertyTextures = "textures"
+fun String.padBase64(): String {
+    return this + "=".repeat((4 - (this.length % 4)) % 4)
+}
+
+fun ItemStack.setEncodedSkullOwner(uuid: UUID, encodedData: String) {
+    assert(this.item == Items.PLAYER_HEAD)
+    val gameProfile = GameProfile(uuid, "LameGuy123")
+    gameProfile.properties.put(propertyTextures, Property(propertyTextures, encodedData.padBase64()))
+    val nbt: NbtCompound = this.orCreateNbt
+    nbt[SkullBlockEntity.SKULL_OWNER_KEY] = NbtHelper.writeGameProfile(
+        NbtCompound(),
+        gameProfile
+    )
+}
+
+val zeroUUID = UUID.fromString("d3cb85e2-3075-48a1-b213-a9bfb62360c1")
+fun ItemStack.setSkullOwner(uuid: UUID, url: String) {
+    assert(this.item == Items.PLAYER_HEAD)
+    val gameProfile = GameProfile(uuid, "LameGuy123")
+    gameProfile.setTextures(
+        MinecraftTexturesPayloadKt(
+            mapOf(MinecraftProfileTexture.Type.SKIN to MinecraftProfileTextureKt(url))
+        )
+    )
+    val nbt: NbtCompound = this.orCreateNbt
+    nbt[SkullBlockEntity.SKULL_OWNER_KEY] = NbtHelper.writeGameProfile(
+        NbtCompound(),
+        gameProfile
+    )
+
+}
+
 
 fun decodeProfileTextureProperty(property: Property): MinecraftTexturesPayloadKt? {
     assertTrueOr(property.name == propertyTextures) { return null }

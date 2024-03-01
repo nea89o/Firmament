@@ -24,6 +24,9 @@
         "main": [
             "moe.nea.firmament.Firmament::onInitialize"
         ],
+        "mm_shedaniel:early_risers": [
+            "moe.nea.firmament.init.EarlyRiser"
+        ],
         "client": [
             "moe.nea.firmament.Firmament::onClientInitialize"
         ],

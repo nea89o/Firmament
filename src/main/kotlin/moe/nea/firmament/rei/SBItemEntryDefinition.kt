@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -30,6 +31,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.HypixelPetInfo
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.appendLore
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.skyBlockId
 
@@ -54,6 +56,7 @@ data class SBItemStack(
     val neuItem: NEUItem?,
     val stackSize: Int,
     val petData: PetData?,
+    val extraLore: List<Text> = emptyList(),
 ) {
     constructor(skyblockId: SkyblockId, petData: PetData) : this(
         skyblockId,
@@ -102,12 +105,13 @@ data class SBItemStack(
         }
     }
 
-    private val itemStack by lazy(LazyThreadSafetyMode.NONE) {
+    private val itemStack: ItemStack by lazy(LazyThreadSafetyMode.NONE) {
         if (skyblockId == SkyblockId.COINS)
-            return@lazy ItemCache.coinItem(stackSize)
+            return@lazy ItemCache.coinItem(stackSize).also { it.appendLore(extraLore) }
         val replacementData = mutableMapOf<String, String>()
         injectReplacementDataForPets(replacementData)
         return@lazy neuItem.asItemStack(idHint = skyblockId, replacementData).copyWithCount(stackSize)
+            .also { it.appendLore(extraLore) }
     }
 
     fun asImmutableItemStack(): ItemStack {

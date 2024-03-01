@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -8,6 +9,7 @@ package moe.nea.firmament.rei
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUForgeRecipe
+import io.github.moulberry.repo.data.NEUMobDropRecipe
 import io.github.moulberry.repo.data.NEURecipe
 import java.util.*
 import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator
@@ -16,6 +18,7 @@ import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.entry.EntryStack
 import moe.nea.firmament.rei.recipes.SBCraftingRecipe
 import moe.nea.firmament.rei.recipes.SBForgeRecipe
+import moe.nea.firmament.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.repo.RepoManager
 
 
@@ -25,6 +28,10 @@ val SkyblockCraftingRecipeDynamicGenerator = neuDisplayGenerator<SBCraftingRecip
 
 val SkyblockForgeRecipeDynamicGenerator = neuDisplayGenerator<SBForgeRecipe, NEUForgeRecipe> {
     SBForgeRecipe(it)
+}
+
+val SkyblockMobDropRecipeDynamicGenerator = neuDisplayGenerator<SBMobDropRecipe, NEUMobDropRecipe> {
+    SBMobDropRecipe(it)
 }
 
 inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(noinline mapper: (T) -> D) =

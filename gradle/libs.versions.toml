@@ -27,7 +27,8 @@ jarvis = "1.1.1"
 nealisp = "1.0.0"
 explosiveenhancement = "1.2.2-1.20.x"
 moulconfig = "3.0.0-beta.5"
-
+manninghamMills = "2.4.1"
+notenoughanimations = "ZLjUeuU8"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -46,8 +47,9 @@ jarvis_api = { module = "moe.nea.jarvis:jarvis-api", version.ref = "jarvis" }
 jarvis_fabric = { module = "moe.nea.jarvis:jarvis-fabric", version.ref = "jarvis" }
 nealisp = { module = "moe.nea:nealisp", version.ref = "nealisp" }
 explosiveenhancement = { module = "maven.modrinth:explosive-enhancement", version.ref = "explosiveenhancement" }
-
+manninghamMills = { module = "me.shedaniel:mm", version.ref = "manninghamMills" }
 # Runtime:
+notenoughanimations = { module = "maven.modrinth:not-enough-animations", version.ref = "notenoughanimations" }
 hotswap = { module = "virtual.github.hotswapagent:hotswap-agent", version.ref = "hotswap_agent" }
 architectury_fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
 rei_fabric = { module = "me.shedaniel:RoughlyEnoughItems-fabric", version.ref = "rei" }
@@ -61,7 +63,12 @@ freecammod = { module = "maven.modrinth:freecam", version.ref = "freecammod" }
 
 [bundles]
 dbus = ["dbus_java_core", "dbus_java_unixsocket"]
-runtime_required = ["architectury_fabric", "rei_fabric"]
+runtime_required = [
+    "architectury_fabric",
+    "rei_fabric",
+    "notenoughanimations",
+
+]
 runtime_optional = [
     "devauth",
     #    "freecammod",

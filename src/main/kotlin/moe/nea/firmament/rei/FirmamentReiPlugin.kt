@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -31,6 +32,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import moe.nea.firmament.rei.recipes.SBMobDropRecipe
 
 
 class FirmamentReiPlugin : REIClientPlugin {
@@ -62,6 +64,7 @@ class FirmamentReiPlugin : REIClientPlugin {
     override fun registerCategories(registry: CategoryRegistry) {
         registry.add(SBCraftingRecipe.Category)
         registry.add(SBForgeRecipe.Category)
+        registry.add(SBMobDropRecipe.Category)
     }
 
     override fun registerExclusionZones(zones: ExclusionZones) {
@@ -77,6 +80,7 @@ class FirmamentReiPlugin : REIClientPlugin {
             SBForgeRecipe.Category.categoryIdentifier,
             SkyblockForgeRecipeDynamicGenerator
         )
+        registry.registerDisplayGenerator(SBMobDropRecipe.Category.categoryIdentifier, SkyblockMobDropRecipeDynamicGenerator)
     }
 
     override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {

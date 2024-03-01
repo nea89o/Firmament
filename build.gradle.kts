@@ -73,6 +73,15 @@ repositories {
     maven("https://maven.notenoughupdates.org/releases")
 }
 
+kotlin {
+    sourceSets.all {
+        languageSettings {
+//            languageVersion = "2.0"
+            enableLanguageFeature("BreakContinueInInlineLambdas")
+        }
+    }
+}
+
 val shadowMe by configurations.creating {
     exclude(group = "org.jetbrains.kotlin")
     exclude(group = "org.jetbrains.kotlinx")
@@ -109,8 +118,10 @@ dependencies {
     modImplementation(libs.modmenu)
     modImplementation(libs.libgui)
     modImplementation(libs.moulconfig)
+    modImplementation(libs.manninghamMills)
     modCompileOnly(libs.explosiveenhancement)
     include(libs.libgui)
+    include(libs.manninghamMills)
     include(libs.moulconfig)
 
 

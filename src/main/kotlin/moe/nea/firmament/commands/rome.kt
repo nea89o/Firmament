@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -52,7 +53,12 @@ fun firmamentCommand() = literal("firmament") {
 
                         val configObj = AllConfigsGui.allConfigs.find { it.name == config }
                         if (configObj == null) {
-                            source.sendFeedback(Text.stringifiedTranslatable("firmament.command.toggle.no-config-found", config))
+                            source.sendFeedback(
+                                Text.stringifiedTranslatable(
+                                    "firmament.command.toggle.no-config-found",
+                                    config
+                                )
+                            )
                             return@thenExecute
                         }
                         val propertyObj = configObj.allOptions[property]
@@ -72,9 +78,11 @@ fun firmamentCommand() = literal("firmament") {
                         propertyObj.value = !propertyObj.value
                         configObj.save()
                         source.sendFeedback(
-                            Text.stringifiedTranslatable("firmament.command.toggle.toggled",configObj.labelText,
-                            propertyObj.labelText,
-                            Text.translatable("firmament.toggle.${propertyObj.value}"))
+                            Text.stringifiedTranslatable(
+                                "firmament.command.toggle.toggled", configObj.labelText,
+                                propertyObj.labelText,
+                                Text.translatable("firmament.toggle.${propertyObj.value}")
+                            )
                         )
                     }
                 }
@@ -144,22 +152,37 @@ fun firmamentCommand() = literal("firmament") {
                         Text.stringifiedTranslatable("firmament.price.bazaar.productid", bazaarData.productId.bazaarId)
                     )
                     source.sendFeedback(
-                        Text.stringifiedTranslatable("firmament.price.bazaar.buy.price", FirmFormatters.formatCurrency(bazaarData.quickStatus.buyPrice, 1))
+                        Text.stringifiedTranslatable(
+                            "firmament.price.bazaar.buy.price",
+                            FirmFormatters.formatCurrency(bazaarData.quickStatus.buyPrice, 1)
+                        )
                     )
                     source.sendFeedback(
-                        Text.stringifiedTranslatable("firmament.price.bazaar.buy.order", bazaarData.quickStatus.buyOrders)
+                        Text.stringifiedTranslatable(
+                            "firmament.price.bazaar.buy.order",
+                            bazaarData.quickStatus.buyOrders
+                        )
                     )
                     source.sendFeedback(
-                        Text.stringifiedTranslatable("firmament.price.bazaar.sell.price", FirmFormatters.formatCurrency(bazaarData.quickStatus.sellPrice, 1))
+                        Text.stringifiedTranslatable(
+                            "firmament.price.bazaar.sell.price",
+                            FirmFormatters.formatCurrency(bazaarData.quickStatus.sellPrice, 1)
+                        )
                     )
                     source.sendFeedback(
-                        Text.stringifiedTranslatable("firmament.price.bazaar.sell.order", bazaarData.quickStatus.sellOrders)
+                        Text.stringifiedTranslatable(
+                            "firmament.price.bazaar.sell.order",
+                            bazaarData.quickStatus.sellOrders
+                        )
                     )
                 }
                 val lowestBin = HypixelStaticData.lowestBin[itemName]
                 if (lowestBin != null) {
                     source.sendFeedback(
-                        Text.stringifiedTranslatable("firmament.price.lowestbin", FirmFormatters.formatCurrency(lowestBin, 1))
+                        Text.stringifiedTranslatable(
+                            "firmament.price.lowestbin",
+                            FirmFormatters.formatCurrency(lowestBin, 1)
+                        )
                     )
                 }
             }
