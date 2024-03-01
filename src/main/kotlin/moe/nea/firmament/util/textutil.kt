@@ -93,7 +93,7 @@ fun CharSequence.removeColorCodes(keepNonColorCodes: Boolean = false): String {
 }
 
 val Text.unformattedString: String
-    get() = string.removeColorCodes().toString()
+    get() = string.removeColorCodes()
 
 
 fun Text.transformEachRecursively(function: (Text) -> Text): Text {
