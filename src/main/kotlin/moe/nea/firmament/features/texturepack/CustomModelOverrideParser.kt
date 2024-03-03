@@ -23,6 +23,7 @@ object CustomModelOverrideParser {
         registerPredicateParser("lore", LorePredicate.Parser)
         registerPredicateParser("all", AndPredicate.Parser)
         registerPredicateParser("any", OrPredicate.Parser)
+        registerPredicateParser("not", NotPredicate.Parser)
     }
 
     fun parsePredicates(predicates: JsonObject): List<FirmamentModelPredicate> {

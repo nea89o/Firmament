@@ -52,7 +52,7 @@ interface StringMatcher {
             }
             if (jsonElement is JsonObject) {
                 val regex = jsonElement["regex"] as JsonPrimitive?
-                val text = jsonElement["text"] as JsonPrimitive?
+                val text = jsonElement["equals"] as JsonPrimitive?
                 val shouldStripColor = when (val color = (jsonElement["color"] as JsonPrimitive?)?.asString) {
                     "preserve" -> false
                     "strip", null -> true
