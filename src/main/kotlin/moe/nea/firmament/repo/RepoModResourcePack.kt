@@ -9,6 +9,7 @@ package moe.nea.firmament.repo
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.*
 import net.fabricmc.fabric.api.resource.ModResourcePack
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.metadata.ModMetadata
@@ -18,16 +19,38 @@ import kotlin.io.path.relativeTo
 import kotlin.streams.asSequence
 import net.minecraft.resource.AbstractFileResourcePack
 import net.minecraft.resource.InputSupplier
+import net.minecraft.resource.NamespaceResourceManager
+import net.minecraft.resource.Resource
 import net.minecraft.resource.ResourcePack
 import net.minecraft.resource.ResourceType
+import net.minecraft.resource.metadata.ResourceMetadata
 import net.minecraft.resource.metadata.ResourceMetadataReader
 import net.minecraft.util.Identifier
 import net.minecraft.util.PathUtil
+import moe.nea.firmament.Firmament
 
 class RepoModResourcePack(val basePath: Path) : ModResourcePack {
     companion object {
         fun append(packs: MutableList<in ModResourcePack>) {
+            Firmament.logger.info("Registering mod resource pack")
             packs.add(RepoModResourcePack(RepoDownloadManager.repoSavedLocation))
+        }
+
+        fun createResourceDirectly(identifier: Identifier): Optional<Resource> {
+            val pack = RepoModResourcePack(RepoDownloadManager.repoSavedLocation)
+            return Optional.of(
+                Resource(
+                    pack,
+                    pack.open(ResourceType.CLIENT_RESOURCES, identifier) ?: return Optional.empty()
+                ) {
+                    val base =
+                        pack.open(ResourceType.CLIENT_RESOURCES, identifier.withPath(identifier.path + ".mcmeta"))
+                    if (base == null)
+                        ResourceMetadata.NONE
+                    else
+                        NamespaceResourceManager.loadMetadata(base)
+                }
+            )
         }
     }
 
