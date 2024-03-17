@@ -9,6 +9,8 @@ package moe.nea.firmament.features.debug
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
+import net.minecraft.nbt.NbtHelper
 import net.minecraft.text.Text
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.HitResult
@@ -25,6 +27,7 @@ import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.focusedItemStack
+import moe.nea.firmament.util.getOrCreateCompoundTag
 import moe.nea.firmament.util.skyBlockId
 
 object PowerUserTools : FirmamentFeature {
@@ -105,7 +108,8 @@ object PowerUserTools : FirmamentFeature {
                     return@subscribe
                 }
                 ClipboardUtils.setTextContent(sbId.neuItem)
-                lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skyblockid", sbId.neuItem))
+                lastCopiedStack =
+                    Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skyblockid", sbId.neuItem))
             } else if (it.matches(TConfig.copyTexturePackId)) {
                 val model = CustomItemModelEvent.getModelIdentifier(item)
                 if (model == null) {
@@ -113,11 +117,31 @@ object PowerUserTools : FirmamentFeature {
                     return@subscribe
                 }
                 ClipboardUtils.setTextContent(model.toString())
-                lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.modelid", model.toString()))
+                lastCopiedStack =
+                    Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.modelid", model.toString()))
             } else if (it.matches(TConfig.copyNbtData)) {
                 val nbt = item.orCreateNbt.toString()
                 ClipboardUtils.setTextContent(nbt)
                 lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.nbt"))
+            } else if (it.matches(TConfig.copySkullTexture)) {
+                if (item.item != Items.PLAYER_HEAD) {
+                    lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skull-id.fail.no-skull"))
+                    return@subscribe
+                }
+                val profile = NbtHelper.toGameProfile(item.orCreateNbt.getOrCreateCompoundTag("SkullOwner"))
+                if (profile == null) {
+                    lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skull-id.fail.no-profile"))
+                    return@subscribe
+                }
+                val skullTexture = CustomSkyBlockTextures.getSkullTexture(profile)
+                if (skullTexture == null) {
+                    lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skull-id.fail.no-texture"))
+                    return@subscribe
+                }
+                ClipboardUtils.setTextContent(skullTexture.toString())
+                lastCopiedStack =
+                    Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skull-id", skullTexture.toString()))
+                println("Copied skull id: $skullTexture")
             }
         }
     }

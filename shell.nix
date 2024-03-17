@@ -11,5 +11,11 @@ pkgs.mkShell {
     temurin-bin-17
     reuse
     pre-commit
+    glfw
+    libGL
   ];
+  shellHook = ''
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${pkgs.glfw}/lib"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${pkgs.libGL}/lib"
+  '';
 }
