@@ -13,6 +13,7 @@ import io.ktor.client.statement.*
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
 import moe.nea.firmament.apis.UrsaManager
+import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.world.FairySouls
@@ -218,6 +219,7 @@ fun firmamentCommand() = literal("firmament") {
             }
         }
     }
+    CommandEvent.SubCommand.publish(CommandEvent.SubCommand(this@literal))
 }
 
 

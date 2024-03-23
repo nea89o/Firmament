@@ -6,7 +6,6 @@
 
 package moe.nea.firmament.features.diana
 
-import org.joml.Vector3f
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.sound.SoundEvents
@@ -33,6 +32,7 @@ object AncestralSpadeSolver {
 
     fun isEnabled() =
         DianaWaypoints.TConfig.ancestralSpadeSolver && SBData.skyblockLocation == "hub"
+
     fun onKeyBind(event: WorldKeyboardEvent) {
         if (!isEnabled()) return
         if (!event.matches(DianaWaypoints.TConfig.ancestralSpadeTeleport)) return
@@ -99,8 +99,7 @@ object AncestralSpadeSolver {
                 color(1f, 1f, 0f, 0.5f)
                 tinyBlock(it, 1f)
                 color(1f, 1f, 0f, 1f)
-                val cameraForward = Vector3f(0f, 0f, 1f).rotate(event.camera.rotation)
-                line(event.camera.pos.add(Vec3d(cameraForward)), it, lineWidth = 3f)
+                tracer(it, lineWidth = 3f)
             }
             if (particlePositions.size > 2 && lastDing.passedTime() < 10.seconds && nextGuess != null) {
                 color(0f, 1f, 0f, 0.7f)

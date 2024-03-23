@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -43,6 +44,10 @@ class RenderInWorldContext private constructor(
     private val buffer = tesselator.buffer
     val effectiveFov = (MC.instance.gameRenderer as AccessorGameRenderer).getFov_firmament(camera, tickDelta, true)
     val effectiveFovScaleFactor = 1 / tan(toRadians(effectiveFov) / 2)
+
+    fun color(color: me.shedaniel.math.Color) {
+        color(color.red / 255F, color.green / 255f, color.blue / 255f, color.alpha / 255f)
+    }
 
     fun color(red: Float, green: Float, blue: Float, alpha: Float) {
         RenderSystem.setShaderColor(red, green, blue, alpha)
@@ -138,6 +143,11 @@ class RenderInWorldContext private constructor(
 
     fun line(vararg points: Vec3d, lineWidth: Float = 10F) {
         line(points.toList(), lineWidth)
+    }
+
+    fun tracer(toWhere: Vec3d, lineWidth: Float = 3f) {
+        val cameraForward = Vector3f(0f, 0f, 1f).rotate(camera.rotation)
+        line(camera.pos.add(Vec3d(cameraForward)), toWhere, lineWidth = lineWidth)
     }
 
     fun line(points: List<Vec3d>, lineWidth: Float = 10F) {
