@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.8.20"
-    kotlin("plugin.serialization") version "1.8.20"
-    id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
-    id("dev.architectury.loom") version "1.1.336"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.23"
+//    id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
+    id("dev.architectury.loom") version "1.5.389"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("moe.nea.licenseextractificator")
-    id("io.github.juuxel.loom-vineflower") version "1.11.0"
+//    id("io.github.juuxel.loom-vineflower") version "1.11.0"
     id("io.shcm.shsupercm.fabric.fletchingtable") version "1.5"
 }
 
@@ -254,6 +254,6 @@ licensing.addExtraLicenseMatchers()
 
 fletchingTable.defaultMixinEnvironment.set("client")
 
-vineflower {
-    toolVersion.set("1.9.1")
-}
+//vineflower {
+//    toolVersion.set("1.9.1")
+//}

@@ -34,7 +34,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlin.coroutines.EmptyCoroutineContext
 import net.minecraft.command.CommandRegistryAccess
@@ -134,10 +133,8 @@ object Firmament {
         HypixelStaticData.spawnDataCollectionLoop()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
-            runBlocking {
-                logger.info("Shutting down NEU coroutines")
-                globalJob.cancel()
-            }
+            logger.info("Shutting down Firmament coroutines")
+            globalJob.cancel()
         })
         registerFirmamentEvents()
         ItemTooltipCallback.EVENT.register { a, b, c ->

@@ -6,7 +6,7 @@
 minecraft = "1.20.4"
 fabric_loader = "0.15.6"
 fabric_api = "0.95.0+1.20.4"
-fabric_kotlin = "1.9.4+kotlin.1.8.21"
+fabric_kotlin = "1.10.19+kotlin.1.9.23"
 yarn = "1.20.4+build.3"
 libgui = "9.2.2+1.20.2"
 rei = "14.0.688"

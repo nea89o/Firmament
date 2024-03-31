@@ -15,6 +15,7 @@ repositories {
 }
 dependencies {
     implementation("com.github.romangraef:neaslicenseextractificator:1.1.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 sourceSets {
