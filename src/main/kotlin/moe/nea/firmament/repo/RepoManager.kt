@@ -39,7 +39,7 @@ object RepoManager {
             save()
         }
 
-        val disableItemGroups by toggle("disable-item-groups") { false }
+        val disableItemGroups by toggle("disable-item-groups") { true }
         val reload by button("reload") {
             save()
             RepoManager.reload()
