@@ -136,7 +136,7 @@ object EntityRenderer {
                 posY,
                 posX + 50,
                 posY + 80,
-                (2F / maxSize * 30).toInt(),
+                (minOf(2F / maxSize, 1F) * 30).toInt(),
                 -bottomOffset,
                 mouseX,
                 mouseY,
