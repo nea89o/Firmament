@@ -143,3 +143,17 @@ specify one of these other matchers and one color preserving property.
 }
 ```
 
+## Armor textures
+
+You can re-*texture* armors, but not re-*model* them with firmament. 
+
+To do so, simply place the layer 1 and layer 2 armor
+texture files at `assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_1.png` and
+`assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_2.png` respectively.
+
+If you want to re-texture a leather
+armor you can use `assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_1_overlay.png` and
+`assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_2_overlay.png` instead. Doing this will cancel out the
+regular leather colors. If you want the leather colors to be applied, supply the normal non-`_overlay` variant, and
+also supply a blank `_overlay` variant. You can also put non-color-affected parts into the `_overlay` variant.
+

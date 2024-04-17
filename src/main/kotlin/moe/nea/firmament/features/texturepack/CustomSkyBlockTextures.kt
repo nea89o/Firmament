@@ -14,6 +14,7 @@ import net.minecraft.block.SkullBlock
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.util.ModelIdentifier
+import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.TickEvent
@@ -68,6 +69,23 @@ object CustomSkyBlockTextures : FirmamentFeature {
     fun getSkullTexture(profile: GameProfile): Identifier? {
         val id = getSkullId(profile) ?: return null
         return Identifier("firmskyblock", "textures/placedskull/$id.png")
+    }
+
+    fun getArmorTexture(
+        itemStack: ItemStack, secondLayer: Boolean,
+        overlay: String?
+    ): Identifier? {
+        val modelIdentifier = CustomItemModelEvent.getModelIdentifier(itemStack) ?: return null
+        // Vanilla scheme: "textures/models/armor/" + var10000 + "_layer_" + (secondLayer ? 2 : 1) + (overlay == null ? "" : "_" + overlay) + ".png";
+        val overlayPart = if (overlay != null) "_$overlay" else ""
+        val identifier = Identifier(
+            modelIdentifier.namespace,
+            "textures/models/armor/${modelIdentifier.path}_layer_${if (secondLayer) 2 else 1}$overlayPart.png"
+        )
+        if (MC.resourceManager.getResource(identifier).isPresent) {
+            return identifier
+        }
+        return null
     }
 
     fun modifySkullTexture(
