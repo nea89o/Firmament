@@ -28,6 +28,7 @@ import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
+import moe.nea.firmament.features.mining.PickaxeAbility
 import moe.nea.firmament.features.mining.PristineProfitTracker
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.features.world.FairySouls
@@ -73,6 +74,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(Fixes)
             loadFeature(DianaWaypoints)
             loadFeature(ItemRarityCosmetics)
+            loadFeature(PickaxeAbility)
             if (Firmament.DEBUG) {
                 loadFeature(DeveloperFeatures)
                 loadFeature(DebugView)

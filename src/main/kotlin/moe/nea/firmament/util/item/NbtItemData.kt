@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -17,7 +18,11 @@ fun textFromNbt() {
 
 val ItemStack.loreAccordingToNbt
     get() = getOrCreateSubNbt(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE.toInt())
-        .map { lazy(LazyThreadSafetyMode.NONE) { Text.Serialization.fromJson((it as NbtString).asString()) } }
+        .map {
+            lazy(LazyThreadSafetyMode.NONE) {
+                Text.Serialization.fromJson((it as NbtString).asString())
+            }
+        }
 
 val ItemStack.displayNameAccordingToNbt
     get() = getOrCreateSubNbt(ItemStack.DISPLAY_KEY).let {
