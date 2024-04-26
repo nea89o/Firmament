@@ -167,5 +167,6 @@
     "firmament.quick-commands.join.unknown-catacombs": "Unknown catacombs floor %s",
     "firmament.config.pickaxe-info": "Pickaxes",
     "firmament.config.pickaxe-info.ability-cooldown": "Pickaxe Ability Cooldown",
-    "firmament.config.pickaxe-info.ability-scale": "Ability Cooldown Scale"
+    "firmament.config.pickaxe-info.ability-scale": "Ability Cooldown Scale",
+    "firmament.config.pickaxe-info.fuel-bar": "Drill Fuel Durability Bar"
 }

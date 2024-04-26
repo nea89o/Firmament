@@ -7,11 +7,10 @@
 package moe.nea.firmament.features.mining
 
 import java.util.regex.Pattern
-import org.intellij.lang.annotations.Language
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.item.ItemStack
+import net.minecraft.util.DyeColor
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HudRenderEvent
@@ -20,11 +19,19 @@ import moe.nea.firmament.events.SlotClickEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.util.DurabilityBarEvent
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SHORT_NUMBER_FORMAT
+import moe.nea.firmament.util.TIME_PATTERN
 import moe.nea.firmament.util.TimeMark
+import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.item.displayNameAccordingToNbt
 import moe.nea.firmament.util.item.loreAccordingToNbt
+import moe.nea.firmament.util.parseShortNumber
+import moe.nea.firmament.util.parseTimePattern
 import moe.nea.firmament.util.render.RenderCircleProgress
+import moe.nea.firmament.util.render.lerp
+import moe.nea.firmament.util.toShedaniel
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 
@@ -36,6 +43,7 @@ object PickaxeAbility : FirmamentFeature {
     object TConfig : ManagedConfig(identifier) {
         val cooldownEnabled by toggle("ability-cooldown") { true }
         val cooldownScale by integer("ability-scale", 16, 64) { 16 }
+        val drillFuelBar by toggle("fuel-bar") { true }
     }
 
     var lobbyJoinTime = TimeMark.farPast()
@@ -73,12 +81,35 @@ object PickaxeAbility : FirmamentFeature {
             abilityOverride = null
         }
         ProcessChatEvent.subscribe {
-            pattern.useMatch(it.unformattedString) {
+            abilityUsePattern.useMatch(it.unformattedString) {
                 lastUsage[group("name")] = TimeMark.now()
             }
             abilitySwitchPattern.useMatch(it.unformattedString) {
                 abilityOverride = group("ability")
             }
+        }
+        DurabilityBarEvent.subscribe {
+            if (!TConfig.drillFuelBar) return@subscribe
+            val lore = it.item.loreAccordingToNbt
+            if (lore.lastOrNull()?.value?.unformattedString?.contains("DRILL") != true) return@subscribe
+            val maxFuel = lore.firstNotNullOfOrNull {
+                fuelPattern.useMatch(
+                    it.value?.unformattedString ?: return@firstNotNullOfOrNull null
+                ) {
+                    parseShortNumber(group("maxFuel"))
+                }
+            } ?: return@subscribe
+            val extra = it.item.extraAttributes
+            if (!extra.contains("drill_fuel")) return@subscribe
+            val fuel = extra.getInt("drill_fuel")
+            val percentage = fuel / maxFuel.toFloat()
+            it.barOverride = DurabilityBarEvent.DurabilityBar(
+                lerp(
+                    DyeColor.RED.toShedaniel(),
+                    DyeColor.GREEN.toShedaniel(),
+                    percentage
+                ), percentage
+            )
         }
         SlotClickEvent.subscribe {
             if (MC.screen?.title?.unformattedString == "Heart of the Mountain") {
@@ -93,7 +124,8 @@ object PickaxeAbility : FirmamentFeature {
         }
     }
 
-    val pattern = Pattern.compile("You used your (?<name>.*) Pickaxe Ability!")
+    val abilityUsePattern = Pattern.compile("You used your (?<name>.*) Pickaxe Ability!")
+    val fuelPattern = Pattern.compile("Fuel: .*/(?<maxFuel>$SHORT_NUMBER_FORMAT)")
 
     data class PickaxeAbilityData(
         val name: String,
@@ -117,21 +149,12 @@ object PickaxeAbility : FirmamentFeature {
         return PickaxeAbilityData(name, cooldown)
     }
 
-    @Language("RegExp")
-    val TIME_PATTERN = "[0-9]+[ms]"
+
     val cooldownPattern = Pattern.compile("Cooldown: (?<cooldown>$TIME_PATTERN)")
     val abilityPattern = Pattern.compile("Ability: (?<name>.*) {2}RIGHT CLICK")
     val abilitySwitchPattern =
         Pattern.compile("You selected (?<ability>.*) as your Pickaxe Ability\\. This ability will apply to all of your pickaxes!")
 
-    fun parseTimePattern(text: String): Duration {
-        val length = text.dropLast(1).toInt()
-        return when (text.last()) {
-            'm' -> length.minutes
-            's' -> length.seconds
-            else -> error("Invalid pattern for time $text")
-        }
-    }
 
     private fun renderHud(event: HudRenderEvent) {
         if (!TConfig.cooldownEnabled) return
