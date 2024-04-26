@@ -15,8 +15,8 @@ plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.serialization") version "1.9.23"
 //    id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
-    id("dev.architectury.loom") version "1.5.389"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("dev.architectury.loom") version "1.6.394"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("moe.nea.licenseextractificator")
 //    id("io.github.juuxel.loom-vineflower") version "1.11.0"
     id("io.shcm.shsupercm.fabric.fletchingtable") version "1.5"
@@ -25,17 +25,17 @@ plugins {
 java {
     withSourcesJar()
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "17"
+    jvmTarget = "21"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "17"
+    jvmTarget = "21"
 }
 
 repositories {
@@ -45,11 +45,6 @@ repositories {
     maven("https://api.modrinth.com/maven") {
         content {
             includeGroup("maven.modrinth")
-        }
-    }
-    maven("https://jitpack.io/") {
-        content {
-            includeGroupByRegex("(com|io)\\.github\\..+")
         }
     }
     maven("https://repo.sleeping.town") {
@@ -71,6 +66,13 @@ repositories {
     maven("https://server.bbkr.space/artifactory/libs-release")
     maven("https://repo.nea.moe/releases")
     maven("https://maven.notenoughupdates.org/releases")
+    maven("https://repo.nea.moe/mirror")
+    maven("https://jitpack.io/") {
+        content {
+            includeGroupByRegex("(com|io)\\.github\\..+")
+            excludeModule("io.github.cottonmc", "LibGui")
+        }
+    }
 }
 
 kotlin {
@@ -132,7 +134,8 @@ dependencies {
     nonModImplentation(libs.nealisp)
     shadowMe(libs.nealisp)
 
-    modApi(libs.fabric.api)
+    modCompileOnly(libs.fabric.api)
+    modRuntimeOnly(libs.fabric.api.deprecated)
     modApi(libs.architectury)
     modCompileOnly(libs.jarvis.api)
     include(libs.jarvis.fabric)
@@ -187,6 +190,12 @@ loom {
             property("firmament.debug", "true")
             property("mixin.debug", "true")
 
+            parseEnvFile(file(".env")).forEach { (t, u) ->
+                environmentVariable(t, u)
+            }
+            parseEnvFile(file(".properties")).forEach{ (t, u) ->
+                property(t,u)
+            }
             vmArg("-ea")
             vmArg("-XX:+AllowEnhancedClassRedefinition")
             vmArg("-XX:HotswapAgent=external")
@@ -197,7 +206,7 @@ loom {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-    options.release.set(17)
+    options.release.set(21)
 }
 
 tasks.jar {

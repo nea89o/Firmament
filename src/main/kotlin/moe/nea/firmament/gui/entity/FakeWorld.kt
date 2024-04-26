@@ -16,11 +16,13 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.streams.asSequence
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
-import net.minecraft.client.world.ClientWorld
+import net.minecraft.component.type.MapIdComponent
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
 import net.minecraft.item.map.MapState
+import net.minecraft.recipe.BrewingRecipeRegistry
+import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.RecipeManager
 import net.minecraft.registry.BuiltinRegistries
 import net.minecraft.registry.DynamicRegistryManager
@@ -29,10 +31,10 @@ import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.RegistryWrapper
 import net.minecraft.registry.entry.RegistryEntry
+import net.minecraft.registry.entry.RegistryEntryInfo
 import net.minecraft.registry.entry.RegistryEntryList
 import net.minecraft.registry.entry.RegistryEntryOwner
 import net.minecraft.registry.tag.TagKey
-import net.minecraft.resource.featuretoggle.FeatureFlag
 import net.minecraft.resource.featuretoggle.FeatureFlags
 import net.minecraft.resource.featuretoggle.FeatureSet
 import net.minecraft.scoreboard.Scoreboard
@@ -119,6 +121,10 @@ fun <T> makeRegistry(registryWrapper: RegistryWrapper.Impl<T>, key: RegistryKey<
             return key
         }
 
+        override fun getEntryInfo(key: RegistryKey<T>?): Optional<RegistryEntryInfo> {
+            TODO("Not yet implemented")
+        }
+
         override fun getLifecycle(): Lifecycle {
             return Lifecycle.stable()
         }
@@ -194,16 +200,16 @@ fun <T> makeRegistry(registryWrapper: RegistryWrapper.Impl<T>, key: RegistryKey<
             return registryWrapper.getOptional(key ?: return Optional.empty())
         }
 
+        override fun getEntry(id: Identifier?): Optional<RegistryEntry.Reference<T>> {
+            TODO("Not yet implemented")
+        }
+
         override fun createEntry(value: T): RegistryEntry.Reference<T> {
-            TODO()
+            TODO("Not yet implemented")
         }
 
         override fun contains(key: RegistryKey<T>?): Boolean {
             return getEntry(key).isPresent
-        }
-
-        override fun getEntryLifecycle(entry: T): Lifecycle {
-            return Lifecycle.stable()
         }
 
         override fun getId(value: T): Identifier? {
@@ -236,7 +242,9 @@ fun createDynamicRegistry(): DynamicRegistryManager.Immutable {
     }
 }
 
-class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegistry()) : World(
+class FakeWorld(
+    registries: DynamicRegistryManager.Immutable = createDynamicRegistry(),
+) : World(
     Properties,
     RegistryKey.of(RegistryKeys.WORLD, Identifier.of("firmament", "fakeworld")),
     registries,
@@ -252,16 +260,8 @@ class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegi
     0, 0
 ) {
     object Properties : MutableWorldProperties {
-        override fun getSpawnX(): Int {
-            return 0
-        }
-
-        override fun getSpawnY(): Int {
-            return 0
-        }
-
-        override fun getSpawnZ(): Int {
-            return 0
+        override fun getSpawnPos(): BlockPos {
+            return BlockPos.ORIGIN
         }
 
         override fun getSpawnAngle(): Float {
@@ -303,17 +303,7 @@ class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegi
             return false
         }
 
-        override fun setSpawnX(spawnX: Int) {
-        }
-
-        override fun setSpawnY(spawnY: Int) {
-        }
-
-        override fun setSpawnZ(spawnZ: Int) {
-        }
-
-        override fun setSpawnAngle(spawnAngle: Float) {
-        }
+        override fun setSpawnPos(pos: BlockPos?, angle: Float) {}
     }
 
     override fun getPlayers(): List<PlayerEntity> {
@@ -361,7 +351,11 @@ class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegi
 
     class FakeChunkManager(val world: FakeWorld) : ChunkManager() {
         override fun getChunk(x: Int, z: Int, leastStatus: ChunkStatus?, create: Boolean): Chunk {
-            return EmptyChunk(world, ChunkPos(x,z), world.registryManager.get(RegistryKeys.BIOME).entryOf(BiomeKeys.PLAINS))
+            return EmptyChunk(
+                world,
+                ChunkPos(x, z),
+                world.registryManager.get(RegistryKeys.BIOME).entryOf(BiomeKeys.PLAINS)
+            )
         }
 
         override fun getWorld(): BlockView {
@@ -406,7 +400,7 @@ class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegi
     override fun syncWorldEvent(player: PlayerEntity?, eventId: Int, pos: BlockPos?, data: Int) {
     }
 
-    override fun emitGameEvent(event: GameEvent?, emitterPos: Vec3d?, emitter: GameEvent.Emitter?) {
+    override fun emitGameEvent(event: RegistryEntry<GameEvent>?, emitterPos: Vec3d?, emitter: GameEvent.Emitter?) {
     }
 
     override fun updateListeners(pos: BlockPos?, oldState: BlockState?, newState: BlockState?, flags: Int) {
@@ -435,15 +429,15 @@ class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegi
         return TickManager()
     }
 
-    override fun getMapState(id: String?): MapState? {
+    override fun getMapState(id: MapIdComponent?): MapState? {
         return null
     }
 
-    override fun putMapState(id: String?, state: MapState?) {
+    override fun putMapState(id: MapIdComponent?, state: MapState?) {
     }
 
-    override fun getNextMapId(): Int {
-        return 0
+    override fun getNextMapId(): MapIdComponent {
+        return MapIdComponent(0)
     }
 
     override fun setBlockBreakingInfo(entityId: Int, pos: BlockPos?, progress: Int) {
@@ -454,7 +448,7 @@ class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegi
     }
 
     override fun getRecipeManager(): RecipeManager {
-        return RecipeManager()
+        return RecipeManager(registryManager)
     }
 
     object FakeEntityLookup : EntityLookup<Entity> {
@@ -487,5 +481,9 @@ class FakeWorld(registries: DynamicRegistryManager.Immutable = createDynamicRegi
 
     override fun getEntityLookup(): EntityLookup<Entity> {
         return FakeEntityLookup
+    }
+
+    override fun getBrewingRecipeRegistry(): BrewingRecipeRegistry {
+        return BrewingRecipeRegistry.EMPTY
     }
 }

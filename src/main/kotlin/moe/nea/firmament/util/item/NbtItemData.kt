@@ -7,27 +7,20 @@
 
 package moe.nea.firmament.util.item
 
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.LoreComponent
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtElement
-import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 
-fun textFromNbt() {
-
-}
-
-val ItemStack.loreAccordingToNbt
-    get() = getOrCreateSubNbt(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE.toInt())
-        .map {
-            lazy(LazyThreadSafetyMode.NONE) {
-                Text.Serialization.fromJson((it as NbtString).asString())
-            }
-        }
+var ItemStack.loreAccordingToNbt
+    get() = get(DataComponentTypes.LORE)?.lines ?: listOf()
+    set(value) {
+        set(DataComponentTypes.LORE, LoreComponent(value))
+    }
 
 val ItemStack.displayNameAccordingToNbt
-    get() = getOrCreateSubNbt(ItemStack.DISPLAY_KEY).let {
-        if (it.contains(ItemStack.NAME_KEY, NbtElement.STRING_TYPE.toInt()))
-            Text.Serialization.fromJson(it.getString(ItemStack.NAME_KEY))
-        else
-            null
-    }
+    get() = get(DataComponentTypes.CUSTOM_NAME) ?: get(DataComponentTypes.ITEM_NAME) ?: item.name
+
+fun ItemStack.setCustomName(literal: Text) {
+    set(DataComponentTypes.CUSTOM_NAME, literal)
+}

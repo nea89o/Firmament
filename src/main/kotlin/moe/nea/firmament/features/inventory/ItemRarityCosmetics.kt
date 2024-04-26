@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -9,7 +10,6 @@ package moe.nea.firmament.features.inventory
 import java.awt.Color
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtElement
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HotbarItemRenderEvent
@@ -17,6 +17,8 @@ import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.item.loreAccordingToNbt
+import moe.nea.firmament.util.unformattedString
 
 object ItemRarityCosmetics : FirmamentFeature {
     override val identifier: String
@@ -47,9 +49,7 @@ object ItemRarityCosmetics : FirmamentFeature {
     }
     private val ItemStack.skyblockLoreRarityColor: Triple<Float, Float, Float>?
         get() {
-            val lore =
-                getOrCreateSubNbt(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE.toInt())
-            val entry = lore.getString(lore.size - 1)
+            val entry = loreAccordingToNbt.lastOrNull()?.unformattedString ?: ""
             return rarityToColor.entries.find { (k, v) -> k in entry }?.value
         }
 

@@ -8,8 +8,7 @@ package moe.nea.firmament.features.texturepack
 
 import com.google.gson.JsonElement
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtElement
-import net.minecraft.nbt.NbtString
+import moe.nea.firmament.util.item.loreAccordingToNbt
 
 class LorePredicate(val matcher: StringMatcher) : FirmamentModelPredicate {
     object Parser : FirmamentModelPredicateParser {
@@ -19,10 +18,7 @@ class LorePredicate(val matcher: StringMatcher) : FirmamentModelPredicate {
     }
 
     override fun test(stack: ItemStack): Boolean {
-        val display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY)
-        if (!display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE.toInt()))
-            return false
-        val lore = display.getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE.toInt())
-        return lore.any { matcher.matches(it as NbtString)}
+        val lore = stack.loreAccordingToNbt
+        return lore.any { matcher.matches(it) }
     }
 }

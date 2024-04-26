@@ -1,13 +1,12 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 package moe.nea.firmament.repo
 
-import com.mojang.authlib.GameProfile
-import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.serialization.Dynamic
 import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.IReloadable
@@ -19,28 +18,27 @@ import java.util.concurrent.ConcurrentHashMap
 import org.apache.logging.log4j.LogManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.jvm.optionals.getOrNull
 import net.minecraft.SharedConstants
-import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.client.resource.language.I18n
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.NbtComponent
 import net.minecraft.datafixer.Schemas
 import net.minecraft.datafixer.TypeReferences
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
-import net.minecraft.nbt.NbtHelper
-import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtOps
-import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.LegacyTagParser
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.appendLore
-import moe.nea.firmament.util.getOrCreateList
-import moe.nea.firmament.util.item.MinecraftProfileTextureKt
-import moe.nea.firmament.util.item.MinecraftTexturesPayloadKt
-import moe.nea.firmament.util.item.setTextures
+import moe.nea.firmament.util.item.setCustomName
+import moe.nea.firmament.util.item.setSkullOwner
+import moe.nea.firmament.util.modifyLore
 import moe.nea.firmament.util.skyblockId
 
 object ItemCache : IReloadable {
@@ -90,10 +88,11 @@ object ItemCache : IReloadable {
             val oldItemTag = get10809CompoundTag()
             val modernItemTag = oldItemTag.transformFrom10809ToModern()
                 ?: return brokenItemStack(this)
-            val itemInstance = ItemStack.fromNbt(modernItemTag)
-            if (itemInstance.nbt?.contains("Enchantments") == true) {
-                itemInstance.enchantments.add(NbtCompound())
-            }
+            val itemInstance =
+                ItemStack.fromNbt(MC.defaultRegistries, modernItemTag).getOrNull() ?: return brokenItemStack(this)
+            val extraAttributes = oldItemTag.getCompound("tag").getCompound("ExtraAttributes")
+            if (extraAttributes != null)
+                itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
             return itemInstance
         } catch (e: Exception) {
             e.printStackTrace()
@@ -117,19 +116,11 @@ object ItemCache : IReloadable {
     }
 
     fun ItemStack.applyLoreReplacements(loreReplacements: Map<String, String>) {
-        val component = getOrCreateSubNbt("display")
-        val lore = component.getOrCreateList("Lore", NbtString.STRING_TYPE)
-        val newLore = NbtList()
-        lore.forEach {
-            newLore.add(
-                NbtString.of(
-                    Text.Serialization.toJsonString(
-                        Text.Serialization.fromJson(it.asString())!!.applyLoreReplacements(loreReplacements)
-                    )
-                )
-            )
+        modifyLore { lore ->
+            lore.map {
+                it.applyLoreReplacements(loreReplacements)
+            }
         }
-        component["Lore"] = newLore
     }
 
     fun Text.applyLoreReplacements(loreReplacements: Map<String, String>): Text {
@@ -141,9 +132,7 @@ object ItemCache : IReloadable {
         return Text.literal(string).styled { this.style }
     }
 
-
     fun NEUItem.getIdentifier() = skyblockId.identifier
-
 
     var job: Job? = null
 
@@ -189,21 +178,7 @@ object ItemCache : IReloadable {
         }
         val itemStack = ItemStack(Items.PLAYER_HEAD)
         itemStack.setCustomName(Text.literal("§r§6" + NumberFormat.getInstance().format(coinAmount) + " Coins"))
-        val nbt: NbtCompound = itemStack.orCreateNbt
-        nbt[SkullBlockEntity.SKULL_OWNER_KEY] = NbtHelper.writeGameProfile(
-            NbtCompound(),
-            GameProfile(uuid, "CoolGuy123").also {
-                it.setTextures(
-                    MinecraftTexturesPayloadKt(
-                        mapOf(
-                            MinecraftProfileTexture.Type.SKIN to MinecraftProfileTextureKt(texture),
-                        ),
-                        uuid,
-                        "CoolGuy123"
-                    )
-                )
-            }
-        )
+        itemStack.setSkullOwner(uuid, texture)
         return itemStack
     }
 }

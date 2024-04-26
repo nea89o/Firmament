@@ -7,9 +7,11 @@
 package moe.nea.firmament.gui.entity
 
 import com.google.gson.JsonObject
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.DyedColorComponent
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.LivingEntity
-import net.minecraft.item.DyeableArmorItem
+import net.minecraft.item.ArmorItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -51,9 +53,8 @@ object ModifyEquipment : EntityModifier {
     }
 
     private fun coloredLeatherArmor(leatherArmor: Item, data: String): ItemStack {
-        require(leatherArmor is DyeableArmorItem)
         val stack = ItemStack(leatherArmor)
-        leatherArmor.setColor(stack, data.toInt(16))
+        stack.set(DataComponentTypes.DYED_COLOR, DyedColorComponent(data.toInt(16), false))
         return stack
     }
 }

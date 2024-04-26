@@ -91,11 +91,9 @@ object PickaxeAbility : FirmamentFeature {
         DurabilityBarEvent.subscribe {
             if (!TConfig.drillFuelBar) return@subscribe
             val lore = it.item.loreAccordingToNbt
-            if (lore.lastOrNull()?.value?.unformattedString?.contains("DRILL") != true) return@subscribe
+            if (lore.lastOrNull()?.unformattedString?.contains("DRILL") != true) return@subscribe
             val maxFuel = lore.firstNotNullOfOrNull {
-                fuelPattern.useMatch(
-                    it.value?.unformattedString ?: return@firstNotNullOfOrNull null
-                ) {
+                fuelPattern.useMatch(it.unformattedString) {
                     parseShortNumber(group("maxFuel"))
                 }
             } ?: return@subscribe
@@ -115,7 +113,7 @@ object PickaxeAbility : FirmamentFeature {
             if (MC.screen?.title?.unformattedString == "Heart of the Mountain") {
                 val name = it.stack.displayNameAccordingToNbt?.unformattedString ?: return@subscribe
                 val cooldown = it.stack.loreAccordingToNbt.firstNotNullOfOrNull {
-                    cooldownPattern.useMatch(it.value?.unformattedString ?: return@firstNotNullOfOrNull null) {
+                    cooldownPattern.useMatch(it.unformattedString) {
                         parseTimePattern(group("cooldown"))
                     }
                 } ?: return@subscribe
@@ -134,15 +132,15 @@ object PickaxeAbility : FirmamentFeature {
 
     fun getCooldownFromLore(itemStack: ItemStack): PickaxeAbilityData? {
         val lore = itemStack.loreAccordingToNbt
-        if (!lore.any { it.value?.unformattedString?.contains("Breaking Power") == true })
+        if (!lore.any { it.unformattedString.contains("Breaking Power") == true })
             return null
         val cooldown = lore.firstNotNullOfOrNull {
-            cooldownPattern.useMatch(it.value?.unformattedString ?: return@firstNotNullOfOrNull null) {
+            cooldownPattern.useMatch(it.unformattedString) {
                 parseTimePattern(group("cooldown"))
             }
         } ?: return null
         val name = lore.firstNotNullOfOrNull {
-            abilityPattern.useMatch(it.value?.unformattedString ?: return@firstNotNullOfOrNull null) {
+            abilityPattern.useMatch(it.unformattedString) {
                 group("name")
             }
         } ?: return null

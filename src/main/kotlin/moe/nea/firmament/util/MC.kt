@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -7,13 +8,12 @@
 package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.Coordinate
-import java.time.Instant
 import java.util.concurrent.ConcurrentLinkedQueue
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.network.message.ArgumentSignatureDataMap
-import net.minecraft.network.message.LastSeenMessagesCollector.LastSeenMessages
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
+import net.minecraft.registry.BuiltinRegistries
+import net.minecraft.registry.RegistryWrapper
 import net.minecraft.resource.ReloadableResourceManagerImpl
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
@@ -40,14 +40,9 @@ object MC {
 
     fun sendServerCommand(command: String) {
         val nh = player?.networkHandler ?: return
-        val lastSeenMessages: LastSeenMessages = nh.lastSeenMessagesCollector.collect()
         nh.sendPacket(
             CommandExecutionC2SPacket(
                 command,
-                Instant.now(),
-                0L,
-                ArgumentSignatureDataMap.EMPTY,
-                lastSeenMessages.update()
             )
         )
     }
@@ -77,6 +72,8 @@ object MC {
         set(value) = MinecraftClient.getInstance().setScreen(value)
     inline val handledScreen: HandledScreen<*>? get() = MinecraftClient.getInstance().currentScreen as? HandledScreen<*>
     inline val window get() = MinecraftClient.getInstance().window
+    inline val currentRegistries: RegistryWrapper.WrapperLookup? get() = world?.registryManager
+    val defaultRegistries: RegistryWrapper.WrapperLookup = BuiltinRegistries.createWrapperLookup()
 }
 
 

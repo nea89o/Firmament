@@ -1,8 +1,10 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
 @file:UseSerializers(DashlessUUIDSerializer::class)
 
 package moe.nea.firmament.features.inventory
@@ -90,7 +92,7 @@ object SlotLocking : FirmamentFeature {
         if (sellItem == null) return false
         if (sellItem.displayNameAccordingToNbt?.unformattedString == "Sell Item") return true
         val lore = sellItem.loreAccordingToNbt
-        return (lore.lastOrNull() ?: return false).value?.unformattedString == "Click to buyback!"
+        return (lore.lastOrNull() ?: return false).unformattedString == "Click to buyback!"
     }
 
     override fun onLoad() {

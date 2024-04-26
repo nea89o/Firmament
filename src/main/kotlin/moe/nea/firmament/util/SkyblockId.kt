@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
@@ -76,7 +77,7 @@ data class HypixelPetInfo(
 private val jsonparser = Json { ignoreUnknownKeys = true }
 
 val ItemStack.extraAttributes: NbtCompound
-    get() = getOrCreateSubNbt("ExtraAttributes")
+    get() = get(DataComponentTypes.CUSTOM_DATA)?.nbt ?: NbtCompound()
 
 val ItemStack.skyblockUUIDString: String?
     get() = extraAttributes.getString("uuid")?.takeIf { it.isNotBlank() }
@@ -121,7 +122,7 @@ val ItemStack.skyBlockId: SkyblockId?
                 else SkyblockId("${enchantName.uppercase()};${enchantmentData.getInt(enchantName)}")
             }
 
-            // TODO: PARTY_HAT_CRAB{,_ANIMATED,_SLOTH}
+            // TODO: PARTY_HAT_CRAB{,_ANIMATED,_SLOTH},POTION
             else -> {
                 SkyblockId(id)
             }

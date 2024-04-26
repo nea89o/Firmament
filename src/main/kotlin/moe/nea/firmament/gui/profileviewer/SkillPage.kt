@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -32,6 +33,7 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Formatting
+import moe.nea.firmament.util.item.setCustomName
 
 object SkillPage : ProfilePage {
 

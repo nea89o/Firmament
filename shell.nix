@@ -8,7 +8,6 @@ pkgs.mkShell {
     gh
     git
     xdg-utils
-    temurin-bin-17
     reuse
     pre-commit
     glfw

@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -137,8 +138,8 @@ object Firmament {
             globalJob.cancel()
         })
         registerFirmamentEvents()
-        ItemTooltipCallback.EVENT.register { a, b, c ->
-            ItemTooltipEvent.publish(ItemTooltipEvent(a, b, c))
+        ItemTooltipCallback.EVENT.register { a, b, c, d ->
+            ItemTooltipEvent.publish(ItemTooltipEvent(a, b, c, d))
         }
         ScreenEvents.AFTER_INIT.register(ScreenEvents.AfterInit { client, screen, scaledWidth, scaledHeight ->
             ScreenEvents.afterRender(screen)

@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -25,7 +26,6 @@ data class WorldRenderLastEvent(
     val camera: Camera,
     val gameRenderer: GameRenderer,
     val lightmapTextureManager: LightmapTextureManager,
-    val positionMatrix: Matrix4f,
     val vertexConsumers: VertexConsumerProvider.Immediate,
 ) : FirmamentEvent() {
     companion object : FirmamentEventBus<WorldRenderLastEvent>()

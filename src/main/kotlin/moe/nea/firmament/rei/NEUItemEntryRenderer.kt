@@ -1,6 +1,7 @@
 /*
- * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
  * SPDX-FileCopyrightText: 2018-2023 shedaniel <daniel@shedaniel.me>
+ * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-License-Identifier: MIT
@@ -17,16 +18,19 @@ import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext
 import me.shedaniel.rei.api.common.entry.EntryStack
-import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.item.TooltipType
 import net.minecraft.client.render.DiffuseLighting
+import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.OverlayTexture
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.model.BakedModel
 import net.minecraft.client.render.model.json.ModelTransformationMode
 import net.minecraft.client.texture.SpriteAtlasTexture
+import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 
 object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<SBItemStack, BakedModel> {
     override fun render(
@@ -43,7 +47,13 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
     val minecraft = MinecraftClient.getInstance()
 
     override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
-        return entry.asItemEntry().getTooltip(tooltipContext, false)
+        return Tooltip.create(
+            entry.asItemEntry().value.getTooltip(
+                Item.TooltipContext.DEFAULT,
+                null,
+                TooltipType.BASIC
+            )
+        )
     }
 
     override fun getExtraData(entry: EntryStack<SBItemStack>): BakedModel {
@@ -60,11 +70,11 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
         graphics: DrawContext,
         delta: Float
     ) {
-        setupGL(model)
         val modelViewStack = RenderSystem.getModelViewStack()
-        modelViewStack.push()
-        modelViewStack.scale(20.0f, -20.0f, 1.0f)
+        modelViewStack.pushMatrix()
+        modelViewStack.scale(20.0f, 20.0f, 1.0f)
         RenderSystem.applyModelViewMatrix()
+        setupGL(model)
     }
 
     fun setupGL(model: BakedModel) {
@@ -93,10 +103,10 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
         if (entry.isEmpty) return
         val value = entry.asItemEntry().value
         graphics.matrices.push()
-        graphics.matrices.translate(bounds.centerX.toFloat() / 20.0f, bounds!!.centerY.toFloat() / -20.0f, 0.0f)
+        graphics.matrices.translate(bounds.centerX.toFloat() / 20.0f, bounds.centerY.toFloat() / 20.0f, 0.0f)
         graphics.matrices.scale(
             bounds.getWidth().toFloat() / 20.0f,
-            (bounds.getWidth() + bounds.getHeight()).toFloat() / 2.0f / 20.0f,
+            -(bounds.getWidth() + bounds.getHeight()).toFloat() / 2.0f / 20.0f,
             1.0f
         )
         minecraft
@@ -107,7 +117,7 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
                 false,
                 graphics.matrices,
                 immediate,
-                15728880,
+                LightmapTextureManager.MAX_LIGHT_COORDINATE,
                 OverlayTexture.DEFAULT_UV,
                 model
             )
@@ -121,9 +131,9 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
         graphics: DrawContext,
         delta: Float
     ) {
-        this.endGL(model)
-        RenderSystem.getModelViewStack().pop()
+        RenderSystem.getModelViewStack().popMatrix()
         RenderSystem.applyModelViewMatrix()
+        this.endGL(model)
     }
 
     fun endGL(model: BakedModel) {
@@ -145,19 +155,20 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
         delta: Float
     ) {
         val modelViewStack = RenderSystem.getModelViewStack()
-        modelViewStack.push()
-        modelViewStack.multiplyPositionMatrix(graphics.matrices.peek().positionMatrix)
+        modelViewStack.pushMatrix()
+        modelViewStack.mul(graphics.matrices.peek().positionMatrix)
         modelViewStack.translate(bounds.x.toFloat(), bounds.y.toFloat(), 0.0f)
         modelViewStack.scale(
             bounds.width.toFloat() / 16.0f,
-            (bounds.getWidth() + bounds.getHeight()).toFloat() / 2.0f / 16.0f,
+            -(bounds.getWidth() + bounds.getHeight()).toFloat() / 2.0f / 16.0f,
             1.0f
         )
         RenderSystem.applyModelViewMatrix()
         renderOverlay(DrawContext(minecraft, graphics.vertexConsumers), entry.asItemEntry())
-        modelViewStack.pop()
+        modelViewStack.popMatrix()
         RenderSystem.applyModelViewMatrix()
     }
+
     fun renderOverlay(graphics: DrawContext, entry: EntryStack<ItemStack>) {
         if (!entry.isEmpty) {
             graphics.drawItemInSlot(MinecraftClient.getInstance().textRenderer, entry.value, 0, 0, null)

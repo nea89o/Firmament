@@ -10,14 +10,13 @@ import com.google.gson.JsonElement
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtString
+import moe.nea.firmament.util.item.displayNameAccordingToNbt
+import moe.nea.firmament.util.item.loreAccordingToNbt
 
 data class DisplayNamePredicate(val stringMatcher: StringMatcher) : FirmamentModelPredicate {
     override fun test(stack: ItemStack): Boolean {
-        val display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY)
-        return if (display.contains(ItemStack.NAME_KEY, NbtElement.STRING_TYPE.toInt()))
-            stringMatcher.matches(display.get(ItemStack.NAME_KEY) as NbtString)
-        else
-            false
+        val display = stack.displayNameAccordingToNbt
+        return stringMatcher.matches(display)
     }
 
     object Parser : FirmamentModelPredicateParser {

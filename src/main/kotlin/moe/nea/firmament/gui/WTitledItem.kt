@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -11,13 +12,13 @@ import io.github.cottonmc.cotton.gui.client.BackgroundPainter
 import io.github.cottonmc.cotton.gui.widget.TooltipBuilder
 import io.github.cottonmc.cotton.gui.widget.WWidget
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.item.TooltipContext
+import net.minecraft.client.item.TooltipType
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import moe.nea.firmament.util.MC
 
 open class WTitledItem(var stack: ItemStack, val countString: Text = Text.empty()) : WWidget() {
-    var backgroundPainter:BackgroundPainter = BackgroundPainter.SLOT
+    var backgroundPainter: BackgroundPainter = BackgroundPainter.SLOT
     override fun canResize(): Boolean = true
     override fun paint(context: DrawContext, x: Int, y: Int, mouseX: Int, mouseY: Int) {
         backgroundPainter.paintBackground(context, x, y, this)
@@ -32,7 +33,7 @@ open class WTitledItem(var stack: ItemStack, val countString: Text = Text.empty(
     }
 
     override fun addTooltip(tooltip: TooltipBuilder) {
-        tooltip.add(*stack.getTooltip(null, TooltipContext.BASIC).toTypedArray())
+        tooltip.add(*stack.getTooltip(null, null, TooltipType.BASIC).toTypedArray())
     }
 
 }

@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -19,13 +20,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
 public class HudRenderEvents {
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getSleepTimer()I"))
+    @Inject(method = "renderSleepOverlay", at = @At(value = "TAIL"))
     public void renderCallBack(DrawContext context, float tickDelta, CallbackInfo ci) {
         HudRenderEvent.Companion.publish(new HudRenderEvent(context, tickDelta));
     }
 
     @Inject(method = "renderHotbarItem", at = @At("HEAD"))
-    public void onRenderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed,CallbackInfo ci) {
+    public void onRenderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed, CallbackInfo ci) {
         if (stack != null && !stack.isEmpty())
             HotbarItemRenderEvent.Companion.publish(new HotbarItemRenderEvent(stack, context, x, y, tickDelta));
     }

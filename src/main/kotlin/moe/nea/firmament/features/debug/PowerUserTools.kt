@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -8,9 +9,9 @@ package moe.nea.firmament.features.debug
 
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
+import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.NbtHelper
 import net.minecraft.text.Text
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.HitResult
@@ -27,7 +28,6 @@ import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.focusedItemStack
-import moe.nea.firmament.util.getOrCreateCompoundTag
 import moe.nea.firmament.util.skyBlockId
 
 object PowerUserTools : FirmamentFeature {
@@ -120,7 +120,8 @@ object PowerUserTools : FirmamentFeature {
                 lastCopiedStack =
                     Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.modelid", model.toString()))
             } else if (it.matches(TConfig.copyNbtData)) {
-                val nbt = item.orCreateNbt.toString()
+                // TODO: copy full nbt
+                val nbt = item.get(DataComponentTypes.CUSTOM_DATA)?.nbt?.toString() ?: "<empty>"
                 ClipboardUtils.setTextContent(nbt)
                 lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.nbt"))
             } else if (it.matches(TConfig.copySkullTexture)) {
@@ -128,7 +129,7 @@ object PowerUserTools : FirmamentFeature {
                     lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skull-id.fail.no-skull"))
                     return@subscribe
                 }
-                val profile = NbtHelper.toGameProfile(item.orCreateNbt.getOrCreateCompoundTag("SkullOwner"))
+                val profile = item.get(DataComponentTypes.PROFILE)
                 if (profile == null) {
                     lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skull-id.fail.no-profile"))
                     return@subscribe
@@ -140,7 +141,10 @@ object PowerUserTools : FirmamentFeature {
                 }
                 ClipboardUtils.setTextContent(skullTexture.toString())
                 lastCopiedStack =
-                    Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skull-id", skullTexture.toString()))
+                    Pair(
+                        item,
+                        Text.stringifiedTranslatable("firmament.tooltip.copied.skull-id", skullTexture.toString())
+                    )
                 println("Copied skull id: $skullTexture")
             }
         }

@@ -12,6 +12,7 @@ import com.google.gson.JsonPrimitive
 import java.util.function.Predicate
 import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.removeColorCodes
 
 interface StringMatcher {
@@ -27,7 +28,7 @@ interface StringMatcher {
         val isString = stringStart >= 0 && string.subSequence(0, stringStart).isBlank()
         val isJson = jsonStart >= 0 && string.subSequence(0, jsonStart).isBlank()
         if (isString || isJson)
-            return matches(Text.Serialization.fromJson(string) ?: return false)
+            return matches(Text.Serialization.fromJson(string, MC.defaultRegistries) ?: return false)
         return matches(string)
     }
 

@@ -3,37 +3,40 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [versions]
-minecraft = "1.20.4"
-fabric_loader = "0.15.6"
-fabric_api = "0.95.0+1.20.4"
+minecraft = "1.20.5"
+fabric_loader = "0.15.10"
+fabric_api = "0.97.6+1.20.5"
 fabric_kotlin = "1.10.19+kotlin.1.9.23"
-yarn = "1.20.4+build.3"
-libgui = "9.2.2+1.20.2"
-rei = "14.0.688"
-devauth = "1.2.0"
-modmenu = "9.0.0"
-ktor = "2.3.0"
-dbus_java = "4.2.1"
-architectury = "11.0.11"
-neurepoparser = "1.4.0"
+yarn = "1.20.5+build.1"
+libgui = "9.2.4+1.20.5"
+rei = "14.0.690-alpha"
+modmenu = "10.0.0-beta.1"
+architectury = "12.0.26"
+
 qolify = "1.3.0-1.20.2"
 citresewn = "1.1.3+1.20"
-hotswap_agent = "1.4.2-SNAPSHOT"
-sodium = "mc1.20.3-0.5.5"
-freecammod = "1.2.0-mc1.20"
+sodium = "mc1.20.5-0.5.8"
+freecammod = "1.2.4+1.20.5"
 ncr = "Fabric-1.20.4-v2.5.0"
+explosiveenhancement = "1.2.2-1.20.x"
+notenoughanimations = "9wrknT51"
+
+devauth = "1.2.0"
+ktor = "2.3.0"
+dbus_java = "4.2.1"
+neurepoparser = "1.4.0"
+hotswap_agent = "1.4.2-SNAPSHOT"
 mixinextras = "0.3.5"
 jarvis = "1.1.1"
 nealisp = "1.0.0"
-explosiveenhancement = "1.2.2-1.20.x"
 moulconfig = "3.0.0-beta.5"
 manninghamMills = "2.4.1"
-notenoughanimations = "ZLjUeuU8"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+fabric_api_deprecated = { module = "net.fabricmc.fabric-api:fabric-api-deprecated", version.ref = "fabric_api" }
 fabric_kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric_kotlin" }
 architectury = { module = "dev.architectury:architectury", version.ref = "architectury" }
 rei_api = { module = "me.shedaniel:RoughlyEnoughItems-api", version.ref = "rei" }
@@ -73,7 +76,7 @@ runtime_optional = [
     "devauth",
     #    "freecammod",
     "sodium",
-    "qolify",
+    #    "qolify",
     #    "citresewn",
     #    "ncr",
 ]

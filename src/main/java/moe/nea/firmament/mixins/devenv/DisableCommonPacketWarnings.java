@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -23,7 +24,7 @@ public class DisableCommonPacketWarnings {
 
     @Inject(method = "warnOnUnknownPayload", at = @At("HEAD"), cancellable = true)
     public void onCustomPacketError(CustomPayload customPayload, CallbackInfo ci) {
-        if (Objects.equals(customPayload.id(), Identifier.of("badlion", "mods"))) {
+        if (Objects.equals(customPayload.getId(), Identifier.of("badlion", "mods"))) {
             ci.cancel();
         }
     }

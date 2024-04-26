@@ -22,9 +22,12 @@ import net.minecraft.resource.InputSupplier
 import net.minecraft.resource.NamespaceResourceManager
 import net.minecraft.resource.Resource
 import net.minecraft.resource.ResourcePack
+import net.minecraft.resource.ResourcePackInfo
+import net.minecraft.resource.ResourcePackSource
 import net.minecraft.resource.ResourceType
 import net.minecraft.resource.metadata.ResourceMetadata
 import net.minecraft.resource.metadata.ResourceMetadataReader
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.PathUtil
 import moe.nea.firmament.Firmament
@@ -113,12 +116,16 @@ class RepoModResourcePack(val basePath: Path) : ModResourcePack {
         )
     }
 
-    override fun getName(): String {
-        return "NEU Repo Resources"
+    override fun getInfo(): ResourcePackInfo {
+        return ResourcePackInfo("neurepo", Text.literal("NEU Repo"), ResourcePackSource.BUILTIN, Optional.empty())
     }
 
     override fun getFabricModMetadata(): ModMetadata {
         return FabricLoader.getInstance().getModContainer("firmament")
             .get().metadata
+    }
+
+    override fun createOverlay(overlay: String): ModResourcePack {
+        return RepoModResourcePack(basePath.resolve(overlay))
     }
 }

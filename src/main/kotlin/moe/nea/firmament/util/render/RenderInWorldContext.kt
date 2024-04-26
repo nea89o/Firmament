@@ -23,7 +23,6 @@ import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.texture.Sprite
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.client.util.math.MatrixStack.Entry
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
@@ -166,7 +165,7 @@ class RenderInWorldContext private constructor(
 
     companion object {
         private fun doLine(
-            matrix: Entry,
+            matrix: MatrixStack.Entry,
             buf: BufferBuilder,
             i: Number,
             j: Number,
@@ -179,9 +178,9 @@ class RenderInWorldContext private constructor(
                 .sub(i.toFloat(), j.toFloat(), k.toFloat())
                 .normalize()
             buf.vertex(matrix.positionMatrix, i.toFloat(), j.toFloat(), k.toFloat())
-                .normal(matrix.normalMatrix, normal.x, normal.y, normal.z).next()
+                .normal(matrix, normal.x, normal.y, normal.z).next()
             buf.vertex(matrix.positionMatrix, x.toFloat(), y.toFloat(), z.toFloat())
-                .normal(matrix.normalMatrix, normal.x, normal.y, normal.z).next()
+                .normal(matrix, normal.x, normal.y, normal.z).next()
         }
 
 

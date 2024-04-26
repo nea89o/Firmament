@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -22,6 +23,7 @@ import net.minecraft.nbt.NbtList
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import net.minecraft.nbt.NbtSizeTracker
+import moe.nea.firmament.util.MC
 
 @Serializable(with = VirtualInventory.Serializer::class)
 data class VirtualInventory(
@@ -44,13 +46,13 @@ data class VirtualInventory(
             val s = decoder.decodeString()
             val n = NbtIo.readCompressed(ByteArrayInputStream(s.decodeBase64Bytes()), NbtSizeTracker.of(100_000_000))
             val items = n.getList(INVENTORY, NbtCompound.COMPOUND_TYPE.toInt())
-            return VirtualInventory(items.map { ItemStack.fromNbt(it as NbtCompound) })
+            return VirtualInventory(items.map { ItemStack.fromNbtOrEmpty(MC.defaultRegistries, it as NbtCompound) })
         }
 
         override fun serialize(encoder: Encoder, value: VirtualInventory) {
             val list = NbtList()
             value.stacks.forEach {
-                list.add(NbtCompound().also(it::writeNbt))
+                list.add(it.encode(MC.defaultRegistries))
             }
             val baos = ByteArrayOutputStream()
             NbtIo.writeCompressed(NbtCompound().also { it.put(INVENTORY, list) }, baos)

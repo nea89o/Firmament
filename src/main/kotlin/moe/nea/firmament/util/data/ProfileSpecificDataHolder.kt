@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -35,7 +36,6 @@ abstract class ProfileSpecificDataHolder<S>(
 
     init {
         allConfigs = readValues()
-        readValues()
         IDataHolder.putDataHolder(this::class, this)
     }
 

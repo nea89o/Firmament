@@ -7,21 +7,20 @@
 
 package moe.nea.firmament.features.texturepack
 
-import com.mojang.authlib.GameProfile
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
+import com.mojang.authlib.properties.Property
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import net.minecraft.block.SkullBlock
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.util.ModelIdentifier
-import net.minecraft.item.ItemStack
+import net.minecraft.component.type.ProfileComponent
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.IdentityCharacteristics
-import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.item.decodeProfileTextureProperty
 import moe.nea.firmament.util.skyBlockId
 
@@ -53,12 +52,12 @@ object CustomSkyBlockTextures : FirmamentFeature {
         }
     }
 
-    private val skullTextureCache = mutableMapOf<IdentityCharacteristics<GameProfile>, Any>()
+    private val skullTextureCache = mutableMapOf<IdentityCharacteristics<ProfileComponent>, Any>()
     private val sentinelPresentInvalid = Object()
 
     private val mcUrlRegex = "https?://textures.minecraft.net/texture/([a-fA-F0-9]+)".toRegex()
-    fun getSkullId(profile: GameProfile): String? {
-        val textureProperty = MC.instance.sessionService.getPackedTextures(profile) ?: return null
+
+    fun getSkullId(textureProperty: Property): String? {
         val texture = decodeProfileTextureProperty(textureProperty) ?: return null
         val textureUrl =
             texture.textures[MinecraftProfileTexture.Type.SKIN]?.url ?: return null
@@ -66,40 +65,23 @@ object CustomSkyBlockTextures : FirmamentFeature {
         return mcUrlData.groupValues[1]
     }
 
-    fun getSkullTexture(profile: GameProfile): Identifier? {
-        val id = getSkullId(profile) ?: return null
+    fun getSkullTexture(profile: ProfileComponent): Identifier? {
+        val id = getSkullId(profile.properties["textures"].firstOrNull() ?: return null) ?: return null
         return Identifier("firmskyblock", "textures/placedskull/$id.png")
-    }
-
-    fun getArmorTexture(
-        itemStack: ItemStack, secondLayer: Boolean,
-        overlay: String?
-    ): Identifier? {
-        val modelIdentifier = CustomItemModelEvent.getModelIdentifier(itemStack) ?: return null
-        // Vanilla scheme: "textures/models/armor/" + var10000 + "_layer_" + (secondLayer ? 2 : 1) + (overlay == null ? "" : "_" + overlay) + ".png";
-        val overlayPart = if (overlay != null) "_$overlay" else ""
-        val identifier = Identifier(
-            modelIdentifier.namespace,
-            "textures/models/armor/${modelIdentifier.path}_layer_${if (secondLayer) 2 else 1}$overlayPart.png"
-        )
-        if (MC.resourceManager.getResource(identifier).isPresent) {
-            return identifier
-        }
-        return null
     }
 
     fun modifySkullTexture(
         type: SkullBlock.SkullType?,
-        profile: GameProfile?,
+        component: ProfileComponent?,
         cir: CallbackInfoReturnable<RenderLayer>
     ) {
         if (type != SkullBlock.Type.PLAYER) return
         if (!TConfig.skullsEnabled) return
-        if (profile == null) return
-        val ic = IdentityCharacteristics(profile)
+        if (component == null) return
+        val ic = IdentityCharacteristics(component)
 
         val n = skullTextureCache.getOrPut(ic) {
-            val id = getSkullTexture(profile) ?: return@getOrPut sentinelPresentInvalid
+            val id = getSkullTexture(component) ?: return@getOrPut sentinelPresentInvalid
             if (!MinecraftClient.getInstance().resourceManager.getResource(id).isPresent) {
                 return@getOrPut sentinelPresentInvalid
             }
