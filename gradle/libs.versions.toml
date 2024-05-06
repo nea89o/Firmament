@@ -3,23 +3,23 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [versions]
-minecraft = "1.20.5"
-fabric_loader = "0.15.10"
-fabric_api = "0.97.6+1.20.5"
+minecraft = "1.20.6"
+fabric_loader = "0.15.11"
+fabric_api = "0.97.8+1.20.6"
 fabric_kotlin = "1.10.19+kotlin.1.9.23"
-yarn = "1.20.5+build.1"
-libgui = "9.2.4+1.20.5"
-rei = "14.0.690-alpha"
+yarn = "1.20.6+build.1"
+libgui = "10.0.0+1.20.6"
+rei = "15.0.728"
 modmenu = "10.0.0-beta.1"
-architectury = "12.0.26"
+architectury = "12.0.27"
 
 qolify = "1.3.0-1.20.2"
 citresewn = "1.1.3+1.20"
-sodium = "mc1.20.5-0.5.8"
+sodium = "mc1.20.6-0.5.8"
 freecammod = "1.2.4+1.20.5"
 ncr = "Fabric-1.20.4-v2.5.0"
 explosiveenhancement = "1.2.2-1.20.x"
-notenoughanimations = "9wrknT51"
+notenoughanimations = "roq966Ei"
 
 devauth = "1.2.0"
 ktor = "2.3.0"
@@ -70,11 +70,10 @@ runtime_required = [
     "architectury_fabric",
     "rei_fabric",
     "notenoughanimations",
-
 ]
 runtime_optional = [
     "devauth",
-    #    "freecammod",
+    "freecammod",
     "sodium",
     #    "qolify",
     #    "citresewn",
