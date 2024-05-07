@@ -45,9 +45,8 @@ object Waypoints : FirmamentFeature {
     object TConfig : ManagedConfig(identifier) {
         val tempWaypointDuration by duration("temp-waypoint-duration", 0.seconds, 1.hours) { 30.seconds }
         val showIndex by toggle("show-index") { true }
+        val skipToNearest by toggle("skip-to-nearest") { false }
         // TODO: look ahead size
-        // TODO: skip to nearest/skip to next only
-        // TODO: skip command
     }
 
     data class TemporaryWaypoint(
@@ -148,6 +147,16 @@ object Waypoints : FirmamentFeature {
                         source.sendFeedback(Text.translatable("firmament.command.waypoint.ordered.toggle.$ordered"))
                     }
                 }
+                thenLiteral("skip") {
+                    thenExecute {
+                        if (ordered && waypoints.isNotEmpty()) {
+                            orderedIndex = (orderedIndex + 1) % waypoints.size
+                            source.sendFeedback(Text.translatable("firmament.command.waypoint.skip"))
+                        } else {
+                            source.sendError(Text.translatable("firmament.command.waypoint.skip.error"))
+                        }
+                    }
+                }
                 thenLiteral("remove") {
                     thenArgument("index", IntegerArgumentType.integer(0)) { indexArg ->
                         thenExecute {
@@ -230,8 +239,13 @@ object Waypoints : FirmamentFeature {
             if (waypoints.isEmpty() || !ordered) return@subscribe
             orderedIndex %= waypoints.size
             val p = MC.player?.pos ?: return@subscribe
-            if (waypoints[orderedIndex].isWithinDistance(p, 3.0)) {
-                orderedIndex = (orderedIndex + 1) % waypoints.size
+            if (TConfig.skipToNearest) {
+                orderedIndex =
+                    (waypoints.withIndex().minBy { it.value.getSquaredDistance(p) }.index + 1) % waypoints.size
+            } else {
+                if (waypoints[orderedIndex].isWithinDistance(p, 3.0)) {
+                    orderedIndex = (orderedIndex + 1) % waypoints.size
+                }
             }
         }
         ProcessChatEvent.subscribe {
