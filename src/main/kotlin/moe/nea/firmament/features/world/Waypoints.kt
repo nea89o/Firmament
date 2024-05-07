@@ -256,7 +256,7 @@ fun <E> List<E>.wrappingWindow(startIndex: Int, windowSize: Int): List<E> {
         result.addAll(subList(startIndex, startIndex + windowSize))
     } else {
         result.addAll(subList(startIndex, size))
-        result.addAll(subList(0, minOf(size - startIndex - windowSize, startIndex)))
+        result.addAll(subList(0, minOf(windowSize - (size - startIndex), startIndex)))
     }
     return result
 }
