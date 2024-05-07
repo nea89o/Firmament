@@ -7,10 +7,10 @@
 
 package moe.nea.firmament.features.world
 
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import me.shedaniel.math.Color
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -22,6 +22,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.commands.get
 import moe.nea.firmament.commands.thenArgument
 import moe.nea.firmament.commands.thenExecute
 import moe.nea.firmament.commands.thenLiteral
@@ -43,6 +44,10 @@ object Waypoints : FirmamentFeature {
 
     object TConfig : ManagedConfig(identifier) {
         val tempWaypointDuration by duration("temp-waypoint-duration", 0.seconds, 1.hours) { 30.seconds }
+        val showIndex by toggle("show-index") { true }
+        // TODO: look ahead size
+        // TODO: skip to nearest/skip to next only
+        // TODO: skip command
     }
 
     data class TemporaryWaypoint(
@@ -143,6 +148,21 @@ object Waypoints : FirmamentFeature {
                         source.sendFeedback(Text.translatable("firmament.command.waypoint.ordered.toggle.$ordered"))
                     }
                 }
+                thenLiteral("remove") {
+                    thenArgument("index", IntegerArgumentType.integer(0)) { indexArg ->
+                        thenExecute {
+                            val index = get(indexArg)
+                            if (index in waypoints.indices) {
+                                waypoints.removeAt(index)
+                                source.sendFeedback(Text.stringifiedTranslatable(
+                                    "firmament.command.waypoint.remove",
+                                    index))
+                            } else {
+                                source.sendError(Text.stringifiedTranslatable("firmament.command.waypoint.remove.error"))
+                            }
+                        }
+                    }
+                }
                 thenLiteral("import") {
                     thenExecute {
                         val contents = ClipboardUtils.getTextContents()
@@ -169,16 +189,22 @@ object Waypoints : FirmamentFeature {
             if (waypoints.isEmpty()) return@subscribe
             RenderInWorldContext.renderInWorld(event) {
                 if (!ordered) {
-                    color(0f, 0.3f, 0.7f, 0.5f)
-                    waypoints.forEach {
-                        block(it)
+                    waypoints.withIndex().forEach {
+                        color(0f, 0.3f, 0.7f, 0.5f)
+                        block(it.value)
+                        color(1f, 1f, 1f, 1f)
+                        if (TConfig.showIndex)
+                            withFacingThePlayer(it.value.toCenterPos()) {
+                                text(Text.literal(it.index.toString()))
+                            }
                     }
                 } else {
                     orderedIndex %= waypoints.size
                     val firstColor = Color.ofRGBA(0, 200, 40, 180)
                     color(firstColor)
                     tracer(waypoints[orderedIndex].toCenterPos(), lineWidth = 3f)
-                    waypoints.wrappingWindow(orderedIndex, 3)
+                    waypoints.withIndex().toList()
+                        .wrappingWindow(orderedIndex, 3)
                         .zip(
                             listOf(
                                 firstColor,
@@ -187,9 +213,15 @@ object Waypoints : FirmamentFeature {
                             )
                         )
                         .reversed()
-                        .forEach { (pos, col) ->
+                        .forEach { (waypoint, col) ->
+                            val (index, pos) = waypoint
                             color(col)
                             block(pos)
+                            color(1f, 1f, 1f, 1f)
+                            if (TConfig.showIndex)
+                                withFacingThePlayer(pos.toCenterPos()) {
+                                    text(Text.literal(index.toString()))
+                                }
                         }
                 }
             }
