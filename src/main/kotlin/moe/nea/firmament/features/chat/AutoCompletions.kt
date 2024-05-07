@@ -7,6 +7,7 @@
 package moe.nea.firmament.features.chat
 
 import com.mojang.brigadier.arguments.StringArgumentType.string
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.get
 import moe.nea.firmament.commands.suggestsList
 import moe.nea.firmament.commands.thenArgument
@@ -30,28 +31,28 @@ object AutoCompletions : FirmamentFeature {
     override val identifier: String
         get() = "auto-completions"
 
-    override fun onLoad() {
-        MaskCommands.subscribe {
-            if (TConfig.provideWarpTabCompletion) {
-                it.mask("warp")
-            }
+    @Subscribe
+    fun onMaskCommands(event: MaskCommands) {
+        if (TConfig.provideWarpTabCompletion) {
+            event.mask("warp")
         }
-        CommandEvent.subscribe {
-            if (TConfig.provideWarpTabCompletion) {
-                it.deleteCommand("warp")
-                it.register("warp") {
-                    thenArgument("to", string()) { toArg ->
-                        suggestsList {
-                            RepoManager.neuRepo.constants?.islands?.warps?.flatMap { listOf(it.warp) + it.aliases } ?: listOf()
-                        }
-                        thenExecute {
-                            val warpName = get(toArg)
-                            if (warpName == "is" && TConfig.replaceWarpIsByWarpIsland) {
-                                MC.sendServerCommand("warp island")
-                            } else {
-                                MC.sendServerCommand("warp ${warpName}")
-                            }
-                        }
+    }
+
+    @Subscribe
+    fun onCommandEvent(event: CommandEvent) {
+        if (!TConfig.provideWarpTabCompletion) return
+        event.deleteCommand("warp")
+        event.register("warp") {
+            thenArgument("to", string()) { toArg ->
+                suggestsList {
+                    RepoManager.neuRepo.constants?.islands?.warps?.flatMap { listOf(it.warp) + it.aliases } ?: listOf()
+                }
+                thenExecute {
+                    val warpName = get(toArg)
+                    if (warpName == "is" && TConfig.replaceWarpIsByWarpIsland) {
+                        MC.sendServerCommand("warp island")
+                    } else {
+                        MC.sendServerCommand("warp $warpName")
                     }
                 }
             }

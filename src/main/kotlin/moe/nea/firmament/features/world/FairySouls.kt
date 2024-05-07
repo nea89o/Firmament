@@ -9,15 +9,10 @@ package moe.nea.firmament.features.world
 import io.github.moulberry.repo.data.Coordinate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderLayer.ALWAYS_DEPTH_TEST
-import net.minecraft.client.render.RenderLayer.MultiPhaseParameters
-import net.minecraft.client.render.RenderPhase
-import net.minecraft.client.render.VertexFormat
-import net.minecraft.client.render.VertexFormats
 import net.minecraft.text.Text
 import net.minecraft.util.math.Vec3d
-import moe.nea.firmament.events.AllowChatEvent
+import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -102,53 +97,43 @@ object FairySouls : FirmamentFeature {
         updateMissingSouls()
     }
 
-    val NODEPTH: RenderLayer = RenderLayer.of(
-        "firmamentnodepth",
-        VertexFormats.POSITION_COLOR_TEXTURE,
-        VertexFormat.DrawMode.QUADS,
-        256,
-        true,
-        true,
-        MultiPhaseParameters.builder()
-            .program(RenderPhase.COLOR_PROGRAM)
-            .writeMaskState(RenderPhase.COLOR_MASK)
-            .depthTest(ALWAYS_DEPTH_TEST)
-            .cull(RenderPhase.DISABLE_CULLING)
-            .layering(RenderLayer.VIEW_OFFSET_Z_LAYERING)
-            .target(RenderPhase.MAIN_TARGET)
-            .build(true)
-    )
-
-    override fun onLoad() {
-        SkyblockServerUpdateEvent.subscribe {
-            currentLocationName = it.newLocraw?.skyblockLocation
-            updateWorldSouls()
-            updateMissingSouls()
-        }
-        AllowChatEvent.subscribe {
-            when (it.text.unformattedString) {
-                "You have already found that Fairy Soul!" -> {
-                    markNearestSoul()
-                }
-
-                "SOUL! You found a Fairy Soul!" -> {
-                    markNearestSoul()
-                }
+    @Subscribe
+    fun onWorldRender(it: WorldRenderLastEvent) {
+        if (!TConfig.displaySouls) return
+        renderInWorld(it) {
+            text(Vec3d(0.0, 0.0, 0.0),
+                 Text.literal("Test String"),
+                 Text.literal("Short"),
+                 Text.literal("just lik"),
+                 verticalAlign = RenderInWorldContext.VerticalAlign.BOTTOM)
+            color(1F, 1F, 0F, 0.8F)
+            currentMissingSouls.forEach {
+                block(it.blockPos)
+            }
+            color(1f, 0f, 1f, 1f)
+            currentLocationSouls.forEach {
+                wireframeCube(it.blockPos)
             }
         }
-        WorldRenderLastEvent.subscribe {
-            if (!TConfig.displaySouls) return@subscribe
-            renderInWorld(it) {
-                text(Vec3d(0.0, 0.0, 0.0), Text.literal("Test String") , Text.literal("Short"), Text.literal("just lik"), verticalAlign = RenderInWorldContext.VerticalAlign.BOTTOM)
-                color(1F, 1F, 0F, 0.8F)
-                currentMissingSouls.forEach {
-                    block(it.blockPos)
-                }
-                color(1f, 0f, 1f, 1f)
-                currentLocationSouls.forEach {
-                    wireframeCube(it.blockPos)
-                }
+    }
+
+    @Subscribe
+    fun onProcessChat(it: ProcessChatEvent) {
+        when (it.text.unformattedString) {
+            "You have already found that Fairy Soul!" -> {
+                markNearestSoul()
+            }
+
+            "SOUL! You found a Fairy Soul!" -> {
+                markNearestSoul()
             }
         }
+    }
+
+    @Subscribe
+    fun onLocationChange(it: SkyblockServerUpdateEvent) {
+        currentLocationName = it.newLocraw?.skyblockLocation
+        updateWorldSouls()
+        updateMissingSouls()
     }
 }

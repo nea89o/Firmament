@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.SlotClickEvent
@@ -73,53 +74,57 @@ object PickaxeAbility : FirmamentFeature {
         return 1.0
     }
 
-    override fun onLoad() {
-        HudRenderEvent.subscribe(this::renderHud)
-        WorldReadyEvent.subscribe {
-            lastUsage.clear()
-            lobbyJoinTime = TimeMark.now()
-            abilityOverride = null
-        }
-        ProcessChatEvent.subscribe {
-            abilityUsePattern.useMatch(it.unformattedString) {
-                lastUsage[group("name")] = TimeMark.now()
-            }
-            abilitySwitchPattern.useMatch(it.unformattedString) {
-                abilityOverride = group("ability")
-            }
-        }
-        DurabilityBarEvent.subscribe {
-            if (!TConfig.drillFuelBar) return@subscribe
-            val lore = it.item.loreAccordingToNbt
-            if (lore.lastOrNull()?.unformattedString?.contains("DRILL") != true) return@subscribe
-            val maxFuel = lore.firstNotNullOfOrNull {
-                fuelPattern.useMatch(it.unformattedString) {
-                    parseShortNumber(group("maxFuel"))
+    @Subscribe
+    fun onSlotClick(it: SlotClickEvent) {
+        if (MC.screen?.title?.unformattedString == "Heart of the Mountain") {
+            val name = it.stack.displayNameAccordingToNbt?.unformattedString ?: return
+            val cooldown = it.stack.loreAccordingToNbt.firstNotNullOfOrNull {
+                cooldownPattern.useMatch(it.unformattedString) {
+                    parseTimePattern(group("cooldown"))
                 }
-            } ?: return@subscribe
-            val extra = it.item.extraAttributes
-            if (!extra.contains("drill_fuel")) return@subscribe
-            val fuel = extra.getInt("drill_fuel")
-            val percentage = fuel / maxFuel.toFloat()
-            it.barOverride = DurabilityBarEvent.DurabilityBar(
-                lerp(
-                    DyeColor.RED.toShedaniel(),
-                    DyeColor.GREEN.toShedaniel(),
-                    percentage
-                ), percentage
-            )
+            } ?: return
+            defaultAbilityDurations[name] = cooldown
         }
-        SlotClickEvent.subscribe {
-            if (MC.screen?.title?.unformattedString == "Heart of the Mountain") {
-                val name = it.stack.displayNameAccordingToNbt?.unformattedString ?: return@subscribe
-                val cooldown = it.stack.loreAccordingToNbt.firstNotNullOfOrNull {
-                    cooldownPattern.useMatch(it.unformattedString) {
-                        parseTimePattern(group("cooldown"))
-                    }
-                } ?: return@subscribe
-                defaultAbilityDurations[name] = cooldown
+    }
+
+    @Subscribe
+    fun onDurabilityBar(it: DurabilityBarEvent) {
+        if (!TConfig.drillFuelBar) return
+        val lore = it.item.loreAccordingToNbt
+        if (lore.lastOrNull()?.unformattedString?.contains("DRILL") != true) return
+        val maxFuel = lore.firstNotNullOfOrNull {
+            fuelPattern.useMatch(it.unformattedString) {
+                parseShortNumber(group("maxFuel"))
             }
+        } ?: return
+        val extra = it.item.extraAttributes
+        if (!extra.contains("drill_fuel")) return
+        val fuel = extra.getInt("drill_fuel")
+        val percentage = fuel / maxFuel.toFloat()
+        it.barOverride = DurabilityBarEvent.DurabilityBar(
+            lerp(
+                DyeColor.RED.toShedaniel(),
+                DyeColor.GREEN.toShedaniel(),
+                percentage
+            ), percentage
+        )
+    }
+
+    @Subscribe
+    fun onChatMessage(it: ProcessChatEvent) {
+        abilityUsePattern.useMatch(it.unformattedString) {
+            lastUsage[group("name")] = TimeMark.now()
         }
+        abilitySwitchPattern.useMatch(it.unformattedString) {
+            abilityOverride = group("ability")
+        }
+    }
+
+    @Subscribe
+    fun onWorldReady(event: WorldReadyEvent) {
+        lastUsage.clear()
+        lobbyJoinTime = TimeMark.now()
+        abilityOverride = null
     }
 
     val abilityUsePattern = Pattern.compile("You used your (?<name>.*) Pickaxe Ability!")
@@ -154,7 +159,8 @@ object PickaxeAbility : FirmamentFeature {
         Pattern.compile("You selected (?<ability>.*) as your Pickaxe Ability\\. This ability will apply to all of your pickaxes!")
 
 
-    private fun renderHud(event: HudRenderEvent) {
+    @Subscribe
+    fun renderHud(event: HudRenderEvent) {
         if (!TConfig.cooldownEnabled) return
         var ability = getCooldownFromLore(MC.player?.getStackInHand(Hand.MAIN_HAND) ?: return) ?: return
         defaultAbilityDurations[ability.name] = ability.cooldown

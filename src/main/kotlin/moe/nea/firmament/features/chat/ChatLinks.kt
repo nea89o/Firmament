@@ -6,11 +6,11 @@
 
 package moe.nea.firmament.features.chat
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.utils.io.jvm.javaio.*
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import java.net.URL
-import java.util.*
+import java.util.Collections
 import moe.nea.jarvis.api.Point
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,6 +26,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ModifyChatEvent
 import moe.nea.firmament.events.ScreenRenderPostEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -96,69 +97,69 @@ object ChatLinks : FirmamentFeature {
         return (url.substringAfterLast('.').lowercase() in imageExtensions)
     }
 
+    @Subscribe
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun onLoad() {
-        ModifyChatEvent.subscribe {
-            if (TConfig.enableLinks)
-                it.replaceWith = it.replaceWith.transformEachRecursively { child ->
-                    val text = child.string
-                    if ("://" !in text) return@transformEachRecursively child
-                    val s = Text.empty().setStyle(child.style)
-                    var index = 0
-                    while (index < text.length) {
-                        val nextMatch = urlRegex.find(text, index)
-                        if (nextMatch == null) {
-                            s.append(Text.literal(text.substring(index, text.length)))
-                            break
-                        }
-                        val range = nextMatch.groups[0]!!.range
-                        val url = nextMatch.groupValues[0]
-                        s.append(Text.literal(text.substring(index, range.first)))
-                        s.append(
-                            Text.literal(url).setStyle(
-                                Style.EMPTY.withUnderline(true).withColor(
-                                    Formatting.AQUA
-                                ).withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(url)))
-                                    .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, url))
-                            )
-                        )
-                        if (isImageUrl(url))
-                            tryCacheUrl(url)
-                        index = range.last + 1
-                    }
-                    s
-                }
-        }
+    fun onRender(it: ScreenRenderPostEvent) {
+        if (!TConfig.imageEnabled) return
+        if (it.screen !is ChatScreen) return
+        val hoveredComponent =
+            MC.inGameHud.chatHud.getTextStyleAt(it.mouseX.toDouble(), it.mouseY.toDouble()) ?: return
+        val hoverEvent = hoveredComponent.hoverEvent ?: return
+        val value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT) ?: return
+        val url = urlRegex.matchEntire(value.unformattedString)?.groupValues?.get(0) ?: return
+        if (!isImageUrl(url)) return
+        val imageFuture = imageCache[url] ?: return
+        if (!imageFuture.isCompleted) return
+        val image = imageFuture.getCompleted() ?: return
+        it.drawContext.matrices.push()
+        val pos = TConfig.position
+        pos.applyTransformations(it.drawContext.matrices)
+        val scale = min(1F, min((9 * 20F) / image.height, (16 * 20F) / image.width))
+        it.drawContext.matrices.scale(scale, scale, 1F)
+        it.drawContext.drawTexture(
+            image.texture,
+            0,
+            0,
+            1F,
+            1F,
+            image.width,
+            image.height,
+            image.width,
+            image.height,
+        )
+        it.drawContext.matrices.pop()
+    }
 
-        ScreenRenderPostEvent.subscribe {
-            if (!TConfig.imageEnabled) return@subscribe
-            if (it.screen !is ChatScreen) return@subscribe
-            val hoveredComponent =
-                MC.inGameHud.chatHud.getTextStyleAt(it.mouseX.toDouble(), it.mouseY.toDouble()) ?: return@subscribe
-            val hoverEvent = hoveredComponent.hoverEvent ?: return@subscribe
-            val value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT) ?: return@subscribe
-            val url = urlRegex.matchEntire(value.unformattedString)?.groupValues?.get(0) ?: return@subscribe
-            if (!isImageUrl(url)) return@subscribe
-            val imageFuture = imageCache[url] ?: return@subscribe
-            if (!imageFuture.isCompleted) return@subscribe
-            val image = imageFuture.getCompleted() ?: return@subscribe
-            it.drawContext.matrices.push()
-            val pos = TConfig.position
-            pos.applyTransformations(it.drawContext.matrices)
-            val scale = min(1F, min((9 * 20F) / image.height, (16 * 20F) / image.width))
-            it.drawContext.matrices.scale(scale, scale, 1F)
-            it.drawContext.drawTexture(
-                image.texture,
-                0,
-                0,
-                1F,
-                1F,
-                image.width,
-                image.height,
-                image.width,
-                image.height,
-            )
-            it.drawContext.matrices.pop()
+    @Subscribe
+    fun onModifyChat(it: ModifyChatEvent) {
+        if (!TConfig.enableLinks) return
+        it.replaceWith = it.replaceWith.transformEachRecursively { child ->
+            val text = child.string
+            if ("://" !in text) return@transformEachRecursively child
+            val s = Text.empty().setStyle(child.style)
+            var index = 0
+            while (index < text.length) {
+                val nextMatch = urlRegex.find(text, index)
+                if (nextMatch == null) {
+                    s.append(Text.literal(text.substring(index, text.length)))
+                    break
+                }
+                val range = nextMatch.groups[0]!!.range
+                val url = nextMatch.groupValues[0]
+                s.append(Text.literal(text.substring(index, range.first)))
+                s.append(
+                    Text.literal(url).setStyle(
+                        Style.EMPTY.withUnderline(true).withColor(
+                            Formatting.AQUA
+                        ).withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(url)))
+                            .withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, url))
+                    )
+                )
+                if (isImageUrl(url))
+                    tryCacheUrl(url)
+                index = range.last + 1
+            }
+            s
         }
     }
 }

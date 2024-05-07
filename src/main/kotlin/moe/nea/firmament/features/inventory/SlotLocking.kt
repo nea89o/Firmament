@@ -10,7 +10,7 @@
 package moe.nea.firmament.features.inventory
 
 import com.mojang.blaze3d.systems.RenderSystem
-import java.util.*
+import java.util.UUID
 import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -18,6 +18,7 @@ import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Identifier
 import moe.nea.firmament.annotations.Subscribe
@@ -96,81 +97,89 @@ object SlotLocking : FirmamentFeature {
         return (lore.lastOrNull() ?: return false).unformattedString == "Click to buyback!"
     }
 
-    override fun onLoad() {
-        HandledScreenKeyPressedEvent.subscribe {
-            if (!it.matches(TConfig.lockSlot)) return@subscribe
-            val inventory = MC.handledScreen ?: return@subscribe
-            inventory as AccessorHandledScreen
-
-            val slot = inventory.focusedSlot_Firmament ?: return@subscribe
-            val lockedSlots = lockedSlots ?: return@subscribe
-            if (slot.inventory is PlayerInventory) {
-                if (slot.index in lockedSlots) {
-                    lockedSlots.remove(slot.index)
-                } else {
-                    lockedSlots.add(slot.index)
-                }
-                DConfig.markDirty()
-                CommonSoundEffects.playSuccess()
-            }
+    @Subscribe
+    fun onSalvageProtect(event: IsSlotProtectedEvent) {
+        if (event.slot == null) return
+        if (!event.slot.hasStack()) return
+        if (event.slot.stack.displayNameAccordingToNbt?.unformattedString != "Salvage Items") return
+        val inv = event.slot.inventory
+        var anyBlocked = false
+        for (i in 0 until event.slot.index) {
+            val stack = inv.getStack(i)
+            if (IsSlotProtectedEvent.shouldBlockInteraction(null, SlotActionType.THROW, stack))
+                anyBlocked = true
         }
-        HandledScreenKeyPressedEvent.subscribe {
-            if (!it.matches(TConfig.lockUUID)) return@subscribe
-            val inventory = MC.handledScreen ?: return@subscribe
-            inventory as AccessorHandledScreen
-
-            val slot = inventory.focusedSlot_Firmament ?: return@subscribe
-            val stack = slot.stack ?: return@subscribe
-            val uuid = stack.skyblockUUID ?: return@subscribe
-            val lockedUUIDs = lockedUUIDs ?: return@subscribe
-            if (uuid in lockedUUIDs) {
-                lockedUUIDs.remove(uuid)
-            } else {
-                lockedUUIDs.add(uuid)
-            }
-            DConfig.markDirty()
-            CommonSoundEffects.playSuccess()
-        }
-        IsSlotProtectedEvent.subscribe {
-            if (it.slot != null && it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())) {
-                it.protect()
-            }
-        }
-        IsSlotProtectedEvent.subscribe { event ->
-            val doesNotDeleteItem = event.actionType == SlotActionType.SWAP
-                || event.actionType == SlotActionType.PICKUP
-                || event.actionType == SlotActionType.QUICK_MOVE
-                || event.actionType == SlotActionType.QUICK_CRAFT
-                || event.actionType == SlotActionType.CLONE
-                || event.actionType == SlotActionType.PICKUP_ALL
-            val isSellOrTradeScreen =
-                isNpcShop(MC.handledScreen) || isTradeScreen(MC.handledScreen) || isSalvageScreen(MC.handledScreen)
-            if (!isSellOrTradeScreen && doesNotDeleteItem) return@subscribe
-            val stack = event.itemStack ?: return@subscribe
-            val uuid = stack.skyblockUUID ?: return@subscribe
-            if (uuid in (lockedUUIDs ?: return@subscribe)) {
-                event.protect()
-            }
-        }
-        IsSlotProtectedEvent.subscribe { event ->
-            if (event.slot == null) return@subscribe
-            if (!event.slot.hasStack()) return@subscribe
-            if (event.slot.stack.displayNameAccordingToNbt?.unformattedString != "Salvage Items") return@subscribe
-            val inv = event.slot.inventory
-            var anyBlocked = false
-            for (i in 0 until event.slot.index) {
-                val stack = inv.getStack(i)
-                if (IsSlotProtectedEvent.shouldBlockInteraction(null, SlotActionType.THROW, stack))
-                    anyBlocked = true
-            }
-            if (anyBlocked) {
-                event.protectSilent()
-            }
+        if (anyBlocked) {
+            event.protectSilent()
         }
     }
 
     @Subscribe
-    fun function(it: SlotRenderEvents.After) {
+    fun onProtectUuidItems(event: IsSlotProtectedEvent) {
+        val doesNotDeleteItem = event.actionType == SlotActionType.SWAP
+            || event.actionType == SlotActionType.PICKUP
+            || event.actionType == SlotActionType.QUICK_MOVE
+            || event.actionType == SlotActionType.QUICK_CRAFT
+            || event.actionType == SlotActionType.CLONE
+            || event.actionType == SlotActionType.PICKUP_ALL
+        val isSellOrTradeScreen =
+            isNpcShop(MC.handledScreen) || isTradeScreen(MC.handledScreen) || isSalvageScreen(MC.handledScreen)
+        if (!isSellOrTradeScreen && doesNotDeleteItem) return
+        val stack = event.itemStack ?: return
+        val uuid = stack.skyblockUUID ?: return
+        if (uuid in (lockedUUIDs ?: return)) {
+            event.protect()
+        }
+    }
+
+    @Subscribe
+    fun onProtectSlot(it: IsSlotProtectedEvent) {
+        if (it.slot != null && it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())) {
+            it.protect()
+        }
+    }
+
+    @Subscribe
+    fun onLockUUID(it: HandledScreenKeyPressedEvent) {
+        if (!it.matches(TConfig.lockUUID)) return
+        val inventory = MC.handledScreen ?: return
+        inventory as AccessorHandledScreen
+
+        val slot = inventory.focusedSlot_Firmament ?: return
+        val stack = slot.stack ?: return
+        val uuid = stack.skyblockUUID ?: return
+        val lockedUUIDs = lockedUUIDs ?: return
+        if (uuid in lockedUUIDs) {
+            lockedUUIDs.remove(uuid)
+        } else {
+            lockedUUIDs.add(uuid)
+        }
+        DConfig.markDirty()
+        CommonSoundEffects.playSuccess()
+        it.cancel()
+    }
+
+    @Subscribe
+    fun onLockSlot(it: HandledScreenKeyPressedEvent) {
+        if (!it.matches(TConfig.lockSlot)) return
+        val inventory = MC.handledScreen ?: return
+        inventory as AccessorHandledScreen
+
+        val slot = inventory.focusedSlot_Firmament ?: return
+        val lockedSlots = lockedSlots ?: return
+        if (slot.inventory is PlayerInventory) {
+            if (slot.index in lockedSlots) {
+                lockedSlots.remove(slot.index)
+            } else {
+                lockedSlots.add(slot.index)
+            }
+            DConfig.markDirty()
+            CommonSoundEffects.playSuccess()
+        }
+    }
+
+    @Subscribe
+    fun onRenderSlotOverlay(it: SlotRenderEvents.After) {
         val isSlotLocked = it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())
         val isUUIDLocked = (it.slot.stack?.skyblockUUID) in (lockedUUIDs ?: setOf())
         if (isSlotLocked || isUUIDLocked) {

@@ -6,9 +6,10 @@
 
 package moe.nea.firmament.features.inventory.storageoverlay
 
-import java.util.*
+import java.util.SortedMap
 import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.Screen
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -40,31 +41,33 @@ object StorageOverlay : FirmamentFeature {
     var shouldReturnToStorageOverlay: Screen? = null
     var currentHandler: StorageBackingHandle? = StorageBackingHandle.None
 
-    override fun onLoad() {
-        ScreenChangeEvent.subscribe {
-            if (lastStorageOverlay != null && it.new != null) {
-                shouldReturnToStorageOverlay = lastStorageOverlay
-                shouldReturnToStorageOverlayFrom = it.new
-                lastStorageOverlay = null
-            } else if (it.old === shouldReturnToStorageOverlayFrom) {
-                if (shouldReturnToStorageOverlay != null && it.new == null)
-                    setScreenLater(shouldReturnToStorageOverlay)
-                shouldReturnToStorageOverlay = null
-                shouldReturnToStorageOverlayFrom = null
-            }
-        }
+    @Subscribe
+    fun onTick(event: TickEvent) {
+        rememberContent(currentHandler ?: return)
+    }
 
-        ScreenChangeEvent.subscribe { event ->
-            currentHandler = StorageBackingHandle.fromScreen(event.new)
-            if (event.old is StorageOverlayScreen && !event.old.isClosing) {
-                event.old.setHandler(currentHandler)
-                if (currentHandler != null)
-                // TODO: Consider instead only replacing rendering? might make a lot of stack handling easier
-                    event.cancel()
-            }
+    @Subscribe
+    fun onScreenChangeLegacy(event: ScreenChangeEvent) {
+        currentHandler = StorageBackingHandle.fromScreen(event.new)
+        if (event.old is StorageOverlayScreen && !event.old.isClosing) {
+            event.old.setHandler(currentHandler)
+            if (currentHandler != null)
+            // TODO: Consider instead only replacing rendering? might make a lot of stack handling easier
+                event.cancel()
         }
-        TickEvent.subscribe {
-            rememberContent(currentHandler ?: return@subscribe)
+    }
+
+    @Subscribe
+    fun onScreenChange(it: ScreenChangeEvent) {
+        if (lastStorageOverlay != null && it.new != null) {
+            shouldReturnToStorageOverlay = lastStorageOverlay
+            shouldReturnToStorageOverlayFrom = it.new
+            lastStorageOverlay = null
+        } else if (it.old === shouldReturnToStorageOverlayFrom) {
+            if (shouldReturnToStorageOverlay != null && it.new == null)
+                setScreenLater(shouldReturnToStorageOverlay)
+            shouldReturnToStorageOverlay = null
+            shouldReturnToStorageOverlayFrom = null
         }
     }
 

@@ -55,9 +55,5 @@ object DeveloperFeatures : FirmamentFeature {
         }
         return reloadFuture.thenCompose { client.reloadResources() }
     }
-
-
-    override fun onLoad() {
-    }
 }
 

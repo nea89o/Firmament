@@ -19,7 +19,9 @@ interface FirmamentFeature : SubscriptionOwner {
         set(value) {
             FeatureManager.setEnabled(identifier, value)
         }
+    override val delegateFeature: FirmamentFeature
+        get() = this
     val config: ManagedConfig? get() = null
-    fun onLoad()
+    fun onLoad() {}
 
 }

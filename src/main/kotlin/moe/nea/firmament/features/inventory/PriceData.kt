@@ -27,11 +27,8 @@ object PriceData : FirmamentFeature {
 
     override val config get() = TConfig
 
-    override fun onLoad() {
-    }
-
     @Subscribe
-    fun function(it: ItemTooltipEvent) {
+    fun onItemTooltip(it: ItemTooltipEvent) {
         if (!TConfig.tooltipEnabled && !TConfig.enableKeybinding.isPressed()) {
             return
         }

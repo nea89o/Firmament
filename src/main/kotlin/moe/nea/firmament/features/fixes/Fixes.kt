@@ -13,6 +13,7 @@ import net.minecraft.client.option.KeyBinding
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.util.Arm
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -50,27 +51,28 @@ object Fixes : FirmamentFeature {
         }
     }
 
-    override fun onLoad() {
-        WorldKeyboardEvent.subscribe {
-            if (it.matches(TConfig.autoSprintKeyBinding)) {
-                TConfig.autoSprint = !TConfig.autoSprint
-            }
-        }
-        HudRenderEvent.subscribe {
-            if (!TConfig.autoSprintKeyBinding.isBound) return@subscribe
-            it.context.matrices.push()
-            TConfig.autoSprintHud.applyTransformations(it.context.matrices)
-            it.context.drawText(
-                MC.font, Text.translatable(
-                    if (TConfig.autoSprint)
-                        "firmament.fixes.auto-sprint.on"
-                    else if (MC.player?.isSprinting == true)
-                        "firmament.fixes.auto-sprint.sprinting"
-                    else
-                        "firmament.fixes.auto-sprint.not-sprinting"
-                ), 0, 0, -1, false
-            )
-            it.context.matrices.pop()
+    @Subscribe
+    fun onRenderHud(it: HudRenderEvent) {
+        if (!TConfig.autoSprintKeyBinding.isBound) return
+        it.context.matrices.push()
+        TConfig.autoSprintHud.applyTransformations(it.context.matrices)
+        it.context.drawText(
+            MC.font, Text.translatable(
+                if (TConfig.autoSprint)
+                    "firmament.fixes.auto-sprint.on"
+                else if (MC.player?.isSprinting == true)
+                    "firmament.fixes.auto-sprint.sprinting"
+                else
+                    "firmament.fixes.auto-sprint.not-sprinting"
+            ), 0, 0, -1, false
+        )
+        it.context.matrices.pop()
+    }
+
+    @Subscribe
+    fun onWorldKeyboard(it: WorldKeyboardEvent) {
+        if (it.matches(TConfig.autoSprintKeyBinding)) {
+            TConfig.autoSprint = !TConfig.autoSprint
         }
     }
 

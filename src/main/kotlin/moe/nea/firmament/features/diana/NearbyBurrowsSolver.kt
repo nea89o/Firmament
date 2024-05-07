@@ -11,15 +11,18 @@ import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Position
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
+import moe.nea.firmament.events.subscription.SubscriptionOwner
+import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.mutableMapWithMaxSize
 import moe.nea.firmament.util.render.RenderInWorldContext.Companion.renderInWorld
 
-object NearbyBurrowsSolver {
+object NearbyBurrowsSolver : SubscriptionOwner {
 
 
     private val recentlyDugBurrows: MutableMap<BlockPos, TimeMark> = mutableMapWithMaxSize(20)
@@ -32,6 +35,7 @@ object NearbyBurrowsSolver {
 
     val burrows = mutableMapOf<BlockPos, BurrowType>()
 
+    @Subscribe
     fun onChatEvent(event: ProcessChatEvent) {
         val lastClickedBurrow = lastBlockClick ?: return
         if (event.unformattedString.startsWith("You dug out a Griffin Burrow!") ||
@@ -62,6 +66,7 @@ object NearbyBurrowsSolver {
         recentEnchantParticles[blockPos] = TimeMark.now()
     }
 
+    @Subscribe
     fun onParticles(event: ParticleSpawnEvent) {
         if (!DianaWaypoints.TConfig.nearbyWaypoints) return
 
@@ -106,6 +111,7 @@ object NearbyBurrowsSolver {
         }
     }
 
+    @Subscribe
     fun onRender(event: WorldRenderLastEvent) {
         if (!DianaWaypoints.TConfig.nearbyWaypoints) return
         renderInWorld(event) {
@@ -120,6 +126,7 @@ object NearbyBurrowsSolver {
         }
     }
 
+    @Subscribe
     fun onSwapWorld(worldReadyEvent: WorldReadyEvent) {
         burrows.clear()
         recentEnchantParticles.clear()
@@ -132,6 +139,9 @@ object NearbyBurrowsSolver {
         burrows.remove(blockPos)
         lastBlockClick = blockPos
     }
+
+    override val delegateFeature: FirmamentFeature
+        get() = DianaWaypoints
 }
 
 fun Position.toBlockPos(): BlockPos {

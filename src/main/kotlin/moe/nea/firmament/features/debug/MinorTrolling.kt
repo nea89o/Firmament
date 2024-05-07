@@ -6,9 +6,10 @@
 
 package moe.nea.firmament.features.debug
 
+import net.minecraft.text.Text
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ModifyChatEvent
 import moe.nea.firmament.features.FirmamentFeature
-import net.minecraft.text.Text
 
 
 // In memorian Dulkir
@@ -19,13 +20,12 @@ object MinorTrolling : FirmamentFeature {
     val trollers = listOf("nea89o", "lrg89")
     val t = "From(?: \\[[^\\]]+])? ([^:]+): (.*)".toRegex()
 
-    override fun onLoad() {
-        ModifyChatEvent.subscribe {
-            val m = t.matchEntire(it.unformattedString) ?: return@subscribe
-            val (_, name, text) = m.groupValues
-            if (name !in trollers) return@subscribe
-            if (!text.startsWith("c:")) return@subscribe
-            it.replaceWith = Text.literal(text.substring(2).replace("&", "§"))
-        }
+    @Subscribe
+    fun onTroll(it: ModifyChatEvent) {
+        val m = t.matchEntire(it.unformattedString) ?: return
+        val (_, name, text) = m.groupValues
+        if (name !in trollers) return
+        if (!text.startsWith("c:")) return
+        it.replaceWith = Text.literal(text.substring(2).replace("&", "§"))
     }
 }

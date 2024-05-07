@@ -12,6 +12,7 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HotbarItemRenderEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
@@ -65,16 +66,18 @@ object ItemRarityCosmetics : FirmamentFeature {
         )
     }
 
-    override fun onLoad() {
-        HotbarItemRenderEvent.subscribe {
-            if (!TConfig.showItemRarityInHotbar) return@subscribe
-            val stack = it.item
-            drawItemStackRarity(it.context, it.x, it.y, stack)
-        }
-        SlotRenderEvents.Before.subscribe {
-            if (!TConfig.showItemRarityBackground) return@subscribe
-            val stack = it.slot.stack ?: return@subscribe
-            drawItemStackRarity(it.context, it.slot.x, it.slot.y, stack)
-        }
+
+    @Subscribe
+    fun onRenderSlot(it: SlotRenderEvents.Before) {
+        if (!TConfig.showItemRarityBackground) return
+        val stack = it.slot.stack ?: return
+        drawItemStackRarity(it.context, it.slot.x, it.slot.y, stack)
+    }
+
+    @Subscribe
+    fun onRenderHotbarItem(it: HotbarItemRenderEvent) {
+        if (!TConfig.showItemRarityInHotbar) return
+        val stack = it.item
+        drawItemStackRarity(it.context, it.x, it.y, stack)
     }
 }

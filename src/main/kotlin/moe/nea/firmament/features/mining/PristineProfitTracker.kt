@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.text.Text
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -62,7 +63,7 @@ object PristineProfitTracker : FirmamentFeature {
 
     val pristineRegex =
         "PRISTINE! You found . Flawed (?<kind>${
-            GemstoneKind.values().joinToString("|") { it.label }
+            GemstoneKind.entries.joinToString("|") { it.label }
         }) Gemstone x(?<count>[0-9,]+)!".toPattern()
 
     val collectionHistogram = Histogram<Double>(10000, 180.seconds)
@@ -97,9 +98,13 @@ object PristineProfitTracker : FirmamentFeature {
         val moneyPerSecond = moneyHistogram.averagePer({ it }, 1.seconds)
         if (collectionPerSecond == null || moneyPerSecond == null) return
         ProfitHud.collectionCurrent = collectionPerSecond
-        ProfitHud.collectionText = Text.stringifiedTranslatable("firmament.pristine-profit.collection", formatCurrency(collectionPerSecond * SECONDS_PER_HOUR, 1)).formattedString()
+        ProfitHud.collectionText = Text.stringifiedTranslatable("firmament.pristine-profit.collection",
+                                                                formatCurrency(collectionPerSecond * SECONDS_PER_HOUR,
+                                                                               1)).formattedString()
         ProfitHud.moneyCurrent = moneyPerSecond
-        ProfitHud.moneyText = Text.stringifiedTranslatable("firmament.pristine-profit.money", formatCurrency(moneyPerSecond * SECONDS_PER_HOUR, 1)).formattedString()
+        ProfitHud.moneyText = Text.stringifiedTranslatable("firmament.pristine-profit.money",
+                                                           formatCurrency(moneyPerSecond * SECONDS_PER_HOUR, 1))
+            .formattedString()
         val data = DConfig.data
         if (data != null) {
             if (data.maxCollectionPerSecond < collectionPerSecond && collectionHistogram.oldestUpdate()
@@ -118,17 +123,16 @@ object PristineProfitTracker : FirmamentFeature {
     }
 
 
-    override fun onLoad() {
-        ProcessChatEvent.subscribe {
-            pristineRegex.useMatch(it.unformattedString) {
-                val gemstoneKind = GemstoneKind.valueOf(group("kind").uppercase())
-                val flawedCount = parseIntWithComma(group("count"))
-                val moneyAmount = sellingStrategy.getSellPrice(gemstoneKind.flawedId) * flawedCount
-                moneyHistogram.record(moneyAmount)
-                val collectionAmount = flawedCount * ROUGHS_PER_FLAWED
-                collectionHistogram.record(collectionAmount.toDouble())
-                updateUi()
-            }
+    @Subscribe
+    fun onMessage(it: ProcessChatEvent) {
+        pristineRegex.useMatch(it.unformattedString) {
+            val gemstoneKind = GemstoneKind.valueOf(group("kind").uppercase())
+            val flawedCount = parseIntWithComma(group("count"))
+            val moneyAmount = sellingStrategy.getSellPrice(gemstoneKind.flawedId) * flawedCount
+            moneyHistogram.record(moneyAmount)
+            val collectionAmount = flawedCount * ROUGHS_PER_FLAWED
+            collectionHistogram.record(collectionAmount.toDouble())
+            updateUi()
         }
     }
 }

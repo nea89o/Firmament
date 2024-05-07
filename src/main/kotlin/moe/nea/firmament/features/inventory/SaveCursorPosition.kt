@@ -27,10 +27,6 @@ object SaveCursorPosition : FirmamentFeature {
     override val config: TConfig
         get() = TConfig
 
-    override fun onLoad() {
-
-    }
-
     var savedPositionedP1: Pair<Double, Double>? = null
     var savedPosition: SavedPosition? = null
 

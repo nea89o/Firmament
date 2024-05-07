@@ -10,6 +10,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.superkat.explosiveenhancement.api.ExplosiveApi
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.math.Vec3d
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -41,15 +42,14 @@ object CompatibliltyFeatures : FirmamentFeature {
         ExplosiveApiWrapperImpl()
     } else null
 
-    override fun onLoad() {
-        ParticleSpawnEvent.subscribe {
-            if (TConfig.enhancedExplosions &&
-                it.particleEffect.type == ParticleTypes.EXPLOSION_EMITTER &&
-                explosiveApiWrapper != null
-            ) {
-                it.cancel()
-                explosiveApiWrapper.spawnParticle(it.position, 2F)
-            }
+    @Subscribe
+    fun onExplosion(it: ParticleSpawnEvent) {
+        if (TConfig.enhancedExplosions &&
+            it.particleEffect.type == ParticleTypes.EXPLOSION_EMITTER &&
+            explosiveApiWrapper != null
+        ) {
+            it.cancel()
+            explosiveApiWrapper.spawnParticle(it.position, 2F)
         }
     }
 }

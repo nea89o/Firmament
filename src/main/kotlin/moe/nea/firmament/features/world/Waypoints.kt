@@ -22,6 +22,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.get
 import moe.nea.firmament.commands.thenArgument
 import moe.nea.firmament.commands.thenExecute
@@ -73,194 +74,203 @@ object Waypoints : FirmamentFeature {
         val b: Int = 0,
     )
 
-    override fun onLoad() {
-        WorldRenderLastEvent.subscribe { event ->
-            temporaryPlayerWaypointList.entries.removeIf { it.value.postedAt.passedTime() > TConfig.tempWaypointDuration }
-            if (temporaryPlayerWaypointList.isNotEmpty())
-                RenderInWorldContext.renderInWorld(event) {
-                    color(1f, 1f, 0f, 1f)
-                    temporaryPlayerWaypointList.forEach { (player, waypoint) ->
-                        block(waypoint.pos)
-                    }
+    @Subscribe
+    fun onRenderOrderedWaypoints(event: WorldRenderLastEvent) {
+        if (waypoints.isEmpty()) return
+        RenderInWorldContext.renderInWorld(event) {
+            if (!ordered) {
+                waypoints.withIndex().forEach {
+                    color(0f, 0.3f, 0.7f, 0.5f)
+                    block(it.value)
                     color(1f, 1f, 1f, 1f)
-                    temporaryPlayerWaypointList.forEach { (player, waypoint) ->
-                        val skin =
-                            MC.networkHandler?.listedPlayerListEntries?.find { it.profile.name == player }
-                                ?.skinTextures
-                                ?.texture
-                        withFacingThePlayer(waypoint.pos.toCenterPos()) {
-                            waypoint(waypoint.pos, Text.stringifiedTranslatable("firmament.waypoint.temporary", player))
-                            if (skin != null) {
-                                matrixStack.translate(0F, -20F, 0F)
-                                // Head front
-                                texture(
-                                    skin, 16, 16,
-                                    1 / 8f, 1 / 8f,
-                                    2 / 8f, 2 / 8f,
-                                )
-                                // Head overlay
-                                texture(
-                                    skin, 16, 16,
-                                    5 / 8f, 1 / 8f,
-                                    6 / 8f, 2 / 8f,
-                                )
-                            }
+                    if (TConfig.showIndex)
+                        withFacingThePlayer(it.value.toCenterPos()) {
+                            text(Text.literal(it.index.toString()))
                         }
-                    }
                 }
-        }
-        WorldReadyEvent.subscribe {
-            temporaryPlayerWaypointList.clear()
-        }
-        CommandEvent.SubCommand.subscribe { event ->
-            event.subcommand("waypoint") {
-                thenArgument("pos", BlockPosArgumentType.blockPos()) { pos ->
-                    thenExecute {
-                        val position = pos.get(this).toAbsoluteBlockPos(source.asFakeServer())
-                        waypoints.add(position)
-                        source.sendFeedback(
-                            Text.stringifiedTranslatable(
-                                "firmament.command.waypoint.added",
-                                position.x,
-                                position.y,
-                                position.z
-                            )
+            } else {
+                orderedIndex %= waypoints.size
+                val firstColor = Color.ofRGBA(0, 200, 40, 180)
+                color(firstColor)
+                tracer(waypoints[orderedIndex].toCenterPos(), lineWidth = 3f)
+                waypoints.withIndex().toList()
+                    .wrappingWindow(orderedIndex, 3)
+                    .zip(
+                        listOf(
+                            firstColor,
+                            Color.ofRGBA(180, 200, 40, 150),
+                            Color.ofRGBA(180, 80, 20, 140),
                         )
-                    }
-                }
-            }
-            event.subcommand("waypoints") {
-                thenLiteral("clear") {
-                    thenExecute {
-                        waypoints.clear()
-                        source.sendFeedback(Text.translatable("firmament.command.waypoint.clear"))
-                    }
-                }
-                thenLiteral("toggleordered") {
-                    thenExecute {
-                        ordered = !ordered
-                        if (ordered) {
-                            val p = MC.player?.pos ?: Vec3d.ZERO
-                            orderedIndex =
-                                waypoints.withIndex().minByOrNull { it.value.getSquaredDistance(p) }?.index ?: 0
-                        }
-                        source.sendFeedback(Text.translatable("firmament.command.waypoint.ordered.toggle.$ordered"))
-                    }
-                }
-                thenLiteral("skip") {
-                    thenExecute {
-                        if (ordered && waypoints.isNotEmpty()) {
-                            orderedIndex = (orderedIndex + 1) % waypoints.size
-                            source.sendFeedback(Text.translatable("firmament.command.waypoint.skip"))
-                        } else {
-                            source.sendError(Text.translatable("firmament.command.waypoint.skip.error"))
-                        }
-                    }
-                }
-                thenLiteral("remove") {
-                    thenArgument("index", IntegerArgumentType.integer(0)) { indexArg ->
-                        thenExecute {
-                            val index = get(indexArg)
-                            if (index in waypoints.indices) {
-                                waypoints.removeAt(index)
-                                source.sendFeedback(Text.stringifiedTranslatable(
-                                    "firmament.command.waypoint.remove",
-                                    index))
-                            } else {
-                                source.sendError(Text.stringifiedTranslatable("firmament.command.waypoint.remove.error"))
-                            }
-                        }
-                    }
-                }
-                thenLiteral("import") {
-                    thenExecute {
-                        val contents = ClipboardUtils.getTextContents()
-                        val data = try {
-                            Firmament.json.decodeFromString<List<ColeWeightWaypoint>>(contents)
-                        } catch (ex: Exception) {
-                            Firmament.logger.error("Could not load waypoints from clipboard", ex)
-                            source.sendError(Text.translatable("firmament.command.waypoint.import.error"))
-                            return@thenExecute
-                        }
-                        waypoints.clear()
-                        data.mapTo(waypoints) { BlockPos(it.x, it.y, it.z) }
-                        source.sendFeedback(
-                            Text.stringifiedTranslatable(
-                                "firmament.command.waypoint.import",
-                                data.size
-                            )
-                        )
-                    }
-                }
-            }
-        }
-        WorldRenderLastEvent.subscribe { event ->
-            if (waypoints.isEmpty()) return@subscribe
-            RenderInWorldContext.renderInWorld(event) {
-                if (!ordered) {
-                    waypoints.withIndex().forEach {
-                        color(0f, 0.3f, 0.7f, 0.5f)
-                        block(it.value)
+                    )
+                    .reversed()
+                    .forEach { (waypoint, col) ->
+                        val (index, pos) = waypoint
+                        color(col)
+                        block(pos)
                         color(1f, 1f, 1f, 1f)
                         if (TConfig.showIndex)
-                            withFacingThePlayer(it.value.toCenterPos()) {
-                                text(Text.literal(it.index.toString()))
+                            withFacingThePlayer(pos.toCenterPos()) {
+                                text(Text.literal(index.toString()))
                             }
                     }
-                } else {
-                    orderedIndex %= waypoints.size
-                    val firstColor = Color.ofRGBA(0, 200, 40, 180)
-                    color(firstColor)
-                    tracer(waypoints[orderedIndex].toCenterPos(), lineWidth = 3f)
-                    waypoints.withIndex().toList()
-                        .wrappingWindow(orderedIndex, 3)
-                        .zip(
-                            listOf(
-                                firstColor,
-                                Color.ofRGBA(180, 200, 40, 150),
-                                Color.ofRGBA(180, 80, 20, 140),
-                            )
+            }
+        }
+    }
+
+    @Subscribe
+    fun onTick(event: TickEvent) {
+        if (waypoints.isEmpty() || !ordered) return
+        orderedIndex %= waypoints.size
+        val p = MC.player?.pos ?: return
+        if (TConfig.skipToNearest) {
+            orderedIndex =
+                (waypoints.withIndex().minBy { it.value.getSquaredDistance(p) }.index + 1) % waypoints.size
+        } else {
+            if (waypoints[orderedIndex].isWithinDistance(p, 3.0)) {
+                orderedIndex = (orderedIndex + 1) % waypoints.size
+            }
+        }
+    }
+
+    @Subscribe
+    fun onProcessChat(it: ProcessChatEvent) {
+        val matcher = temporaryPlayerWaypointMatcher.matcher(it.unformattedString)
+        if (it.nameHeuristic != null && TConfig.tempWaypointDuration > 0.seconds && matcher.find()) {
+            temporaryPlayerWaypointList[it.nameHeuristic] = TemporaryWaypoint(
+                BlockPos(
+                    matcher.group(1).toInt(),
+                    matcher.group(2).toInt(),
+                    matcher.group(3).toInt(),
+                ),
+                TimeMark.now()
+            )
+        }
+    }
+
+    @Subscribe
+    fun onCommand(event: CommandEvent.SubCommand) {
+        event.subcommand("waypoint") {
+            thenArgument("pos", BlockPosArgumentType.blockPos()) { pos ->
+                thenExecute {
+                    val position = pos.get(this).toAbsoluteBlockPos(source.asFakeServer())
+                    waypoints.add(position)
+                    source.sendFeedback(
+                        Text.stringifiedTranslatable(
+                            "firmament.command.waypoint.added",
+                            position.x,
+                            position.y,
+                            position.z
                         )
-                        .reversed()
-                        .forEach { (waypoint, col) ->
-                            val (index, pos) = waypoint
-                            color(col)
-                            block(pos)
-                            color(1f, 1f, 1f, 1f)
-                            if (TConfig.showIndex)
-                                withFacingThePlayer(pos.toCenterPos()) {
-                                    text(Text.literal(index.toString()))
-                                }
+                    )
+                }
+            }
+        }
+        event.subcommand("waypoints") {
+            thenLiteral("clear") {
+                thenExecute {
+                    waypoints.clear()
+                    source.sendFeedback(Text.translatable("firmament.command.waypoint.clear"))
+                }
+            }
+            thenLiteral("toggleordered") {
+                thenExecute {
+                    ordered = !ordered
+                    if (ordered) {
+                        val p = MC.player?.pos ?: Vec3d.ZERO
+                        orderedIndex =
+                            waypoints.withIndex().minByOrNull { it.value.getSquaredDistance(p) }?.index ?: 0
+                    }
+                    source.sendFeedback(Text.translatable("firmament.command.waypoint.ordered.toggle.$ordered"))
+                }
+            }
+            thenLiteral("skip") {
+                thenExecute {
+                    if (ordered && waypoints.isNotEmpty()) {
+                        orderedIndex = (orderedIndex + 1) % waypoints.size
+                        source.sendFeedback(Text.translatable("firmament.command.waypoint.skip"))
+                    } else {
+                        source.sendError(Text.translatable("firmament.command.waypoint.skip.error"))
+                    }
+                }
+            }
+            thenLiteral("remove") {
+                thenArgument("index", IntegerArgumentType.integer(0)) { indexArg ->
+                    thenExecute {
+                        val index = get(indexArg)
+                        if (index in waypoints.indices) {
+                            waypoints.removeAt(index)
+                            source.sendFeedback(Text.stringifiedTranslatable(
+                                "firmament.command.waypoint.remove",
+                                index))
+                        } else {
+                            source.sendError(Text.stringifiedTranslatable("firmament.command.waypoint.remove.error"))
                         }
+                    }
+                }
+            }
+            thenLiteral("import") {
+                thenExecute {
+                    val contents = ClipboardUtils.getTextContents()
+                    val data = try {
+                        Firmament.json.decodeFromString<List<ColeWeightWaypoint>>(contents)
+                    } catch (ex: Exception) {
+                        Firmament.logger.error("Could not load waypoints from clipboard", ex)
+                        source.sendError(Text.translatable("firmament.command.waypoint.import.error"))
+                        return@thenExecute
+                    }
+                    waypoints.clear()
+                    data.mapTo(waypoints) { BlockPos(it.x, it.y, it.z) }
+                    source.sendFeedback(
+                        Text.stringifiedTranslatable(
+                            "firmament.command.waypoint.import",
+                            data.size
+                        )
+                    )
                 }
             }
         }
-        TickEvent.subscribe {
-            if (waypoints.isEmpty() || !ordered) return@subscribe
-            orderedIndex %= waypoints.size
-            val p = MC.player?.pos ?: return@subscribe
-            if (TConfig.skipToNearest) {
-                orderedIndex =
-                    (waypoints.withIndex().minBy { it.value.getSquaredDistance(p) }.index + 1) % waypoints.size
-            } else {
-                if (waypoints[orderedIndex].isWithinDistance(p, 3.0)) {
-                    orderedIndex = (orderedIndex + 1) % waypoints.size
+    }
+
+    @Subscribe
+    fun onRenderTemporaryWaypoints(event: WorldRenderLastEvent) {
+        temporaryPlayerWaypointList.entries.removeIf { it.value.postedAt.passedTime() > TConfig.tempWaypointDuration }
+        if (temporaryPlayerWaypointList.isEmpty()) return
+        RenderInWorldContext.renderInWorld(event) {
+            color(1f, 1f, 0f, 1f)
+            temporaryPlayerWaypointList.forEach { (player, waypoint) ->
+                block(waypoint.pos)
+            }
+            color(1f, 1f, 1f, 1f)
+            temporaryPlayerWaypointList.forEach { (player, waypoint) ->
+                val skin =
+                    MC.networkHandler?.listedPlayerListEntries?.find { it.profile.name == player }
+                        ?.skinTextures
+                        ?.texture
+                withFacingThePlayer(waypoint.pos.toCenterPos()) {
+                    waypoint(waypoint.pos, Text.stringifiedTranslatable("firmament.waypoint.temporary", player))
+                    if (skin != null) {
+                        matrixStack.translate(0F, -20F, 0F)
+                        // Head front
+                        texture(
+                            skin, 16, 16,
+                            1 / 8f, 1 / 8f,
+                            2 / 8f, 2 / 8f,
+                        )
+                        // Head overlay
+                        texture(
+                            skin, 16, 16,
+                            5 / 8f, 1 / 8f,
+                            6 / 8f, 2 / 8f,
+                        )
+                    }
                 }
             }
         }
-        ProcessChatEvent.subscribe {
-            val matcher = temporaryPlayerWaypointMatcher.matcher(it.unformattedString)
-            if (it.nameHeuristic != null && TConfig.tempWaypointDuration > 0.seconds && matcher.find()) {
-                temporaryPlayerWaypointList[it.nameHeuristic] = TemporaryWaypoint(
-                    BlockPos(
-                        matcher.group(1).toInt(),
-                        matcher.group(2).toInt(),
-                        matcher.group(3).toInt(),
-                    ),
-                    TimeMark.now()
-                )
-            }
-        }
+    }
+
+    @Subscribe
+    fun onWorldReady(event: WorldReadyEvent) {
+        temporaryPlayerWaypointList.clear()
     }
 }
 

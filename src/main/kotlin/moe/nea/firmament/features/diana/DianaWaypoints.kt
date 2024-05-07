@@ -28,23 +28,12 @@ object DianaWaypoints : FirmamentFeature {
     }
 
     override fun onLoad() {
-        ParticleSpawnEvent.subscribe(NearbyBurrowsSolver::onParticles)
-        WorldReadyEvent.subscribe(NearbyBurrowsSolver::onSwapWorld)
-        WorldRenderLastEvent.subscribe(NearbyBurrowsSolver::onRender)
         UseBlockEvent.subscribe {
             NearbyBurrowsSolver.onBlockClick(it.hitResult.blockPos)
         }
         AttackBlockEvent.subscribe {
             NearbyBurrowsSolver.onBlockClick(it.blockPos)
         }
-        ProcessChatEvent.subscribe(NearbyBurrowsSolver::onChatEvent)
-
-
-        WorldKeyboardEvent.subscribe(AncestralSpadeSolver::onKeyBind)
-        ParticleSpawnEvent.subscribe(AncestralSpadeSolver::onParticleSpawn)
-        SoundReceiveEvent.subscribe(AncestralSpadeSolver::onPlaySound)
-        WorldRenderLastEvent.subscribe(AncestralSpadeSolver::onWorldRender)
-        WorldReadyEvent.subscribe(AncestralSpadeSolver::onSwapWorld)
     }
 }
 

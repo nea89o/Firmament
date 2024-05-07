@@ -10,17 +10,20 @@ import kotlin.time.Duration.Companion.seconds
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.math.Vec3d
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ParticleSpawnEvent
 import moe.nea.firmament.events.SoundReceiveEvent
 import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
+import moe.nea.firmament.events.subscription.SubscriptionOwner
+import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.WarpUtil
 import moe.nea.firmament.util.render.RenderInWorldContext
 
-object AncestralSpadeSolver {
+object AncestralSpadeSolver : SubscriptionOwner {
     var lastDing = TimeMark.farPast()
         private set
     private val pitches = mutableListOf<Float>()
@@ -33,6 +36,7 @@ object AncestralSpadeSolver {
     fun isEnabled() =
         DianaWaypoints.TConfig.ancestralSpadeSolver && SBData.skyblockLocation == "hub"
 
+    @Subscribe
     fun onKeyBind(event: WorldKeyboardEvent) {
         if (!isEnabled()) return
         if (!event.matches(DianaWaypoints.TConfig.ancestralSpadeTeleport)) return
@@ -42,6 +46,7 @@ object AncestralSpadeSolver {
         lastTeleportAttempt = TimeMark.now()
     }
 
+    @Subscribe
     fun onParticleSpawn(event: ParticleSpawnEvent) {
         if (!isEnabled()) return
         if (event.particleEffect != ParticleTypes.DRIPPING_LAVA) return
@@ -53,6 +58,7 @@ object AncestralSpadeSolver {
         }
     }
 
+    @Subscribe
     fun onPlaySound(event: SoundReceiveEvent) {
         if (!isEnabled()) return
         if (!SoundEvents.BLOCK_NOTE_BLOCK_HARP.matchesId(event.sound.value().id)) return
@@ -92,6 +98,7 @@ object AncestralSpadeSolver {
         nextGuess = event.position.add(lastParticleDirection.multiply(soundDistanceEstimate))
     }
 
+    @Subscribe
     fun onWorldRender(event: WorldRenderLastEvent) {
         if (!isEnabled()) return
         RenderInWorldContext.renderInWorld(event) {
@@ -108,11 +115,15 @@ object AncestralSpadeSolver {
         }
     }
 
+    @Subscribe
     fun onSwapWorld(event: WorldReadyEvent) {
         nextGuess = null
         particlePositions.clear()
         pitches.clear()
         lastDing = TimeMark.farPast()
     }
+
+    override val delegateFeature: FirmamentFeature
+        get() = DianaWaypoints
 
 }

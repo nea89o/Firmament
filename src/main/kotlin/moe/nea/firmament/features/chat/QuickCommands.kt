@@ -8,6 +8,7 @@ package moe.nea.firmament.features.chat
 
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.text.Text
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.DefaultSource
 import moe.nea.firmament.commands.RestArgumentType
 import moe.nea.firmament.commands.get
@@ -34,28 +35,29 @@ object QuickCommands : FirmamentFeature {
 
     val kuudraLevelNames = listOf("NORMAL", "HOT", "BURNING", "FIERY", "INFERNAL")
     val dungeonLevelNames = listOf("ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN")
-    override fun onLoad() {
-        CommandEvent.subscribe {
-            it.register("join") {
-                thenArgument("what", RestArgumentType) { what ->
-                    thenExecute {
-                        val what = this[what]
-                        if (!SBData.isOnSkyblock) {
-                            MC.sendCommand("join $what")
-                            return@thenExecute
-                        }
-                        val joinName = getNameForFloor(what.replace(" ", "").lowercase())
-                        if (joinName == null) {
-                            source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown", what))
-                        } else {
-                            source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.success", joinName))
-                            MC.sendCommand("joininstance $joinName")
-                        }
+
+    @Subscribe
+    fun onCommands(it: CommandEvent) {
+        it.register("join") {
+            thenArgument("what", RestArgumentType) { what ->
+                thenExecute {
+                    val what = this[what]
+                    if (!SBData.isOnSkyblock) {
+                        MC.sendCommand("join $what")
+                        return@thenExecute
+                    }
+                    val joinName = getNameForFloor(what.replace(" ", "").lowercase())
+                    if (joinName == null) {
+                        source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown", what))
+                    } else {
+                        source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.success",
+                                                                         joinName))
+                        MC.sendCommand("joininstance $joinName")
                     }
                 }
-                thenExecute {
-                    source.sendFeedback(Text.translatable("firmament.quick-commands.join.explain"))
-                }
+            }
+            thenExecute {
+                source.sendFeedback(Text.translatable("firmament.quick-commands.join.explain"))
             }
         }
     }
@@ -70,7 +72,8 @@ object QuickCommands : FirmamentFeature {
                 )
             }
             if (l !in kuudraLevelNames.indices) {
-                source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown-kuudra", kuudraLevel))
+                source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown-kuudra",
+                                                                 kuudraLevel))
                 return null
             }
             return "KUUDRA_${kuudraLevelNames[l]}"
@@ -90,7 +93,8 @@ object QuickCommands : FirmamentFeature {
                 return "CATACOMBS_ENTRANCE"
             }
             if (l !in dungeonLevelNames.indices) {
-                source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown-catacombs", kuudraLevel))
+                source.sendFeedback(Text.stringifiedTranslatable("firmament.quick-commands.join.unknown-catacombs",
+                                                                 kuudraLevel))
                 return null
             }
             return "${if (masterLevel != null) "MASTER_" else ""}CATACOMBS_FLOOR_${dungeonLevelNames[l]}"
