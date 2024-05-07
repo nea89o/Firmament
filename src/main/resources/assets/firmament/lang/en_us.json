@@ -126,6 +126,7 @@
     "firmament.config.item-rarity-cosmetics.background": "Slot Background Rarity",
     "firmament.config.item-rarity-cosmetics.background-hotbar": "Hotbar Background Rarity",
     "firmament.hud.edit": "Edit %s",
+    "firmament.key.category": "Firmament",
     "firmament.keybinding.external": "External",
     "firmament.config.slot-locking": "Slot Locking",
     "firmament.config.slot-locking.lock": "Lock Slot",
