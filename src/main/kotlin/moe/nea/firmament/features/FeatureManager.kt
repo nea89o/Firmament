@@ -10,7 +10,10 @@ package moe.nea.firmament.features
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.annotations.generated.AllSubscriptions
 import moe.nea.firmament.events.FeaturesInitializedEvent
+import moe.nea.firmament.events.FirmamentEvent
+import moe.nea.firmament.events.subscription.Subscription
 import moe.nea.firmament.features.chat.AutoCompletions
 import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.chat.QuickCommands
@@ -80,8 +83,23 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
                 loadFeature(DebugView)
             }
             allFeatures.forEach { it.config }
+            subscribeEvents()
             FeaturesInitializedEvent.publish(FeaturesInitializedEvent(allFeatures.toList()))
             hasAutoloaded = true
+        }
+    }
+
+    private fun subscribeEvents() {
+        AllSubscriptions.provideSubscriptions {
+            subscribeSingleEvent(it)
+        }
+    }
+
+    private fun <T : FirmamentEvent> subscribeSingleEvent(it: Subscription<T>) {
+        if (it.owner in features.values) { // TODO: better check here, somehow. probably implement some interface method
+            it.eventBus.subscribe(false, it.invoke) // TODO: pass through receivesCancelled from the annotation
+        } else {
+            Firmament.logger.error("Ignoring event listener for ${it.eventBus} in ${it.owner}")
         }
     }
 

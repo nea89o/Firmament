@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     `maven-publish`
+    id("com.google.devtools.ksp") version "1.9.23-1.0.20"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.serialization") version "1.9.23"
 //    id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
@@ -170,6 +171,9 @@ dependencies {
 
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+
+    implementation(project(":symbols"))
+    ksp(project(":symbols"))
 }
 
 tasks.test {
@@ -193,8 +197,8 @@ loom {
             parseEnvFile(file(".env")).forEach { (t, u) ->
                 environmentVariable(t, u)
             }
-            parseEnvFile(file(".properties")).forEach{ (t, u) ->
-                property(t,u)
+            parseEnvFile(file(".properties")).forEach { (t, u) ->
+                property(t, u)
             }
             vmArg("-ea")
             vmArg("-XX:+AllowEnhancedClassRedefinition")

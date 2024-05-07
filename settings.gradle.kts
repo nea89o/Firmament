@@ -1,6 +1,10 @@
-// SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
-//
-// SPDX-License-Identifier: CC0-1.0
+/*
+ * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+ *
+ * SPDX-License-Identifier: CC0-1.0
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 pluginManagement {
     repositories {
@@ -28,3 +32,4 @@ pluginManagement {
 
 rootProject.name = "Firmament"
 
+include("symbols")
