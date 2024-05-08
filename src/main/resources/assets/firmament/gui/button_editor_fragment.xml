@@ -8,7 +8,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 <Root xmlns="http://notenoughupdates.org/moulconfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://notenoughupdates.org/moulconfig https://raw.githubusercontent.com/NotEnoughUpdates/MoulConfig/master/MoulConfig.xsd">
-    <Panel>
+    <Panel background="VANILLA" insets="10">
         <Column>
             <Row>
                 <ItemStack value="@getItemIcon"/>

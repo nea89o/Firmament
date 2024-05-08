@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -20,10 +21,10 @@ import moe.nea.firmament.util.SkyblockId
 
 @Serializable
 data class InventoryButton(
-    val x: Int,
-    val y: Int,
-    val anchorRight: Boolean,
-    val anchorBottom: Boolean,
+    var x: Int,
+    var y: Int,
+    var anchorRight: Boolean,
+    var anchorBottom: Boolean,
     var icon: String? = "",
     var command: String? = "",
 ) {

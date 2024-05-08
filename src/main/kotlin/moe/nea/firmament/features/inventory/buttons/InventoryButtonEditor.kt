@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -7,8 +8,8 @@
 package moe.nea.firmament.features.inventory.buttons
 
 import io.github.notenoughupdates.moulconfig.common.IItemStack
-import io.github.notenoughupdates.moulconfig.xml.Bind
 import io.github.notenoughupdates.moulconfig.platform.ModernItemStack
+import io.github.notenoughupdates.moulconfig.xml.Bind
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import org.lwjgl.glfw.GLFW
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec2f
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.FragmentGuiScreen
 import moe.nea.firmament.util.MC
@@ -83,9 +85,12 @@ class InventoryButtonEditor(
     }
 
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+        super.render(context, mouseX, mouseY, delta)
+        context.matrices.push()
+        context.matrices.translate(0f, 0f, -10f)
         context.fill(lastGuiRect.minX, lastGuiRect.minY, lastGuiRect.maxX, lastGuiRect.maxY, -1)
         context.setShaderColor(1f, 1f, 1f, 1f)
-        super.render(context, mouseX, mouseY, delta)
+        context.matrices.pop()
         for (button in buttons) {
             val buttonPosition = button.getBounds(lastGuiRect)
             context.matrices.push()
@@ -104,22 +109,56 @@ class InventoryButtonEditor(
         return false
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        if (super.mouseClicked(mouseX, mouseY, button)) return true
+    override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
+        if (super.mouseReleased(mouseX, mouseY, button)) return true
         val clickedButton = buttons.firstOrNull { it.getBounds(lastGuiRect).contains(Point(mouseX, mouseY)) }
-        if (clickedButton != null) {
+        if (clickedButton != null && !justPerformedAClickAction) {
             createPopup(MoulConfigUtils.loadGui("button_editor_fragment", Editor(clickedButton)), Point(mouseX, mouseY))
             return true
         }
-        if (lastGuiRect.contains(mouseX, mouseY) || lastGuiRect.contains(
+        justPerformedAClickAction = false
+        lastDraggedButton = null
+        return false
+    }
+
+    override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
+        if (super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) return true
+
+        if (initialDragMousePosition.distanceSquared(Vec2f(mouseX.toFloat(), mouseY.toFloat())) >= 4 * 4) {
+            initialDragMousePosition = Vec2f(-10F, -10F)
+            lastDraggedButton?.let { dragging ->
+                justPerformedAClickAction = true
+                val (anchorRight, anchorBottom, offsetX, offsetY) = getCoordsForMouse(mouseX.toInt(), mouseY.toInt())
+                    ?: return true
+                dragging.x = offsetX
+                dragging.y = offsetY
+                dragging.anchorRight = anchorRight
+                dragging.anchorBottom = anchorBottom
+            }
+        }
+        return false
+    }
+
+    var lastDraggedButton: InventoryButton? = null
+    var justPerformedAClickAction = false
+    var initialDragMousePosition = Vec2f(-10F, -10F)
+
+    data class AnchoredCoords(
+        val anchorRight: Boolean,
+        val anchorBottom: Boolean,
+        val offsetX: Int,
+        val offsetY: Int,
+    )
+
+    fun getCoordsForMouse(mx: Int, my: Int): AnchoredCoords? {
+        if (lastGuiRect.contains(mx, my) || lastGuiRect.contains(
                 Point(
-                    mouseX + InventoryButton.dimensions.width,
-                    mouseY + InventoryButton.dimensions.height,
+                    mx + InventoryButton.dimensions.width,
+                    my + InventoryButton.dimensions.height,
                 )
             )
-        ) return true
-        val mx = mouseX.toInt()
-        val my = mouseY.toInt()
+        ) return null
+
         val anchorRight = mx > lastGuiRect.maxX
         val anchorBottom = my > lastGuiRect.maxY
         var offsetX = mx - if (anchorRight) lastGuiRect.maxX else lastGuiRect.minX
@@ -128,7 +167,22 @@ class InventoryButtonEditor(
             offsetX = MathHelper.floor(offsetX / 20F) * 20
             offsetY = MathHelper.floor(offsetY / 20F) * 20
         }
+        return AnchoredCoords(anchorRight, anchorBottom, offsetX, offsetY)
+    }
+
+    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+        if (super.mouseClicked(mouseX, mouseY, button)) return true
+        val clickedButton = buttons.firstOrNull { it.getBounds(lastGuiRect).contains(Point(mouseX, mouseY)) }
+        if (clickedButton != null) {
+            lastDraggedButton = clickedButton
+            initialDragMousePosition = Vec2f(mouseX.toFloat(), mouseY.toFloat())
+            return true
+        }
+        val mx = mouseX.toInt()
+        val my = mouseY.toInt()
+        val (anchorRight, anchorBottom, offsetX, offsetY) = getCoordsForMouse(mx, my) ?: return true
         buttons.add(InventoryButton(offsetX, offsetY, anchorRight, anchorBottom, null, null))
+        justPerformedAClickAction = true
         return true
     }
 
