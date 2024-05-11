@@ -8,13 +8,15 @@
 package moe.nea.firmament
 
 import com.mojang.brigadier.CommandDispatcher
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.compression.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
+import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
@@ -36,11 +38,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import kotlin.coroutines.EmptyCoroutineContext
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.dbus.FirmamentDbusObject
+import moe.nea.firmament.events.ClientStartedEvent
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.events.ScreenRenderPostEvent
@@ -133,6 +137,9 @@ object Firmament {
         FeatureManager.autoload()
         HypixelStaticData.spawnDataCollectionLoop()
         ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
+        ClientLifecycleEvents.CLIENT_STARTED.register(ClientLifecycleEvents.ClientStarted {
+            ClientStartedEvent.publish(ClientStartedEvent())
+        })
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
             logger.info("Shutting down Firmament coroutines")
             globalJob.cancel()
@@ -151,4 +158,9 @@ object Firmament {
 
 
     fun identifier(path: String) = Identifier(MOD_ID, path)
+    inline fun <reified T : Any> tryDecodeJsonFromStream(inputStream: InputStream): Result<T> {
+        return runCatching {
+            json.decodeFromStream<T>(inputStream)
+        }
+    }
 }

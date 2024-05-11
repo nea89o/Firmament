@@ -157,3 +157,49 @@ armor you can use `assets/firmskyblock/textures/models/armor/{skyblock_id}_layer
 regular leather colors. If you want the leather colors to be applied, supply the normal non-`_overlay` variant, and
 also supply a blank `_overlay` variant. You can also put non-color-affected parts into the `_overlay` variant.
 
+## Global Item Texture Replacement
+
+Most texture replacement is done based on the SkyBlock id of the item. However, some items you might want to re-texture
+do not have an id. The next best alternative you had before was just to replace the vanilla item and add a bunch of
+predicates. This tries to fix this problem, at the cost of being more performance intensive than the other re-texturing 
+methods.
+
+The entrypoint to global overrides is `firmskyblock:overrides/item`. Put your overrides into that folder, with one file
+per override.
+
+```json5
+{
+    "screen": "testrp:chocolate_factory",
+    "model": "testrp:time_tower",
+    "predicate": {
+        "firmament:display_name": {
+            "regex": "Time Tower.*"
+        }
+    }
+}
+```
+
+There are three parts to the override.
+
+The `model` is an *item id* that the item will be replaced with. This means the
+model will be loaded from `assets/<namespace>/models/item/<id>.json`.  Make sure to use your own namespace to
+avoid collisions with other texture packs that might use the same id for a gui.
+
+The `predicate` is just a normal [predicate](#predicates). This one does not support the vanilla predicates. You can
+still use vanilla predicates in the resolved model, but this will not allow you to fall back to other global overrides.
+
+### Global item texture Screens
+
+In order to improve performance not all overrides are tested all the time. Instead you can prefilter by the screen that
+is open. First the gui is resolved to `assets/<namespace>/filters/screen/<id>.json`. Make sure to use your own namespace
+to avoid collisions with other texture packs that might use the same id for a screen.
+
+```json
+{
+    "title": "Chocolate Factory"
+}
+```
+
+Currently, the only supported filter is `title`, which accepts a [string matcher](#string-matcher). You can also use
+`firmament:always` as an always on filter (this is the recommended way).
+

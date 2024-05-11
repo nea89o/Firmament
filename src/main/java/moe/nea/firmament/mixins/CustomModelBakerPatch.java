@@ -1,11 +1,13 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 package moe.nea.firmament.mixins;
 
+import moe.nea.firmament.events.BakeExtraModelsEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.UnbakedModel;
@@ -39,12 +41,7 @@ public abstract class CustomModelBakerPatch {
 
     @Inject(method = "bake", at = @At("HEAD"))
     public void onBake(BiFunction<Identifier, SpriteIdentifier, Sprite> spriteLoader, CallbackInfo ci) {
-        Map<Identifier, Resource> resources =
-            MinecraftClient.getInstance().getResourceManager().findResources("models/item", it -> "firmskyblock".equals(it.getNamespace()) && it.getPath().endsWith(".json"));
-        for (Identifier identifier : resources.keySet()) {
-            ModelIdentifier modelId = new ModelIdentifier("firmskyblock", identifier.getPath().substring("models/item/".length(), identifier.getPath().length() - ".json".length()), "inventory");
-            addModel(modelId);
-        }
+        BakeExtraModelsEvent.Companion.publish(new BakeExtraModelsEvent(this::addModel));
         modelsToBake.values().forEach(model -> model.setParents(this::getOrLoadModel));
     }
 }

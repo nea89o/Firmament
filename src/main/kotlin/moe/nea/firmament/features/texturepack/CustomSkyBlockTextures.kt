@@ -17,6 +17,7 @@ import net.minecraft.client.util.ModelIdentifier
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.util.Identifier
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.events.BakeExtraModelsEvent
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -44,6 +45,23 @@ object CustomSkyBlockTextures : FirmamentFeature {
         if (TConfig.cacheDuration < 1 || it.tickCount % TConfig.cacheDuration == 0) {
             CustomItemModelEvent.clearCache()
             skullTextureCache.clear()
+        }
+    }
+
+    @Subscribe
+    fun bakeCustomFirmModels(event: BakeExtraModelsEvent) {
+        val resources =
+            MinecraftClient.getInstance().resourceManager.findResources("models/item"
+            ) { it: Identifier ->
+                "firmskyblock" == it.namespace && it.path
+                    .endsWith(".json")
+            }
+        for (identifier in resources.keys) {
+            val modelId = ModelIdentifier("firmskyblock",
+                                          identifier.path.substring("models/item/".length,
+                                                                    identifier.path.length - ".json".length),
+                                          "inventory")
+            event.addModel(modelId)
         }
     }
 
