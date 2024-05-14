@@ -11,6 +11,7 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 
 object CustomModelOverrideParser {
@@ -45,13 +46,21 @@ object CustomModelOverrideParser {
         registerPredicateParser("item", ItemPredicate.Parser)
     }
 
+    private val neverPredicate = listOf(
+        object : FirmamentModelPredicate {
+            override fun test(stack: ItemStack): Boolean {
+                return false
+            }
+        }
+    )
+
     fun parsePredicates(predicates: JsonObject): List<FirmamentModelPredicate> {
         val parsedPredicates = mutableListOf<FirmamentModelPredicate>()
         for (predicateName in predicates.keySet()) {
             if (!predicateName.startsWith("firmament:")) continue
             val identifier = Identifier(predicateName)
-            val parser = predicateParsers[identifier] ?: continue
-            val parsedPredicate = parser.parse(predicates[predicateName]) ?: continue
+            val parser = predicateParsers[identifier] ?: return neverPredicate
+            val parsedPredicate = parser.parse(predicates[predicateName]) ?: return neverPredicate
             parsedPredicates.add(parsedPredicate)
         }
         return parsedPredicates
