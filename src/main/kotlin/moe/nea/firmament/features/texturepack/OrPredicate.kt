@@ -24,7 +24,7 @@ class OrPredicate(val children: Array<FirmamentModelPredicate>) : FirmamentModel
                         CustomModelOverrideParser.parsePredicates(it as JsonObject)
                     }
                     .toTypedArray()
-            return AndPredicate(children)
+            return OrPredicate(children)
         }
 
     }

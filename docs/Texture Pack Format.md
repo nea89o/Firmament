@@ -86,6 +86,36 @@ Filter by item type:
 "firmament:item": "minecraft:clock"
 ```
 
+#### Extra attributes
+
+Filter by extra attribute NBT data:
+
+Specify a `path` to look at, separating sub elements with a `.`. You can use a `*` to check any child.
+
+Then either specify a `match` sub-object or directly inline that object in the format of an [nbt matcher](#nbt-matcher).
+
+Inlined match:
+
+```json5
+"firmament:extra_attributes": {
+    "path": "gems.JADE_0",
+    "string": "PERFECT"
+}
+```
+
+Sub object match:
+
+```json5
+"firmament:extra_attributes": {
+    "path": "gems.JADE_0",
+    "match": {
+        "string": "PERFECT"
+    }    
+}
+```
+
+
+
 #### Logic Operators
 
 Logic operators allow to combine other firmament predicates into one. This is done by building boolean operators:
@@ -148,6 +178,48 @@ specify one of these other matchers and one color preserving property.
   // You can use an "equals" property to test if the entire string is equal to some value. 
   // Equals is faster than regex, but also more limited.  
   "equals": "Some Text"    
+}
+```
+
+### Nbt Matcher
+
+This matches a single nbt element.
+
+Have the type of the nbt element as json key. Can be `string`, `int`, `float`, `double`, `long`, `short` and `byte`.
+
+The `string` type matches like a regular [string matcher](#string-matcher):
+
+```json
+"string": {
+    "color": "strip",
+    "regex": "^aaa bbb$"
+}
+```
+
+The other (numeric) types can either be matched directly against a number:
+
+```json
+"int": 10
+```
+
+Or as a range:
+
+```json
+"long": {
+    "min": 0,
+    "max": 1000
+}
+```
+
+Min and max are both optional, but you need to specify at least one. By default `min` is inclusive and `max` is exclusive.
+You can override that like so:
+
+```json
+"short": {
+    "min": 0,
+    "max": 1000,
+    "minExclusive": true,
+    "maxExclusive": false
 }
 ```
 

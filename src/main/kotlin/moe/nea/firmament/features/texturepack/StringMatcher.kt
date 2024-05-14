@@ -46,12 +46,20 @@ interface StringMatcher {
         override fun matches(string: String): Boolean {
             return expected == (if (stripColorCodes) string.removeColorCodes() else string)
         }
+
+        override fun toString(): String {
+            return "Equals($expected, stripColorCodes = $stripColorCodes)"
+        }
     }
 
-    class Pattern(patternWithColorCodes: String, val stripColorCodes: Boolean) : StringMatcher {
+    class Pattern(val patternWithColorCodes: String, val stripColorCodes: Boolean) : StringMatcher {
         private val regex: Predicate<String> = patternWithColorCodes.toPattern().asMatchPredicate()
         override fun matches(string: String): Boolean {
             return regex.test(if (stripColorCodes) string.removeColorCodes() else string)
+        }
+
+        override fun toString(): String {
+            return "Pattern($patternWithColorCodes, stripColorCodes = $stripColorCodes)"
         }
     }
 
@@ -73,7 +81,7 @@ interface StringMatcher {
     }
 
     companion object {
-        fun serialize(stringMatcher: StringMatcher):JsonElement {
+        fun serialize(stringMatcher: StringMatcher): JsonElement {
             TODO("Cannot serialize string matchers rn")
         }
 
