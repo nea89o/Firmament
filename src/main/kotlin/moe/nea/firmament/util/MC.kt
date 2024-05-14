@@ -13,6 +13,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import net.minecraft.registry.BuiltinRegistries
+import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.RegistryWrapper
 import net.minecraft.resource.ReloadableResourceManagerImpl
 import net.minecraft.text.Text
@@ -74,6 +75,7 @@ object MC {
     inline val window get() = MinecraftClient.getInstance().window
     inline val currentRegistries: RegistryWrapper.WrapperLookup? get() = world?.registryManager
     val defaultRegistries: RegistryWrapper.WrapperLookup = BuiltinRegistries.createWrapperLookup()
+    val defaultItems = defaultRegistries.getWrapperOrThrow(RegistryKeys.ITEM)
 }
 
 

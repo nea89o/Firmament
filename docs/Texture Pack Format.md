@@ -78,6 +78,14 @@ Tries to find at least one lore line that matches the given [string matcher](#st
 }
 ```
 
+#### Item type
+
+Filter by item type:
+
+```json
+"firmament:item": "minecraft:clock"
+```
+
 #### Logic Operators
 
 Logic operators allow to combine other firmament predicates into one. This is done by building boolean operators:

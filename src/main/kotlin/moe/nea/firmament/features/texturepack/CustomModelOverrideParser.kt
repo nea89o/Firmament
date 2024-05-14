@@ -42,6 +42,7 @@ object CustomModelOverrideParser {
         registerPredicateParser("all", AndPredicate.Parser)
         registerPredicateParser("any", OrPredicate.Parser)
         registerPredicateParser("not", NotPredicate.Parser)
+        registerPredicateParser("item", ItemPredicate.Parser)
     }
 
     fun parsePredicates(predicates: JsonObject): List<FirmamentModelPredicate> {
@@ -50,7 +51,7 @@ object CustomModelOverrideParser {
             if (!predicateName.startsWith("firmament:")) continue
             val identifier = Identifier(predicateName)
             val parser = predicateParsers[identifier] ?: continue
-            val parsedPredicate = parser.parse(predicates[predicateName])
+            val parsedPredicate = parser.parse(predicates[predicateName]) ?: continue
             parsedPredicates.add(parsedPredicate)
         }
         return parsedPredicates
