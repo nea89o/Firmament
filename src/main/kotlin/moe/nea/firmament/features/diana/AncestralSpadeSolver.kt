@@ -110,7 +110,7 @@ object AncestralSpadeSolver : SubscriptionOwner {
             }
             if (particlePositions.size > 2 && lastDing.passedTime() < 10.seconds && nextGuess != null) {
                 color(0f, 1f, 0f, 0.7f)
-                line(*particlePositions.toTypedArray())
+                line(particlePositions)
             }
         }
     }

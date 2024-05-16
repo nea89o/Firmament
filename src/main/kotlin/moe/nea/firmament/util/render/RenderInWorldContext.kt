@@ -151,12 +151,24 @@ class RenderInWorldContext private constructor(
 
     fun line(points: List<Vec3d>, lineWidth: Float = 10F) {
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram)
-        RenderSystem.lineWidth(lineWidth / pow(camera.pos.squaredDistanceTo(points.first()), 0.25).toFloat())
+        RenderSystem.lineWidth(lineWidth)
         buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
         buffer.fixedColor(255, 255, 255, 255)
 
+        val matrix = matrixStack.peek()
+        var lastNormal: Vector3f? = null
         points.zipWithNext().forEach { (a, b) ->
-            doLine(matrixStack.peek(), buffer, a.x, a.y, a.z, b.x, b.y, b.z)
+            val normal = Vector3f(b.x.toFloat(), b.y.toFloat(), b.z.toFloat())
+                .sub(a.x.toFloat(), a.y.toFloat(), a.z.toFloat())
+                .normalize()
+            val lastNormal0 = lastNormal ?: normal
+            lastNormal = normal
+            buffer.vertex(matrix.positionMatrix, a.x.toFloat(), a.y.toFloat(), a.z.toFloat())
+                .normal(matrix, lastNormal0.x, lastNormal0.y, lastNormal0.z)
+                .next()
+            buffer.vertex(matrix.positionMatrix, b.x.toFloat(), b.y.toFloat(), b.z.toFloat())
+                .normal(matrix, normal.x, normal.y, normal.z)
+                .next()
         }
         buffer.unfixColor()
 
@@ -167,20 +179,22 @@ class RenderInWorldContext private constructor(
         private fun doLine(
             matrix: MatrixStack.Entry,
             buf: BufferBuilder,
-            i: Number,
-            j: Number,
-            k: Number,
-            x: Number,
-            y: Number,
-            z: Number
+            i: Float,
+            j: Float,
+            k: Float,
+            x: Float,
+            y: Float,
+            z: Float
         ) {
-            val normal = Vector3f(x.toFloat(), y.toFloat(), z.toFloat())
-                .sub(i.toFloat(), j.toFloat(), k.toFloat())
+            val normal = Vector3f(x, y, z)
+                .sub(i, j, k)
                 .normalize()
-            buf.vertex(matrix.positionMatrix, i.toFloat(), j.toFloat(), k.toFloat())
-                .normal(matrix, normal.x, normal.y, normal.z).next()
-            buf.vertex(matrix.positionMatrix, x.toFloat(), y.toFloat(), z.toFloat())
-                .normal(matrix, normal.x, normal.y, normal.z).next()
+            buf.vertex(matrix.positionMatrix, i, j, k)
+                .normal(matrix, normal.x, normal.y, normal.z)
+                .next()
+            buf.vertex(matrix.positionMatrix, x, y, z)
+                .normal(matrix, normal.x, normal.y, normal.z)
+                .next()
         }
 
 
@@ -190,9 +204,11 @@ class RenderInWorldContext private constructor(
 
             for (i in 0..1) {
                 for (j in 0..1) {
-                    doLine(matrix, buf, 0, i, j, 1, i, j)
-                    doLine(matrix, buf, i, 0, j, i, 1, j)
-                    doLine(matrix, buf, i, j, 0, i, j, 1)
+                    val i = i.toFloat()
+                    val j = j.toFloat()
+                    doLine(matrix, buf, 0F, i, j, 1F, i, j)
+                    doLine(matrix, buf, i, 0F, j, i, 1F, j)
+                    doLine(matrix, buf, i, j, 0F, i, j, 1F)
                 }
             }
             buf.unfixColor()
