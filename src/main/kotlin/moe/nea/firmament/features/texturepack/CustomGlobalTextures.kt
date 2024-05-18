@@ -33,6 +33,7 @@ import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.IdentifierSerializer
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.json.SingletonSerializableList
 import moe.nea.firmament.util.runNull
 
 object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalTextures.CustomGuiTextureOverride>(),
@@ -46,7 +47,7 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 
     @Serializable
     data class GlobalItemOverride(
-        val screen: Identifier,
+        val screen: @Serializable(SingletonSerializableList::class) List<Identifier>,
         val model: Identifier,
         val predicate: FirmamentModelPredicate,
     )
@@ -107,7 +108,8 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
                     }
                 }
 
-        val byGuiClass = overrideResources.groupBy { it.screen }
+        val byGuiClass = overrideResources.flatMap { override -> override.screen.toSet().map { it to override } }
+            .groupBy { it.first }
         val guiClasses = byGuiClass.entries
             .mapNotNull {
                 val key = it.key
@@ -123,7 +125,7 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
                             logger.error("Failed to load screen filter at $key", ex)
                             return@mapNotNull null
                         }
-                ItemOverrideCollection(screenFilter, it.value)
+                ItemOverrideCollection(screenFilter, it.value.map { it.second })
             }
         logger.info("Loaded ${overrideResources.size} global item overrides")
         return CustomGuiTextureOverride(guiClasses)
@@ -131,14 +133,14 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 
     var guiClassOverrides = CustomGuiTextureOverride(listOf())
 
-    var matchingOverrides: List<ItemOverrideCollection> = listOf()
+    var matchingOverrides: Set<ItemOverrideCollection> = setOf()
 
     @Subscribe
     fun onOpenGui(event: ScreenChangeEvent) {
         val newTitle = event.new?.title
         matchingOverrides =
-            if (newTitle == null) listOf()
-            else guiClassOverrides.classes.filter { it.screenFilter.title.matches(newTitle) }
+            if (newTitle == null) setOf()
+            else guiClassOverrides.classes.filterTo(mutableSetOf()) { it.screenFilter.title.matches(newTitle) }
     }
 
     @JvmStatic

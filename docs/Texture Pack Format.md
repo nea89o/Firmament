@@ -268,6 +268,9 @@ avoid collisions with other texture packs that might use the same id for a gui.
 The `predicate` is just a normal [predicate](#predicates). This one does not support the vanilla predicates. You can
 still use vanilla predicates in the resolved model, but this will not allow you to fall back to other global overrides.
 
+The `screen` specifies which screens your override will work on. This is purely for performance reasons, your filter
+should work purely based on predicates if possible. You can specify multiply screens by using a json array.
+
 ### Global item texture Screens
 
 In order to improve performance not all overrides are tested all the time. Instead you can prefilter by the screen that
