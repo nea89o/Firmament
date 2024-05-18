@@ -21,6 +21,6 @@ var ItemStack.loreAccordingToNbt
 val ItemStack.displayNameAccordingToNbt
     get() = get(DataComponentTypes.CUSTOM_NAME) ?: get(DataComponentTypes.ITEM_NAME) ?: item.name
 
-fun ItemStack.setCustomName(literal: Text) {
-    set(DataComponentTypes.CUSTOM_NAME, literal)
+fun ItemStack.setCustomName(text: Text) {
+    set(DataComponentTypes.CUSTOM_NAME, text)
 }

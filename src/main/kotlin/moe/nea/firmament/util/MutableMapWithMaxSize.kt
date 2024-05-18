@@ -11,3 +11,22 @@ fun <K, V> mutableMapWithMaxSize(maxSize: Int): MutableMap<K, V> = object : Link
         return size > maxSize
     }
 }
+
+fun <T, R> ((T) -> R).memoizeIdentity(maxCacheSize: Int): (T) -> R {
+    val memoized = { it: IdentityCharacteristics<T> ->
+        this(it.value)
+    }.memoize(maxCacheSize)
+    return { memoized(IdentityCharacteristics(it)) }
+}
+
+private val SENTINEL_NULL = java.lang.Object()
+fun <T, R> ((T) -> R).memoize(maxCacheSize: Int): (T) -> R {
+    val map = mutableMapWithMaxSize<T, Any>(maxCacheSize)
+    return {
+        val value = map.computeIfAbsent(it) { innerValue ->
+            this(innerValue) ?: SENTINEL_NULL
+        }
+        if (value == SENTINEL_NULL) null as R
+        else value as R
+    }
+}

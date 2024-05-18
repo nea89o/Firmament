@@ -19,6 +19,9 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.item.loreAccordingToNbt
+import moe.nea.firmament.util.lastNotNullOfOrNull
+import moe.nea.firmament.util.memoize
+import moe.nea.firmament.util.memoizeIdentity
 import moe.nea.firmament.util.unformattedString
 
 object ItemRarityCosmetics : FirmamentFeature {
@@ -48,15 +51,19 @@ object ItemRarityCosmetics : FirmamentFeature {
         val c = Color(it.value.colorValue!!)
         Triple(c.red / 255F, c.green / 255F, c.blue / 255F)
     }
-    private val ItemStack.skyblockLoreRarityColor: Triple<Float, Float, Float>?
-        get() {
-            val entry = loreAccordingToNbt.lastOrNull()?.unformattedString ?: ""
-            return rarityToColor.entries.find { (k, v) -> k in entry }?.value
+
+    private fun getSkyblockRarity0(itemStack: ItemStack): Triple<Float, Float, Float>? {
+        return itemStack.loreAccordingToNbt.lastNotNullOfOrNull {
+            val entry = it.unformattedString
+            rarityToColor.entries.find { (k, v) -> k in entry }?.value
         }
+    }
+
+    val getSkyblockRarity = ::getSkyblockRarity0.memoizeIdentity(100)
 
 
     fun drawItemStackRarity(drawContext: DrawContext, x: Int, y: Int, item: ItemStack) {
-        val (r, g, b) = item.skyblockLoreRarityColor ?: return
+        val (r, g, b) = getSkyblockRarity(item) ?: return
         drawContext.drawSprite(
             x, y,
             0,
