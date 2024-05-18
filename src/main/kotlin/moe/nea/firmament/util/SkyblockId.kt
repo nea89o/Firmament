@@ -11,10 +11,9 @@ package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
-import java.util.*
+import java.util.UUID
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
@@ -31,7 +30,15 @@ import moe.nea.firmament.util.json.DashlessUUIDSerializer
 @JvmInline
 @Serializable
 value class SkyblockId(val neuItem: String) {
-    val identifier get() = Identifier("skyblockitem", neuItem.lowercase().replace(";", "__").replace(":", "___"))
+    val identifier
+        get() = Identifier("skyblockitem",
+                           neuItem.lowercase().replace(";", "__")
+                               .replace(":", "___")
+                               .replace(illlegalPathRegex) {
+                                   it.value.toCharArray()
+                                       .joinToString("") { "__" + it.code.toString(16).padStart(4, '0') }
+                               })
+
     override fun toString(): String {
         return neuItem
     }
@@ -58,6 +65,7 @@ value class SkyblockId(val neuItem: String) {
         private val bazaarEnchantmentRegex = "ENCHANTMENT_(\\D*)_(\\d+)".toRegex()
         val NULL: SkyblockId = SkyblockId("null")
         val PET_NULL: SkyblockId = SkyblockId("null_pet")
+        private val illlegalPathRegex = "[^a-z0-9_.-/]".toRegex()
     }
 }
 
