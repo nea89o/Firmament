@@ -35,6 +35,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
         val skullsEnabled by toggle("skulls-enabled") { true }
         val cacheDuration by integer("cache-duration", 0, 20) { 1 }
         val enableModelOverrides by toggle("model-overrides") { true }
+        val enableArmorOverrides by toggle("armor-overrides") { true }
     }
 
     override val config: ManagedConfig
