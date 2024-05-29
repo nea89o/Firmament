@@ -153,6 +153,7 @@
     "firmament.config.fixes.player-skins": "Fix unsigned Player Skins",
     "firmament.config.power-user.show-item-id": "Show SkyBlock Ids",
     "firmament.config.power-user.copy-item-id": "Copy SkyBlock Id",
+    "firmament.modapi.event": "Received mod API event: %s",
     "firmament.config.power-user.copy-texture-pack-id": "Copy Texture Pack Id",
     "firmament.config.power-user.copy-skull-texture": "Copy Placed Skull Id",
     "firmament.config.power-user.copy-nbt-data": "Copy NBT data",
