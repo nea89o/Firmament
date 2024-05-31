@@ -9,6 +9,8 @@ package moe.nea.firmament.features.inventory.storageoverlay
 
 import io.ktor.util.decodeBase64Bytes
 import io.ktor.util.encodeBase64
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -20,10 +22,8 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtIo
 import net.minecraft.nbt.NbtList
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtSizeTracker
-import moe.nea.firmament.util.MC
 
 @Serializable(with = VirtualInventory.Serializer::class)
 data class VirtualInventory(
@@ -46,13 +46,21 @@ data class VirtualInventory(
             val s = decoder.decodeString()
             val n = NbtIo.readCompressed(ByteArrayInputStream(s.decodeBase64Bytes()), NbtSizeTracker.of(100_000_000))
             val items = n.getList(INVENTORY, NbtCompound.COMPOUND_TYPE.toInt())
-            return VirtualInventory(items.map { ItemStack.fromNbtOrEmpty(MC.defaultRegistries, it as NbtCompound) })
+            return VirtualInventory(items.map {
+                it as NbtCompound
+                if (it.isEmpty) ItemStack.EMPTY
+                else runCatching {
+                    ItemStack.CODEC.parse(NbtOps.INSTANCE, it).orThrow
+                }.getOrElse { ItemStack.EMPTY }
+            })
         }
 
         override fun serialize(encoder: Encoder, value: VirtualInventory) {
             val list = NbtList()
             value.stacks.forEach {
-                list.add(it.encode(MC.defaultRegistries))
+                if (it.isEmpty) list.add(NbtCompound())
+                else list.add(runCatching { ItemStack.CODEC.encode(it, NbtOps.INSTANCE, NbtCompound()).orThrow }
+                                  .getOrElse { NbtCompound() })
             }
             val baos = ByteArrayOutputStream()
             NbtIo.writeCompressed(NbtCompound().also { it.put(INVENTORY, list) }, baos)
