@@ -4,6 +4,6 @@
 
 repos:
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v1.0.0
+    rev: v3.1.0a1
     hooks:
       - id: reuse
