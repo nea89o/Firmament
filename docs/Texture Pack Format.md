@@ -227,15 +227,97 @@ You can override that like so:
 
 You can re-*texture* armors, but not re-*model* them with firmament. 
 
-To do so, simply place the layer 1 and layer 2 armor
-texture files at `assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_1.png` and
-`assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_2.png` respectively.
+To retexture a piece of armor place a json file at `assets/firmskyblock/overrides/armor_models/*.json`.
 
-If you want to re-texture a leather
-armor you can use `assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_1_overlay.png` and
-`assets/firmskyblock/textures/models/armor/{skyblock_id}_layer_2_overlay.png` instead. Doing this will cancel out the
-regular leather colors. If you want the leather colors to be applied, supply the normal non-`_overlay` variant, and
-also supply a blank `_overlay` variant. You can also put non-color-affected parts into the `_overlay` variant.
+```json
+{
+    "item_ids": [
+        "TARANTULA_BOOTS",
+        "TARANTULA_LEGGINGS",
+        // ETC
+    ],
+    "layers": [
+        {
+            "identifier": "firmskyblock:tarantula"
+        }
+    ]
+}
+```
+
+Only one such file can exist per item id, but multiple item ids can share one texture file this way.
+
+The `item_ids` is the items to which this override will apply when worn. Those are neu repo ids (so what will be shown
+in game as the regular SkyBlock id, not the resource pack identifier).
+
+### Layers
+
+The `layers` specify the multiple texture layers that will be used when rendering. For non leather armor, or armor
+ignoring the leather armor ting just one layer is enough.
+
+If you want to apply armor tint to the texture you will usually want two layers. The first layer has a tint applied:
+
+```json
+{
+    "identifier": "firmskyblock:angler",
+    "tint": true
+}
+```
+
+This will tint the texture before it is being rendered.
+
+The second layer will have no tint applied, but will have a suffix:
+
+```json
+{
+    "identifier": "firmskyblock:angler",
+    "suffix": "_overlay"
+}
+```
+
+This second layer is used for the countours of the armor.
+
+The layer identifier will resolve to a texture file path according to vanilla armor texture rules like so:
+
+`assets/{identifier.namespace}/textures/models/armor/{identifier.path}_layer_{isLegs ? 2 : 1}{suffix}.png`
+
+Note that there is no automatic underscore insertion for suffix, so you will need to manually specify it if you want.
+
+The leg armor piece uses a different texture, same as with vanilla.
+
+### Overrides
+
+You can also apply overrides to these layers. These work similar to item predicate overrides, but only the custom
+Firmament predicates will work. You will also just directly specify new layers instead of delegating to another file.
+
+```json
+{
+    "item_ids": [
+        "TARANTULA_BOOTS",
+        "TARANTULA_LEGGINGS",
+        // ETC
+    ],
+    "layers": [
+        {
+            "identifier": "firmskyblock:tarantula"
+        }
+    ],
+    "overrides": [
+        {
+            "layers": [
+                {
+                    "identifier": "firmskyblock:tarantula_maxed"
+                }
+            ],
+            "predicate": {
+                "firmament:lore": {
+                    "regex": "Piece Bonus: +285.*"
+                }
+            }
+        }
+    ]
+}
+```
+
 
 ## Global Item Texture Replacement
 
