@@ -59,6 +59,7 @@ object AllConfigsGui {
             it.insets = Insets.ROOT_PANEL
             box.layout()
             it.add(WFixedPanel((WScrollPanel((box)).also {
+                it.verticalScrollBar.scrollingSpeed = 12
                 it.setSize(400, 300)
             })))
             it.setSize(400, 300)
