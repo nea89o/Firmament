@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+on:
+    release:
+        types:
+            - published
+
+jobs:
+    upload-to-modrinth:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: dsaltares/fetch-gh-release-asset@master
+              with:
+                  version: ${{ github.event.release.id }}
+                  regex: true
+                  file: ".*\\.jar"
+                  token: ${{ secrets.GITHUB_TOKEN }}
+            - run: |
+                  printf %s "$CHANGELOG" > CHANGELOG.md
+              env:
+                  CHANGELOG: ${{ github.event.release.body }}
+            - uses: Kir-Antipov/mc-publish@v3.3
+              with:
+                  modrinth-id: IJNUBZ2a
+                  modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+                  files: "*.jar"
+                  loaders: fabric
+                  game-versions: 1.20.6
+                  version: ${{ github.event.release.tag_name }}
