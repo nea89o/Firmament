@@ -16,6 +16,7 @@ jobs:
                   version: ${{ github.event.release.id }}
                   regex: true
                   file: ".*\\.jar"
+                  target: '.'
                   token: ${{ secrets.GITHUB_TOKEN }}
             - run: |
                   printf %s "$CHANGELOG" > CHANGELOG.md
