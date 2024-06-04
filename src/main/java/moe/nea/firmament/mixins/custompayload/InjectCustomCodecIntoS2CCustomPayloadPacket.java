@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-package moe.nea.firmament.mixins;
+package moe.nea.firmament.mixins.custompayload;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -12,14 +12,14 @@ import moe.nea.firmament.apis.ingame.InGameCodecWrapper;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.List;
 
-@Mixin(priority = 1001, value = CustomPayloadC2SPacket.class)
-public class WrapCustomPayloadC2SPacketCodec {
+@Mixin(priority = 1001, value = CustomPayloadS2CPacket.class)
+public abstract class InjectCustomCodecIntoS2CCustomPayloadPacket {
 
     @WrapOperation(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/CustomPayload;createCodec(Lnet/minecraft/network/packet/CustomPayload$CodecFactory;Ljava/util/List;)Lnet/minecraft/network/codec/PacketCodec;"))
     private static PacketCodec<PacketByteBuf, CustomPayload> wrapFactory(
@@ -29,6 +29,6 @@ public class WrapCustomPayloadC2SPacketCodec {
 
         var originalCodec = original.call(unknownCodecFactory, types);
 
-        return new InGameCodecWrapper(originalCodec, InGameCodecWrapper.Direction.C2S);
+        return new InGameCodecWrapper(originalCodec, InGameCodecWrapper.Direction.S2C);
     }
 }

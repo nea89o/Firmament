@@ -56,23 +56,30 @@ object MC {
         player?.networkHandler?.sendCommand(command)
     }
 
-    inline val resourceManager get() = (MinecraftClient.getInstance().resourceManager as ReloadableResourceManagerImpl)
+    fun onMainThread(block: () -> Unit) {
+        if (instance.isOnThread)
+            block()
+        else
+            instance.send(block)
+    }
+
+    inline val resourceManager get() = (instance.resourceManager as ReloadableResourceManagerImpl)
     inline val networkHandler get() = player?.networkHandler
     inline val instance get() = MinecraftClient.getInstance()
-    inline val keyboard get() = MinecraftClient.getInstance().keyboard
-    inline val textureManager get() = MinecraftClient.getInstance().textureManager
-    inline val inGameHud get() = MinecraftClient.getInstance().inGameHud
-    inline val font get() = MinecraftClient.getInstance().textRenderer
-    inline val soundManager get() = MinecraftClient.getInstance().soundManager
-    inline val player get() = MinecraftClient.getInstance().player
-    inline val camera get() = MinecraftClient.getInstance().cameraEntity
-    inline val guiAtlasManager get() = MinecraftClient.getInstance().guiAtlasManager
-    inline val world get() = MinecraftClient.getInstance().world
+    inline val keyboard get() = instance.keyboard
+    inline val textureManager get() = instance.textureManager
+    inline val inGameHud get() = instance.inGameHud
+    inline val font get() = instance.textRenderer
+    inline val soundManager get() = instance.soundManager
+    inline val player get() = instance.player
+    inline val camera get() = instance.cameraEntity
+    inline val guiAtlasManager get() = instance.guiAtlasManager
+    inline val world get() = instance.world
     inline var screen
-        get() = MinecraftClient.getInstance().currentScreen
-        set(value) = MinecraftClient.getInstance().setScreen(value)
-    inline val handledScreen: HandledScreen<*>? get() = MinecraftClient.getInstance().currentScreen as? HandledScreen<*>
-    inline val window get() = MinecraftClient.getInstance().window
+        get() = instance.currentScreen
+        set(value) = instance.setScreen(value)
+    inline val handledScreen: HandledScreen<*>? get() = instance.currentScreen as? HandledScreen<*>
+    inline val window get() = instance.window
     inline val currentRegistries: RegistryWrapper.WrapperLookup? get() = world?.registryManager
     val defaultRegistries: RegistryWrapper.WrapperLookup = BuiltinRegistries.createWrapperLookup()
     val defaultItems = defaultRegistries.getWrapperOrThrow(RegistryKeys.ITEM)

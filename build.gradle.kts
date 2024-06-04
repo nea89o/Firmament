@@ -74,6 +74,8 @@ repositories {
             excludeModule("io.github.cottonmc", "LibGui")
         }
     }
+    maven( "https://repo.hypixel.net/repository/Hypixel/")
+    maven("https://maven.azureaaron.net/snapshots")
 }
 
 kotlin {

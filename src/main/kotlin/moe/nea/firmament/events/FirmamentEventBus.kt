@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -8,6 +9,7 @@ package moe.nea.firmament.events
 
 import java.util.concurrent.CopyOnWriteArrayList
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.util.MC
 
 /**
  * A pubsub event bus.
@@ -47,4 +49,9 @@ open class FirmamentEventBus<T : FirmamentEvent> {
         return event
     }
 
+    fun publishSync(event: T) {
+        MC.onMainThread {
+            publish(event)
+        }
+    }
 }
