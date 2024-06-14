@@ -29,7 +29,7 @@ hotswap_agent = "1.4.2-SNAPSHOT"
 mixinextras = "0.3.5"
 jarvis = "1.1.1"
 nealisp = "1.0.0"
-moulconfig = "3.0.0-beta.5"
+moulconfig = "3.0.0-beta.12"
 manninghamMills = "2.4.1"
 
 [libraries]

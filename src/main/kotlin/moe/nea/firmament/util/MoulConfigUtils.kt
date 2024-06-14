@@ -12,6 +12,8 @@ import io.github.notenoughupdates.moulconfig.xml.ChildCount
 import io.github.notenoughupdates.moulconfig.xml.XMLContext
 import io.github.notenoughupdates.moulconfig.xml.XMLGuiLoader
 import io.github.notenoughupdates.moulconfig.xml.XMLUniverse
+import io.github.notenoughupdates.moulconfig.xml.XSDGenerator
+import java.io.File
 import javax.xml.namespace.QName
 import me.shedaniel.math.Color
 import org.w3c.dom.Element
@@ -38,7 +40,7 @@ object MoulConfigUtils {
             val color = uni.mapXMLObject(it, java.awt.Color::class.java)
             Color.ofRGBA(color.red, color.green, color.blue, color.alpha)
         }
-        uni.registerLoader(object : XMLGuiLoader<BarComponent> {
+        uni.registerLoader(object : XMLGuiLoader.Basic<BarComponent> {
             override fun getName(): QName {
                 return QName(firmUrl, "Bar")
             }
@@ -60,6 +62,28 @@ object MoulConfigUtils {
                 return mapOf("progress" to true, "total" to true, "emptyColor" to true, "fillColor" to true)
             }
         })
+    }
+
+    fun generateXSD(
+        file: File,
+        namespace: String
+    ) {
+        val generator = XSDGenerator(universe, namespace)
+        generator.writeAll()
+        generator.dumpToFile(file)
+    }
+
+    @JvmStatic
+    fun main(args: Array<out String>) {
+        generateXSD(File("MoulConfig.xsd"), XMLUniverse.MOULCONFIG_XML_NS)
+        generateXSD(File("MoulConfig.Firmament.xsd"), firmUrl)
+        File("wrapper.xsd").writeText("""
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import namespace="http://notenoughupdates.org/moulconfig" schemaLocation="MoulConfig.xsd"/>
+    <xs:import namespace="http://firmament.nea.moe/moulconfig" schemaLocation="MoulConfig.Firmament.xsd"/>
+</xs:schema>
+        """.trimIndent())
     }
 
     fun loadGui(name: String, bindTo: Any): GuiContext {

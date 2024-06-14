@@ -27,3 +27,5 @@ gradle-app.setting
 
 # loom runClient
 /run/
+*.xsd
+
