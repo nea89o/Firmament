@@ -6,7 +6,6 @@
 
 package moe.nea.firmament.apis.ingame
 
-import net.hypixel.modapi.fabric.event.HypixelModAPICallback
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket
 import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
@@ -31,9 +30,6 @@ object HypixelModAPI : SubscriptionOwner {
             InGameCodecWrapper.createStealthyCodec(
                 PartyInfoResponse.intoType()
             )
-        HypixelModAPICallback.EVENT.register(HypixelModAPICallback {
-            MC.sendChat(Text.literal("Official API: $it"))
-        })
     }
 
     @JvmStatic

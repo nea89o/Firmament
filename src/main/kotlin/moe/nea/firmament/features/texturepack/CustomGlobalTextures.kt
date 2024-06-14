@@ -21,6 +21,7 @@ import net.minecraft.client.util.ModelIdentifier
 import net.minecraft.item.ItemStack
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
@@ -32,7 +33,9 @@ import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.IdentifierSerializer
+import moe.nea.firmament.util.IdentityCharacteristics
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.computeNullableFunction
 import moe.nea.firmament.util.json.SingletonSerializableList
 import moe.nea.firmament.util.runNull
 
@@ -137,11 +140,12 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 
     @Subscribe
     fun onOpenGui(event: ScreenChangeEvent) {
-        val newTitle = event.new?.title
-        matchingOverrides =
-            if (newTitle == null) setOf()
-            else guiClassOverrides.classes.filterTo(mutableSetOf()) { it.screenFilter.title.matches(newTitle) }
+        val newTitle = event.new?.title ?: Text.empty()
+        matchingOverrides = guiClassOverrides.classes
+            .filterTo(mutableSetOf()) { it.screenFilter.title.matches(newTitle) }
     }
+
+    val overrideCache = mutableMapOf<IdentityCharacteristics<ItemStack>, Any>()
 
     @JvmStatic
     fun replaceGlobalModel(
@@ -149,14 +153,19 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
         stack: ItemStack,
         cir: CallbackInfoReturnable<BakedModel>
     ) {
-        for (guiClassOverride in matchingOverrides) {
-            for (override in guiClassOverride.overrides) {
-                if (override.predicate.test(stack)) {
-                    cir.returnValue = models.modelManager.getModel(ModelIdentifier(override.model, "inventory"))
-                    return
+        val value = overrideCache.computeNullableFunction(IdentityCharacteristics(stack)) {
+            for (guiClassOverride in matchingOverrides) {
+                for (override in guiClassOverride.overrides) {
+                    if (override.predicate.test(stack)) {
+                        return@computeNullableFunction models.modelManager.getModel(
+                            ModelIdentifier(override.model, "inventory"))
+                    }
                 }
             }
+            null
         }
+        if (value != null)
+            cir.returnValue = value
     }
 
 

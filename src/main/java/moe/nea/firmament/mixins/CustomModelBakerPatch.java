@@ -43,5 +43,8 @@ public abstract class CustomModelBakerPatch {
     public void onBake(BiFunction<Identifier, SpriteIdentifier, Sprite> spriteLoader, CallbackInfo ci) {
         BakeExtraModelsEvent.Companion.publish(new BakeExtraModelsEvent(this::addModel));
         modelsToBake.values().forEach(model -> model.setParents(this::getOrLoadModel));
+        modelsToBake.keySet().stream()
+            .filter(it -> !it.getNamespace().equals("minecraft"))
+            .forEach(it -> System.out.println("Non minecraft texture is being loaded: " + it));
     }
 }

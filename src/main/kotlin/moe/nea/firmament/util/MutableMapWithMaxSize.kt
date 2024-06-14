@@ -19,14 +19,25 @@ fun <T, R> ((T) -> R).memoizeIdentity(maxCacheSize: Int): (T) -> R {
     return { memoized(IdentityCharacteristics(it)) }
 }
 
-private val SENTINEL_NULL = java.lang.Object()
+@PublishedApi
+internal val SENTINEL_NULL = java.lang.Object()
+
+/**
+ * Requires the map to only contain values of type [R] or [SENTINEL_NULL]. This is ensured if the map is only ever
+ * accessed via this function.
+ */
+inline fun <T, R> MutableMap<T, Any>.computeNullableFunction(key: T, crossinline func: () -> R): R {
+    val value = this.getOrPut(key) {
+        func() ?: SENTINEL_NULL
+    }
+    @Suppress("UNCHECKED_CAST")
+    return if (value === SENTINEL_NULL) null as R
+    else value as R
+}
+
 fun <T, R> ((T) -> R).memoize(maxCacheSize: Int): (T) -> R {
     val map = mutableMapWithMaxSize<T, Any>(maxCacheSize)
     return {
-        val value = map.computeIfAbsent(it) { innerValue ->
-            this(innerValue) ?: SENTINEL_NULL
-        }
-        if (value == SENTINEL_NULL) null as R
-        else value as R
+        map.computeNullableFunction(it) { this@memoize(it) }
     }
 }

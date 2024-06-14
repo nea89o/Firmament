@@ -9,6 +9,7 @@ package moe.nea.firmament.features.texturepack
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
+import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents.Custom
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import net.minecraft.block.SkullBlock
 import net.minecraft.client.MinecraftClient
@@ -44,8 +45,11 @@ object CustomSkyBlockTextures : FirmamentFeature {
     @Subscribe
     fun onTick(it: TickEvent) {
         if (TConfig.cacheDuration < 1 || it.tickCount % TConfig.cacheDuration == 0) {
+            // TODO: unify all of those caches somehow
             CustomItemModelEvent.clearCache()
             skullTextureCache.clear()
+            CustomGlobalTextures.overrideCache.clear()
+            CustomGlobalArmorOverrides.overrideCache.clear()
         }
     }
 

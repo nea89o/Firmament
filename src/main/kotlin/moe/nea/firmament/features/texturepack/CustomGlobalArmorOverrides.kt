@@ -25,6 +25,8 @@ import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.features.texturepack.CustomGlobalTextures.logger
 import moe.nea.firmament.util.IdentifierSerializer
+import moe.nea.firmament.util.IdentityCharacteristics
+import moe.nea.firmament.util.computeNullableFunction
 import moe.nea.firmament.util.skyBlockId
 
 object CustomGlobalArmorOverrides : SubscriptionOwner {
@@ -62,17 +64,21 @@ object CustomGlobalArmorOverrides : SubscriptionOwner {
     override val delegateFeature: FirmamentFeature
         get() = CustomSkyBlockTextures
 
+    val overrideCache = mutableMapOf<IdentityCharacteristics<ItemStack>, Any>()
+
     @JvmStatic
     fun overrideArmor(stack: ItemStack): List<ArmorMaterial.Layer>? {
         if (!CustomSkyBlockTextures.TConfig.enableArmorOverrides) return null
-        val id = stack.skyBlockId ?: return null
-        val override = overrides[id.neuItem] ?: return null
-        for (suboverride in override.overrides) {
-            if (suboverride.predicate.test(stack)) {
-                return suboverride.bakedLayers
+        return overrideCache.computeNullableFunction(IdentityCharacteristics(stack)) {
+            val id = stack.skyBlockId ?: return@computeNullableFunction null
+            val override = overrides[id.neuItem] ?: return@computeNullableFunction null
+            for (suboverride in override.overrides) {
+                if (suboverride.predicate.test(stack)) {
+                    return@computeNullableFunction suboverride.bakedLayers
+                }
             }
+            return@computeNullableFunction override.bakedLayers
         }
-        return override.bakedLayers
     }
 
     var overrides: Map<String, ArmorOverride> = mapOf()
