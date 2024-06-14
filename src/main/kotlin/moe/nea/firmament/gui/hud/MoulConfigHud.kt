@@ -30,11 +30,16 @@ abstract class MoulConfigHud(
 
     private var fragment: GuiContext? = null
 
+    fun forceInit() {
+
+    }
+
     open fun shouldRender(): Boolean {
         return true
     }
 
     init {
+        require(name.matches("^[a-z_/]+$".toRegex()))
         HudRenderEvent.subscribe {
             if (!shouldRender()) return@subscribe
             val renderContext = componentWrapper.createContext(it.context)

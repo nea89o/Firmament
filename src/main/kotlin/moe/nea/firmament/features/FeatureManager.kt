@@ -22,6 +22,7 @@ import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.MinorTrolling
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.diana.DianaWaypoints
+import moe.nea.firmament.features.events.anniversity.AnniversaryFeatures
 import moe.nea.firmament.features.fixes.CompatibliltyFeatures
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
@@ -70,6 +71,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(ChatLinks)
             loadFeature(InventoryButtons)
             loadFeature(CompatibliltyFeatures)
+            loadFeature(AnniversaryFeatures)
             loadFeature(QuickCommands)
             loadFeature(SaveCursorPosition)
             loadFeature(CustomSkyBlockTextures)

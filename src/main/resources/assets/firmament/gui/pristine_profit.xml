@@ -7,7 +7,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 <Root xmlns="http://notenoughupdates.org/moulconfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:firm="http://nea.moe/Firmament"
+      xmlns:firm="http://firmament.nea.moe/moulconfig"
       xsi:schemaLocation="http://notenoughupdates.org/moulconfig https://raw.githubusercontent.com/NotEnoughUpdates/MoulConfig/master/MoulConfig.xsd">
     <Column>
         <Row>

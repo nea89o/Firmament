@@ -18,7 +18,7 @@ import org.w3c.dom.Element
 import moe.nea.firmament.gui.BarComponent
 
 object MoulConfigUtils {
-    val firmUrl = "http://nea.moe/Firmament"
+    val firmUrl = "http://firmament.nea.moe/moulconfig"
     val universe = XMLUniverse.getDefaultUniverse().also { uni ->
         uni.registerMapper(java.awt.Color::class.java) {
             if (it.startsWith("#")) {

@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
-public class HudRenderEvents {
-    @Inject(method = "renderSleepOverlay", at = @At(value = "TAIL"))
+public class HudRenderEventsPatch {
+    @Inject(method = "renderSleepOverlay", at = @At(value = "HEAD"))
     public void renderCallBack(DrawContext context, float tickDelta, CallbackInfo ci) {
         HudRenderEvent.Companion.publish(new HudRenderEvent(context, tickDelta));
     }

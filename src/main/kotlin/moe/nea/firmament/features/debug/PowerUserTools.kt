@@ -10,12 +10,16 @@ package moe.nea.firmament.features.debug
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.component.DataComponentTypes
+import net.minecraft.entity.Entity
+import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.text.Text
 import net.minecraft.util.hit.BlockHitResult
+import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.events.ItemTooltipEvent
@@ -41,6 +45,7 @@ object PowerUserTools : FirmamentFeature {
         val copyTexturePackId by keyBindingWithDefaultUnbound("copy-texture-pack-id")
         val copyNbtData by keyBindingWithDefaultUnbound("copy-nbt-data")
         val copySkullTexture by keyBindingWithDefaultUnbound("copy-skull-texture")
+        val copyEntityData by keyBindingWithDefaultUnbound("entity-data")
     }
 
     override val config
@@ -64,6 +69,37 @@ object PowerUserTools : FirmamentFeature {
             lastCopiedStack = null
         }
     }
+
+    fun debugFormat(itemStack: ItemStack): Text {
+        return Text.literal(itemStack.skyBlockId?.toString() ?: itemStack.toString())
+    }
+
+    @Subscribe
+    fun onEntityInfo(event: WorldKeyboardEvent) {
+        if (!event.matches(TConfig.copyEntityData)) return
+        val target = (MC.instance.crosshairTarget as? EntityHitResult)?.entity
+        if (target == null) {
+            MC.sendChat(Text.translatable("firmament.poweruser.entity.fail"))
+            return
+        }
+        showEntity(target)
+    }
+
+    fun showEntity(target: Entity) {
+        MC.sendChat(Text.translatable("firmament.poweruser.entity.type", target.type))
+        MC.sendChat(Text.translatable("firmament.poweruser.entity.name", target.name))
+        if (target is LivingEntity) {
+            MC.sendChat(Text.translatable("firmament.poweruser.entity.armor"))
+            for (armorItem in target.armorItems) {
+                MC.sendChat(Text.translatable("firmament.poweruser.entity.armor.item", debugFormat(armorItem)))
+            }
+        }
+        MC.sendChat(Text.stringifiedTranslatable("firmament.poweruser.entity.passengers", target.passengerList.size))
+        target.passengerList.forEach {
+            showEntity(target)
+        }
+    }
+
 
     @Subscribe
     fun copyInventoryInfo(it: HandledScreenKeyPressedEvent) {

@@ -63,6 +63,7 @@ object RepoManager {
     val neuRepo: NEURepository = NEURepository.of(RepoDownloadManager.repoSavedLocation).apply {
         registerReloadListener(ItemCache)
         registerReloadListener(ExpLadders)
+        registerReloadListener(ItemNameLookup)
         registerReloadListener {
             Firmament.coroutineScope.launch(MinecraftDispatcher) {
                 if (!trySendClientboundUpdateRecipesPacket()) {

@@ -9,7 +9,7 @@ package moe.nea.firmament.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
-import io.ktor.client.statement.*
+import io.ktor.client.statement.bodyAsText
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
 import moe.nea.firmament.apis.UrsaManager
@@ -193,6 +193,13 @@ fun firmamentCommand() = literal("firmament") {
         thenLiteral("config") {
             thenExecute {
                 FairySouls.TConfig.showConfigEditor()
+            }
+        }
+        thenLiteral("simulate") {
+            thenArgument("message", RestArgumentType) { message ->
+                thenExecute {
+                    MC.instance.messageHandler.onGameMessage(Text.literal(get(message)), false)
+                }
             }
         }
         thenLiteral("sbdata") {

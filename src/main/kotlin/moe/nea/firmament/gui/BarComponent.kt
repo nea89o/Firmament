@@ -58,7 +58,7 @@ class BarComponent(
             ScreenDrawing.texturedRect(context, x, y, 4, 8, texture, emptyColor.color)
             return
         }
-        val increasePerPixel = (sectionEnd - sectionStart / 4)
+        val increasePerPixel = (sectionEnd - sectionStart) / width
         var valueAtPixel = sectionStart
         for (i in (0 until width)) {
             ScreenDrawing.texturedRect(
