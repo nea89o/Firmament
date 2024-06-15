@@ -16,7 +16,7 @@ plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.serialization") version "1.9.23"
 //    id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
-    id("dev.architectury.loom") version "1.6.394"
+    id("dev.architectury.loom") version "1.6.397"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("moe.nea.licenseextractificator")
 //    id("io.github.juuxel.loom-vineflower") version "1.11.0"
@@ -76,6 +76,7 @@ repositories {
     }
     maven( "https://repo.hypixel.net/repository/Hypixel/")
     maven("https://maven.azureaaron.net/snapshots")
+    mavenLocal()
 }
 
 kotlin {

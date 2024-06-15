@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<Root xmlns="http://notenoughupdates.org/moulconfig"
+      xmlns:firm="http://firmament.nea.moe/moulconfig">
+    <Center>
+        <Panel background="VANILLA" insets="10">
+            <Column>
+                <Text text="Firmament Config"/>
+                <ScrollPanel width="400" height="300">
+                    <Array data="@configs">
+                        <firm:Fixed width="380" height="30">
+                            <Panel background="VANILLA">
+                                <Center>
+                                    <Row>
+                                        <Center>
+                                            <Text text="@name"/>
+                                        </Center>
+                                        <firm:Button onClick="@openEditor">
+                                            <Text text="Edit"/>
+                                        </firm:Button>
+                                    </Row>
+                                </Center>
+                            </Panel>
+                        </firm:Fixed>
+                    </Array>
+                </ScrollPanel>
+            </Column>
+        </Panel>
+    </Center>
+</Root>
