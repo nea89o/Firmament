@@ -79,10 +79,10 @@ data class SBItemStack(
     ) {
         val stats = petInfo.interpolatedStatsAtLevel(level) ?: return
         stats.otherNumbers.forEachIndexed { index, it ->
-            replacementData[index.toString()] = FirmFormatters.formatCurrency(it, 1)
+            replacementData[index.toString()] = FirmFormatters.formatCommas(it, 1)
         }
         stats.statNumbers.forEach { (t, u) ->
-            replacementData[t] = FirmFormatters.formatCurrency(u, 1)
+            replacementData[t] = FirmFormatters.formatCommas(u, 1)
         }
     }
 

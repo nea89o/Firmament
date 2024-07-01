@@ -6,37 +6,39 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WBox
-import io.github.cottonmc.cotton.gui.widget.WLabel
-import io.github.cottonmc.cotton.gui.widget.WWidget
-import io.github.cottonmc.cotton.gui.widget.data.Axis
-import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
+import io.github.notenoughupdates.moulconfig.gui.GuiComponent
+import io.github.notenoughupdates.moulconfig.gui.component.RowComponent
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
-import moe.nea.firmament.gui.WSplitPanel
+import moe.nea.firmament.gui.FixedComponent
 
 class GuiAppender(val width: Int, val screenAccessor: () -> Screen) {
-    val panel = WBox(Axis.VERTICAL).also {
-        it.setSize(width, 200)
-    }
+    val panel = mutableListOf<GuiComponent>()
     internal val reloadables = mutableListOf<(() -> Unit)>()
 
     fun onReload(reloadable: () -> Unit) {
         reloadables.add(reloadable)
     }
 
-    fun appendLabeledRow(label: Text, right: WWidget) {
+    fun appendLabeledRow(label: Text, right: GuiComponent) {
         appendSplitRow(
-            WLabel(label).setVerticalAlignment(VerticalAlignment.CENTER),
+            TextComponent(label.string),
             right
         )
     }
 
-    fun appendSplitRow(left: WWidget, right: WWidget) {
-        appendFullRow(WSplitPanel(left.also { it.setSize(width / 2, 18) }, right.also { it.setSize(width / 2, 18) }))
+    fun appendSplitRow(left: GuiComponent, right: GuiComponent) {
+        // TODO: make this more dynamic
+        // i could just make a component that allows for using half the available size
+        appendFullRow(RowComponent(
+            FixedComponent(GetSetter.constant(width / 2), null, left),
+            FixedComponent(GetSetter.constant(width / 2), null, right),
+        ))
     }
 
-    fun appendFullRow(widget: WWidget) {
-        panel.add(widget, width, 18)
+    fun appendFullRow(widget: GuiComponent) {
+        panel.add(widget)
     }
 }

@@ -6,7 +6,6 @@
 
 package moe.nea.firmament.repo
 
-import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.NEURecipeCache
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.NEURepositoryException
@@ -21,7 +20,6 @@ import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.gui.config.ManagedConfig
-import moe.nea.firmament.hud.ProgressBar
 import moe.nea.firmament.rei.PetData
 import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
@@ -53,12 +51,6 @@ object RepoManager {
     val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash
 
     var recentlyFailedToUpdateItemList = false
-
-    val progressBar by lazy {
-        ProgressBar("", null, 0).also {
-            it.setSize(180, 22)
-        }
-    }
 
     val neuRepo: NEURepository = NEURepository.of(RepoDownloadManager.repoSavedLocation).apply {
         registerReloadListener(ItemCache)
@@ -98,14 +90,13 @@ object RepoManager {
 
     fun launchAsyncUpdate(force: Boolean = false) {
         Firmament.coroutineScope.launch {
-            progressBar.reportProgress("Downloading", 0, null)
-            CottonHud.add(progressBar)
+            ItemCache.ReloadProgressHud.reportProgress("Downloading", 0, -1) // TODO: replace with a proper boundy bar
+            ItemCache.ReloadProgressHud.isEnabled = true
             try {
                 RepoDownloadManager.downloadUpdate(force)
-                progressBar.reportProgress("Download complete", 1, 1)
+                ItemCache.ReloadProgressHud.reportProgress("Download complete", 1, 1)
             } finally {
-                CottonHud.remove(progressBar)
-
+                ItemCache.ReloadProgressHud.isEnabled = false
             }
             reload()
         }
@@ -113,14 +104,14 @@ object RepoManager {
 
     fun reload() {
         try {
-            progressBar.reportProgress("Reloading from Disk", 0, null)
-            CottonHud.add(progressBar)
+            ItemCache.ReloadProgressHud.reportProgress("Reloading from Disk", 0, -1) // TODO: replace with a proper boundy bar
+            ItemCache.ReloadProgressHud.isEnabled = true
             neuRepo.reload()
         } catch (exc: NEURepositoryException) {
             MinecraftClient.getInstance().player?.sendMessage(
                 Text.literal("Failed to reload repository. This will result in some mod features not working.")
             )
-            CottonHud.remove(progressBar)
+            ItemCache.ReloadProgressHud.isEnabled = false
             exc.printStackTrace()
         }
     }

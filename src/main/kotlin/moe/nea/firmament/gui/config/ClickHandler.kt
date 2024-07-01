@@ -6,9 +6,9 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WButton
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
 import kotlinx.serialization.json.JsonElement
-import net.minecraft.text.Text
+import moe.nea.firmament.gui.FirmButtonComponent
 
 class ClickHandler(val config: ManagedConfig, val runnable: () -> Unit) : ManagedConfig.OptionHandler<Unit> {
     override fun toJson(element: Unit): JsonElement? {
@@ -19,12 +19,10 @@ class ClickHandler(val config: ManagedConfig, val runnable: () -> Unit) : Manage
 
     override fun emitGuiElements(opt: ManagedOption<Unit>, guiAppender: GuiAppender) {
         guiAppender.appendLabeledRow(
-            Text.translatable("firmament.config.${config.name}.${opt.propertyName}"),
-            WButton(Text.translatable("firmament.config.${config.name}.${opt.propertyName}")).apply {
-                setOnClick {
-                    runnable()
-                }
-            },
+            opt.labelText,
+            FirmButtonComponent(
+                TextComponent(opt.labelText.string),
+                action = runnable),
         )
     }
 }

@@ -8,12 +8,12 @@
 package moe.nea.firmament.repo
 
 import com.mojang.serialization.Dynamic
-import io.github.cottonmc.cotton.gui.client.CottonHud
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
+import io.github.notenoughupdates.moulconfig.xml.Bind
 import java.text.NumberFormat
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.logging.log4j.LogManager
 import kotlinx.coroutines.Job
@@ -32,6 +32,9 @@ import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.gui.config.HudMeta
+import moe.nea.firmament.gui.config.HudPosition
+import moe.nea.firmament.gui.hud.MoulConfigHud
 import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
@@ -135,6 +138,30 @@ object ItemCache : IReloadable {
     fun NEUItem.getIdentifier() = skyblockId.identifier
 
     var job: Job? = null
+    object ReloadProgressHud : MoulConfigHud(
+        "repo_reload", HudMeta(HudPosition(0.0, 0.0, 1F), Text.literal("Repo Reload"), 180, 18)) {
+
+
+        var isEnabled = false
+        override fun shouldRender(): Boolean {
+            return isEnabled
+        }
+
+        @get:Bind("current")
+        var current: Double = 0.0
+
+        @get:Bind("label")
+        var label: String = ""
+
+        @get:Bind("max")
+        var max: Double = 0.0
+
+        fun reportProgress(label: String, current: Int, max: Int) {
+            this.label = label
+            this.current = current.toDouble()
+            this.max = max.toDouble()
+        }
+    }
 
     override fun reload(repository: NEURepository) {
         val j = job
@@ -147,18 +174,18 @@ object ItemCache : IReloadable {
         job = Firmament.coroutineScope.launch {
             val items = repository.items?.items
             if (items == null) {
-                CottonHud.remove(RepoManager.progressBar)
+                ReloadProgressHud.isEnabled = false
                 return@launch
             }
             val recacheItems = I18n.translate("firmament.repo.cache")
-            RepoManager.progressBar.reportProgress(recacheItems, 0, items.size)
-            CottonHud.add(RepoManager.progressBar)
+            ReloadProgressHud.reportProgress(recacheItems, 0, items.size)
+            ReloadProgressHud.isEnabled = true
             var i = 0
             items.values.forEach {
                 it.asItemStack() // Rebuild cache
-                RepoManager.progressBar.reportProgress(recacheItems, i++, items.size)
+                ReloadProgressHud.reportProgress(recacheItems, i++, items.size)
             }
-            CottonHud.remove(RepoManager.progressBar)
+            ReloadProgressHud.isEnabled = false
         }
     }
 

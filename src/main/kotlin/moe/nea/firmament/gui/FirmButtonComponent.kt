@@ -15,10 +15,10 @@ import io.github.notenoughupdates.moulconfig.gui.component.PanelComponent
 import io.github.notenoughupdates.moulconfig.observer.GetSetter
 
 
-class FirmButtonComponent(
+open class FirmButtonComponent(
     child: GuiComponent,
+    val isEnabled: GetSetter<Boolean> = GetSetter.constant(true),
     val action: Runnable,
-    val isEnabled: GetSetter<Boolean> = GetSetter.constant(true)
 ) : PanelComponent(child) {
 
     /* TODO: make use of vanillas built in nine slicer */

@@ -122,11 +122,9 @@ dependencies {
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.kotlin)
     modImplementation(libs.modmenu)
-    modImplementation(libs.libgui)
     modImplementation(libs.moulconfig)
     modImplementation(libs.manninghamMills)
     modCompileOnly(libs.explosiveenhancement)
-    include(libs.libgui)
     include(libs.manninghamMills)
     include(libs.moulconfig)
 

@@ -6,7 +6,8 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WToggleButton
+import io.github.notenoughupdates.moulconfig.gui.component.SwitchComponent
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.boolean
@@ -24,13 +25,16 @@ class BooleanHandler(val config: ManagedConfig) : ManagedConfig.OptionHandler<Bo
     override fun emitGuiElements(opt: ManagedOption<Boolean>, guiAppender: GuiAppender) {
         guiAppender.appendLabeledRow(
             opt.labelText,
-            WToggleButton(opt.labelText).apply {
-                guiAppender.onReload { toggle = opt.value }
-                setOnToggle {
-                    opt.value = it
+            SwitchComponent(object : GetSetter<Boolean> {
+                override fun get(): Boolean {
+                    return opt.get()
+                }
+
+                override fun set(newValue: Boolean) {
+                    opt.set(newValue)
                     config.save()
                 }
-            }
+            }, 200)
         )
     }
 }

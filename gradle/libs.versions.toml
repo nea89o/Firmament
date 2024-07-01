@@ -44,7 +44,6 @@ moulconfig = { module = "org.notenoughupdates.moulconfig:modern", version.ref = 
 repoparser = { module = "moe.nea:neurepoparser", version.ref = "neurepoparser" }
 dbus_java_core = { module = "com.github.hypfvieh:dbus-java-core", version.ref = "dbus_java" }
 dbus_java_unixsocket = { module = "com.github.hypfvieh:dbus-java-transport-native-unixsocket", version.ref = "dbus_java" }
-libgui = { module = "io.github.cottonmc:LibGui", version.ref = "libgui" }
 mixinextras = { module = "io.github.llamalad7:mixinextras-fabric", version.ref = "mixinextras" }
 jarvis_api = { module = "moe.nea.jarvis:jarvis-api", version.ref = "jarvis" }
 jarvis_fabric = { module = "moe.nea.jarvis:jarvis-fabric", version.ref = "jarvis" }

@@ -7,8 +7,6 @@
 package moe.nea.firmament.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import io.github.cottonmc.cotton.gui.client.ScreenDrawing
-import io.github.cottonmc.cotton.gui.widget.data.Texture
 import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
 import io.github.notenoughupdates.moulconfig.common.RenderContext
 import io.github.notenoughupdates.moulconfig.gui.GuiComponent
@@ -33,6 +31,24 @@ class BarComponent(
         return 8
     }
 
+    data class Texture(
+        val identifier: Identifier,
+        val u1: Float, val v1: Float,
+        val u2: Float, val v2: Float,
+    ) {
+        fun draw(context: DrawContext, x: Int, y: Int, width: Int, height: Int, color: Color) {
+            context.drawTexturedQuad(
+                identifier,
+                x, y, x + width, x + height, 0,
+                u1, u2, v1, v2,
+                color.red / 255F,
+                color.green / 255F,
+                color.blue / 255F,
+                color.alpha / 255F,
+            )
+        }
+    }
+
     companion object {
         val resource = Firmament.identifier("textures/gui/bar.png")
         val left = Texture(resource, 0 / 64F, 0 / 64F, 4 / 64F, 8 / 64F)
@@ -51,20 +67,21 @@ class BarComponent(
         sectionEnd: Double
     ) {
         if (sectionEnd < progress.get() && width == 4) {
-            ScreenDrawing.texturedRect(context, x, y, 4, 8, texture, fillColor.color)
+            texture.draw(context, x, y, 4, 8, fillColor)
             return
         }
         if (sectionStart > progress.get() && width == 4) {
-            ScreenDrawing.texturedRect(context, x, y, 4, 8, texture, emptyColor.color)
+            texture.draw(context, x, y, 4, 8, emptyColor)
             return
         }
         val increasePerPixel = (sectionEnd - sectionStart) / width
         var valueAtPixel = sectionStart
         for (i in (0 until width)) {
-            ScreenDrawing.texturedRect(
+            val newTex =
+                Texture(texture.identifier, texture.u1 + i / 64F, texture.v1, texture.u1 + (i + 1) / 64F, texture.v2)
+            newTex.draw(
                 context, x + i, y, 1, 8,
-                texture.image, texture.u1 + i / 64F, texture.v1, texture.u1 + (i + 1) / 64F, texture.v2,
-                if (valueAtPixel < progress.get()) fillColor.color else emptyColor.color
+                if (valueAtPixel < progress.get()) fillColor else emptyColor
             )
             valueAtPixel += increasePerPixel
         }

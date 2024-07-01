@@ -6,7 +6,8 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WTextField
+import io.github.notenoughupdates.moulconfig.gui.component.TextFieldComponent
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
@@ -24,15 +25,16 @@ class StringHandler(val config: ManagedConfig) : ManagedConfig.OptionHandler<Str
     override fun emitGuiElements(opt: ManagedOption<String>, guiAppender: GuiAppender) {
         guiAppender.appendLabeledRow(
             opt.labelText,
-            WTextField(opt.labelText).apply {
-                maxLength = 1000
-                suggestion = Text.translatableWithFallback(opt.rawLabelText + ".hint", "")
-                guiAppender.onReload { text = opt.value }
-                setChangedListener {
-                    opt.value = it
-                    config.save()
-                }
-            }
+            TextFieldComponent(
+                object : GetSetter<String> by opt {
+                    override fun set(newValue: String) {
+                        opt.set(newValue)
+                        config.save()
+                    }
+                },
+                130,
+                suggestion = Text.translatableWithFallback(opt.rawLabelText + ".hint", "").string
+            ),
         )
     }
 }

@@ -6,6 +6,7 @@
 
 package moe.nea.firmament.gui.config
 
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlin.properties.ReadWriteProperty
@@ -18,7 +19,14 @@ class ManagedOption<T : Any>(
     val propertyName: String,
     val default: () -> T,
     val handler: ManagedConfig.OptionHandler<T>
-) : ReadWriteProperty<Any?, T> {
+) : ReadWriteProperty<Any?, T>, GetSetter<T> {
+    override fun set(newValue: T) {
+        this.value = newValue
+    }
+
+    override fun get(): T {
+        return this.value
+    }
 
     val rawLabelText = "firmament.config.${element.name}.${propertyName}"
     val labelText = Text.translatable(rawLabelText)

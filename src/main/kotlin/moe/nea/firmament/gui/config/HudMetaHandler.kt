@@ -6,7 +6,8 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WButton
+import io.github.notenoughupdates.moulconfig.gui.component.ButtonComponent
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -27,14 +28,17 @@ class HudMetaHandler(val config: ManagedConfig, val label: MutableText, val widt
     }
 
     override fun emitGuiElements(opt: ManagedOption<HudMeta>, guiAppender: GuiAppender) {
-        guiAppender.appendLabeledRow(opt.labelText, WButton(Text.stringifiedTranslatable("firmament.hud.edit", label))
-            .also {
-                it.setOnClick {
-                    MC.screen = JarvisIntegration.jarvis.getHudEditor(
-                        guiAppender.screenAccessor.invoke(),
-                        listOf(opt.value)
-                    )
-                }
+        guiAppender.appendLabeledRow(
+            opt.labelText,
+            ButtonComponent(
+                TextComponent(
+                    Text.stringifiedTranslatable("firmament.hud.edit", label).string),
+                2,
+            ) {
+                MC.screen = JarvisIntegration.jarvis.getHudEditor(
+                    guiAppender.screenAccessor.invoke(),
+                    listOf(opt.value)
+                )
             })
     }
 }

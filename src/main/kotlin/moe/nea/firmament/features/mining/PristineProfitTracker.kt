@@ -18,7 +18,7 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.gui.hud.MoulConfigHud
 import moe.nea.firmament.util.BazaarPriceStrategy
-import moe.nea.firmament.util.FirmFormatters.formatCurrency
+import moe.nea.firmament.util.FirmFormatters.formatCommas
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.formattedString
@@ -99,11 +99,11 @@ object PristineProfitTracker : FirmamentFeature {
         if (collectionPerSecond == null || moneyPerSecond == null) return
         ProfitHud.collectionCurrent = collectionPerSecond
         ProfitHud.collectionText = Text.stringifiedTranslatable("firmament.pristine-profit.collection",
-                                                                formatCurrency(collectionPerSecond * SECONDS_PER_HOUR,
-                                                                               1)).formattedString()
+                                                                formatCommas(collectionPerSecond * SECONDS_PER_HOUR,
+                                                                             1)).formattedString()
         ProfitHud.moneyCurrent = moneyPerSecond
         ProfitHud.moneyText = Text.stringifiedTranslatable("firmament.pristine-profit.money",
-                                                           formatCurrency(moneyPerSecond * SECONDS_PER_HOUR, 1))
+                                                           formatCommas(moneyPerSecond * SECONDS_PER_HOUR, 1))
             .formattedString()
         val data = DConfig.data
         if (data != null) {

@@ -77,9 +77,9 @@ object MoulConfigUtils {
             override fun createInstance(context: XMLContext<*>, element: Element): FirmButtonComponent {
                 return FirmButtonComponent(
                     context.getChildFragment(element),
-                    context.getMethodFromAttribute(element, QName("onClick")),
                     context.getPropertyFromAttribute(element, QName("enabled"), Boolean::class.java)
-                        ?: GetSetter.constant(true)
+                        ?: GetSetter.constant(true),
+                    context.getMethodFromAttribute(element, QName("onClick")),
                 )
             }
 
