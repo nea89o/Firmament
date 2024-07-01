@@ -6,11 +6,11 @@
 
 package moe.nea.firmament.keybindings
 
+import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.Serializable
-import moe.nea.firmament.util.MC
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.InputUtil
-import org.lwjgl.glfw.GLFW
+import moe.nea.firmament.util.MC
 
 @Serializable
 data class SavedKeyBinding(
@@ -38,6 +38,24 @@ data class SavedKeyBinding(
                 modifiers and GLFW.GLFW_MOD_ALT != 0
             )
         }
+
+        fun getModInt(): Int {
+            val h = MC.window.handle
+            val ctrl = if (MinecraftClient.IS_SYSTEM_MAC) {
+                InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SUPER)
+                    || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SUPER)
+            } else InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_CONTROL)
+                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_CONTROL)
+            val shift = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SHIFT)
+                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
+            val alt = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_ALT)
+                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_ALT)
+            var mods = 0
+            if (ctrl) mods = mods or GLFW.GLFW_MOD_CONTROL
+            if (shift) mods = mods or GLFW.GLFW_MOD_SHIFT
+            if (alt) mods = mods or GLFW.GLFW_MOD_ALT
+            return mods
+        }
     }
 
     fun isPressed(atLeast: Boolean = false): Boolean {
@@ -47,21 +65,21 @@ data class SavedKeyBinding(
 
         val ctrl = if (MinecraftClient.IS_SYSTEM_MAC) {
             InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SUPER)
-                    || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SUPER)
+                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SUPER)
         } else InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_CONTROL)
-                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_CONTROL)
+            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_CONTROL)
         val shift = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SHIFT)
-                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
+            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
         val alt = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_ALT)
-                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_ALT)
+            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_ALT)
         if (atLeast)
             return (ctrl >= this.ctrl) &&
-                    (alt >= this.alt) &&
-                    (shift >= this.shift)
+                (alt >= this.alt) &&
+                (shift >= this.shift)
 
         return (ctrl == this.ctrl) &&
-                (alt == this.alt) &&
-                (shift == this.shift)
+            (alt == this.alt) &&
+            (shift == this.shift)
     }
 
     override fun matches(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {

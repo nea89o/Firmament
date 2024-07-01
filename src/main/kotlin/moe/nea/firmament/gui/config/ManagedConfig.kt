@@ -6,17 +6,17 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.client.CottonClientScreen
-import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription
-import io.github.cottonmc.cotton.gui.widget.WBox
-import io.github.cottonmc.cotton.gui.widget.WButton
-import io.github.cottonmc.cotton.gui.widget.WLabel
-import io.github.cottonmc.cotton.gui.widget.data.Axis
-import io.github.cottonmc.cotton.gui.widget.data.Insets
-import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
+import io.github.notenoughupdates.moulconfig.gui.CloseEventListener
+import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
+import io.github.notenoughupdates.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.gui.component.CenterComponent
+import io.github.notenoughupdates.moulconfig.gui.component.ColumnComponent
+import io.github.notenoughupdates.moulconfig.gui.component.PanelComponent
+import io.github.notenoughupdates.moulconfig.gui.component.RowComponent
+import io.github.notenoughupdates.moulconfig.gui.component.ScrollPanelComponent
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
 import moe.nea.jarvis.api.Point
 import org.lwjgl.glfw.GLFW
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -27,9 +27,8 @@ import kotlin.time.Duration
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.gui.WTightScrollPanel
+import moe.nea.firmament.gui.FirmButtonComponent
 import moe.nea.firmament.keybindings.SavedKeyBinding
-import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
 abstract class ManagedConfig(override val name: String) : ManagedConfigElement() {
@@ -150,45 +149,30 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
 
     val labelText = Text.translatable("firmament.config.${name}")
 
-    fun getConfigEditor(parent: Screen? = null): CottonClientScreen {
-        val lwgd = LightweightGuiDescription()
+    fun getConfigEditor(parent: Screen? = null): Screen {
         var screen: Screen? = null
         val guiapp = GuiAppender(400) { requireNotNull(screen) { "Screen Accessor called too early" } }
         latestGuiAppender = guiapp
-        guiapp.panel.insets = Insets.ROOT_PANEL
-        guiapp.appendFullRow(WBox(Axis.HORIZONTAL).also {
-            it.add(WButton(Text.literal("←")).also {
-                it.setOnClick {
-                    if (parent != null) {
-                        save()
-                        setScreenLater(parent)
-                    } else {
-                        AllConfigsGui.showAllGuis()
-                    }
-                }
-            })
-            it.add(WLabel(labelText).also {
-                it.verticalAlignment = VerticalAlignment.CENTER
-            })
-        })
-        sortedOptions.forEach { it.appendToGui(guiapp) }
-        guiapp.reloadables.forEach { it() }
-        lwgd.setRootPanel(WTightScrollPanel(guiapp.panel).also {
-            it.setSize(400, 300)
-        })
-        screen =
-            object : CottonClientScreen(lwgd) {
-                override fun init() {
-                    latestGuiAppender = guiapp
-                    super.init()
-                }
-
-                override fun close() {
-                    latestGuiAppender = null
+        guiapp.appendFullRow(RowComponent(
+            FirmButtonComponent(TextComponent("←")) {
+                if (parent != null) {
                     save()
-                    MC.screen = parent
+                    setScreenLater(parent)
+                } else {
+                    AllConfigsGui.showAllGuis()
                 }
             }
+        ))
+        sortedOptions.forEach { it.appendToGui(guiapp) }
+        guiapp.reloadables.forEach { it() }
+        val component = CenterComponent(PanelComponent(ScrollPanelComponent(400, 300, ColumnComponent(guiapp.panel)), 10, PanelComponent.DefaultBackgroundRenderer.VANILLA))
+        screen = object : GuiComponentWrapper(GuiContext(component)) {
+            override fun close() {
+                if (context.onBeforeClose() == CloseEventListener.CloseAction.NO_OBJECTIONS_TO_CLOSE) {
+                    client!!.setScreen(parent)
+                }
+            }
+        }
         return screen
     }
 

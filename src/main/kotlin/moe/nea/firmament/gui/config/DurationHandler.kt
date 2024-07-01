@@ -6,18 +6,16 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WBox
-import io.github.cottonmc.cotton.gui.widget.WLabel
-import io.github.cottonmc.cotton.gui.widget.WSlider
-import io.github.cottonmc.cotton.gui.widget.data.Axis
-import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
-import java.util.function.IntConsumer
+import io.github.notenoughupdates.moulconfig.common.IMinecraft
+import io.github.notenoughupdates.moulconfig.gui.component.RowComponent
+import io.github.notenoughupdates.moulconfig.gui.component.SliderComponent
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import net.minecraft.text.Text
@@ -34,22 +32,31 @@ class DurationHandler(val config: ManagedConfig, val min: Duration, val max: Dur
     }
 
     override fun emitGuiElements(opt: ManagedOption<Duration>, guiAppender: GuiAppender) {
-        val label =
-            WLabel(Text.literal(FirmFormatters.formatTimespan(opt.value))).setVerticalAlignment(VerticalAlignment.CENTER)
-        guiAppender.appendLabeledRow(opt.labelText, WBox(Axis.HORIZONTAL).also {
-            it.add(label, 40, 18)
-            it.add(WSlider(min.inWholeMilliseconds.toInt(), max.inWholeMilliseconds.toInt(), Axis.HORIZONTAL).apply {
-                valueChangeListener = IntConsumer {
-                    opt.value = it.milliseconds
-                    label.text = Text.literal(FirmFormatters.formatTimespan(opt.value))
-                    config.save()
-                }
-                guiAppender.onReload {
-                    value = opt.value.inWholeMilliseconds.toInt()
-                    label.text = Text.literal(FirmFormatters.formatTimespan(opt.value))
-                }
-            }, 130, 18)
-        })
+        guiAppender.appendLabeledRow(
+            opt.labelText,
+            RowComponent(
+                TextComponent(IMinecraft.instance.defaultFontRenderer,
+                              { FirmFormatters.formatTimespan(opt.value) },
+                              40,
+                              TextComponent.TextAlignment.CENTER,
+                              true,
+                              false),
+                SliderComponent(
+                    object : GetSetter<Float> {
+                        override fun get(): Float {
+                            return opt.value.toDouble(DurationUnit.SECONDS).toFloat()
+                        }
+
+                        override fun set(newValue: Float) {
+                            opt.value = newValue.toDouble().toDuration(DurationUnit.SECONDS)
+                        }
+                    },
+                    min.toDouble(DurationUnit.SECONDS).toFloat(),
+                    max.toDouble(DurationUnit.SECONDS).toFloat(),
+                    0.1F,
+                    130
+                )
+            ))
     }
 
 }

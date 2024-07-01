@@ -6,17 +6,16 @@
 
 package moe.nea.firmament.gui.config
 
-import io.github.cottonmc.cotton.gui.widget.WBox
-import io.github.cottonmc.cotton.gui.widget.WLabel
-import io.github.cottonmc.cotton.gui.widget.WSlider
-import io.github.cottonmc.cotton.gui.widget.data.Axis
-import io.github.cottonmc.cotton.gui.widget.data.VerticalAlignment
-import java.util.function.IntConsumer
+import io.github.notenoughupdates.moulconfig.common.IMinecraft
+import io.github.notenoughupdates.moulconfig.gui.component.RowComponent
+import io.github.notenoughupdates.moulconfig.gui.component.SliderComponent
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
-import net.minecraft.text.Text
+import moe.nea.firmament.util.FirmFormatters
 
 class IntegerHandler(val config: ManagedConfig, val min: Int, val max: Int) : ManagedConfig.OptionHandler<Int> {
     override fun toJson(element: Int): JsonElement? {
@@ -28,22 +27,32 @@ class IntegerHandler(val config: ManagedConfig, val min: Int, val max: Int) : Ma
     }
 
     override fun emitGuiElements(opt: ManagedOption<Int>, guiAppender: GuiAppender) {
-        val label =
-            WLabel(Text.literal(opt.value.toString())).setVerticalAlignment(VerticalAlignment.CENTER)
-        guiAppender.appendLabeledRow(opt.labelText, WBox(Axis.HORIZONTAL).also {
-            it.add(label, 40, 18)
-            it.add(WSlider(min, max, Axis.HORIZONTAL).apply {
-                valueChangeListener = IntConsumer {
-                    opt.value = it
-                    label.text = Text.literal(opt.value.toString())
-                    config.save()
-                }
-                guiAppender.onReload {
-                    value = opt.value
-                    label.text = Text.literal(opt.value.toString())
-                }
-            }, 130, 18)
-        })
+        guiAppender.appendLabeledRow(
+            opt.labelText,
+            RowComponent(
+                TextComponent(IMinecraft.instance.defaultFontRenderer,
+                              { FirmFormatters.formatCommas(opt.value, 0) },
+                              40,
+                              TextComponent.TextAlignment.CENTER,
+                              true,
+                              false),
+                SliderComponent(
+                    object : GetSetter<Float> {
+                        override fun get(): Float {
+                            return opt.value.toFloat()
+                        }
+
+                        override fun set(newValue: Float) {
+                            opt.value = newValue.toInt()
+                        }
+                    },
+                    min.toFloat(),
+                    max.toFloat(),
+                    0.1F,
+                    130
+                )
+            ))
+
     }
 
 }

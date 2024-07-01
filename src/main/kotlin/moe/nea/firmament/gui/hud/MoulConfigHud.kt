@@ -6,11 +6,12 @@
 
 package moe.nea.firmament.gui.hud
 
+import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
 import io.github.notenoughupdates.moulconfig.gui.GuiContext
 import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
-import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SynchronousResourceReloader
+import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.gui.config.HudMeta
 import moe.nea.firmament.util.MC
@@ -21,9 +22,11 @@ abstract class MoulConfigHud(
     val hudMeta: HudMeta,
 ) {
     companion object {
-        private val componentWrapper = object : GuiComponentWrapper(GuiContext(TextComponent("§cERROR"))) {
-            init {
-                this.client = MC.instance
+        private val componentWrapper by lazy {
+            object : GuiComponentWrapper(GuiContext(TextComponent("§cERROR"))) {
+                init {
+                    this.client = MC.instance
+                }
             }
         }
     }
@@ -31,7 +34,6 @@ abstract class MoulConfigHud(
     private var fragment: GuiContext? = null
 
     fun forceInit() {
-
     }
 
     open fun shouldRender(): Boolean {
@@ -53,11 +55,13 @@ abstract class MoulConfigHud(
             fragment!!.root.render(renderContextTranslated)
             it.context.matrices.pop()
         }
-        MC.resourceManager.registerReloader(object : SynchronousResourceReloader {
-            override fun reload(manager: ResourceManager?) {
-                fragment = null
-            }
-        })
+        FinalizeResourceManagerEvent.subscribe {
+            MC.resourceManager.registerReloader(object : SynchronousResourceReloader {
+                override fun reload(manager: ResourceManager?) {
+                    fragment = null
+                }
+            })
+        }
     }
 
     fun loadFragment() {

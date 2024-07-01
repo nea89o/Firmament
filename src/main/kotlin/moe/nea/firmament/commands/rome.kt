@@ -20,7 +20,6 @@ import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ManagedOption
-import moe.nea.firmament.gui.profileviewer.ProfileViewer
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.FirmFormatters
@@ -28,7 +27,6 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.unformattedString
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -127,19 +125,6 @@ fun firmamentCommand() = literal("firmament") {
             }
         }
     }
-    thenLiteral("pv") {
-        thenExecute {
-            ProfileViewer.onCommand(source, MC.player!!.name.unformattedString)
-        }
-        thenArgument("name", string()) { name ->
-            suggestsList {
-                MC.world?.players?.filter { it.uuid?.version() == 4 }?.map { it.name.unformattedString } ?: listOf()
-            }
-            thenExecute {
-                ProfileViewer.onCommand(source, get(name))
-            }
-        }
-    }
     thenLiteral("price") {
         thenArgument("item", string()) { item ->
             suggestsList { RepoManager.neuRepo.items.items.keys }
@@ -155,7 +140,7 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(
                         Text.stringifiedTranslatable(
                             "firmament.price.bazaar.buy.price",
-                            FirmFormatters.formatCurrency(bazaarData.quickStatus.buyPrice, 1)
+                            FirmFormatters.formatCommas(bazaarData.quickStatus.buyPrice, 1)
                         )
                     )
                     source.sendFeedback(
@@ -167,7 +152,7 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(
                         Text.stringifiedTranslatable(
                             "firmament.price.bazaar.sell.price",
-                            FirmFormatters.formatCurrency(bazaarData.quickStatus.sellPrice, 1)
+                            FirmFormatters.formatCommas(bazaarData.quickStatus.sellPrice, 1)
                         )
                     )
                     source.sendFeedback(
@@ -182,7 +167,7 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(
                         Text.stringifiedTranslatable(
                             "firmament.price.lowestbin",
-                            FirmFormatters.formatCurrency(lowestBin, 1)
+                            FirmFormatters.formatCommas(lowestBin, 1)
                         )
                     )
                 }

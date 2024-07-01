@@ -97,6 +97,7 @@
     "firmament.config.waypoints": "Waypoints",
     "firmament.config.waypoints.temp-waypoint-duration": "Temporary Waypoint Duration",
     "firmament.config.waypoints.show-index": "Show ordered waypoint indexes",
+    "firmament.config.waypoints.skip-to-nearest": "Allow skipping waypoints",
     "firmament.recipe.forge.time": "Forging Time: %s",
     "firmament.recipe.mobs.drops": "§e§lDrop Chance: %s",
     "firmament.recipe.mobs.name": "§8[§7Lv %d§8] §c%s",
