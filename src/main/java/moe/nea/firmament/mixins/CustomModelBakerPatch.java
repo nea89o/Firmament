@@ -30,21 +30,21 @@ import java.util.function.BiFunction;
 public abstract class CustomModelBakerPatch {
 
     @Shadow
-    protected abstract void addModel(ModelIdentifier modelId);
+    protected abstract void loadItemModel(ModelIdentifier id);
+
+    @Shadow
+    abstract UnbakedModel getOrLoadModel(Identifier id);
 
     @Shadow
     @Final
-    private Map<Identifier, UnbakedModel> modelsToBake;
-
-    @Shadow
-    public abstract UnbakedModel getOrLoadModel(Identifier id);
+    private Map<ModelIdentifier, UnbakedModel> modelsToBake;
 
     @Inject(method = "bake", at = @At("HEAD"))
-    public void onBake(BiFunction<Identifier, SpriteIdentifier, Sprite> spriteLoader, CallbackInfo ci) {
-        BakeExtraModelsEvent.Companion.publish(new BakeExtraModelsEvent(this::addModel));
+    public void onBake(ModelLoader.SpriteGetter spliteGetter, CallbackInfo ci) {
+        BakeExtraModelsEvent.Companion.publish(new BakeExtraModelsEvent(this::loadItemModel));
         modelsToBake.values().forEach(model -> model.setParents(this::getOrLoadModel));
-        modelsToBake.keySet().stream()
-            .filter(it -> !it.getNamespace().equals("minecraft"))
-            .forEach(it -> System.out.println("Non minecraft texture is being loaded: " + it));
+//        modelsToBake.keySet().stream()
+//            .filter(it -> !it.id().getNamespace().equals("minecraft"))
+//            .forEach(it -> System.out.println("Non minecraft texture is being loaded: " + it));
     }
 }

@@ -9,7 +9,6 @@ package moe.nea.firmament.features.texturepack
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
-import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents.Custom
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import net.minecraft.block.SkullBlock
 import net.minecraft.client.MinecraftClient
@@ -62,10 +61,13 @@ object CustomSkyBlockTextures : FirmamentFeature {
                     .endsWith(".json")
             }
         for (identifier in resources.keys) {
-            val modelId = ModelIdentifier("firmskyblock",
-                                          identifier.path.substring("models/item/".length,
-                                                                    identifier.path.length - ".json".length),
-                                          "inventory")
+            val modelId = ModelIdentifier.ofInventoryVariant(
+                Identifier.of(
+                    "firmskyblock",
+                    identifier.path.substring(
+                        "models/item/".length,
+                        identifier.path.length - ".json".length),
+                ))
             event.addModel(modelId)
         }
     }
@@ -74,7 +76,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
     fun onCustomModelId(it: CustomItemModelEvent) {
         if (!TConfig.enabled) return
         val id = it.itemStack.skyBlockId ?: return
-        it.overrideModel = ModelIdentifier("firmskyblock", id.identifier.path, "inventory")
+        it.overrideModel = ModelIdentifier.ofInventoryVariant(Identifier.of("firmskyblock", id.identifier.path))
     }
 
     private val skullTextureCache = mutableMapOf<IdentityCharacteristics<ProfileComponent>, Any>()
@@ -92,7 +94,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
 
     fun getSkullTexture(profile: ProfileComponent): Identifier? {
         val id = getSkullId(profile.properties["textures"].firstOrNull() ?: return null) ?: return null
-        return Identifier("firmskyblock", "textures/placedskull/$id.png")
+        return Identifier.of("firmskyblock", "textures/placedskull/$id.png")
     }
 
     fun modifySkullTexture(

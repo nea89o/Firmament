@@ -7,6 +7,7 @@
 package moe.nea.firmament.util.render
 
 import com.mojang.blaze3d.systems.RenderSystem
+import io.github.notenoughupdates.moulconfig.platform.next
 import org.joml.Matrix4f
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.BufferRenderer
@@ -80,22 +81,24 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
         u2: Float, v2: Float,
     ) {
         RenderSystem.setShaderTexture(0, texture)
-        RenderSystem.setShader(GameRenderer::getPositionColorTexProgram)
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram)
         val hw = width / 2F
         val hh = height / 2F
         val matrix4f: Matrix4f = worldContext.matrixStack.peek().positionMatrix
-        val buf = Tessellator.getInstance().buffer
-        buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE)
-        buf.fixedColor(255, 255, 255, 255)
+        val buf = Tessellator.getInstance()
+            .begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR)
         buf.vertex(matrix4f, -hw, -hh, 0F)
+            .color(-1)
             .texture(u1, v1).next()
         buf.vertex(matrix4f, -hw, +hh, 0F)
+            .color(-1)
             .texture(u1, v2).next()
         buf.vertex(matrix4f, +hw, +hh, 0F)
+            .color(-1)
             .texture(u2, v2).next()
         buf.vertex(matrix4f, +hw, -hh, 0F)
+            .color(-1)
             .texture(u2, v1).next()
-        buf.unfixColor()
         BufferRenderer.drawWithGlobalProgram(buf.end())
     }
 

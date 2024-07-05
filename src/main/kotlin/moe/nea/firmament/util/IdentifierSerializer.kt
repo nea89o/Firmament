@@ -19,7 +19,7 @@ object IdentifierSerializer : KSerializer<Identifier> {
         get() = SerialDescriptor("Identifier", delegateSerializer.descriptor)
 
     override fun deserialize(decoder: Decoder): Identifier {
-        return Identifier(decoder.decodeSerializableValue(delegateSerializer))
+        return Identifier.of(decoder.decodeSerializableValue(delegateSerializer))
     }
 
     override fun serialize(encoder: Encoder, value: Identifier) {

@@ -6,7 +6,6 @@
 
 package moe.nea.firmament.mixins.accessor;
 
-import kotlin.Deprecated;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.slot.Slot;
 import org.jetbrains.annotations.Nullable;

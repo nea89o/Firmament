@@ -68,7 +68,7 @@ object ItemRarityCosmetics : FirmamentFeature {
             x, y,
             0,
             16, 16,
-            MC.guiAtlasManager.getSprite(Identifier("firmament:item_rarity_background")),
+            MC.guiAtlasManager.getSprite(Identifier.of("firmament:item_rarity_background")),
             r, g, b, 1F
         )
     }

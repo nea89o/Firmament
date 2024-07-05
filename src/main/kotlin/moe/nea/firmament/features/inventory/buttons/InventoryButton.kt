@@ -42,7 +42,7 @@ data class InventoryButton(
             0,
             dimensions.width,
             dimensions.height,
-            MC.guiAtlasManager.getSprite(Identifier("firmament:inventory_button_background"))
+            MC.guiAtlasManager.getSprite(Identifier.of("firmament:inventory_button_background"))
         )
         context.drawItem(getItem(), 1, 1)
     }

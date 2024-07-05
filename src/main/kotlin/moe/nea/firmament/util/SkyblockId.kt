@@ -31,7 +31,7 @@ import moe.nea.firmament.util.json.DashlessUUIDSerializer
 @Serializable
 value class SkyblockId(val neuItem: String) {
     val identifier
-        get() = Identifier("skyblockitem",
+        get() = Identifier.of("skyblockitem",
                            neuItem.lowercase().replace(";", "__")
                                .replace(":", "___")
                                .replace(illlegalPathRegex) {

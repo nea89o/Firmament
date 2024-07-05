@@ -251,11 +251,11 @@ tasks.processResources {
 tasks.scanLicenses {
     scanConfiguration(nonModImplentation)
     scanConfiguration(configurations.modCompileClasspath.get())
-    outputFile.set(file("$buildDir/LICENSES-FIRMAMENT.json"))
+    outputFile.set(layout.buildDirectory.file("LICENSES-FIRMAMENT.json"))
     licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())
 }
 tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).apply {
-    outputFile.set(file("$buildDir/LICENSES-FIRMAMENT.txt"))
+    outputFile.set(layout.buildDirectory.file("LICENSES-FIRMAMENT.txt"))
     licenseFormatter.set(moe.nea.licenseextractificator.TextLicenseFormatter())
     scanConfiguration(nonModImplentation)
     scanConfiguration(configurations.modCompileClasspath.get())
@@ -268,7 +268,3 @@ tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).ap
 licensing.addExtraLicenseMatchers()
 
 fletchingTable.defaultMixinEnvironment.set("client")
-
-//vineflower {
-//    toolVersion.set("1.9.1")
-//}

@@ -12,12 +12,17 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.codec.PacketCodec
 import net.minecraft.network.codec.PacketCodecs
 import net.minecraft.network.packet.CustomPayload
+import net.minecraft.util.Identifier
 import net.minecraft.util.Uuids
 import moe.nea.firmament.apis.ingame.FirmamentCustomPayload
 
 interface FirmamentCustomPayloadMeta<T : FirmamentCustomPayload> {
     val ID: CustomPayload.Id<T>
     val CODEC: PacketCodec<PacketByteBuf, T>
+
+    fun id(name: String): CustomPayload.Id<T> {
+        return CustomPayload.Id<T>(Identifier.of(name))
+    }
 
     fun intoType(): CustomPayload.Type<PacketByteBuf, T> {
         return CustomPayload.Type(ID, CODEC)
@@ -26,7 +31,7 @@ interface FirmamentCustomPayloadMeta<T : FirmamentCustomPayload> {
 
 data class PartyInfoRequest(val version: Int) : FirmamentCustomPayload {
     companion object : FirmamentCustomPayloadMeta<PartyInfoRequest> {
-        override val ID = CustomPayload.id<PartyInfoRequest>("hypixel:party_info")
+        override val ID = id("hypixel:party_info")
         override val CODEC =
             PacketCodecs.VAR_INT.cast<PacketByteBuf>()
                 .xmap(::PartyInfoRequest, PartyInfoRequest::version)
@@ -116,7 +121,7 @@ data class PartyInfoResponseV1(
 
 data class PartyInfoResponse(val data: HypixelVersionedPacketData<PartyInfoResponseV>) : FirmamentCustomPayload {
     companion object : FirmamentCustomPayloadMeta<PartyInfoResponse> {
-        override val ID: CustomPayload.Id<PartyInfoResponse> = CustomPayload.id("hypixel:party_info")
+        override val ID = id("hypixel:party_info")
         override val CODEC =
             CodecUtils
                 .dispatchVersioned<PacketByteBuf, PartyInfoResponseV>(

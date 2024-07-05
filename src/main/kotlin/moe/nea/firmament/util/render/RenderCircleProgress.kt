@@ -7,6 +7,7 @@
 package moe.nea.firmament.util.render
 
 import com.mojang.blaze3d.systems.RenderSystem
+import io.github.notenoughupdates.moulconfig.platform.next
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import kotlin.math.atan2
@@ -31,12 +32,10 @@ object RenderCircleProgress {
         v2: Float,
     ) {
         RenderSystem.setShaderTexture(0, texture)
-        RenderSystem.setShader { GameRenderer.getPositionColorTexProgram() }
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram)
         RenderSystem.enableBlend()
         val matrix: Matrix4f = drawContext.matrices.peek().positionMatrix
-        val bufferBuilder = Tessellator.getInstance().buffer
-        bufferBuilder.begin(DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR_TEXTURE)
-        bufferBuilder.fixedColor(255, 255, 255, 255)
+        val bufferBuilder = Tessellator.getInstance().begin(DrawMode.TRIANGLES, VertexFormats.POSITION_TEXTURE_COLOR)
 
         val corners = listOf(
             Vector2f(0F, -1F),
@@ -79,17 +78,19 @@ object RenderCircleProgress {
             bufferBuilder
                 .vertex(matrix, second.x, second.y, 0F)
                 .texture(lerp(u1, u2, ilerp(second.x)), lerp(v1, v2, ilerp(second.y)))
+                .color(-1)
                 .next()
             bufferBuilder
                 .vertex(matrix, first.x, first.y, 0F)
                 .texture(lerp(u1, u2, ilerp(first.x)), lerp(v1, v2, ilerp(first.y)))
+                .color(-1)
                 .next()
             bufferBuilder
                 .vertex(matrix, 0F, 0F, 0F)
                 .texture(lerp(u1, u2, ilerp(0F)), lerp(v1, v2, ilerp(0F)))
+                .color(-1)
                 .next()
         }
-        bufferBuilder.unfixColor()
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end())
         RenderSystem.disableBlend()
     }

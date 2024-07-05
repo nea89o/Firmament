@@ -41,7 +41,7 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
                 add(Widgets.createRecipeBase(bounds))
                 val source = display.neuRecipe.render
                 val entity = if (source.startsWith("@")) {
-                    EntityRenderer.constructEntity(Identifier(source.substring(1)))
+                    EntityRenderer.constructEntity(Identifier.of(source.substring(1)))
                 } else {
                     EntityRenderer.applyModifiers(source, listOf())
                 }

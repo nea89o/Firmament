@@ -117,7 +117,7 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
             .mapNotNull {
                 val key = it.key
                 val guiClassResource =
-                    manager.getResource(Identifier(key.namespace, "filters/screen/${key.path}.json"))
+                    manager.getResource(Identifier.of(key.namespace, "filters/screen/${key.path}.json"))
                         .getOrNull()
                         ?: return@mapNotNull runNull {
                             logger.error("Failed to locate screen filter at $key")

@@ -34,7 +34,7 @@ object CustomModelOverrideParser {
 
 
     fun registerPredicateParser(name: String, parser: FirmamentModelPredicateParser) {
-        predicateParsers[Identifier("firmament", name)] = parser
+        predicateParsers[Identifier.of("firmament", name)] = parser
     }
 
     init {
@@ -59,7 +59,7 @@ object CustomModelOverrideParser {
         val parsedPredicates = mutableListOf<FirmamentModelPredicate>()
         for (predicateName in predicates.keySet()) {
             if (!predicateName.startsWith("firmament:")) continue
-            val identifier = Identifier(predicateName)
+            val identifier = Identifier.of(predicateName)
             val parser = predicateParsers[identifier] ?: return neverPredicate
             val parsedPredicate = parser.parse(predicates[predicateName]) ?: return neverPredicate
             parsedPredicates.add(parsedPredicate)

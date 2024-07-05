@@ -17,7 +17,7 @@ object CommonSoundEffects {
     }
 
     fun playFailure() {
-        playSound(Identifier("minecraft", "block.anvil.place"))
+        playSound(Identifier.of("minecraft", "block.anvil.place"))
     }
 
     fun playSuccess() {
@@ -25,6 +25,6 @@ object CommonSoundEffects {
     }
 
     fun playDing() {
-        playSound(Identifier("minecraft", "entity.arrow.hit_player"))
+        playSound(Identifier.of("minecraft", "entity.arrow.hit_player"))
     }
 }

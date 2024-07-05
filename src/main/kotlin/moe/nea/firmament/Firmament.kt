@@ -145,8 +145,8 @@ object Firmament {
             globalJob.cancel()
         })
         registerFirmamentEvents()
-        ItemTooltipCallback.EVENT.register { a, b, c, d ->
-            ItemTooltipEvent.publish(ItemTooltipEvent(a, b, c, d))
+        ItemTooltipCallback.EVENT.register { stack, context, type, lines ->
+            ItemTooltipEvent.publish(ItemTooltipEvent(stack, context, type, lines))
         }
         ScreenEvents.AFTER_INIT.register(ScreenEvents.AfterInit { client, screen, scaledWidth, scaledHeight ->
             ScreenEvents.afterRender(screen)
@@ -157,7 +157,7 @@ object Firmament {
     }
 
 
-    fun identifier(path: String) = Identifier(MOD_ID, path)
+    fun identifier(path: String) = Identifier.of(MOD_ID, path)
     inline fun <reified T : Any> tryDecodeJsonFromStream(inputStream: InputStream): Result<T> {
         return runCatching {
             json.decodeFromStream<T>(inputStream)

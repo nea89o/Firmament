@@ -15,10 +15,10 @@ object ModifyPlayerSkin : EntityModifier {
     override fun apply(entity: LivingEntity, info: JsonObject): LivingEntity {
         require(entity is GuiPlayer)
         info["cape"]?.let {
-            entity.capeTexture = Identifier(it.asString)
+            entity.capeTexture = Identifier.of(it.asString)
         }
         info["skin"]?.let {
-            entity.skinTexture = Identifier(it.asString)
+            entity.skinTexture = Identifier.of(it.asString)
         }
         info["slim"]?.let {
             entity.model = if (it.asBoolean) SkinTextures.Model.SLIM else SkinTextures.Model.WIDE

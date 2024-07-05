@@ -8,15 +8,16 @@
 package moe.nea.firmament.util.render
 
 import com.mojang.blaze3d.systems.RenderSystem
+import io.github.notenoughupdates.moulconfig.platform.next
 import java.lang.Math.pow
-import java.lang.Math.toRadians
 import org.joml.Matrix4f
 import org.joml.Vector3f
-import kotlin.math.tan
 import net.minecraft.client.gl.VertexBuffer
 import net.minecraft.client.render.BufferBuilder
+import net.minecraft.client.render.BufferRenderer
 import net.minecraft.client.render.Camera
 import net.minecraft.client.render.GameRenderer
+import net.minecraft.client.render.RenderTickCounter
 import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.VertexFormat
@@ -28,7 +29,6 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.WorldRenderLastEvent
-import moe.nea.firmament.mixins.accessor.AccessorGameRenderer
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
 
@@ -37,12 +37,9 @@ class RenderInWorldContext private constructor(
     private val tesselator: Tessellator,
     val matrixStack: MatrixStack,
     private val camera: Camera,
-    private val tickDelta: Float,
+    private val tickCounter: RenderTickCounter,
     val vertexConsumers: VertexConsumerProvider.Immediate,
 ) {
-    private val buffer = tesselator.buffer
-    val effectiveFov = (MC.instance.gameRenderer as AccessorGameRenderer).getFov_firmament(camera, tickDelta, true)
-    val effectiveFovScaleFactor = 1 / tan(toRadians(effectiveFov) / 2)
 
     fun color(color: me.shedaniel.math.Color) {
         color(color.red / 255F, color.green / 255f, color.blue / 255f, color.alpha / 255f)
@@ -56,8 +53,7 @@ class RenderInWorldContext private constructor(
         RenderSystem.setShader(GameRenderer::getPositionColorProgram)
         matrixStack.push()
         matrixStack.translate(blockPos.x.toFloat(), blockPos.y.toFloat(), blockPos.z.toFloat())
-        buildCube(matrixStack.peek().positionMatrix, buffer)
-        tesselator.draw()
+        buildCube(matrixStack.peek().positionMatrix, tesselator)
         matrixStack.pop()
     }
 
@@ -125,8 +121,7 @@ class RenderInWorldContext private constructor(
         matrixStack.translate(vec3d.x, vec3d.y, vec3d.z)
         matrixStack.scale(size, size, size)
         matrixStack.translate(-.5, -.5, -.5)
-        buildCube(matrixStack.peek().positionMatrix, buffer)
-        tesselator.draw()
+        buildCube(matrixStack.peek().positionMatrix, tesselator)
         matrixStack.pop()
     }
 
@@ -135,8 +130,7 @@ class RenderInWorldContext private constructor(
         matrixStack.push()
         RenderSystem.lineWidth(lineWidth / pow(camera.pos.squaredDistanceTo(blockPos.toCenterPos()), 0.25).toFloat())
         matrixStack.translate(blockPos.x.toFloat(), blockPos.y.toFloat(), blockPos.z.toFloat())
-        buildWireFrameCube(matrixStack.peek(), buffer)
-        tesselator.draw()
+        buildWireFrameCube(matrixStack.peek(), tesselator)
         matrixStack.pop()
     }
 
@@ -152,8 +146,7 @@ class RenderInWorldContext private constructor(
     fun line(points: List<Vec3d>, lineWidth: Float = 10F) {
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram)
         RenderSystem.lineWidth(lineWidth)
-        buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
-        buffer.fixedColor(255, 255, 255, 255)
+        val buffer = tesselator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
 
         val matrix = matrixStack.peek()
         var lastNormal: Vector3f? = null
@@ -170,9 +163,8 @@ class RenderInWorldContext private constructor(
                 .normal(matrix, normal.x, normal.y, normal.z)
                 .next()
         }
-        buffer.unfixColor()
 
-        tesselator.draw()
+        BufferRenderer.drawWithGlobalProgram(buffer.end())
     }
 
     companion object {
@@ -191,16 +183,17 @@ class RenderInWorldContext private constructor(
                 .normalize()
             buf.vertex(matrix.positionMatrix, i, j, k)
                 .normal(matrix, normal.x, normal.y, normal.z)
+                .color(-1)
                 .next()
             buf.vertex(matrix.positionMatrix, x, y, z)
                 .normal(matrix, normal.x, normal.y, normal.z)
+                .color(-1)
                 .next()
         }
 
 
-        private fun buildWireFrameCube(matrix: MatrixStack.Entry, buf: BufferBuilder) {
-            buf.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
-            buf.fixedColor(255, 255, 255, 255)
+        private fun buildWireFrameCube(matrix: MatrixStack.Entry, tessellator: Tessellator) {
+            val buf = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
 
             for (i in 0..1) {
                 for (j in 0..1) {
@@ -211,12 +204,11 @@ class RenderInWorldContext private constructor(
                     doLine(matrix, buf, i, j, 0F, i, j, 1F)
                 }
             }
-            buf.unfixColor()
+            BufferRenderer.drawWithGlobalProgram(buf.end())
         }
 
-        private fun buildCube(matrix: Matrix4f, buf: BufferBuilder) {
-            buf.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR)
-            buf.fixedColor(255, 255, 255, 255)
+        private fun buildCube(matrix: Matrix4f, tessellator: Tessellator) {
+            val buf = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION)
             buf.vertex(matrix, 0.0F, 0.0F, 0.0F).next()
             buf.vertex(matrix, 0.0F, 0.0F, 1.0F).next()
             buf.vertex(matrix, 0.0F, 1.0F, 1.0F).next()
@@ -253,7 +245,7 @@ class RenderInWorldContext private constructor(
             buf.vertex(matrix, 1.0F, 1.0F, 1.0F).next()
             buf.vertex(matrix, 0.0F, 1.0F, 1.0F).next()
             buf.vertex(matrix, 1.0F, 0.0F, 1.0F).next()
-            buf.unfixColor()
+            BufferRenderer.drawWithGlobalProgram(buf.end())
         }
 
 
@@ -270,7 +262,7 @@ class RenderInWorldContext private constructor(
                 RenderSystem.renderThreadTesselator(),
                 event.matrices,
                 event.camera,
-                event.tickDelta,
+                event.tickCounter,
                 event.vertexConsumers
             )
 

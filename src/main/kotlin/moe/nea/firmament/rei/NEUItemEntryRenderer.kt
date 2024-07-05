@@ -20,7 +20,6 @@ import me.shedaniel.rei.api.client.gui.widgets.TooltipContext
 import me.shedaniel.rei.api.common.entry.EntryStack
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.item.TooltipType
 import net.minecraft.client.render.DiffuseLighting
 import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.OverlayTexture
@@ -30,6 +29,7 @@ import net.minecraft.client.render.model.json.ModelTransformationMode
 import net.minecraft.client.texture.SpriteAtlasTexture
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.item.tooltip.TooltipType
 import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
 
 object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<SBItemStack, BakedModel> {

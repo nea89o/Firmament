@@ -42,7 +42,7 @@ class FirmamentReiPlugin : REIClientPlugin {
             return EntryStack.of(VanillaEntryTypes.ITEM, value.asImmutableItemStack())
         }
 
-        val SKYBLOCK_ITEM_TYPE_ID = Identifier("firmament", "skyblockitems")
+        val SKYBLOCK_ITEM_TYPE_ID = Identifier.of("firmament", "skyblockitems")
     }
     override fun registerTransferHandlers(registry: TransferHandlerRegistry) {
         registry.register(TransferHandler { context ->

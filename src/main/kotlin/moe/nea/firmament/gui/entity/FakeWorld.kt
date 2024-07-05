@@ -129,6 +129,10 @@ fun <T> makeRegistry(registryWrapper: RegistryWrapper.Impl<T>, key: RegistryKey<
             return Lifecycle.stable()
         }
 
+        override fun getDefaultEntry(): Optional<RegistryEntry.Reference<T>> {
+            return Optional.empty()
+        }
+
         override fun getIds(): MutableSet<Identifier> {
             return idLookup.keys.mapTo(mutableSetOf()) { it.value }
         }
@@ -251,7 +255,7 @@ class FakeWorld(
     registries[RegistryKeys.DIMENSION_TYPE].entryOf(
         RegistryKey.of(
             RegistryKeys.DIMENSION_TYPE,
-            Identifier("minecraft", "overworld")
+            Identifier.of("minecraft", "overworld")
         )
     ),
     { DummyProfiler.INSTANCE },
@@ -436,7 +440,7 @@ class FakeWorld(
     override fun putMapState(id: MapIdComponent?, state: MapState?) {
     }
 
-    override fun getNextMapId(): MapIdComponent {
+    override fun increaseAndGetMapId(): MapIdComponent {
         return MapIdComponent(0)
     }
 

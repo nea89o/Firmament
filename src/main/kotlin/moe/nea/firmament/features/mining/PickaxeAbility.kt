@@ -172,7 +172,7 @@ object PickaxeAbility : FirmamentFeature {
         event.context.matrices.translate(MC.window.scaledWidth / 2F, MC.window.scaledHeight / 2F, 0F)
         event.context.matrices.scale(TConfig.cooldownScale.toFloat(), TConfig.cooldownScale.toFloat(), 1F)
         RenderCircleProgress.renderCircle(
-            event.context, Identifier("firmament", "textures/gui/circle.png"),
+            event.context, Identifier.of("firmament", "textures/gui/circle.png"),
             getCooldownPercentage(ability.name, ability.cooldown).toFloat(),
             0f, 1f, 0f, 1f
         )

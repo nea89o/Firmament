@@ -190,10 +190,10 @@ object SlotLocking : FirmamentFeature {
                 MC.guiAtlasManager.getSprite(
                     when {
                         isSlotLocked ->
-                            (Identifier("firmament:slot_locked"))
+                            (Identifier.of("firmament:slot_locked"))
 
                         isUUIDLocked ->
-                            (Identifier("firmament:uuid_locked"))
+                            (Identifier.of("firmament:uuid_locked"))
 
                         else ->
                             error("unreachable")
