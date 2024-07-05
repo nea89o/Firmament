@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.Serializable
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.InputUtil
+import net.minecraft.text.Text
 import moe.nea.firmament.util.MC
 
 @Serializable
@@ -85,6 +86,22 @@ data class SavedKeyBinding(
     override fun matches(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
         if (this.keyCode == GLFW.GLFW_KEY_UNKNOWN) return false
         return keyCode == this.keyCode && getMods(modifiers) == Triple(shift, ctrl, alt)
+    }
+
+    fun format(): Text {
+        val stroke = Text.literal("")
+        if (ctrl) {
+            stroke.append("CTRL + ")
+        }
+        if (alt) {
+            stroke.append("ALT + ")
+        }
+        if (shift) {
+            stroke.append("SHIFT + ") // TODO: translations?
+        }
+
+        stroke.append(InputUtil.Type.KEYSYM.createFromCode(keyCode).localizedText)
+        return stroke
     }
 
 }

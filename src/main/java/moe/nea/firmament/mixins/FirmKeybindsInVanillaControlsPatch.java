@@ -6,6 +6,7 @@
 
 package moe.nea.firmament.mixins;
 
+import moe.nea.firmament.gui.config.KeyBindingHandler;
 import moe.nea.firmament.gui.config.ManagedConfig;
 import moe.nea.firmament.keybindings.FirmamentKeyBindings;
 import net.minecraft.client.MinecraftClient;
@@ -40,19 +41,21 @@ public class FirmKeybindsInVanillaControlsPatch {
 
     @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;builder(Lnet/minecraft/text/Text;Lnet/minecraft/client/gui/widget/ButtonWidget$PressAction;)Lnet/minecraft/client/gui/widget/ButtonWidget$Builder;"))
     public ButtonWidget.PressAction onInit(ButtonWidget.PressAction action) {
-        ManagedConfig config = FirmamentKeyBindings.INSTANCE.getKeyBindings().get(binding);
+        var config = FirmamentKeyBindings.INSTANCE.getKeyBindings().get(binding);
         if (config == null) return action;
         return button -> {
-            config.showConfigEditor(MinecraftClient.getInstance().currentScreen);
+            ((KeyBindingHandler) config.getHandler())
+                .getManagedConfig()
+                .showConfigEditor(MinecraftClient.getInstance().currentScreen);
         };
     }
 
     @Inject(method = "update", at = @At("HEAD"), cancellable = true)
     public void onUpdate(CallbackInfo ci) {
-        ManagedConfig config = FirmamentKeyBindings.INSTANCE.getKeyBindings().get(binding);
+        var config = FirmamentKeyBindings.INSTANCE.getKeyBindings().get(binding);
         if (config == null) return;
         resetButton.active = false;
-        editButton.setMessage(Text.translatable("firmament.keybinding.external"));
+        editButton.setMessage(Text.translatable("firmament.keybinding.external", config.value.format()));
         ci.cancel();
     }
 

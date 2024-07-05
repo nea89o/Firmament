@@ -17,16 +17,17 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
-import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import moe.nea.firmament.gui.FirmButtonComponent
 import moe.nea.firmament.keybindings.FirmamentKeyBindings
 import moe.nea.firmament.keybindings.SavedKeyBinding
 
-class KeyBindingHandler(name: String, val managedConfig: ManagedConfig) : ManagedConfig.OptionHandler<SavedKeyBinding> {
-    init {
-        FirmamentKeyBindings.registerKeyBinding(name, managedConfig)
+class KeyBindingHandler(val name: String, val managedConfig: ManagedConfig) :
+    ManagedConfig.OptionHandler<SavedKeyBinding> {
+
+    override fun initOption(opt: ManagedOption<SavedKeyBinding>) {
+        FirmamentKeyBindings.registerKeyBinding(name, opt)
     }
 
     override fun toJson(element: SavedKeyBinding): JsonElement? {
@@ -44,19 +45,22 @@ class KeyBindingHandler(name: String, val managedConfig: ManagedConfig) : Manage
         var label: String = ""
         var button: FirmButtonComponent? = null
         fun updateLabel() {
-            val stroke = Text.literal("")
-            if (opt.value.shift) {
-                stroke.append("SHIFT + ") // TODO: translations?
-            }
-            if (opt.value.alt) {
-                stroke.append("ALT + ")
-            }
-            if (opt.value.ctrl) {
-                stroke.append("CTRL + ")
-            }
-            stroke.append(InputUtil.Type.KEYSYM.createFromCode(opt.value.keyCode).localizedText)
-            if (editing)
+            var stroke = opt.value.format()
+            if (editing) {
+                stroke = Text.literal("")
+                val (shift, alt, ctrl) = SavedKeyBinding.getMods(SavedKeyBinding.getModInt())
+                if (shift) {
+                    stroke.append("SHIFT + ")
+                }
+                if (alt) {
+                    stroke.append("ALT + ")
+                }
+                if (ctrl) {
+                    stroke.append("CTRL + ")
+                }
+                stroke.append("???")
                 stroke.styled { it.withColor(Formatting.YELLOW) }
+            }
             label = (stroke).string
             managedConfig.save()
         }
@@ -79,7 +83,7 @@ class KeyBindingHandler(name: String, val managedConfig: ManagedConfig) : Manage
             }) {
             override fun keyboardEvent(event: KeyboardEvent, context: GuiImmediateContext): Boolean {
                 if (event is KeyboardEvent.KeyPressed) {
-                    if (event.pressed) onKeyPressed(event.keycode, SavedKeyBinding.getModInt())
+                    return if (event.pressed) onKeyPressed(event.keycode, SavedKeyBinding.getModInt())
                     else onKeyReleased(event.keycode, SavedKeyBinding.getModInt())
                 }
                 return super.keyboardEvent(event, context)
@@ -100,6 +104,7 @@ class KeyBindingHandler(name: String, val managedConfig: ManagedConfig) : Manage
                     lastPressed = 0
                     opt.value = SavedKeyBinding(GLFW.GLFW_KEY_UNKNOWN)
                     updateLabel()
+                    blur()
                     return true
                 }
                 if (ch == GLFW.GLFW_KEY_LEFT_SHIFT || ch == GLFW.GLFW_KEY_RIGHT_SHIFT
@@ -112,6 +117,7 @@ class KeyBindingHandler(name: String, val managedConfig: ManagedConfig) : Manage
                         ch, modifiers
                     )
                     editing = false
+                    blur()
                     lastPressed = 0
                     lastPressedNonModifier = 0
                 }
@@ -132,6 +138,7 @@ class KeyBindingHandler(name: String, val managedConfig: ManagedConfig) : Manage
                 if (lastPressedNonModifier == ch || (lastPressedNonModifier == 0 && ch == lastPressed)) {
                     opt.value = SavedKeyBinding(ch, modifiers)
                     editing = false
+                    blur()
                     lastPressed = 0
                     lastPressedNonModifier = 0
                 }

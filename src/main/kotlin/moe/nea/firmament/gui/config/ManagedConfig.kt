@@ -34,6 +34,7 @@ import moe.nea.firmament.util.ScreenUtil.setScreenLater
 abstract class ManagedConfig(override val name: String) : ManagedConfigElement() {
 
     interface OptionHandler<T : Any> {
+        fun initOption(opt: ManagedOption<T>) {}
         fun toJson(element: T): JsonElement?
         fun fromJson(element: JsonElement): T
         fun emitGuiElements(opt: ManagedOption<T>, guiAppender: GuiAppender)
@@ -74,6 +75,7 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
     ): ManagedOption<T> {
         if (propertyName in allOptions) error("Cannot register the same name twice")
         return ManagedOption(this, propertyName, default, handler).also {
+            it.handler.initOption(it)
             it.load(data)
             allOptions[propertyName] = it
             sortedOptions.add(it)
