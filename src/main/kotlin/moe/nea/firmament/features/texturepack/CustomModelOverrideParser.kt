@@ -45,6 +45,7 @@ object CustomModelOverrideParser {
         registerPredicateParser("not", NotPredicate.Parser)
         registerPredicateParser("item", ItemPredicate.Parser)
         registerPredicateParser("extra_attributes", ExtraAttributesPredicate.Parser)
+        registerPredicateParser("pet", PetPredicate.Parser)
     }
 
     private val neverPredicate = listOf(

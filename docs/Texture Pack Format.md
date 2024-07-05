@@ -114,6 +114,30 @@ Sub object match:
 }
 ```
 
+#### Pet Data
+
+Filter by pet information. While you can already filter by the skyblock id for pet type and tier, this allows you to
+further filter by level and some other pet info.
+
+```json5
+"firmament:pet" {
+    "id": "WOLF",
+    "exp": ">=25353230",
+    "tier": "[RARE,LEGENDARY]",
+    "level": "[50,)",
+    "candyUsed": 0
+}
+```
+
+| Name        | Type                                                                   | Description                                                                                                                          |
+|-------------|------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `id`        | [String](#string-matcher)                                              | The id of the pet                                                                                                                    |
+| `exp`       | [Number](#number-matcher)                                              | The total experience of the pet                                                                                                      |
+| `tier`      | Rarity (like [Number](#number-matcher), but with rarity names instead) | The total experience of the pet                                                                                                      |
+| `level`     | [Number](#number-matcher)                                              | The current level of the pet                                                                                                         |
+| `candyUsed` | [Number](#number-matcher)                                              | The number of pet candies used on the pet. This is present even if they are not shown in game (such as on a level 100 legendary pet) |
+
+Every part of this matcher is optional.
 
 
 #### Logic Operators
@@ -181,6 +205,58 @@ specify one of these other matchers and one color preserving property.
 }
 ```
 
+### Number Matchers
+
+This matches a number against either a range or a specific number.
+
+#### Direct number
+
+You can directly specify a number using that value directly:
+```json5
+"firmament:pet": {
+    "level": 100
+}
+```
+
+This is best for whole numbers, since decimal numbers can be really close together but still be different.
+
+#### Intervals
+
+For ranges you can instead use an interval. This uses the standard mathematical notation for those as a string:
+
+
+```json5
+"firmament:pet": {
+    "level": "(50,100]"
+}
+```
+
+This is in the format of `(min,max)` or `[min,max]`. Either min or max can be omitted, which results in that boundary
+being ignored (so `[50,)` would be 50 until infinity). You can also vary the parenthesis on either side independently.
+
+Specifying round parenthesis `()` means the number is exclusive, so not including this number. For example `(50,100)`
+would not match just the number `50` or `100`, but would match `51`.
+
+Specifying square brackets `[]` means the number is inclusive. For example `[50,100]` would match both `50` and `100`.
+
+You can mix and match parenthesis and brackets, they only ever affect the number next to it.
+
+For more information in intervals check out [Wikipedia](https://en.wikipedia.org/wiki/Interval_(mathematics)).
+
+#### Operators
+
+If instead of specifying a range you just need to specify one boundary you can also use the standard operators to 
+compare your number:
+
+```json5
+"firmament:pet": {
+    "level": "<50"
+}
+```
+
+This example would match if the level is less than fifty. The available operators are `<`, `>`, `<=` and `>=`. The
+operator needs to be specified on the left. The versions of the operator with `=` also allow the number to be equal.
+
 ### Nbt Matcher
 
 This matches a single nbt element.
@@ -222,6 +298,11 @@ You can override that like so:
     "maxExclusive": false
 }
 ```
+
+
+> [!WARNING]
+> This syntax for numbers is *just* for **NBT values**. This is also why specifying the type of the number is necessary.
+> For other number matchers, use [the number matchers](#number-matchers)
 
 ## Armor textures
 
