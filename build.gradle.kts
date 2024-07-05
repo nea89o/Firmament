@@ -142,6 +142,8 @@ dependencies {
     modCompileOnly(libs.jarvis.api)
     include(libs.jarvis.fabric)
 
+    modCompileOnly(libs.femalegender)
+
     // Actual dependencies
     modCompileOnly(libs.rei.api) {
         exclude(module = "architectury")
