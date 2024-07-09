@@ -81,7 +81,7 @@ class SubscribeAnnotationProcessor(
                 continue
             }
             val parent = element.parentDeclaration
-            if (parent !is KSClassDeclaration || parent.isCompanionObject || parent.classKind != ClassKind.OBJECT) {
+            if (parent !is KSClassDeclaration || parent.classKind != ClassKind.OBJECT) {
                 logger.error("@Subscribe on a non-object", element)
                 continue
             }

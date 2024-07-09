@@ -98,11 +98,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
     }
 
     private fun <T : FirmamentEvent> subscribeSingleEvent(it: Subscription<T>) {
-        if (it.owner.delegateFeature in features.values) { // TODO: better check here, somehow. probably implement some interface method
-            it.eventBus.subscribe(false, it.invoke) // TODO: pass through receivesCancelled from the annotation
-        } else {
-            Firmament.logger.error("Ignoring event listener for ${it.eventBus} in ${it.owner}")
-        }
+        it.eventBus.subscribe(false, it.invoke)
     }
 
     fun loadFeature(feature: FirmamentFeature) {

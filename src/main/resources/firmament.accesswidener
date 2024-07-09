@@ -13,3 +13,7 @@ accessible field net/minecraft/entity/passive/AbstractHorseEntity SADDLED_FLAG I
 accessible field net/minecraft/entity/passive/AbstractHorseEntity HORSE_FLAGS Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/resource/NamespaceResourceManager loadMetadata (Lnet/minecraft/resource/InputSupplier;)Lnet/minecraft/resource/metadata/ResourceMetadata;
 accessible method net/minecraft/client/gui/DrawContext drawTexturedQuad (Lnet/minecraft/util/Identifier;IIIIIFFFFFFFF)V
+
+mutable field net/minecraft/screen/slot/Slot x I
+mutable field net/minecraft/screen/slot/Slot y I
+

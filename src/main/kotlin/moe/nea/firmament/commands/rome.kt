@@ -15,7 +15,7 @@ import net.minecraft.text.Text
 import moe.nea.firmament.apis.UrsaManager
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
-import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
+import moe.nea.firmament.features.inventory.storageoverlay.StorageOverviewScreen
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
@@ -107,7 +107,7 @@ fun firmamentCommand() = literal("firmament") {
     }
     thenLiteral("storage") {
         thenExecute {
-            ScreenUtil.setScreenLater(StorageOverlayScreen())
+            ScreenUtil.setScreenLater(StorageOverviewScreen())
             MC.player?.networkHandler?.sendChatCommand("storage")
         }
     }

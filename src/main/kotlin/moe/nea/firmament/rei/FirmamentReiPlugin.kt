@@ -19,20 +19,21 @@ import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry
 import me.shedaniel.rei.api.common.entry.EntryStack
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
-import moe.nea.firmament.events.HandledScreenPushREIEvent
-import moe.nea.firmament.features.inventory.CraftingOverlay
-import moe.nea.firmament.rei.recipes.SBCraftingRecipe
-import moe.nea.firmament.rei.recipes.SBForgeRecipe
-import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.skyblockId
-import moe.nea.firmament.util.unformattedString
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import moe.nea.firmament.events.HandledScreenPushREIEvent
+import moe.nea.firmament.features.inventory.CraftingOverlay
+import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
+import moe.nea.firmament.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.skyblockId
+import moe.nea.firmament.util.unformattedString
 
 
 class FirmamentReiPlugin : REIClientPlugin {
@@ -44,6 +45,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 
         val SKYBLOCK_ITEM_TYPE_ID = Identifier.of("firmament", "skyblockitems")
     }
+
     override fun registerTransferHandlers(registry: TransferHandlerRegistry) {
         registry.register(TransferHandler { context ->
             val screen = context.containerScreen
@@ -69,6 +71,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 
     override fun registerExclusionZones(zones: ExclusionZones) {
         zones.register(HandledScreen::class.java) { HandledScreenPushREIEvent.publish(HandledScreenPushREIEvent(it)).rectangles }
+        zones.register(StorageOverlayScreen::class.java) { it.getBounds() }
     }
 
     override fun registerDisplays(registry: DisplayRegistry) {
@@ -80,7 +83,8 @@ class FirmamentReiPlugin : REIClientPlugin {
             SBForgeRecipe.Category.categoryIdentifier,
             SkyblockForgeRecipeDynamicGenerator
         )
-        registry.registerDisplayGenerator(SBMobDropRecipe.Category.categoryIdentifier, SkyblockMobDropRecipeDynamicGenerator)
+        registry.registerDisplayGenerator(SBMobDropRecipe.Category.categoryIdentifier,
+                                          SkyblockMobDropRecipeDynamicGenerator)
     }
 
     override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {

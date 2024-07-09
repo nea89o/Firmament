@@ -15,7 +15,7 @@ interface SubscriptionOwner {
 }
 
 data class Subscription<T : FirmamentEvent>(
-    val owner: SubscriptionOwner,
+    val owner: Any,
     val invoke: (T) -> Unit,
     val eventBus: FirmamentEventBus<T>,
 )

@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -20,11 +21,6 @@ sealed interface StorageBackingHandle {
     sealed interface HasBackingScreen {
         val handler: GenericContainerScreenHandler
     }
-
-    /**
-     * No open "server side" screen.
-     */
-    object None : StorageBackingHandle
 
     /**
      * The main storage overview is open. Clicking on a slot will open that page. This page is accessible via `/storage`
@@ -48,7 +44,7 @@ sealed interface StorageBackingHandle {
          * selection screen.
          */
         fun fromScreen(screen: Screen?): StorageBackingHandle? {
-            if (screen == null) return None
+            if (screen == null) return null
             if (screen !is GenericContainerScreen) return null
             val title = screen.title.unformattedString
             if (title == "Storage") return Overview(screen.screenHandler)
