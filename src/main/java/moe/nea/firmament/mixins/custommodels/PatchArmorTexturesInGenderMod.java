@@ -16,9 +16,11 @@ import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(GenderArmorLayer.class)
+@Pseudo
 public class PatchArmorTexturesInGenderMod {
     @WrapOperation(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArmorItem;getMaterial()Lnet/minecraft/registry/entry/RegistryEntry;"))
