@@ -47,13 +47,13 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
     val minecraft = MinecraftClient.getInstance()
 
     override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
-        return Tooltip.create(
-            entry.asItemEntry().value.getTooltip(
-                Item.TooltipContext.DEFAULT,
-                null,
-                TooltipType.BASIC
-            )
+        val stack = entry.value.asImmutableItemStack()
+        val lore = stack.getTooltip(
+            Item.TooltipContext.DEFAULT,
+            null,
+            TooltipType.BASIC
         )
+        return Tooltip.create(lore)
     }
 
     override fun getExtraData(entry: EntryStack<SBItemStack>): BakedModel {

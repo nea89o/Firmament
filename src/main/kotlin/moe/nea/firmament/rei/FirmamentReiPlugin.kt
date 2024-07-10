@@ -32,6 +32,7 @@ import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.rei.recipes.SBCraftingRecipe
 import moe.nea.firmament.rei.recipes.SBForgeRecipe
+import moe.nea.firmament.rei.recipes.SBKatRecipe
 import moe.nea.firmament.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.SkyblockId
@@ -70,6 +71,7 @@ class FirmamentReiPlugin : REIClientPlugin {
         registry.add(SBCraftingRecipe.Category)
         registry.add(SBForgeRecipe.Category)
         registry.add(SBMobDropRecipe.Category)
+        registry.add(SBKatRecipe.Category)
     }
 
     override fun registerExclusionZones(zones: ExclusionZones) {
@@ -80,14 +82,16 @@ class FirmamentReiPlugin : REIClientPlugin {
     override fun registerDisplays(registry: DisplayRegistry) {
         registry.registerDisplayGenerator(
             SBCraftingRecipe.Category.catIdentifier,
-            SkyblockCraftingRecipeDynamicGenerator
-        )
+            SkyblockCraftingRecipeDynamicGenerator)
         registry.registerDisplayGenerator(
             SBForgeRecipe.Category.categoryIdentifier,
-            SkyblockForgeRecipeDynamicGenerator
-        )
-        registry.registerDisplayGenerator(SBMobDropRecipe.Category.categoryIdentifier,
-                                          SkyblockMobDropRecipeDynamicGenerator)
+            SkyblockForgeRecipeDynamicGenerator)
+        registry.registerDisplayGenerator(
+            SBMobDropRecipe.Category.categoryIdentifier,
+            SkyblockMobDropRecipeDynamicGenerator)
+        registry.registerDisplayGenerator(
+            SBKatRecipe.Category.categoryIdentifier,
+            SkyblockKatRecipeDynamicGenerator)
     }
 
     override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {

@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -27,7 +28,7 @@ object NEUItemEntrySerializer : EntrySerializer<SBItemStack> {
     override fun save(entry: EntryStack<SBItemStack>, value: SBItemStack): NbtCompound {
         return NbtCompound().apply {
             putString(SKYBLOCK_ID_ENTRY, value.skyblockId.neuItem)
-            putInt(SKYBLOCK_ITEM_COUNT, value.stackSize)
+            putInt(SKYBLOCK_ITEM_COUNT, value.getStackSize())
         }
     }
 }

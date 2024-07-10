@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -46,7 +47,7 @@ object CraftingOverlay : FirmamentFeature {
         val expectedItem = recipe.neuRecipe.inputs[recipeIndex]
         val actualStack = slot.stack ?: ItemStack.EMPTY!!
         val actualEntry = SBItemEntryDefinition.getEntry(actualStack).value
-        if ((actualEntry.skyblockId.neuItem != expectedItem.itemId || actualEntry.stackSize < expectedItem.amount) && expectedItem.amount.toInt() != 0) {
+        if ((actualEntry.skyblockId.neuItem != expectedItem.itemId || actualEntry.getStackSize() < expectedItem.amount) && expectedItem.amount.toInt() != 0) {
             event.context.fill(
                 event.slot.x,
                 event.slot.y,

@@ -46,6 +46,9 @@ data class PetData(
         fun fromHypixel(petInfo: HypixelPetInfo) = PetData(
             petInfo.tier, petInfo.type, petInfo.exp,
         )
+        fun forLevel(petId: String, rarity: Rarity, level: Int) = PetData(
+            rarity, petId, ExpLadders.getExpLadder(petId, rarity).getPetExpForLevel(level).toDouble()
+        )
     }
 
     val levelData by lazy { ExpLadders.getExpLadder(petId, rarity).getPetLevel(exp) }
@@ -54,10 +57,22 @@ data class PetData(
 data class SBItemStack(
     val skyblockId: SkyblockId,
     val neuItem: NEUItem?,
-    val stackSize: Int,
-    val petData: PetData?,
+    private var stackSize: Int,
+    private var petData: PetData?,
     val extraLore: List<Text> = emptyList(),
 ) {
+
+    fun getStackSize() = stackSize
+    fun setStackSize(newSize: Int) {
+        this.stackSize = stackSize
+        this.itemStack_ = null
+    }
+    fun getPetData() = petData
+    fun setPetData(petData: PetData?) {
+        this.petData = petData
+        this.itemStack_ = null
+    }
+
     constructor(skyblockId: SkyblockId, petData: PetData) : this(
         skyblockId,
         RepoManager.getNEUItem(skyblockId),
@@ -87,7 +102,7 @@ data class SBItemStack(
     }
 
     private fun injectReplacementDataForPets(replacementData: MutableMap<String, String>) {
-        if (petData == null) return
+        val petData = this.petData ?: return
         val petInfo = RepoManager.neuRepo.constants.petNumbers[petData.petId]?.get(petData.rarity) ?: return
         if (petData.isStub) {
             val mapLow = mutableMapOf<String, String>()
@@ -105,14 +120,23 @@ data class SBItemStack(
         }
     }
 
-    private val itemStack: ItemStack by lazy(LazyThreadSafetyMode.NONE) {
-        if (skyblockId == SkyblockId.COINS)
-            return@lazy ItemCache.coinItem(stackSize).also { it.appendLore(extraLore) }
-        val replacementData = mutableMapOf<String, String>()
-        injectReplacementDataForPets(replacementData)
-        return@lazy neuItem.asItemStack(idHint = skyblockId, replacementData).copyWithCount(stackSize)
-            .also { it.appendLore(extraLore) }
-    }
+
+    private var itemStack_: ItemStack? = null
+
+    private val itemStack: ItemStack
+        get() {
+            val itemStack = itemStack_ ?: run {
+                if (skyblockId == SkyblockId.COINS)
+                    return@run ItemCache.coinItem(stackSize).also { it.appendLore(extraLore) }
+                val replacementData = mutableMapOf<String, String>()
+                injectReplacementDataForPets(replacementData)
+                return@run neuItem.asItemStack(idHint = skyblockId, replacementData).copyWithCount(stackSize)
+                    .also { it.appendLore(extraLore) }
+            }
+            if (itemStack_ == null)
+                itemStack_ = itemStack
+            return itemStack
+        }
 
     fun asImmutableItemStack(): ItemStack {
         return itemStack
@@ -125,7 +149,7 @@ data class SBItemStack(
 
 object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     override fun equals(o1: SBItemStack, o2: SBItemStack, context: ComparisonContext): Boolean {
-        return o1.skyblockId == o2.skyblockId && o1.stackSize == o2.stackSize
+        return o1.skyblockId == o2.skyblockId && o1.getStackSize() == o2.getStackSize()
     }
 
     override fun cheatsAs(entry: EntryStack<SBItemStack>?, value: SBItemStack): ItemStack {
@@ -167,7 +191,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     }
 
     override fun isEmpty(entry: EntryStack<SBItemStack>?, value: SBItemStack): Boolean {
-        return value.stackSize == 0
+        return value.getStackSize() == 0
     }
 
     override fun getIdentifier(entry: EntryStack<SBItemStack>?, value: SBItemStack): Identifier {

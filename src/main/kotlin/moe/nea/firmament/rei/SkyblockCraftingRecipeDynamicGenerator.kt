@@ -9,32 +9,34 @@ package moe.nea.firmament.rei
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUForgeRecipe
+import io.github.moulberry.repo.data.NEUKatUpgradeRecipe
 import io.github.moulberry.repo.data.NEUMobDropRecipe
 import io.github.moulberry.repo.data.NEURecipe
-import java.util.*
+import java.util.Optional
 import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.entry.EntryStack
 import moe.nea.firmament.rei.recipes.SBCraftingRecipe
 import moe.nea.firmament.rei.recipes.SBForgeRecipe
+import moe.nea.firmament.rei.recipes.SBKatRecipe
 import moe.nea.firmament.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.repo.RepoManager
 
 
-val SkyblockCraftingRecipeDynamicGenerator = neuDisplayGenerator<SBCraftingRecipe, NEUCraftingRecipe> {
-    SBCraftingRecipe(it)
-}
+val SkyblockCraftingRecipeDynamicGenerator =
+    neuDisplayGenerator<SBCraftingRecipe, NEUCraftingRecipe> { SBCraftingRecipe(it) }
 
-val SkyblockForgeRecipeDynamicGenerator = neuDisplayGenerator<SBForgeRecipe, NEUForgeRecipe> {
-    SBForgeRecipe(it)
-}
+val SkyblockForgeRecipeDynamicGenerator =
+    neuDisplayGenerator<SBForgeRecipe, NEUForgeRecipe> { SBForgeRecipe(it) }
 
-val SkyblockMobDropRecipeDynamicGenerator = neuDisplayGenerator<SBMobDropRecipe, NEUMobDropRecipe> {
-    SBMobDropRecipe(it)
-}
+val SkyblockMobDropRecipeDynamicGenerator =
+    neuDisplayGenerator<SBMobDropRecipe, NEUMobDropRecipe> { SBMobDropRecipe(it) }
 
-inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(noinline mapper: (T) -> D) =
+val SkyblockKatRecipeDynamicGenerator =
+    neuDisplayGenerator<SBKatRecipe, NEUKatUpgradeRecipe> { SBKatRecipe(it) }
+
+inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(crossinline mapper: (T) -> D) =
     object : DynamicDisplayGenerator<D> {
         override fun getRecipeFor(entry: EntryStack<*>): Optional<List<D>> {
             if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
@@ -47,7 +49,7 @@ inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(noinline map
         override fun generate(builder: ViewSearchBuilder): Optional<List<D>> {
             if (SBCraftingRecipe.Category.catIdentifier !in builder.categories) return Optional.empty()
             return Optional.of(
-                RepoManager.getAllRecipes().filterIsInstance<T>().map(mapper)
+                RepoManager.getAllRecipes().filterIsInstance<T>().map { mapper(it) }
                     .toList()
             )
         }

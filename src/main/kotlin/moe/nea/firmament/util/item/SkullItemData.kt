@@ -12,7 +12,7 @@ package moe.nea.firmament.util.item
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
-import java.util.*
+import java.util.UUID
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -63,10 +63,12 @@ fun ItemStack.setEncodedSkullOwner(uuid: UUID, encodedData: String) {
 val zeroUUID = UUID.fromString("d3cb85e2-3075-48a1-b213-a9bfb62360c1")
 fun ItemStack.setSkullOwner(uuid: UUID, url: String) {
     assert(this.item == Items.PLAYER_HEAD)
-    val gameProfile = GameProfile(uuid, "LameGuy123")
+    val gameProfile = GameProfile(uuid, "nea89")
     gameProfile.setTextures(
         MinecraftTexturesPayloadKt(
-            mapOf(MinecraftProfileTexture.Type.SKIN to MinecraftProfileTextureKt(url))
+            textures = mapOf(MinecraftProfileTexture.Type.SKIN to MinecraftProfileTextureKt(url)),
+            profileId = uuid,
+            profileName = "nea89",
         )
     )
     this.set(DataComponentTypes.PROFILE, ProfileComponent(gameProfile))

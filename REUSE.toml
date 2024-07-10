@@ -1,0 +1,9 @@
+#SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+#
+#SPDX-License-Identifier: CC0-1.0
+
+version = 1
+SPDX-PackageName = "Firmament"
+SPDX-PackageSupplier = "Linnea Gräf <nea@nea.moe>"
+SPDX-PackageDownloadLocation = "https://github.com/romangraef/Firmament"
+annotations = []
