@@ -27,5 +27,4 @@ jobs:
                     modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
                     files: "*.jar"
                     loaders: fabric
-                    game-versions: 1.20.6
                     version: ${{ github.event.release.tag_name }}

@@ -54,6 +54,11 @@
             "links": {
                 "modmenu.discord": "https://discord.gg/64pFP94AWA"
             }
+        },
+        "mc-publish": {
+            "dependencies": [
+                "roughlyenoughitems{modrinth:rei}"
+            ]
         }
     }
 }
