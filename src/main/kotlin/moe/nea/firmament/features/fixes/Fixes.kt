@@ -31,7 +31,6 @@ object Fixes : FirmamentFeature {
         val autoSprintKeyBinding by keyBindingWithDefaultUnbound("auto-sprint-keybinding")
         val autoSprintHud by position("auto-sprint-hud", 80, 10) { Point(0.0, 1.0) }
         val peekChat by keyBindingWithDefaultUnbound("peek-chat")
-        val useClientSidedHandedness by toggle("clientside-lefthand") { true }
     }
 
     override val config: ManagedConfig
@@ -43,12 +42,6 @@ object Fixes : FirmamentFeature {
     ) {
         if (keyBinding === MinecraftClient.getInstance().options.sprintKey && TConfig.autoSprint && MC.player?.isSprinting != true)
             cir.returnValue = true
-    }
-
-    fun isLeftHandedHook(entity: PlayerEntity, cit: CallbackInfoReturnable<Arm>) = errorBoundary {
-        if (TConfig.useClientSidedHandedness && entity.isMainPlayer) {
-            cit.returnValue = MC.instance.options.mainArm.value
-        }
     }
 
     @Subscribe
