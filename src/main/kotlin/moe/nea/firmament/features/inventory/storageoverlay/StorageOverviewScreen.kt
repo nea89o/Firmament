@@ -7,6 +7,7 @@
 
 package moe.nea.firmament.features.inventory.storageoverlay
 
+import org.lwjgl.glfw.GLFW
 import kotlin.math.max
 import net.minecraft.block.Blocks
 import net.minecraft.client.gui.DrawContext
@@ -119,8 +120,9 @@ class StorageOverviewScreen() : Screen(Text.empty()) {
         }
     }
 
-    override fun close() {
-        isClosing = true
-        super.close()
+    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE)
+            isClosing = true
+        return super.keyPressed(keyCode, scanCode, modifiers)
     }
 }

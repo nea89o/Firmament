@@ -9,14 +9,19 @@ package moe.nea.firmament.features.inventory.storageoverlay
 
 import java.util.SortedMap
 import kotlinx.serialization.serializer
-import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.item.Items
+import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
+import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ScreenChangeEvent
+import moe.nea.firmament.events.SlotClickEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 
@@ -43,7 +48,8 @@ object StorageOverlay : FirmamentFeature {
     override val config: TConfig
         get() = TConfig
 
-    var lastStorageOverlay: Screen? = null
+    var lastStorageOverlay: StorageOverviewScreen? = null
+    var skipNextStorageOverlayBackflip = false
     var currentHandler: StorageBackingHandle? = null
 
     @Subscribe
@@ -52,22 +58,58 @@ object StorageOverlay : FirmamentFeature {
     }
 
     @Subscribe
+    fun onClick(event: SlotClickEvent) {
+        if (lastStorageOverlay != null && event.slot.inventory !is PlayerInventory && event.slot.index < 9
+            && event.stack.item != Items.BLACK_STAINED_GLASS_PANE
+        ) {
+            skipNextStorageOverlayBackflip = true
+        }
+    }
+
+    @Subscribe
     fun onScreenChange(it: ScreenChangeEvent) {
+        if (it.old == null && it.new == null) return
         val storageOverlayScreen = it.old as? StorageOverlayScreen
             ?: ((it.old as? HandledScreen<*>)?.customGui as? StorageOverlayCustom)?.overview
+        var storageOverviewScreen = it.old as? StorageOverviewScreen
+        val screen = it.new as? GenericContainerScreen
+        val oldHandler = currentHandler
+        currentHandler = StorageBackingHandle.fromScreen(screen)
+        rememberContent(currentHandler)
+        if (storageOverviewScreen != null && oldHandler is StorageBackingHandle.HasBackingScreen) {
+            val player = MC.player
+            assert(player != null)
+            player?.networkHandler?.sendPacket(CloseHandledScreenC2SPacket(oldHandler.handler.syncId))
+            if (player?.currentScreenHandler === oldHandler.handler) {
+                player.currentScreenHandler = player.playerScreenHandler
+            }
+        }
+        storageOverviewScreen = storageOverviewScreen ?: lastStorageOverlay
         if (it.new == null && storageOverlayScreen != null && !storageOverlayScreen.isExiting) {
             it.overrideScreen = storageOverlayScreen
             return
         }
-        val screen = it.new as? GenericContainerScreen ?: return
-        currentHandler = StorageBackingHandle.fromScreen(screen)
+        if (storageOverviewScreen != null
+            && !storageOverviewScreen.isClosing
+            && (currentHandler is StorageBackingHandle.Overview || currentHandler == null)
+        ) {
+            if (skipNextStorageOverlayBackflip) {
+                skipNextStorageOverlayBackflip = false
+            } else {
+                it.overrideScreen = storageOverviewScreen
+                lastStorageOverlay = null
+            }
+            return
+        }
+        screen ?: return
         screen.customGui = StorageOverlayCustom(
-            currentHandler as? StorageBackingHandle.Page ?: return,
+            currentHandler ?: return,
             screen,
             storageOverlayScreen ?: return)
     }
 
-    fun rememberContent(handler: StorageBackingHandle) {
+    fun rememberContent(handler: StorageBackingHandle?) {
+        handler ?: return
         // TODO: Make all of these functions work on deltas / updates instead of the entire contents
         val data = Data.data?.storageInventories ?: return
         when (handler) {

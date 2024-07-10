@@ -17,7 +17,7 @@ import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.customgui.CustomGui
 
 class StorageOverlayCustom(
-    val handler: StorageBackingHandle.Page,
+    val handler: StorageBackingHandle,
     val screen: GenericContainerScreen,
     val overview: StorageOverlayScreen,
 ) : CustomGui() {
@@ -59,7 +59,7 @@ class StorageOverlayCustom(
     }
 
     override fun mouseClick(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        return overview.mouseClicked(mouseX, mouseY, button, handler.storagePageSlot)
+        return overview.mouseClicked(mouseX, mouseY, button, (handler as? StorageBackingHandle.Page)?.storagePageSlot)
     }
 
     override fun render(drawContext: DrawContext, delta: Float, mouseX: Int, mouseY: Int) {
@@ -68,7 +68,7 @@ class StorageOverlayCustom(
                            mouseX,
                            mouseY,
                            delta,
-                           handler.storagePageSlot,
+                           (handler as? StorageBackingHandle.Page)?.storagePageSlot,
                            screen.screenHandler.slots.take(screen.screenHandler.rows * 9).drop(9),
                            Point((screen as AccessorHandledScreen).x_Firmament, screen.y_Firmament))
         overview.drawScrollBar(drawContext)

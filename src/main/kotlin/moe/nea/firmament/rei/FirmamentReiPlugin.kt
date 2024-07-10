@@ -13,16 +13,19 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry
 import me.shedaniel.rei.api.client.registry.screen.ExclusionZones
+import me.shedaniel.rei.api.client.registry.screen.OverlayDecider
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandler
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry
 import me.shedaniel.rei.api.common.entry.EntryStack
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
@@ -99,6 +102,15 @@ class FirmamentReiPlugin : REIClientPlugin {
     }
 
     override fun registerScreens(registry: ScreenRegistry) {
+        registry.registerDecider(object : OverlayDecider {
+            override fun <R : Screen?> isHandingScreen(screen: Class<R>?): Boolean {
+                return screen == StorageOverlayScreen::class.java
+            }
+
+            override fun <R : Screen?> shouldScreenBeOverlaid(screen: R): ActionResult {
+                return ActionResult.SUCCESS
+            }
+        })
         registry.registerFocusedStack(SkyblockItemIdFocusedStackProvider)
     }
 
