@@ -24,6 +24,22 @@ replacement texture at `firmskyblock:textures/placedskulls/<thathash>.png`. Keep
 the texture with another skin texture, meaning that skin texture has it's own hash. Do not mix those up, you need to use
 the hash of the old skin.
 
+## Armor Skull Models
+
+You can replace the models of skull items (or other items) by specifying the `firmament:head_model` property on your
+model. Note that this is resolved *after* all [overrides](#predicates) and further predicates are not resolved on the
+head model.
+
+```json5
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "firmskyblock:item/regular_texture"
+    },
+    "firmament:head_model": "minecraft:block/diamond_block" // when wearing on the head render a diamond block instead (can be any item model, including custom ones)
+}
+```
+
 ## Predicates
 
 Firmament adds the ability for more complex [item model predicates](https://minecraft.wiki/w/Tutorials/Models#Item_predicates).
