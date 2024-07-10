@@ -96,7 +96,7 @@ object PowerUserTools : FirmamentFeature {
         }
         MC.sendChat(Text.stringifiedTranslatable("firmament.poweruser.entity.passengers", target.passengerList.size))
         target.passengerList.forEach {
-            showEntity(target)
+            showEntity(it)
         }
     }
 
