@@ -94,6 +94,11 @@ if ! [ -d "$basedir/.git" ]; then
     exit 1
 fi
 
+if ! "${JAVA_HOME}"/bin/java -version 2>&1 | grep 'version "21.'>/dev/null && [ "$_arg_no_check" == off ]; then
+    echo Wrong java version
+    exit 1
+fi
+
 if [ -n "$(git status --porcelain)" ] && [ "$_arg_no_check" == off ]; then
     echo Unclean git working environment
     exit 1
