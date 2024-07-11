@@ -12,25 +12,28 @@ jobs:
         name: Test
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-              name: Checkout repository
-            - name: Set up JDK 21
-              uses: actions/setup-java@v4
-              with:
-                  distribution: temurin
-                  java-version: 21
-            - name: Set up gradle cache
-              uses: gradle/actions/setup-gradle@v3
-            - name: Build with gradle
-              run: ./gradlew clean test remapJar --stacktrace
-            - name: Upload build artifact
-              uses: actions/upload-artifact@v3
-              with:
-                  path: build/libs/Firmament-*.jar
-            - name: Move build artifact around
-              id: artifact-rename
-              run: |
-                  rm -f build/libs/*sources*.jar
-                  newfilename=build/libs/Firmament-$(git rev-parse --short HEAD).jar
-                  echo filename=$newfilename >>"$GITHUB_OUTPUT"
-                  mv build/libs/Firmament-*.jar $newfilename
+            -   uses: actions/checkout@v4
+                name: Checkout repository
+                with:
+                    fetch-tags: true
+            -   name: Set up JDK 21
+                uses: actions/setup-java@v4
+                with:
+                    distribution: temurin
+                    java-version: 21
+            -   name: Set up gradle cache
+                uses: gradle/actions/setup-gradle@v3
+            -   name: Build with gradle
+                run: ./gradlew clean test remapJar --stacktrace
+            -   name: Upload build artifact
+                uses: actions/upload-artifact@v3
+                with:
+                    path: build/libs/Firmament-*.jar
+            -   name: Move build artifact around
+                run: |
+                    rm -f build/libs/*sources*.jar
+            -   name: Upload to discord
+                run: |
+                    curl "$WEBHOOK_URL" -X POST -H "Content-type: multipart/form-data" --form "files[0]=@$(echo build/libs/*.jar)"
+                env:
+                    WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
