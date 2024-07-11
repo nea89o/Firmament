@@ -183,7 +183,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-version = rootProject.property("mod_version").toString()
+version = getGitTagInfo()
 group = rootProject.property("maven_group").toString()
 
 loom {

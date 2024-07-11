@@ -121,11 +121,8 @@ echo -n "Choosing next version as: "
 read newversion
 echo "Confirming new version as $newversion"
 
-echo Editing gradle.properties
-sed -i -E 's/(mod_version *= *).*/\1'"$newversion"'/' "$basedir"/gradle.properties
-git add gradle.properties
 echo Committing release commit
-git commit -m 'Prepare release '"$newversion"'
+git commit --allow-empty -m 'Prepare release '"$newversion"'
 
 [no changelog]'
 echo Tagging release commit
