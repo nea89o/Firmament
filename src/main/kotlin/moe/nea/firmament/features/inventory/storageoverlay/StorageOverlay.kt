@@ -14,7 +14,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
-import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.SlotClickEvent
@@ -34,7 +33,8 @@ object StorageOverlay : FirmamentFeature {
         get() = "storage-overlay"
 
     object TConfig : ManagedConfig(identifier) {
-        val rows by integer("rows", 1, 5) { 3 }
+        val alwaysReplace by toggle("always-replace") { true }
+        val columns by integer("rows", 1, 10) { 3 }
         val scrollSpeed by integer("scroll-speed", 1, 50) { 10 }
         val inverseScroll by toggle("inverse-scroll") { false }
         val padding by integer("padding", 1, 20) { 5 }
@@ -105,7 +105,7 @@ object StorageOverlay : FirmamentFeature {
         screen.customGui = StorageOverlayCustom(
             currentHandler ?: return,
             screen,
-            storageOverlayScreen ?: return)
+            storageOverlayScreen ?: (if (TConfig.alwaysReplace) StorageOverlayScreen() else return))
     }
 
     fun rememberContent(handler: StorageBackingHandle?) {

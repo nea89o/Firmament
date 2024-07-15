@@ -33,22 +33,11 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
         val MAIN_INVENTORY_Y = 9
         val SCROLL_BAR_WIDTH = 8
         val SCROLL_BAR_HEIGHT = 16
-
-        @Subscribe
-        fun onCommand(event: CommandEvent.SubCommand) {
-            event.subcommand("teststorage") {
-                executes {
-                    ScreenUtil.setScreenLater(StorageOverlayScreen())
-                    MC.sendCommand("ec")
-                    0
-                }
-            }
-        }
     }
 
     var isExiting: Boolean = false
     var scroll: Float = 0F
-    var pageWidthCount = StorageOverlay.TConfig.rows
+    var pageWidthCount = StorageOverlay.TConfig.columns
 
     inner class Measurements {
         val innerScrollPanelWidth = PAGE_WIDTH * pageWidthCount + (pageWidthCount - 1) * PADDING
@@ -66,7 +55,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
     var lastRenderedInnerHeight = 0
     override fun init() {
         super.init()
-        pageWidthCount = StorageOverlay.TConfig.rows
+        pageWidthCount = StorageOverlay.TConfig.columns
             .coerceAtMost((width - PADDING) / (PAGE_WIDTH + PADDING))
             .coerceAtLeast(1)
         measurements = Measurements()

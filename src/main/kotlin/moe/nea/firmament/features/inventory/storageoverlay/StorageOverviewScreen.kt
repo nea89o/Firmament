@@ -51,7 +51,7 @@ class StorageOverviewScreen() : Screen(Text.empty()) {
         var currentMaxHeight = StorageOverlay.config.margin - StorageOverlay.config.padding - scroll
         var totalHeight = -currentMaxHeight
         content.storageInventories.onEachIndexed { index, (key, value) ->
-            val pageX = (index % StorageOverlay.config.rows)
+            val pageX = (index % StorageOverlay.config.columns)
             if (pageX == 0) {
                 currentMaxHeight += StorageOverlay.config.padding
                 offsetY += currentMaxHeight
@@ -59,7 +59,7 @@ class StorageOverviewScreen() : Screen(Text.empty()) {
                 currentMaxHeight = 0
             }
             val xPosition =
-                width / 2 - (StorageOverlay.config.rows * (pageWidth + StorageOverlay.config.padding) - StorageOverlay.config.padding) / 2 + pageX * (pageWidth + StorageOverlay.config.padding)
+                width / 2 - (StorageOverlay.config.columns * (pageWidth + StorageOverlay.config.padding) - StorageOverlay.config.padding) / 2 + pageX * (pageWidth + StorageOverlay.config.padding)
             onEach(Pair(key, value), xPosition, offsetY)
             val height = getStorePageHeight(value)
             currentMaxHeight = max(currentMaxHeight, height)
