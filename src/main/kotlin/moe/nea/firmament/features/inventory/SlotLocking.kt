@@ -18,7 +18,6 @@ import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.GenericContainerScreenHandler
-import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Identifier
 import moe.nea.firmament.annotations.Subscribe
@@ -124,7 +123,9 @@ object SlotLocking : FirmamentFeature {
             || event.actionType == SlotActionType.PICKUP_ALL
         val isSellOrTradeScreen =
             isNpcShop(MC.handledScreen) || isTradeScreen(MC.handledScreen) || isSalvageScreen(MC.handledScreen)
-        if (!isSellOrTradeScreen && doesNotDeleteItem) return
+        if ((!isSellOrTradeScreen || event.slot?.inventory !is PlayerInventory)
+            && doesNotDeleteItem
+        ) return
         val stack = event.itemStack ?: return
         val uuid = stack.skyblockUUID ?: return
         if (uuid in (lockedUUIDs ?: return)) {
