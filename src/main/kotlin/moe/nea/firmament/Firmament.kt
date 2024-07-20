@@ -30,8 +30,6 @@ import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder
-import org.freedesktop.dbus.exceptions.DBusException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -43,7 +41,6 @@ import kotlin.coroutines.EmptyCoroutineContext
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
-import moe.nea.firmament.dbus.FirmamentDbusObject
 import moe.nea.firmament.events.ClientStartedEvent
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.ItemTooltipEvent
@@ -97,12 +94,6 @@ object Firmament {
     }
 
     val globalJob = Job()
-    val dbusConnection = try {
-        DBusConnectionBuilder.forSessionBus()
-            .build()
-    } catch (e: Exception) {
-        null
-    }
     val coroutineScope =
         CoroutineScope(EmptyCoroutineContext + CoroutineName("Firmament")) + SupervisorJob(globalJob)
 
@@ -121,12 +112,6 @@ object Firmament {
 
     @JvmStatic
     fun onClientInitialize() {
-        try {
-            dbusConnection?.exportObject(FirmamentDbusObject)
-            dbusConnection?.requestBusName("moe.nea.firmament")
-        } catch (e: DBusException) {
-            // :(
-        }
         var tick = 0
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
             TickEvent.publish(TickEvent(tick++))

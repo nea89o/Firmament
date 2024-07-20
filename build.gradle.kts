@@ -151,9 +151,6 @@ dependencies {
     }
     nonModImplentation(libs.repoparser)
     shadowMe(libs.repoparser)
-    nonModImplentation(libs.bundles.dbus)
-    shadowMe(libs.bundles.dbus)
-
     fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
 
     transInclude(nonModImplentation(ktor("client-core"))!!)
