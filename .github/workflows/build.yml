@@ -16,6 +16,7 @@ jobs:
                 name: Checkout repository
                 with:
                     fetch-tags: true
+                    fetch-depth: 0
             -   name: Set up JDK 21
                 uses: actions/setup-java@v4
                 with:
@@ -29,9 +30,10 @@ jobs:
                 uses: actions/upload-artifact@v3
                 with:
                     path: build/libs/Firmament-*.jar
-            -   name: Move build artifact around
+            -   name: Move build artifact around and print check sum
                 run: |
                     rm -f build/libs/*sources*.jar
+                    sha256sum build/libs/*.jar
             -   name: Upload to discord
                 run: |
                     curl "$WEBHOOK_URL" -X POST -H "Content-type: multipart/form-data" --form "files[0]=@$(echo build/libs/*.jar)"

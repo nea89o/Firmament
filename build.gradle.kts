@@ -20,7 +20,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("moe.nea.licenseextractificator")
 //    id("io.github.juuxel.loom-vineflower") version "1.11.0"
-    id("io.shcm.shsupercm.fabric.fletchingtable") version "1.5"
 }
 
 java {
@@ -264,6 +263,9 @@ tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).ap
     outputs.upToDateWhen { false }
 }
 
-licensing.addExtraLicenseMatchers()
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}
 
-fletchingTable.defaultMixinEnvironment.set("client")
+licensing.addExtraLicenseMatchers()
