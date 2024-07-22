@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -21,6 +22,13 @@ public class PropertySignatureIgnorePatch {
     public void onValidateSignature(PublicKey publicKey, CallbackInfoReturnable<Boolean> cir) {
         if (Fixes.TConfig.INSTANCE.getFixUnsignedPlayerSkins()) {
             cir.setReturnValue(true);
+        }
+    }
+
+    @Inject(method = "signature", cancellable = true, at = @At("HEAD"), remap = false)
+    public void returnEmptySignatureInsteadOfNull(CallbackInfoReturnable<String> cir) {
+        if (Fixes.TConfig.INSTANCE.getFixUnsignedPlayerSkins()) {
+            cir.setReturnValue("");
         }
     }
 
