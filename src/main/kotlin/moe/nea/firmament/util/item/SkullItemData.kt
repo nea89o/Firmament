@@ -23,6 +23,7 @@ import net.minecraft.component.type.ProfileComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.util.Base64Util.padToValidBase64
 import moe.nea.firmament.util.assertTrueOr
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.json.InstantAsLongSerializer
@@ -49,14 +50,11 @@ fun GameProfile.setTextures(textures: MinecraftTexturesPayloadKt) {
 }
 
 private val propertyTextures = "textures"
-fun String.padBase64(): String {
-    return this + "=".repeat((4 - (this.length % 4)) % 4)
-}
 
 fun ItemStack.setEncodedSkullOwner(uuid: UUID, encodedData: String) {
     assert(this.item == Items.PLAYER_HEAD)
     val gameProfile = GameProfile(uuid, "LameGuy123")
-    gameProfile.properties.put(propertyTextures, Property(propertyTextures, encodedData.padBase64()))
+    gameProfile.properties.put(propertyTextures, Property(propertyTextures, encodedData.padToValidBase64()))
     this.set(DataComponentTypes.PROFILE, ProfileComponent(gameProfile))
 }
 
