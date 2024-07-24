@@ -36,8 +36,9 @@ class InGameCodecWrapper(
         val duplicateBuffer = PacketByteBuf(buf.slice())
         val original = wrapped.decode(buf)
         buf.skipBytes(buf.readableBytes())
-        val duplicate = direction.customCodec.decode(duplicateBuffer)
-        if (duplicate is FirmamentCustomPayload.Unhandled)
+        val duplicate = runCatching { direction.customCodec.decode(duplicateBuffer) }
+            .getOrNull()
+        if (duplicate is FirmamentCustomPayload.Unhandled || duplicate == null)
             return original
         return JoinedCustomPayload(original, duplicate)
     }
