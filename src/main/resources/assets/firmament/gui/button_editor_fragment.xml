@@ -13,7 +13,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
                 <ItemStack value="@getItemIcon"/>
                 <Text text="Icon"/>
             </Row>
-            <Hover lines="Put your display item in here.;Can be any SkyBlock item id.">
+            <Hover lines="Put your display item in here.;Can be any SkyBlock item id.;;Alternatively you can paste in a /give command">
                 <TextField value="@icon" width="180"/>
             </Hover>
             <Text text="Command"/>
