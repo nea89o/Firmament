@@ -53,7 +53,7 @@ class MixinAnnotationProcessor(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         return resolver.getSymbolsWithAnnotation("org.spongepowered.asm.mixin.Mixin")
-            .filter { processElement(it, resolver) }.toList()
+            .filter { !processElement(it, resolver) }.toList()
     }
 
     override fun finish() {
