@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -28,12 +29,12 @@ object RepoManager {
     object Config : ManagedConfig("repo") {
         var username by string("username") { "NotEnoughUpdates" }
         var reponame by string("reponame") { "NotEnoughUpdates-REPO" }
-        var branch by string("branch") { "prerelease" }
+        var branch by string("branch") { "master" }
         val autoUpdate by toggle("autoUpdate") { true }
         val reset by button("reset") {
             username = "NotEnoughUpdates"
             reponame = "NotEnoughUpdates-REPO"
-            branch = "prerelease"
+            branch = "master"
             save()
         }
 
@@ -66,12 +67,17 @@ object RepoManager {
         }
     }
 
-    private val recipeCache = NEURecipeCache.forRepo(neuRepo)
+    val essenceRecipeProvider = EssenceRecipeProvider()
+    val recipeCache = BetterRepoRecipeCache(essenceRecipeProvider)
+    init {
+    	neuRepo.registerReloadListener(essenceRecipeProvider)
+    	neuRepo.registerReloadListener(recipeCache)
+    }
 
     fun getAllRecipes() = neuRepo.items.items.values.asSequence().flatMap { it.recipes }
 
-    fun getRecipesFor(skyblockId: SkyblockId): Set<NEURecipe> = recipeCache.recipes[skyblockId.neuItem] ?: setOf()
-    fun getUsagesFor(skyblockId: SkyblockId): Set<NEURecipe> = recipeCache.usages[skyblockId.neuItem] ?: setOf()
+    fun getRecipesFor(skyblockId: SkyblockId): Set<NEURecipe> = recipeCache.recipes[skyblockId] ?: setOf()
+    fun getUsagesFor(skyblockId: SkyblockId): Set<NEURecipe> = recipeCache.usages[skyblockId] ?: setOf()
 
     private fun trySendClientboundUpdateRecipesPacket(): Boolean {
         return MinecraftClient.getInstance().world != null && MinecraftClient.getInstance().networkHandler?.onSynchronizeRecipes(

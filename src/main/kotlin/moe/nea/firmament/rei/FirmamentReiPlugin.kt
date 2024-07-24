@@ -31,6 +31,7 @@ import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.rei.recipes.SBEssenceUpgradeRecipe
 import moe.nea.firmament.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.rei.recipes.SBKatRecipe
 import moe.nea.firmament.rei.recipes.SBMobDropRecipe
@@ -72,6 +73,7 @@ class FirmamentReiPlugin : REIClientPlugin {
         registry.add(SBForgeRecipe.Category)
         registry.add(SBMobDropRecipe.Category)
         registry.add(SBKatRecipe.Category)
+        registry.add(SBEssenceUpgradeRecipe.Category)
     }
 
     override fun registerExclusionZones(zones: ExclusionZones) {
@@ -92,6 +94,10 @@ class FirmamentReiPlugin : REIClientPlugin {
         registry.registerDisplayGenerator(
             SBKatRecipe.Category.categoryIdentifier,
             SkyblockKatRecipeDynamicGenerator)
+        registry.registerDisplayGenerator(
+            SBEssenceUpgradeRecipe.Category.categoryIdentifier,
+            SkyblockEssenceRecipeDynamicGenerator
+        )
     }
 
     override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {

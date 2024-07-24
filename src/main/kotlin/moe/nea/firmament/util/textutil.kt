@@ -9,6 +9,7 @@ package moe.nea.firmament.util
 
 import net.minecraft.text.MutableText
 import net.minecraft.text.PlainTextContent
+import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableTextContent
 import net.minecraft.util.Formatting
@@ -98,7 +99,7 @@ val Text.unformattedString: String
     get() = string.removeColorCodes()
 
 
-fun MutableText.withColor(formatting: Formatting) = this.styled { it.withColor(formatting) }
+fun MutableText.withColor(formatting: Formatting) = this.styled { it.withColor(formatting).withItalic(false) }
 
 fun Text.transformEachRecursively(function: (Text) -> Text): Text {
     val c = this.content

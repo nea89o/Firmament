@@ -1,28 +1,34 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 package moe.nea.firmament.repo
 
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.utils.io.jvm.nio.*
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import moe.nea.firmament.Firmament
-import moe.nea.firmament.Firmament.logger
-import moe.nea.firmament.util.iterate
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.utils.io.jvm.nio.copyTo
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.util.zip.ZipInputStream
-import kotlin.io.path.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.inputStream
+import kotlin.io.path.outputStream
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
+import moe.nea.firmament.Firmament
+import moe.nea.firmament.Firmament.logger
+import moe.nea.firmament.util.iterate
 
 
 object RepoDownloadManager {
@@ -55,6 +61,9 @@ object RepoDownloadManager {
     private class GithubCommitsResponse(val sha: String)
 
     private suspend fun requestLatestGithubSha(): String? {
+        if (RepoManager.Config.branch == "prerelease") {
+            RepoManager.Config.branch = "master"
+        }
         val response =
             Firmament.httpClient.get("https://api.github.com/repos/${RepoManager.Config.username}/${RepoManager.Config.reponame}/commits/${RepoManager.Config.branch}")
         if (response.status.value != 200) {

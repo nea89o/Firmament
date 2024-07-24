@@ -18,9 +18,11 @@ import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.entry.EntryStack
 import moe.nea.firmament.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.rei.recipes.SBEssenceUpgradeRecipe
 import moe.nea.firmament.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.rei.recipes.SBKatRecipe
 import moe.nea.firmament.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.repo.EssenceRecipeProvider
 import moe.nea.firmament.repo.RepoManager
 
 
@@ -35,6 +37,8 @@ val SkyblockMobDropRecipeDynamicGenerator =
 
 val SkyblockKatRecipeDynamicGenerator =
     neuDisplayGenerator<SBKatRecipe, NEUKatUpgradeRecipe> { SBKatRecipe(it) }
+val SkyblockEssenceRecipeDynamicGenerator =
+    neuDisplayGenerator<SBEssenceUpgradeRecipe, EssenceRecipeProvider.EssenceUpgradeRecipe> { SBEssenceUpgradeRecipe(it) }
 
 inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(crossinline mapper: (T) -> D) =
     object : DynamicDisplayGenerator<D> {

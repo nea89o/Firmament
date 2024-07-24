@@ -18,8 +18,11 @@ var ItemStack.loreAccordingToNbt
         set(DataComponentTypes.LORE, LoreComponent(value))
     }
 
-val ItemStack.displayNameAccordingToNbt
+var ItemStack.displayNameAccordingToNbt: Text
     get() = get(DataComponentTypes.CUSTOM_NAME) ?: get(DataComponentTypes.ITEM_NAME) ?: item.name
+    set(value) {
+        set(DataComponentTypes.CUSTOM_NAME, value)
+    }
 
 fun ItemStack.setCustomName(text: Text) {
     set(DataComponentTypes.CUSTOM_NAME, text)
