@@ -38,6 +38,7 @@ class EssenceRecipeProvider : IReloadable {
     override fun reload(repository: NEURepository) {
         val recipes = mutableListOf<EssenceUpgradeRecipe>()
         for ((neuId, costs) in repository.constants.essenceCost.costs) {
+            // TODO: add dungeonization costs. this is in repo, but not in the repo parser.
             for ((starCountAfter, essenceCost) in costs.essenceCosts.entries) {
                 val items = costs.itemCosts[starCountAfter] ?: emptyList()
                 recipes.add(
