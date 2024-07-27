@@ -14,10 +14,10 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
 import moe.nea.firmament.apis.UrsaManager
 import moe.nea.firmament.events.CommandEvent
+import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverviewScreen
-import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ManagedOption
@@ -182,11 +182,6 @@ fun firmamentCommand() = literal("firmament") {
         }
     }
     thenLiteral("dev") {
-        thenLiteral("config") {
-            thenExecute {
-                FairySouls.TConfig.showConfigEditor()
-            }
-        }
         thenLiteral("simulate") {
             thenArgument("message", RestArgumentType) { message ->
                 thenExecute {
@@ -206,6 +201,12 @@ fun firmamentCommand() = literal("firmament") {
                     source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.mode", locrawInfo.mode))
                     source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.map", locrawInfo.map))
                 }
+            }
+        }
+        thenLiteral("copyEntities") {
+            thenExecute {
+                val player = MC.player ?: return@thenExecute
+                player.world.getOtherEntities(player, player.boundingBox.expand(12.0)).forEach(PowerUserTools::showEntity)
             }
         }
         thenLiteral("callUrsa") {

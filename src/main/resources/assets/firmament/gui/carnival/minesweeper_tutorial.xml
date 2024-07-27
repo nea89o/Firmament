@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<Root xmlns="http://notenoughupdates.org/moulconfig"
+>
+    <Center>
+        <Panel background="VANILLA" insets="10">
+            <Column>
+                <Scale scale="2">
+                    <Text text="§aFruit§7 Digging"/>
+                </Scale>
+                <Text
+                    text="The goal of the fruit digging minigame is to find as many§a fruits§r as possible on a §b7x7§e sand§r grid."
+                    width="300"/>
+                <Text
+                    text="To do so, you break§e sand blocks§r to reveal what is hidden underneath: a §afruit§r, a §cbomb, or §erum§r."
+                    width="300"/>
+                <Text
+                    text="When you break a block, you can also get some extra information based on your §7dowsing mode§r."
+                    width="300"/>
+                <Scale scale="1.5">
+                    <Text text="§7Dowsing Modes"/>
+                </Scale>
+                <Array data="@modes">
+                    <Row>
+                        <ItemStack value="@itemType"/>
+                        <Text text="@feature" width="80"/>
+                        <Text text="@description" width="220"/>
+                    </Row>
+                </Array>
+
+                <Scale scale="1.5">
+                    <Text text="§aTiles"/>
+                </Scale>
+                <ScrollPanel width="300" height="120">
+                    <Array data="@pieces">
+                        <Row>
+                            <Center>
+                                <ItemStack value="@getIcon"/>
+                            </Center>
+                            <Text text="@pieceLabel" width="80"/>
+                            <Text text="@description" width="145"/>
+                            <Spacer width="5"/>
+                            <Text text="@boardLabel" width="50"/>
+                        </Row>
+                    </Array>
+                </ScrollPanel>
+            </Column>
+        </Panel>
+    </Center>
+</Root>

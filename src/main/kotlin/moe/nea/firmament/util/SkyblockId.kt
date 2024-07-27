@@ -16,9 +16,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.NbtComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
+import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 
 /**
@@ -32,12 +34,12 @@ import moe.nea.firmament.util.json.DashlessUUIDSerializer
 value class SkyblockId(val neuItem: String) {
     val identifier
         get() = Identifier.of("skyblockitem",
-                           neuItem.lowercase().replace(";", "__")
-                               .replace(":", "___")
-                               .replace(illlegalPathRegex) {
-                                   it.value.toCharArray()
-                                       .joinToString("") { "__" + it.code.toString(16).padStart(4, '0') }
-                               })
+                              neuItem.lowercase().replace(";", "__")
+                                  .replace(":", "___")
+                                  .replace(illlegalPathRegex) {
+                                      it.value.toCharArray()
+                                          .joinToString("") { "__" + it.code.toString(16).padStart(4, '0') }
+                                  })
 
     override fun toString(): String {
         return neuItem
@@ -85,7 +87,14 @@ data class HypixelPetInfo(
 private val jsonparser = Json { ignoreUnknownKeys = true }
 
 val ItemStack.extraAttributes: NbtCompound
-    get() = get(DataComponentTypes.CUSTOM_DATA)?.nbt ?: NbtCompound()
+    get() {
+        val customData = get(DataComponentTypes.CUSTOM_DATA) ?: run {
+            val component = NbtComponent.of(NbtCompound())
+            set(DataComponentTypes.CUSTOM_DATA, component)
+            component
+        }
+        return customData.nbt
+    }
 
 val ItemStack.skyblockUUIDString: String?
     get() = extraAttributes.getString("uuid")?.takeIf { it.isNotBlank() }
@@ -100,6 +109,12 @@ val ItemStack.petData: HypixelPetInfo?
         return runCatching { jsonparser.decodeFromString<HypixelPetInfo>(jsonString) }
             .getOrElse { return null }
     }
+
+fun ItemStack.setSkyBlockFirmamentUiId(uiId: String) = setSkyBlockId(SkyblockId("FIRMAMENT_UI_$uiId"))
+fun ItemStack.setSkyBlockId(skyblockId: SkyblockId): ItemStack {
+    this.extraAttributes["id"] = skyblockId.neuItem
+    return this
+}
 
 val ItemStack.skyBlockId: SkyblockId?
     get() {

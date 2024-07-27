@@ -88,6 +88,7 @@ object PowerUserTools : FirmamentFeature {
     fun showEntity(target: Entity) {
         MC.sendChat(Text.translatable("firmament.poweruser.entity.type", target.type))
         MC.sendChat(Text.translatable("firmament.poweruser.entity.name", target.name))
+        MC.sendChat(Text.stringifiedTranslatable("firmament.poweruser.entity.position", target.pos))
         if (target is LivingEntity) {
             MC.sendChat(Text.translatable("firmament.poweruser.entity.armor"))
             for (armorItem in target.armorItems) {

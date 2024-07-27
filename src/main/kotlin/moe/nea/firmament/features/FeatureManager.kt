@@ -23,6 +23,7 @@ import moe.nea.firmament.features.debug.MinorTrolling
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.diana.DianaWaypoints
 import moe.nea.firmament.features.events.anniversity.AnniversaryFeatures
+import moe.nea.firmament.features.events.carnival.CarnivalFeatures
 import moe.nea.firmament.features.fixes.CompatibliltyFeatures
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
@@ -80,6 +81,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(DianaWaypoints)
             loadFeature(ItemRarityCosmetics)
             loadFeature(PickaxeAbility)
+            loadFeature(CarnivalFeatures)
             if (Firmament.DEBUG) {
                 loadFeature(DeveloperFeatures)
                 loadFeature(DebugView)
