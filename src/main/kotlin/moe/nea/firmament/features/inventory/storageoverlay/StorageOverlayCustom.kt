@@ -42,6 +42,12 @@ class StorageOverlayCustom(
 
     override fun onInit() {
         overview.init(MinecraftClient.getInstance(), screen.width, screen.height)
+        overview.init()
+        screen as AccessorHandledScreen
+        screen.x_Firmament = overview.measurements.x
+        screen.y_Firmament = overview.measurements.y
+        screen.backgroundWidth_Firmament = overview.measurements.totalWidth
+        screen.backgroundHeight_Firmament = overview.measurements.totalHeight
     }
 
     override fun isPointOverSlot(slot: Slot, xOffset: Int, yOffset: Int, pointX: Double, pointY: Double): Boolean {

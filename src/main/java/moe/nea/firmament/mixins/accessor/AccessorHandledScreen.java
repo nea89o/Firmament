@@ -21,14 +21,25 @@ public interface AccessorHandledScreen {
     @Accessor("backgroundWidth")
     int getBackgroundWidth_Firmament();
 
+    @Accessor("backgroundWidth")
+    void setBackgroundWidth_Firmament(int newBackgroundWidth);
+
     @Accessor("backgroundHeight")
     int getBackgroundHeight_Firmament();
+
+    @Accessor("backgroundHeight")
+    void setBackgroundHeight_Firmament(int newBackgroundHeight);
 
     @Accessor("x")
     int getX_Firmament();
 
+    @Accessor("x")
+    void setX_Firmament(int newX);
+
     @Accessor("y")
     int getY_Firmament();
 
+    @Accessor("y")
+    void setY_Firmament(int newY);
 
 }

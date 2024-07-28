@@ -48,12 +48,14 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
         val y = height / 2 - (overviewHeight + PLAYER_HEIGHT) / 2
         val playerX = width / 2 - PLAYER_WIDTH / 2
         val playerY = y + overviewHeight - PLAYER_Y_INSET
+        val totalWidth = overviewWidth
+        val totalHeight = overviewWidth - PLAYER_Y_INSET + PLAYER_HEIGHT
     }
 
     var measurements = Measurements()
 
     var lastRenderedInnerHeight = 0
-    override fun init() {
+    public override fun init() {
         super.init()
         pageWidthCount = StorageOverlay.TConfig.columns
             .coerceAtMost((width - PADDING) / (PAGE_WIDTH + PADDING))
