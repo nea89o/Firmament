@@ -15,7 +15,7 @@ import me.shedaniel.rei.api.client.gui.widgets.Widgets
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import me.shedaniel.rei.api.common.util.EntryStacks
-import net.minecraft.block.Blocks
+import net.minecraft.item.Items
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
@@ -35,7 +35,7 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
             return 100
         }
 
-        override fun getIcon(): Renderer = EntryStacks.of(Blocks.ANVIL)
+        override fun getIcon(): Renderer = EntryStacks.of(Items.DIAMOND_SWORD)
         override fun setupDisplay(display: SBMobDropRecipe, bounds: Rectangle): List<Widget> {
             return buildList {
                 add(Widgets.createRecipeBase(bounds))
