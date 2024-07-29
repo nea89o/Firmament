@@ -49,7 +49,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
         val playerX = width / 2 - PLAYER_WIDTH / 2
         val playerY = y + overviewHeight - PLAYER_Y_INSET
         val totalWidth = overviewWidth
-        val totalHeight = overviewWidth - PLAYER_Y_INSET + PLAYER_HEIGHT
+        val totalHeight = overviewHeight - PLAYER_Y_INSET + PLAYER_HEIGHT
     }
 
     var measurements = Measurements()
