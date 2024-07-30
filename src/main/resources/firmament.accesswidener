@@ -19,3 +19,5 @@ accessible method net/minecraft/client/gui/DrawContext drawTexturedQuad (Lnet/mi
 mutable field net/minecraft/screen/slot/Slot x I
 mutable field net/minecraft/screen/slot/Slot y I
 
+accessible field net/minecraft/entity/player/PlayerEntity PLAYER_MODEL_PARTS Lnet/minecraft/entity/data/TrackedData;
+

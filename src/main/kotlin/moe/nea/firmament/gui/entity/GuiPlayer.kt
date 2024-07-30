@@ -39,6 +39,10 @@ class GuiPlayer(world: ClientWorld?, profile: GameProfile?) : AbstractClientPlay
         return false
     }
 
+    override fun shouldRenderName(): Boolean {
+        return false
+    }
+
     var skinTexture: Identifier = DefaultSkinHelper.getSkinTextures(this.getUuid()).texture
     var capeTexture: Identifier? = null
     var model: Model = Model.WIDE
