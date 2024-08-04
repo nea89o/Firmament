@@ -1,5 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+ * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -20,6 +21,7 @@ import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.blockPos
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.render.RenderInWorldContext
@@ -32,7 +34,7 @@ object FairySouls : FirmamentFeature {
 
     @Serializable
     data class Data(
-        val foundSouls: MutableMap<String, MutableSet<Int>> = mutableMapOf()
+        val foundSouls: MutableMap<SkyBlockIsland, MutableSet<Int>> = mutableMapOf()
     )
 
     override val config: ManagedConfig
@@ -55,7 +57,7 @@ object FairySouls : FirmamentFeature {
     val playerReach = 5
     val playerReachSquared = playerReach * playerReach
 
-    var currentLocationName: String? = null
+    var currentLocationName: SkyBlockIsland? = null
     var currentLocationSouls: List<Coordinate> = emptyList()
     var currentMissingSouls: List<Coordinate> = emptyList()
 
@@ -71,7 +73,7 @@ object FairySouls : FirmamentFeature {
     fun updateWorldSouls() {
         currentLocationSouls = emptyList()
         val loc = currentLocationName ?: return
-        currentLocationSouls = RepoManager.neuRepo.constants.fairySouls.soulLocations[loc] ?: return
+        currentLocationSouls = RepoManager.neuRepo.constants.fairySouls.soulLocations[loc.locrawMode] ?: return
     }
 
     fun findNearestClickableSoul(): Coordinate? {
@@ -79,7 +81,7 @@ object FairySouls : FirmamentFeature {
         val pos = player.pos
         val location = SBData.skyblockLocation ?: return null
         val soulLocations: List<Coordinate> =
-            RepoManager.neuRepo.constants.fairySouls.soulLocations[location] ?: return null
+            RepoManager.neuRepo.constants.fairySouls.soulLocations[location.locrawMode] ?: return null
         return soulLocations
             .map { it to it.blockPos.getSquaredDistance(pos) }
             .filter { it.second < playerReachSquared }
@@ -101,11 +103,6 @@ object FairySouls : FirmamentFeature {
     fun onWorldRender(it: WorldRenderLastEvent) {
         if (!TConfig.displaySouls) return
         renderInWorld(it) {
-            text(Vec3d(0.0, 0.0, 0.0),
-                 Text.literal("Test String"),
-                 Text.literal("Short"),
-                 Text.literal("just lik"),
-                 verticalAlign = RenderInWorldContext.VerticalAlign.BOTTOM)
             color(1F, 1F, 0F, 0.8F)
             currentMissingSouls.forEach {
                 block(it.blockPos)

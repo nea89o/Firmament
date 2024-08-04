@@ -8,13 +8,9 @@
 package moe.nea.firmament.mixins;
 
 import moe.nea.firmament.events.BakeExtraModelsEvent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,20 +20,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
-import java.util.function.BiFunction;
 
 @Mixin(ModelLoader.class)
 public abstract class CustomModelBakerPatch {
+
+    @Shadow
+    @Final
+    private Map<ModelIdentifier, UnbakedModel> modelsToBake;
 
     @Shadow
     protected abstract void loadItemModel(ModelIdentifier id);
 
     @Shadow
     abstract UnbakedModel getOrLoadModel(Identifier id);
-
-    @Shadow
-    @Final
-    private Map<ModelIdentifier, UnbakedModel> modelsToBake;
 
     @Inject(method = "bake", at = @At("HEAD"))
     public void onBake(ModelLoader.SpriteGetter spliteGetter, CallbackInfo ci) {

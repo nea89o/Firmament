@@ -31,6 +31,7 @@ import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.CommonSoundEffects
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.item.displayNameAccordingToNbt
 import moe.nea.firmament.util.item.loreAccordingToNbt
@@ -66,7 +67,7 @@ object SlotLocking : FirmamentFeature {
 
     val lockedSlots
         get() = when (SBData.skyblockLocation) {
-            "rift" -> DConfig.data?.lockedSlotsRift
+            SkyBlockIsland.RIFT -> DConfig.data?.lockedSlotsRift
             null -> null
             else -> DConfig.data?.lockedSlots
         }

@@ -30,9 +30,9 @@ object WarpUtil {
 
     private var lastAttemptedWarp = ""
     private var lastWarpAttempt = TimeMark.farPast()
-    fun findNearestWarp(locrawMode: String, pos: Position): Islands.Warp? {
+    fun findNearestWarp(island: SkyBlockIsland, pos: Position): Islands.Warp? {
         return warps.minByOrNull {
-            if (locrawMode != it.mode || (DConfig.data?.excludedWarps?.contains(it.warp) == true)) {
+            if (island.locrawMode != it.mode || (DConfig.data?.excludedWarps?.contains(it.warp) == true)) {
                 return@minByOrNull Double.MAX_VALUE
             } else {
                 return@minByOrNull squaredDist(pos, it)
@@ -47,10 +47,10 @@ object WarpUtil {
         return dx * dx + dy * dy + dz * dz
     }
 
-    fun teleportToNearestWarp(locrawMode: String, pos: Position) {
-        val nearestWarp = findNearestWarp(locrawMode, pos) ?: return
+    fun teleportToNearestWarp(island: SkyBlockIsland, pos: Position) {
+        val nearestWarp = findNearestWarp(island, pos) ?: return
 
-        if (locrawMode == SBData.skyblockLocation
+        if (island == SBData.skyblockLocation
             && sqrt(squaredDist(pos, nearestWarp)) > 1.1 * sqrt(squaredDist((MC.player ?: return).pos, nearestWarp))
         ) {
             return

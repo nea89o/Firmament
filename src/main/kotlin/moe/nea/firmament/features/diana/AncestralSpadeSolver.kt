@@ -19,6 +19,7 @@ import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.SBData
+import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.WarpUtil
 import moe.nea.firmament.util.render.RenderInWorldContext
@@ -34,7 +35,7 @@ object AncestralSpadeSolver : SubscriptionOwner {
     private var lastTeleportAttempt = TimeMark.farPast()
 
     fun isEnabled() =
-        DianaWaypoints.TConfig.ancestralSpadeSolver && SBData.skyblockLocation == "hub"
+        DianaWaypoints.TConfig.ancestralSpadeSolver && SBData.skyblockLocation == SkyBlockIsland.HUB
 
     @Subscribe
     fun onKeyBind(event: WorldKeyboardEvent) {
@@ -42,7 +43,7 @@ object AncestralSpadeSolver : SubscriptionOwner {
         if (!event.matches(DianaWaypoints.TConfig.ancestralSpadeTeleport)) return
 
         if (lastTeleportAttempt.passedTime() < 3.seconds) return
-        WarpUtil.teleportToNearestWarp("hub", nextGuess ?: return)
+        WarpUtil.teleportToNearestWarp(SkyBlockIsland.HUB, nextGuess ?: return)
         lastTeleportAttempt = TimeMark.now()
     }
 
