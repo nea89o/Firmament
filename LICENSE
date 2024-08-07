@@ -1,0 +1,5 @@
+This mod is licensed under a GPL 3.0 or Later license. Images and models (found in src/main/resources or other) are
+additionally licensed under CC-BY-4.0.
+
+To read a full license report of all dependencies, execute
+`./gradlew :printAllLicenses`.

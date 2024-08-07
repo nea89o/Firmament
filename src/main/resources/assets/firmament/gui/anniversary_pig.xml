@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
-<!--
-SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <Root xmlns="http://notenoughupdates.org/moulconfig"
       xmlns:firm="http://firmament.nea.moe/moulconfig"
 >

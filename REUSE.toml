@@ -5,5 +5,29 @@
 version = 1
 SPDX-PackageName = "Firmament"
 SPDX-PackageSupplier = "Linnea Gräf <nea@nea.moe>"
-SPDX-PackageDownloadLocation = "https://github.com/romangraef/Firmament"
-annotations = []
+SPDX-PackageDownloadLocation = "https://github.com/nea89o/Firmament"
+
+[[annotations]]
+path = ["**/*.kt", "**/*.java"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]
+
+[[annotations]]
+path = ["src/main/resources/**/*.png", "src/main/resources/**/*.mcmeta"]
+SPDX-License-Identifier = "CC-BY-4.0"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]
+
+[[annotations]]
+path = "src/main/resources/assets/**/lang/*.json"
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]
+
+[[annotations]]
+path = ["src/main/resources/assets/firmament/gui/**/*.xml"]
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]
+
+[[annotations]]
+path = "**/*.gradle.kts"
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]

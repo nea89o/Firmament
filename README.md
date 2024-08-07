@@ -77,7 +77,10 @@ order for this mod to work.
 
 ### Licensing and contribution policy
 
-This mod is licensed under a GPL 3.0 or Later license. To read a full license report of all dependencies, execute
+This mod is licensed under a GPL 3.0 or Later license. Images and models in src/main/resources are additionally licensed
+under CC-BY-4.0
+
+To read a full license report of all dependencies, execute
 `./gradlew :printAllLicenses`.
 
 Contributions are tentatively welcomed. The mod is still in an early stage and lots of things will change and/or are

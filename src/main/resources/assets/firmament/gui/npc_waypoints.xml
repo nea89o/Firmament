@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
-<!--
-SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
-
-SPDX-License-Identifier: GPL-3.0-or-later
--->
-
 <Root xmlns="http://notenoughupdates.org/moulconfig" xmlns:firm="http://firmament.nea.moe/moulconfig">
     <Center>
         <Panel background="VANILLA" insets="5">
@@ -20,7 +13,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
                         <Array data="@results">
                             <Row>
                                 <Text text="@name" width="180"/>
-                                <firm:Hover lines="Click to set this waypoint as your destination;Shift-Click to warp to the nearest warp point and set this as your destination">
+                                <firm:Hover
+                                    lines="Click to set this waypoint as your destination;Shift-Click to warp to the nearest warp point and set this as your destination">
                                     <firm:Button onClick="@click" noBackground="true">
                                         <When condition="@isSelected">
                                             <firm:Image resource="firmament:textures/gui/waypoint_selected.png"

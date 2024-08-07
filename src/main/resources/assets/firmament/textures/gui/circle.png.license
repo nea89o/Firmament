@@ -1,3 +1,4 @@
 SPDX-FileCopyrightText: 2024 june_hibiscus
 
+# This line is needed because of https://github.com/fsfe/reuse-tool/issues/1057
 SPDX-License-Identifier: CC-BY-4.0

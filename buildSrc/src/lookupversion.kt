@@ -1,8 +1,3 @@
-/*
- * SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
- *
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
 
 fun execString(vararg args: String): String {
     val pb = ProcessBuilder(*args)
