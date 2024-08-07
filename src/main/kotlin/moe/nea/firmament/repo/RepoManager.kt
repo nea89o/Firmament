@@ -7,7 +7,6 @@
 
 package moe.nea.firmament.repo
 
-import io.github.moulberry.repo.NEURecipeCache
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.NEURepositoryException
 import io.github.moulberry.repo.data.NEUItem
@@ -20,6 +19,7 @@ import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
+import moe.nea.firmament.events.ReloadRegistrationEvent
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.rei.PetData
 import moe.nea.firmament.util.MinecraftDispatcher
@@ -57,6 +57,7 @@ object RepoManager {
         registerReloadListener(ItemCache)
         registerReloadListener(ExpLadders)
         registerReloadListener(ItemNameLookup)
+        ReloadRegistrationEvent.publish(ReloadRegistrationEvent(this))
         registerReloadListener {
             Firmament.coroutineScope.launch(MinecraftDispatcher) {
                 if (!trySendClientboundUpdateRecipesPacket()) {
@@ -69,9 +70,10 @@ object RepoManager {
 
     val essenceRecipeProvider = EssenceRecipeProvider()
     val recipeCache = BetterRepoRecipeCache(essenceRecipeProvider)
+
     init {
-    	neuRepo.registerReloadListener(essenceRecipeProvider)
-    	neuRepo.registerReloadListener(recipeCache)
+        neuRepo.registerReloadListener(essenceRecipeProvider)
+        neuRepo.registerReloadListener(recipeCache)
     }
 
     fun getAllRecipes() = neuRepo.items.items.values.asSequence().flatMap { it.recipes }
@@ -110,7 +112,9 @@ object RepoManager {
 
     fun reload() {
         try {
-            ItemCache.ReloadProgressHud.reportProgress("Reloading from Disk", 0, -1) // TODO: replace with a proper boundy bar
+            ItemCache.ReloadProgressHud.reportProgress("Reloading from Disk",
+                                                       0,
+                                                       -1) // TODO: replace with a proper boundy bar
             ItemCache.ReloadProgressHud.isEnabled = true
             neuRepo.reload()
         } catch (exc: NEURepositoryException) {

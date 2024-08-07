@@ -18,8 +18,9 @@ import io.github.notenoughupdates.moulconfig.observer.GetSetter
 open class FirmButtonComponent(
     child: GuiComponent,
     val isEnabled: GetSetter<Boolean> = GetSetter.constant(true),
+    val noBackground: Boolean = false,
     val action: Runnable,
-) : PanelComponent(child) {
+) : PanelComponent(child, if (noBackground) 0 else 2, DefaultBackgroundRenderer.TRANSPARENT) {
 
     /* TODO: make use of vanillas built in nine slicer */
     val hoveredBg =
@@ -44,7 +45,6 @@ open class FirmButtonComponent(
         .cornerUv(5 / 200F, 5 / 20F)
         .mode(NinePatch.Mode.STRETCHING)
         .build()
-
     var isClicking = false
     override fun mouseEvent(mouseEvent: MouseEvent, context: GuiImmediateContext): Boolean {
         if (!isEnabled.get()) return false
@@ -54,12 +54,14 @@ open class FirmButtonComponent(
                 if (context.isHovered) {
                     action.run()
                 }
+                blur()
                 return true
             }
         }
         if (!context.isHovered) return false
         if (mouseEvent !is MouseEvent.Click) return false
         if (mouseEvent.mouseState && mouseEvent.mouseButton == 0) {
+            requestFocus()
             isClicking = true
             return true
         }
@@ -73,10 +75,11 @@ open class FirmButtonComponent(
 
     override fun render(context: GuiImmediateContext) {
         context.renderContext.pushMatrix()
-        context.renderContext.drawNinePatch(
-            getBackground(context),
-            0f, 0f, context.width, context.height
-        )
+        if (!noBackground)
+            context.renderContext.drawNinePatch(
+                getBackground(context),
+                0f, 0f, context.width, context.height
+            )
         context.renderContext.translate(insets.toFloat(), insets.toFloat(), 0f)
         element.render(getChildContext(context))
         context.renderContext.popMatrix()

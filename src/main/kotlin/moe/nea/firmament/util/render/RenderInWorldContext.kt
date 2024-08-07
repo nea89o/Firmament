@@ -83,11 +83,12 @@ class RenderInWorldContext private constructor(
         }
     }
 
-    fun waypoint(position: BlockPos, label: Text) {
+    fun waypoint(position: BlockPos, vararg label: Text) {
         text(
             position.toCenterPos(),
-            label,
-            Text.literal("§e${FirmFormatters.formatDistance(MC.player?.pos?.distanceTo(position.toCenterPos()) ?: 42069.0)}")
+            *label,
+            Text.literal("§e${FirmFormatters.formatDistance(MC.player?.pos?.distanceTo(position.toCenterPos()) ?: 42069.0)}"),
+            background = 0xAA202020.toInt()
         )
     }
 
@@ -123,9 +124,9 @@ class RenderInWorldContext private constructor(
         }
     }
 
-    fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER) {
+    fun text(position: Vec3d, vararg texts: Text, verticalAlign: VerticalAlign = VerticalAlign.CENTER, background: Int = 0x70808080) {
         withFacingThePlayer(position) {
-            text(*texts, verticalAlign = verticalAlign)
+            text(*texts, verticalAlign = verticalAlign, background = background)
         }
     }
 

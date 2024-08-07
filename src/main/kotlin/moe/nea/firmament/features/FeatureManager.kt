@@ -87,13 +87,12 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
                 loadFeature(DebugView)
             }
             allFeatures.forEach { it.config }
-            subscribeEvents()
             FeaturesInitializedEvent.publish(FeaturesInitializedEvent(allFeatures.toList()))
             hasAutoloaded = true
         }
     }
 
-    private fun subscribeEvents() {
+    fun subscribeEvents() {
         AllSubscriptions.provideSubscriptions {
             subscribeSingleEvent(it)
         }

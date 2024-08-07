@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<Root xmlns="http://notenoughupdates.org/moulconfig" xmlns:firm="http://firmament.nea.moe/moulconfig">
+    <Center>
+        <Panel background="VANILLA" insets="5">
+            <Column>
+                <Center>
+                    <TextField value="@search" width="200"/>
+                </Center>
+                <firm:Tick tick="@tick"/>
+                <Spacer height="5"/>
+                <Panel background="TRANSPARENT" insets="4">
+                    <ScrollPanel width="200" height="300">
+                        <Array data="@results">
+                            <Row>
+                                <Text text="@name" width="180"/>
+                                <firm:Hover lines="Click to set this waypoint as your destination;Shift-Click to warp to the nearest warp point and set this as your destination">
+                                    <firm:Button onClick="@click" noBackground="true">
+                                        <When condition="@isSelected">
+                                            <firm:Image resource="firmament:textures/gui/waypoint_selected.png"
+                                                        width="16"
+                                                        height="16"/>
+                                            <firm:Image resource="firmament:textures/gui/waypoint_unselected.png"
+                                                        width="16"
+                                                        height="16"/>
+                                        </When>
+                                    </firm:Button>
+                                </firm:Hover>
+                            </Row>
+                        </Array>
+                    </ScrollPanel>
+                </Panel>
+            </Column>
+        </Panel>
+    </Center>
+</Root>

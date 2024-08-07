@@ -31,8 +31,8 @@ object WarpUtil {
     private var lastAttemptedWarp = ""
     private var lastWarpAttempt = TimeMark.farPast()
     fun findNearestWarp(island: SkyBlockIsland, pos: Position): Islands.Warp? {
-        return warps.minByOrNull {
-            if (island.locrawMode != it.mode || (DConfig.data?.excludedWarps?.contains(it.warp) == true)) {
+        return warps.asSequence().filter { it.mode == island.locrawMode }.minByOrNull {
+            if (DConfig.data?.excludedWarps?.contains(it.warp) == true) {
                 return@minByOrNull Double.MAX_VALUE
             } else {
                 return@minByOrNull squaredDist(pos, it)
@@ -48,8 +48,11 @@ object WarpUtil {
     }
 
     fun teleportToNearestWarp(island: SkyBlockIsland, pos: Position) {
-        val nearestWarp = findNearestWarp(island, pos) ?: return
-
+        val nearestWarp = findNearestWarp(island, pos)
+        if (nearestWarp == null) {
+            MC.sendChat(Text.literal("Could not find an unlocked warp in ${island.userFriendlyName}"))
+            return
+        }
         if (island == SBData.skyblockLocation
             && sqrt(squaredDist(pos, nearestWarp)) > 1.1 * sqrt(squaredDist((MC.player ?: return).pos, nearestWarp))
         ) {

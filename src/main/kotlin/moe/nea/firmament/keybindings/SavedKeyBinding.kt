@@ -47,8 +47,7 @@ data class SavedKeyBinding(
                     || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SUPER)
             } else InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_CONTROL)
                 || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_CONTROL)
-            val shift = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SHIFT)
-                || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
+            val shift = isShiftDown()
             val alt = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_ALT)
                 || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_ALT)
             var mods = 0
@@ -57,6 +56,11 @@ data class SavedKeyBinding(
             if (alt) mods = mods or GLFW.GLFW_MOD_ALT
             return mods
         }
+
+        private val h get() = MC.window.handle
+        fun isShiftDown() = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SHIFT)
+            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
+
     }
 
     fun isPressed(atLeast: Boolean = false): Boolean {
@@ -69,8 +73,7 @@ data class SavedKeyBinding(
                 || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SUPER)
         } else InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_CONTROL)
             || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_CONTROL)
-        val shift = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SHIFT)
-            || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
+        val shift = isShiftDown()
         val alt = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_ALT)
             || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_ALT)
         if (atLeast)

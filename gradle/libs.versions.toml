@@ -23,7 +23,7 @@ notenoughanimations = "WaI2x21x"
 
 devauth = "1.2.0"
 ktor = "2.3.0"
-neurepoparser = "1.4.0"
+neurepoparser = "1.5.0"
 hotswap_agent = "1.4.2-SNAPSHOT"
 mixinextras = "0.3.5"
 jarvis = "1.1.3"
