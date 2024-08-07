@@ -1,5 +1,5 @@
-This mod is licensed under a GPL 3.0 or Later license. Images and models (found in src/main/resources or other) are
-additionally licensed under CC-BY-4.0.
+Most of this mod is licensed under a GPL-3.0-or-later license. Some resources may also be licensed using creative
+commons licenses. You can use the [reuse](https://github.com/fsfe/reuse-tool) spec to check the concrete licenses for
+each file. See the licenses folder for the concrete license terms of each license.
 
-To read a full license report of all dependencies, execute
-`./gradlew :printAllLicenses`.
+To generate a full license report of all dependencies, execute `./gradlew :printAllLicenses`.

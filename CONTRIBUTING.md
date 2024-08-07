@@ -1,0 +1,39 @@
+<!--
+SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+# Contributing to Firmament
+
+Contributions are tentatively welcomed. The structure of the mod is probably not really transparent to newcomers, but if
+you are interested, feel free to tackle any [issues](https://github.com/nea89o/Firmament/issues/) or create your own
+features.
+
+## Community
+
+If you need any help contributing feel free to join the [discord]. This is where you can raise more casual issues. Note
+that using the discord is not mandatory for contributing. If you don't want to join the discord, feel free to ask
+questions in issues or to otherwise contact me.
+
+## State of Firmament
+
+Many of the foundations of Firmament are not yet fix. If you find things confusing or think some of the fundamental
+building blocks of Firmament should be changed, feel free to raise an issue. More than likely there is no deeper reason
+for something confusing, aside from this being a bit of a sloppy project.
+
+## Development workflow
+
+Firmament is a fabric mod so the development workflow is quite similar to any other fabric mod. To build you will need a
+Java capable IDE (strongly recommend IntelliJ here), as well as Java 21. To contribute back to Firmament you will need
+to create a [fork](https://github.com/nea89o/Firmament/fork). This is your own copy of Firmament which you can change.
+You can load that fork using IntelliJs "New" -> "Project from version control" import option. You might need to
+authenticate your GitHub account to IntelliJ during this process or at a later point in time.
+
+Typically, for each new set of features you will create a branch and then create a pull request back to the main
+Firmament repo. Note that Firmament makes use of commit names to generate a changelog. As such the first line of each
+commit should be something that can be interpreted by an end user. If you want to make an internal change you can use
+the `[no changelog]` tag inside your commit message body to hide a commit from the changelog. Try to make one commit for
+each feature. Don't worry if you have any problems with your git history, your pull request will history will be
+rewritten to be fixed (but it would help me if you can keep your commit history clean).
+
+[discord]: https://discord.gg/64pFP94AWA

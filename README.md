@@ -7,13 +7,6 @@ SPDX-License-Identifier: CC0-1.0
 # Firmament
 <small><i>Powered by NEU</i></small>
 
-> Firmament will soon enter its early public alpha stage. While there is still much to be done in terms of usability,
-> a lot of features are already ready.
-> 
-> In the meantime please do not ask for features to be added, [instead check the TODO list](TODO.txt) (although bug
-> reports are welcome).
-
-[This project is currently being renamed.](#renaming)
 
 [![Forum Thread](https://img.shields.io/badge/Forum%20Thread-blue?style=flat-square)](https://hypixel.net/threads/firmament-a-skyblock-mod-for-1-20-1.5446366/)
 [![Discord](https://img.shields.io/discord/1088154030628417616?style=flat-square&logo=discord)](https://discord.gg/64pFP94AWA)
@@ -26,8 +19,10 @@ SPDX-License-Identifier: CC0-1.0
 - Grouping Items that belong together like minions
 - Recipe Viewer for Crafting Recipes
 - Recipe Viewer for Forge Recipes
+- ... as well as many more custom recipe types.
+- NPC waypoints
 - Image Preview in chat
-- A storage overview (not a full on overlay that allows you to interact with all pages, but that is planned)
+- A storage overview as well as a full storage overlay
 - A crafting overlay when clicking the "Move Item" plus in a crafting recipe
 - Cursor position saver
 - Slot locking
@@ -35,10 +30,9 @@ SPDX-License-Identifier: CC0-1.0
   loaded)
 - Fairy soul highlighter
 - A hud editor powered by [Jarvis](https://github.com/romangraef/jarvis)
-- Fishing Helper for Fishing particles (currently not working if you sneak because of 1.20 messing up positioning, but
-  there will be a fix for that once i get confirmation by an admin that that fix is allowed)
 - Basic Config Gui (/firm config). Still needs improvement, but for the basics it's enough. You can also
   use `/jarvis options` to search through all config options
+- and more (maintaining a feature list properly is a task for the future).
 
 ## Installation
 
@@ -60,45 +54,40 @@ Everything is configurable via either `/firm config`, or via `/jarvis options`.
 ### Recommendations
 
 - [DulkirMod-Fabric](https://github.com/inglettronald/DulkirMod-fabric), a versatile SkyBlock mod.
+- [Skyblocker](https://modrinth.com/mod/skyblocker-liap), a very feature rich SkyBlock mod.
 - [Sodium](https://modrinth.com/mod/sodium) and [Lithium](https://modrinth.com/mod/lithium), both excellent performance mods.
 - [ModMenu](https://modrinth.com/mod/modmenu), just to see which mods you have installed, and to configure some of them.
-- [Zoomify](https://modrinth.com/mod/zoomify), a very basic, but very tidy zoom mod.
 
 ## Infos about the development
 
-### Building your own
+### Licensing and contribution policy
 
-Use Java 17.
+Most of this mod is licensed under a GPL-3.0-or-later license. Some resources may also be licensed using creative
+commons licenses. You can use the [reuse](https://github.com/fsfe/reuse-tool) spec to check the concrete licenses for
+each file. See the licenses folder for the concrete license terms of each license.
+
+Whenever you add Content to this repository, you license that Content under those terms as specified by reuse, and you
+agree that you have the right to license that Content under those terms. If you want your Content to be available under
+a different license, or with explicit credit to you, make sure to request so in your pull request, or to provide an
+appropriate reuse `.license` file. (Note that an incompatible deviating license might result in your contribution being
+rejected.)
+
+Contributions are tentatively welcomed. The structure of the mod is probably not really transparent to newcomers, but if
+you are interested, feel free to tackle any [issues](https://github.com/nea89o/Firmament/issues/) or create your own
+features. If you need any help contributing feel free to join the [discord].
+
+### Development
+
+Use Java 21.
 
 Running `./gradlew :build` will create a mod jar in `build/libs`
 
-You will need the fabric api mod, the fabric kotlin language mod, the architectury mod and REI in your mods folder in
-order for this mod to work.
+For a more complete development guide check out the [contributing guide](./CONTRIBUTING.md).
 
-### Licensing and contribution policy
+### Affiliation to NEU
 
-This mod is licensed under a GPL 3.0 or Later license. Images and models in src/main/resources are additionally licensed
-under CC-BY-4.0
+This codebase was originally labeled as "NotEnoughUpdates 1.19". While the author is a maintainer to NEU, this project
+is not affiliated with NEU beyond personal connections. There may still be references to NEU due to old names or
+overlapping features and libraries.
 
-To read a full license report of all dependencies, execute
-`./gradlew :printAllLicenses`.
-
-Contributions are tentatively welcomed. The mod is still in an early stage and lots of things will change and/or are
-not properly documented for other developers. If you would still like to try, make sure to add the proper 
-[copyright header](HEADER) to your file, or update existing copyright headers with your name and the current year.
-Pull requests are welcome through [GitHub](https://github.com/romangraef/Firmament) or via git send-email. Your code
-will be publicly available under a GPL license, so make sure that you have the appropriate permissions to grant that
-license, or if you are reusing code from somewhere else to properly credit the code and check if the original license
-is compatible with ours. If you want, you can license a specific file you write under a less restrictive non copyleft
-license with appropriate header, although it may at a later point be upgraded to a GPL licensed file, if another
-contributor edits that file.
-
-### Renaming
-
-This method is in the process of being renamed to Firmament from NotEnoughUpdates1.19. As such some of the branding and
-code references may still refer to NEU or NotEnoughUpdates. This mod is not related to NEU (although I am at this point
-the most active and (by line count) second most prolific NEU dev (after only Moulberry himself)). This mod is also using
-NEU data and as such can be referred to as "Firmament powered by NEU". This mod exists outside the Moulberryverse of
-mods and is not integrated into the Moulberryverse of quality control and bureaucracy. Any references to Moulberry and
-most references to NEU are due to be removed. This mod is not representing NEU in 1.19, although it does have some of
-its features.
+[discord]: https://discord.gg/64pFP94AWA
