@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.repo
 
 import io.github.moulberry.repo.NEURepository

@@ -54,7 +54,7 @@ data class PetData(
     val levelData by lazy { ExpLadders.getExpLadder(petId, rarity).getPetLevel(exp) }
 }
 
-data class SBItemStack(
+data class SBItemStack constructor(
     val skyblockId: SkyblockId,
     val neuItem: NEUItem?,
     private var stackSize: Int,
@@ -133,7 +133,8 @@ data class SBItemStack(
                     return@run ItemCache.coinItem(stackSize).also { it.appendLore(extraLore) }
                 val replacementData = mutableMapOf<String, String>()
                 injectReplacementDataForPets(replacementData)
-                return@run neuItem.asItemStack(idHint = skyblockId, replacementData).copyWithCount(stackSize)
+                return@run neuItem.asItemStack(idHint = skyblockId, replacementData)
+                    .copyWithCount(stackSize)
                     .also { it.appendLore(extraLore) }
                     .also { enhanceStatsByStars(it, stars) }
             }
@@ -212,7 +213,8 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     }
 
     override fun wildcard(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
-        return value.copy(stackSize = 1, petData = null, stars = 0, extraLore = listOf())
+        return value.copy(stackSize = 1, petData = RepoManager.getPotentialStubPetData(value.skyblockId),
+                          stars = 0, extraLore = listOf())
     }
 
     override fun normalize(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
