@@ -13,11 +13,14 @@ import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
+import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.WarpUtil
 import moe.nea.firmament.util.render.RenderInWorldContext
+import moe.nea.firmament.util.skyBlockId
 
 object AncestralSpadeSolver : SubscriptionOwner {
     var lastDing = TimeMark.farPast()
@@ -27,10 +30,13 @@ object AncestralSpadeSolver : SubscriptionOwner {
     var nextGuess: Vec3d? = null
         private set
 
+    val ancestralSpadeId = SkyblockId("ANCESTRAL_SPADE")
     private var lastTeleportAttempt = TimeMark.farPast()
 
     fun isEnabled() =
-        DianaWaypoints.TConfig.ancestralSpadeSolver && SBData.skyblockLocation == SkyBlockIsland.HUB
+        DianaWaypoints.TConfig.ancestralSpadeSolver
+            && SBData.skyblockLocation == SkyBlockIsland.HUB
+            && MC.player?.inventory?.containsAny { it.skyBlockId == ancestralSpadeId } == true // TODO: add a reactive property here
 
     @Subscribe
     fun onKeyBind(event: WorldKeyboardEvent) {
