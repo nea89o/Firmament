@@ -66,7 +66,7 @@ data class SBItemStack(
 
     fun getStackSize() = stackSize
     fun setStackSize(newSize: Int) {
-        this.stackSize = stackSize
+        this.stackSize = newSize
         this.itemStack_ = null
     }
 
