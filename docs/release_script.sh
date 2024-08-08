@@ -111,9 +111,9 @@ fi
 
 git fetch --tags "$REMOTE"
 
-git tag --list --sort=taggerdate
+git tag --list --sort=v:refname
 
-oldversion="$(git tag --list --sort=taggerdate | tail -n1)"
+oldversion="$(git describe --tags --abbrev=0|tr -d '\n')"
 
 echo "Choosing old version as $oldversion"
 
