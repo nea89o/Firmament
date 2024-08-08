@@ -465,3 +465,54 @@ to avoid collisions with other texture packs that might use the same id for a sc
 Currently, the only supported filter is `title`, which accepts a [string matcher](#string-matcher). You can also use
 `firmament:always` as an always on filter (this is the recommended way).
 
+## Block Model Replacements
+
+If you want to replace block textures in the world you can do so using block overrides. Those are stored in 
+`assets/firmskyblock/overrides/blocks/<id>.json`. The id does not matter, all overrides are loaded. This file specifies
+which block models are replaced under which conditions:
+
+```json
+{
+    "modes": [
+        "mining_3"
+    ],
+    "area": [
+        {
+            "min": [
+                -31,
+                200,
+                -117
+            ],
+            "max": [
+                12,
+                223,
+                -95
+            ]
+        }
+    ],
+    "replacements": {
+        "minecraft:blue_wool": "firmskyblock:mithril_deep",
+        "minecraft:light_blue_wool": {
+            "block": "firmskyblock:mithril_deep",
+            "sound": "minecraft:block.wet_sponge.hit"
+        }
+    }
+}
+```
+
+| Field                   | Required | Description                                                                                                                                                                                                                                                     |
+|-------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `modes`                 | yes      | A list of `/locraw` mode names.                                                                                                                                                                                                                                 |
+| `area`                  | no       | A list of areas. Blocks outside of the coordinate range will be ignored. If the block is in *any* range it will be considered inside                                                                                                                            |
+| `area.min`              | yes      | The lowest coordinate in the area. Is included in the area.                                                                                                                                                                                                     |
+| `area.max`              | yes      | The highest coordinate in the area. Is included in the area.                                                                                                                                                                                                    |
+| `replacements`          | yes      | A map of block id to replacement mappings                                                                                                                                                                                                                       |
+| `replacements` (string) | yes      | You can directly specify a string. Equivalent to just setting `replacements.block`.                                                                                                                                                                             |
+| `replacements.block`    | yes      | You can specify a block model to be used instead of the regular one. The model will be loaded from `assets/<namespace>/models/block/<path>.json` like regular block models.                                                                                     |
+| `replacements.sound`    | no       | You can also specify a sound override. This is only used for the "hit" sound effect that repeats while the block is mined. The "break" sound effect played after a block was finished mining is sadly sent by hypixel directly and cannot be replaced reliably. |
+
+> A quick note about optimization: Not specifying an area (by just omitting the `area` field) is quicker than having an
+> area encompass the entire map.
+> 
+> If you need to use multiple `area`s for unrelated sections of the world it might be a performance improvement to move
+> unrelated models to different files to reduce the amount of area checks being done for each block.

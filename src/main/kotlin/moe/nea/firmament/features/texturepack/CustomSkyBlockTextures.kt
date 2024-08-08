@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.features.texturepack
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
@@ -31,6 +29,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
         val cacheDuration by integer("cache-duration", 0, 20) { 1 }
         val enableModelOverrides by toggle("model-overrides") { true }
         val enableArmorOverrides by toggle("armor-overrides") { true }
+        val enableBlockOverrides by toggle("block-overrides") { true }
     }
 
     override val config: ManagedConfig
@@ -63,7 +62,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
                         "models/item/".length,
                         identifier.path.length - ".json".length),
                 ))
-            event.addModel(modelId)
+            event.addItemModel(modelId)
         }
     }
 

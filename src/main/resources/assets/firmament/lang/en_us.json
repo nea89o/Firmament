@@ -164,6 +164,7 @@
     "firmament.config.custom-skyblock-textures.cache-duration": "Model Cache Duration",
     "firmament.config.custom-skyblock-textures.model-overrides": "Enable model overrides/predicates",
     "firmament.config.custom-skyblock-textures.armor-overrides": "Enable Armor re-texturing",
+    "firmament.config.custom-skyblock-textures.block-overrides": "Enable Block re-modelling",
     "firmament.config.custom-skyblock-textures.enabled": "Enable Custom Item Textures",
     "firmament.config.custom-skyblock-textures.skulls-enabled": "Enable Custom Placed Skull Textures",
     "firmament.config.fixes": "Fixes",

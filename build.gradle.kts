@@ -139,6 +139,7 @@ dependencies {
     modRuntimeOnly(libs.fabric.api.deprecated)
     modApi(libs.architectury)
     modCompileOnly(libs.jarvis.api)
+    modCompileOnly(libs.sodium)
     include(libs.jarvis.fabric)
 
     modCompileOnly(libs.femalegender)

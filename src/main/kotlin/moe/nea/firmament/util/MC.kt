@@ -1,11 +1,10 @@
-
-
 package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.Coordinate
 import java.util.concurrent.ConcurrentLinkedQueue
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.client.render.WorldRenderer
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import net.minecraft.registry.BuiltinRegistries
 import net.minecraft.registry.RegistryKeys
@@ -23,6 +22,9 @@ object MC {
         TickEvent.subscribe {
             while (true) {
                 inGameHud.chatHud.addMessage(messageQueue.poll() ?: break)
+            }
+            while (true) {
+                (nextTickTodos.poll() ?: break).invoke()
             }
         }
     }
@@ -58,7 +60,14 @@ object MC {
             instance.send(block)
     }
 
+    private val nextTickTodos = ConcurrentLinkedQueue<() -> Unit>()
+    fun nextTick(function: () -> Unit) {
+        nextTickTodos.add(function)
+    }
+
+
     inline val resourceManager get() = (instance.resourceManager as ReloadableResourceManagerImpl)
+    inline val worldRenderer: WorldRenderer get() = instance.worldRenderer
     inline val networkHandler get() = player?.networkHandler
     inline val instance get() = MinecraftClient.getInstance()
     inline val keyboard get() = instance.keyboard

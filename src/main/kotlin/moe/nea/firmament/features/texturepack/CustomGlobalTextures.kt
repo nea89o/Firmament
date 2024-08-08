@@ -78,7 +78,7 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
     fun onBakeModels(event: BakeExtraModelsEvent) {
         for (guiClassOverride in preparationFuture.join().classes) {
             for (override in guiClassOverride.overrides) {
-                event.addModel(ModelIdentifier(override.model, "inventory"))
+                event.addItemModel(ModelIdentifier(override.model, "inventory"))
             }
         }
     }
