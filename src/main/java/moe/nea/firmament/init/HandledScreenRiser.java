@@ -2,6 +2,8 @@
 package moe.nea.firmament.init;
 
 import me.shedaniel.mm.api.ClassTinkerers;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
@@ -17,8 +19,10 @@ import org.objectweb.asm.tree.VarInsnNode;
 import java.lang.reflect.Modifier;
 
 public class HandledScreenRiser extends RiserUtils {
-    String Screen = remapper.mapClassName("intermediary", "net.minecraft.class_437");
-    String HandledScreen = remapper.mapClassName("intermediary", "net.minecraft.class_465");
+    @IntermediaryName(net.minecraft.client.gui.screen.Screen.class)
+    String Screen;
+    @IntermediaryName(net.minecraft.client.gui.screen.ingame.HandledScreen.class)
+    String HandledScreen;
     Type mouseScrolledDesc = Type.getMethodType(Type.BOOLEAN_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE, Type.DOUBLE_TYPE);
     String mouseScrolled = remapper.mapMethodName("intermediary", "net.minecraft.class_364", "method_25401",
                                                   mouseScrolledDesc.getDescriptor());

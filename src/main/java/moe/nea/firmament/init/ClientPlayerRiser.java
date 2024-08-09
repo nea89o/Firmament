@@ -1,4 +1,3 @@
-
 package moe.nea.firmament.init;
 
 import me.shedaniel.mm.api.ClassTinkerers;
@@ -14,11 +13,15 @@ import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 public class ClientPlayerRiser extends RiserUtils {
-    String PlayerEntity = remapper.mapClassName("intermediary", "net.minecraft.class_1657");
-    String World = remapper.mapClassName("intermediary", "net.minecraft.class_1937");
+    @IntermediaryName(net.minecraft.entity.player.PlayerEntity.class)
+    String PlayerEntity;
+    @IntermediaryName(net.minecraft.world.World.class)
+    String World;
     String GameProfile = "com.mojang.authlib.GameProfile";
-    String BlockPos = remapper.mapClassName("intermediary", "net.minecraft.class_2338");
-    String AbstractClientPlayerEntity = remapper.mapClassName("intermediary", "net.minecraft.class_742");
+    @IntermediaryName(net.minecraft.util.math.BlockPos.class)
+    String BlockPos;
+    @IntermediaryName(net.minecraft.client.network.AbstractClientPlayerEntity.class)
+    String AbstractClientPlayerEntity;
     String GuiPlayer = "moe.nea.firmament.gui.entity.GuiPlayer";
     // World world, BlockPos pos, float yaw, GameProfile gameProfile
     Type constructorDescriptor = Type.getMethodType(Type.VOID_TYPE, getTypeForClassName(World), getTypeForClassName(BlockPos), Type.FLOAT_TYPE, getTypeForClassName(GameProfile));

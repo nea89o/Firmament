@@ -31,3 +31,8 @@ SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"
 path = "**/*.gradle.kts"
 SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]
+
+[[annotations]]
+path = ["**/META-INF/services/*"]
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]

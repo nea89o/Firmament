@@ -7,6 +7,7 @@
  */
 
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
+import net.fabricmc.loom.LoomGradleExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -38,46 +39,49 @@ compileTestKotlin.kotlinOptions {
     jvmTarget = "21"
 }
 
-repositories {
-    maven("https://maven.terraformersmc.com/releases/")
-    maven("https://maven.shedaniel.me")
-    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
-    maven("https://api.modrinth.com/maven") {
-        content {
-            includeGroup("maven.modrinth")
+allprojects {
+    repositories {
+        mavenCentral()
+        maven("https://maven.terraformersmc.com/releases/")
+        maven("https://maven.shedaniel.me")
+        maven("https://maven.fabricmc.net")
+        maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+        maven("https://api.modrinth.com/maven") {
+            content {
+                includeGroup("maven.modrinth")
+            }
         }
+        maven("https://repo.sleeping.town") {
+            content {
+                includeGroup("com.unascribed")
+            }
+        }
+        ivy("https://github.com/HotswapProjects/HotswapAgent/releases/download") {
+            patternLayout {
+                artifact("[revision]/[artifact]-[revision].[ext]")
+            }
+            content {
+                includeGroup("virtual.github.hotswapagent")
+            }
+            metadataSources {
+                artifact()
+            }
+        }
+        maven("https://server.bbkr.space/artifactory/libs-release")
+        maven("https://repo.nea.moe/releases")
+        maven("https://maven.notenoughupdates.org/releases")
+        maven("https://repo.nea.moe/mirror")
+        maven("https://jitpack.io/") {
+            content {
+                includeGroupByRegex("(com|io)\\.github\\..+")
+                excludeModule("io.github.cottonmc", "LibGui")
+            }
+        }
+        maven("https://repo.hypixel.net/repository/Hypixel/")
+        maven("https://maven.azureaaron.net/snapshots")
+        mavenLocal()
     }
-    maven("https://repo.sleeping.town") {
-        content {
-            includeGroup("com.unascribed")
-        }
-    }
-    ivy("https://github.com/HotswapProjects/HotswapAgent/releases/download") {
-        patternLayout {
-            artifact("[revision]/[artifact]-[revision].[ext]")
-        }
-        content {
-            includeGroup("virtual.github.hotswapagent")
-        }
-        metadataSources {
-            artifact()
-        }
-    }
-    maven("https://server.bbkr.space/artifactory/libs-release")
-    maven("https://repo.nea.moe/releases")
-    maven("https://maven.notenoughupdates.org/releases")
-    maven("https://repo.nea.moe/mirror")
-    maven("https://jitpack.io/") {
-        content {
-            includeGroupByRegex("(com|io)\\.github\\..+")
-            excludeModule("io.github.cottonmc", "LibGui")
-        }
-    }
-    maven( "https://repo.hypixel.net/repository/Hypixel/")
-    maven("https://maven.azureaaron.net/snapshots")
-    mavenLocal()
 }
-
 kotlin {
     sourceSets.all {
         languageSettings {
@@ -124,6 +128,8 @@ dependencies {
     modImplementation(libs.moulconfig)
     modImplementation(libs.manninghamMills)
     modCompileOnly(libs.explosiveenhancement)
+    compileOnly(project(":javaplugin"))
+    annotationProcessor(project(":javaplugin"))
     include(libs.manninghamMills)
     include(libs.moulconfig)
 
@@ -209,8 +215,21 @@ loom {
 }
 
 tasks.withType<JavaCompile> {
+    this.sourceCompatibility = "21"
+    this.targetCompatibility = "21"
     options.encoding = "UTF-8"
-    options.release.set(21)
+    val module = "ALL-UNNAMED"
+    options.forkOptions.jvmArgs!!.addAll(listOf(
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=$module",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.comp=$module",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.tree=$module",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=$module",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.code=$module",
+    ))
+    options.isFork = true
+    afterEvaluate {
+        options.compilerArgs.add("-Xplugin:IntermediaryNameReplacement mappingFile=${LoomGradleExtension.get(project).mappingsFile.absolutePath} sourceNs=named")
+    }
 }
 
 tasks.jar {

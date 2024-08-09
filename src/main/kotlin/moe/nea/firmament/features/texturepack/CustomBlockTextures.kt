@@ -157,7 +157,10 @@ object CustomBlockTextures {
         currentIslandReplacements = replacements
         if (lastReplacements != replacements) {
             MC.nextTick {
-                MC.worldRenderer.reload()
+                MC.worldRenderer.chunks?.chunks?.forEach {
+                    // false schedules rebuilds outside a 27 block radius to happen async
+                    it.scheduleRebuild(false)
+                }
             }
         }
     }
@@ -259,6 +262,10 @@ object CustomBlockTextures {
         return BakedReplacements(map.mapValues { LocationReplacements(it.value) })
     }
 
+    @JvmStatic
+    fun patchIndigo(orig: BakedModel, pos: BlockPos, state: BlockState): BakedModel {
+        return getReplacementModel(state, pos) ?: orig
+    }
 
     @Subscribe
     fun onStart(event: FinalizeResourceManagerEvent) {

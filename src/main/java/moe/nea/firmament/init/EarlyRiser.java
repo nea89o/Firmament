@@ -6,5 +6,6 @@ public class EarlyRiser implements Runnable {
     public void run() {
         new ClientPlayerRiser().addTinkerers();
         new HandledScreenRiser().addTinkerers();
+        new SectionBuilderRiser().addTinkerers();
     }
 }

@@ -33,6 +33,7 @@ import kotlinx.coroutines.plus
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlin.coroutines.EmptyCoroutineContext
+import net.minecraft.client.render.chunk.SectionBuilder
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
@@ -112,6 +113,8 @@ object Firmament {
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
             TickEvent.publish(TickEvent(tick++))
         })
+        // TODO: remove me
+        Class.forName(SectionBuilder::class.java.name)
         IDataHolder.registerEvents()
         RepoManager.initialize()
         SBData.init()

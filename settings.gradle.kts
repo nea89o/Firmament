@@ -33,3 +33,4 @@ pluginManagement {
 rootProject.name = "Firmament"
 
 include("symbols")
+include("javaplugin")
