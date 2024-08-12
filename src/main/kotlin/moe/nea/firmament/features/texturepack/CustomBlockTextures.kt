@@ -3,6 +3,7 @@
 package moe.nea.firmament.features.texturepack
 
 import java.util.concurrent.CompletableFuture
+import net.fabricmc.loader.api.FabricLoader
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -29,6 +30,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.compat.SodiumChunkReloader
 import moe.nea.firmament.events.BakeExtraModelsEvent
 import moe.nea.firmament.events.EarlyResourceReloadEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
@@ -161,9 +163,19 @@ object CustomBlockTextures {
                     // false schedules rebuilds outside a 27 block radius to happen async
                     it.scheduleRebuild(false)
                 }
+                sodiumReloadTask?.run()
             }
         }
     }
+
+    private val sodiumReloadTask = runCatching {
+        SodiumChunkReloader()
+    }.getOrElse {
+        if (FabricLoader.getInstance().isModLoaded("sodium"))
+            logger.error("Could not create sodium chunk reloader")
+        null
+    }
+
 
     fun matchesPosition(replacement: BlockReplacement, blockPos: BlockPos?): Boolean {
         if (blockPos == null) return true

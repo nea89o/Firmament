@@ -467,6 +467,10 @@ Currently, the only supported filter is `title`, which accepts a [string matcher
 
 ## Block Model Replacements
 
+Firmament adds the ability to retexture block models. Supported renderers are vanilla, indigo (fabric), sodium (and 
+anything sodium based). Firmament performs gentle world reloading so that even when the world data gets updated very
+late by the server there should be no flicker.
+
 If you want to replace block textures in the world you can do so using block overrides. Those are stored in 
 `assets/firmskyblock/overrides/blocks/<id>.json`. The id does not matter, all overrides are loaded. This file specifies
 which block models are replaced under which conditions:
