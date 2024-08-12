@@ -60,7 +60,7 @@ public class SectionBuilderRiser extends RiserUtils {
                 return;
             }
         }
-        new RuntimeException("Could not inject tesselation hook despite fabric renderer indigo being loaded").printStackTrace();
+        System.err.println("Could not inject indigo rendering hook. Is a custom renderer installed (e.g. sodium)?");
     }
 
     private void handleIndigo(MethodNode method) {

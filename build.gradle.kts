@@ -79,6 +79,7 @@ allprojects {
         }
         maven("https://repo.hypixel.net/repository/Hypixel/")
         maven("https://maven.azureaaron.net/snapshots")
+        maven("https://maven.azureaaron.net/releases")
         mavenLocal()
     }
 }
@@ -128,6 +129,8 @@ dependencies {
     modImplementation(libs.moulconfig)
     modImplementation(libs.manninghamMills)
     modCompileOnly(libs.explosiveenhancement)
+    modImplementation(libs.hypixelmodapi)
+    include(libs.hypixelmodapi.fabric)
     compileOnly(project(":javaplugin"))
     annotationProcessor(project(":javaplugin"))
     include(libs.manninghamMills)

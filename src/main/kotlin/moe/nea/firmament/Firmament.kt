@@ -113,8 +113,6 @@ object Firmament {
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
             TickEvent.publish(TickEvent(tick++))
         })
-        // TODO: remove me
-        Class.forName(SectionBuilder::class.java.name)
         IDataHolder.registerEvents()
         RepoManager.initialize()
         SBData.init()

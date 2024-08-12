@@ -1,37 +1,53 @@
-
-
 package moe.nea.firmament.util
 
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
-import moe.nea.firmament.Firmament
-import moe.nea.firmament.events.OutgoingPacketEvent
+import java.util.UUID
+import net.hypixel.modapi.HypixelModAPI
+import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
+import kotlin.jvm.optionals.getOrNull
+import kotlin.time.Duration.Companion.seconds
+import moe.nea.firmament.events.AllowChatEvent
 import moe.nea.firmament.events.ProcessChatEvent
+import moe.nea.firmament.events.ServerConnectedEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldReadyEvent
-import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
-import java.util.*
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 object SBData {
     private val profileRegex = "Profile ID: ([a-z0-9\\-]+)".toRegex()
+    val profileSuggestTexts = listOf(
+        "CLICK THIS TO SUGGEST IT IN CHAT [DASHES]",
+        "CLICK THIS TO SUGGEST IT IN CHAT [NO DASHES]",
+    )
     var profileId: UUID? = null
 
-    private var lastLocrawSent = Timer()
-    private val anyLocrawSent = Timer()
-    private val locrawRoundtripTime: Duration = 5.seconds
     private var hasReceivedProfile = false
-    private var hasSentLocraw = false
     var locraw: Locraw? = null
     val skyblockLocation: SkyBlockIsland? get() = locraw?.skyblockLocation
     val hasValidLocraw get() = locraw?.server !in listOf("limbo", null)
     val isOnSkyblock get() = locraw?.gametype == "SKYBLOCK"
-
+    var lastProfileIdRequest = TimeMark.farPast()
     fun init() {
-        OutgoingPacketEvent.subscribe { event ->
-            if (event.packet is CommandExecutionC2SPacket && event.packet.command == "locraw") {
-                anyLocrawSent.markNow()
+        ServerConnectedEvent.subscribe {
+            HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)
+        }
+        HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket::class.java) {
+            MC.onMainThread {
+                val lastLocraw = locraw
+                locraw = Locraw(it.serverName,
+                                it.serverType.getOrNull()?.name?.uppercase(),
+                                it.mode.getOrNull(),
+                                it.map.getOrNull())
+                SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, null))
+            }
+        }
+        SkyblockServerUpdateEvent.subscribe {
+            if (!hasReceivedProfile && isOnSkyblock && lastProfileIdRequest.passedTime() > 30.seconds) {
+                lastProfileIdRequest = TimeMark.now()
+                MC.sendServerCommand("profileid")
+            }
+        }
+        AllowChatEvent.subscribe { event ->
+            if (event.unformattedString in profileSuggestTexts && lastProfileIdRequest.passedTime() < 5.seconds) {
+                event.cancel()
             }
         }
         ProcessChatEvent.subscribe(receivesCancelled = true) { event ->
@@ -40,60 +56,11 @@ object SBData {
                 try {
                     profileId = UUID.fromString(profileMatch.groupValues[1])
                     hasReceivedProfile = true
-                    if (!hasValidLocraw && !hasSentLocraw && anyLocrawSent.timePassed() > locrawRoundtripTime) {
-                        sendLocraw()
-                    }
                 } catch (e: IllegalArgumentException) {
                     profileId = null
                     e.printStackTrace()
                 }
             }
-            if (event.unformattedString.startsWith("{")) {
-                if (tryReceiveLocraw(event.unformattedString)) {
-                    if (lastLocrawSent.timePassed() < locrawRoundtripTime) {
-                        lastLocrawSent.markFarPast()
-                        event.cancel()
-                    }
-                    if (!hasValidLocraw && !hasSentLocraw && hasReceivedProfile) {
-                        sendLocraw()
-                    }
-                }
-            }
-        }
-
-        WorldReadyEvent.subscribe {
-            val lastLocraw = locraw
-            locraw = null
-            SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, null))
-            hasSentLocraw = false
-            hasReceivedProfile = false
         }
     }
-
-    private fun tryReceiveLocraw(unformattedString: String, update: Boolean = true): Boolean = try {
-        val lastLocraw = locraw
-        val n = Firmament.json.decodeFromString<Locraw>(unformattedString)
-        if (update) {
-            if (n.gametype != "SKYBLOCK")
-                profileId = null
-            locraw = n
-            SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, locraw))
-        }
-        true
-    } catch (e: SerializationException) {
-        e.printStackTrace()
-        false
-    } catch (e: IllegalArgumentException) {
-        e.printStackTrace()
-        false
-    }
-
-    fun sendLocraw() {
-        hasSentLocraw = true
-        lastLocrawSent.markNow()
-        val nh = MC.player?.networkHandler ?: return
-        nh.sendChatCommand("locraw")
-    }
-
-
 }
