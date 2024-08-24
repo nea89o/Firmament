@@ -49,7 +49,6 @@ open class FirmButtonComponent(
                 if (context.isHovered) {
                     action.run()
                 }
-                blur()
                 return true
             }
         }
