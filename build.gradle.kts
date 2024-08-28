@@ -8,20 +8,23 @@
 
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import net.fabricmc.loom.LoomGradleExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
     `maven-publish`
-    id("com.google.devtools.ksp") version "1.9.23-1.0.20"
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.23"
-//    id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
-    id("dev.architectury.loom") version "1.6.397"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.kotlin.plugin.powerassert)
+    alias(libs.plugins.kotlin.plugin.ksp)
+    alias(libs.plugins.loom)
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("moe.nea.licenseextractificator")
-//    id("io.github.juuxel.loom-vineflower") version "1.11.0"
 }
+
+version = getGitTagInfo()
+group = rootProject.property("maven_group").toString()
 
 java {
     withSourcesJar()
@@ -30,13 +33,11 @@ java {
     }
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "21"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "21"
+
+tasks.withType(KotlinCompile::class) {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+    }
 }
 
 allprojects {
@@ -80,17 +81,54 @@ allprojects {
         maven("https://repo.hypixel.net/repository/Hypixel/")
         maven("https://maven.azureaaron.net/snapshots")
         maven("https://maven.azureaaron.net/releases")
+        maven("https://www.cursemaven.com")
         mavenLocal()
     }
 }
 kotlin {
     sourceSets.all {
         languageSettings {
-//            languageVersion = "2.0"
             enableLanguageFeature("BreakContinueInInlineLambdas")
         }
     }
 }
+val compatSourceSets: MutableSet<SourceSet> = mutableSetOf()
+fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): SourceSet {
+    val ss = sourceSets.create(name) {
+        this.java.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
+        this.kotlin.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/kotlin")))
+    }
+    compatSourceSets.add(ss)
+    loom.createRemapConfigurations(ss)
+    val mainSS = sourceSets.main.get()
+    configurations {
+        (ss.implementationConfigurationName) {
+            extendsFrom(getByName(mainSS.compileClasspathConfigurationName))
+        }
+        (ss.annotationProcessorConfigurationName) {
+            extendsFrom(getByName(mainSS.annotationProcessorConfigurationName))
+        }
+        (mainSS.runtimeOnlyConfigurationName) {
+            extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
+        }
+    }
+    dependencies {
+        runtimeOnly(ss.output)
+        (ss.implementationConfigurationName)(sourceSets.main.get().output)
+    }
+    tasks.jar {
+        from(ss.output)
+    }
+    return ss
+}
+
+val SourceSet.modImplementationConfigurationName
+    get() =
+        loom.remapConfigurations.find {
+            it.targetConfigurationName.get() == this.implementationConfigurationName
+        }!!.sourceConfiguration
+val configuredSourceSet = createIsolatedSourceSet("configured")
+val sodiumSourceSet = createIsolatedSourceSet("sodium")
 
 val shadowMe by configurations.creating {
     exclude(group = "org.jetbrains.kotlin")
@@ -148,10 +186,11 @@ dependencies {
     modRuntimeOnly(libs.fabric.api.deprecated)
     modApi(libs.architectury)
     modCompileOnly(libs.jarvis.api)
-    modCompileOnly(libs.sodium)
     include(libs.jarvis.fabric)
 
     modCompileOnly(libs.femalegender)
+    (configuredSourceSet.modImplementationConfigurationName)(libs.configured)
+    (sodiumSourceSet.modImplementationConfigurationName)(libs.sodium)
 
     // Actual dependencies
     modCompileOnly(libs.rei.api) {
@@ -189,9 +228,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-version = getGitTagInfo()
-group = rootProject.property("maven_group").toString()
-
 loom {
     clientOnlyMinecraftJar()
     accessWidenerPath.set(project.file("src/main/resources/firmament.accesswidener"))
@@ -201,6 +237,10 @@ loom {
             property("devauth.enabled", "true")
             property("fabric.log.level", "info")
             property("firmament.debug", "true")
+            property("firmament.classroots",
+                     compatSourceSets.joinToString(File.pathSeparator) {
+                         File(it.output.classesDirs.asPath).absolutePath
+                     })
             property("mixin.debug", "true")
 
             parseEnvFile(file(".env")).forEach { (t, u) ->

@@ -4,7 +4,14 @@
 
 [versions]
 minecraft = "1.21"
-fabric_loader = "0.15.11"
+
+# Update from https://kotlinlang.org/
+kotlin = "2.0.20"
+# Update from https://github.com/google/ksp/releases
+kotlin_ksp = "2.0.20-1.0.24"
+
+# Update from https://linkie.shedaniel.me/dependencies?loader=fabric
+fabric_loader = "0.16.3"
 fabric_api = "0.100.4+1.21"
 fabric_kotlin = "1.11.0+kotlin.2.0.0"
 yarn = "1.21+build.7"
@@ -12,25 +19,58 @@ rei = "16.0.729"
 modmenu = "11.0.1"
 architectury = "13.0.3"
 
-qolify = "1.3.0-1.20.2"
-citresewn = "1.1.3+1.20"
+# Update from https://maven.architectury.dev/dev/architectury/loom/dev.architectury.loom.gradle.plugin/
+loom = "1.7.412"
+
+# Update from https://modrinth.com/mod/qolify/versions?l=fabric
+qolify = "1.6.0-1.21.1"
+
+# Update from https://modrinth.com/mod/sodium/versions?l=fabric
 sodium = "mc1.21-0.5.11"
-freecammod = "U5eR0FyR"
+
+# Update from https://modrinth.com/mod/freecam/versions?l=fabric
+freecammod = "vomskVK3"
+
+# Update from https://modrinth.com/mod/no-chat-reports/versions?l=fabric
 ncr = "Fabric-1.21-v2.8.0"
+
+# Update from https://modrinth.com/mod/female-gender/versions?l=fabric
 femalegender = "kJmjQvAS"
+
+# Update from https://modrinth.com/mod/explosive-enhancement/versions?l=fabric
 explosiveenhancement = "1.2.3-1.21.0"
-notenoughanimations = "WaI2x21x"
+
+# Update from https://modrinth.com/mod/not-enough-animations/versions?l=fabric
+notenoughanimations = "BQ8qstAV"
 
 devauth = "1.2.0"
-ktor = "2.3.0"
+
+# Update from https://ktor.io/
+ktor = "2.3.12"
+
+# Update from https://repo.nea.moe/#/releases/moe/nea/neurepoparser
 neurepoparser = "1.5.0"
+
+# Update from https://github.com/HotswapProjects/HotswapAgent/releases
 hotswap_agent = "1.4.2-SNAPSHOT"
+
+# Update from https://github.com/LlamaLad7/MixinExtras/tags
 mixinextras = "0.3.5"
+
 jarvis = "1.1.3"
 nealisp = "1.0.0"
+
+# Update from https://github.com/NotEnoughUpdates/MoulConfig/tags
 moulconfig = "3.0.0-beta.15"
+
+# Update from https://www.curseforge.com/minecraft/mc-mods/configured/files/all?page=1&pageSize=20
+configured = "5441234"
+
+# Update from https://modrinth.com/mod/hypixel-mod-api/versions
 hypixelmodapi = "1.0.1"
 hypixelmodapi_fabric = "1.0.1+build.1+mc1.21"
+
+# Update from https://github.com/shedaniel/fabric-asm or https://maven.shedaniel.me/me/shedaniel/mm/
 manninghamMills = "2.4.1"
 
 [libraries]
@@ -52,6 +92,7 @@ manninghamMills = { module = "me.shedaniel:mm", version.ref = "manninghamMills" 
 aaronhmapi = { module = "net.azureaaron:hm-api", version = "1.0.0+1.21" }
 hypixelmodapi = { module = "net.hypixel:mod-api", version.ref = "hypixelmodapi" }
 hypixelmodapi_fabric = { module = "maven.modrinth:hypixel-mod-api", version.ref = "hypixelmodapi_fabric" }
+configured = { module = "curse.maven:configured-457570", version.ref = "configured" }
 # Runtime:
 notenoughanimations = { module = "maven.modrinth:not-enough-animations", version.ref = "notenoughanimations" }
 hotswap = { module = "virtual.github.hotswapagent:hotswap-agent", version.ref = "hotswap_agent" }
@@ -60,7 +101,6 @@ rei_fabric = { module = "me.shedaniel:RoughlyEnoughItems-fabric", version.ref = 
 devauth = { module = "me.djtheredstoner:DevAuth-fabric", version.ref = "devauth" }
 modmenu = { module = "maven.modrinth:modmenu", version.ref = "modmenu" }
 qolify = { module = "maven.modrinth:qolify", version.ref = "qolify" }
-citresewn = { module = "maven.modrinth:cit-resewn", version.ref = "citresewn" }
 ncr = { module = "maven.modrinth:no-chat-reports", version.ref = "ncr" }
 sodium = { module = "maven.modrinth:sodium", version.ref = "sodium" }
 freecammod = { module = "maven.modrinth:freecam", version.ref = "freecammod" }
@@ -78,9 +118,13 @@ runtime_optional = [
     "devauth",
     "freecammod",
     "sodium",
-    #    "qolify",
-    #    "citresewn",
-    #    "ncr",
+#    "qolify",
+    "ncr",
 ]
 
-
+[plugins]
+kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin_plugin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin_plugin_powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
+kotlin_plugin_ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin_ksp" }
+loom = { id = "dev.architectury.loom", version.ref = "loom" }

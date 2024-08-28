@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(SodiumWorldRenderer.class)
 @Pseudo
 public interface AccessorSodiumWorldRenderer {
-    @Accessor("renderSectionManager")
+    @Accessor(value = "renderSectionManager", remap = false)
     RenderSectionManager getRenderSectionManager_firmament();
 }

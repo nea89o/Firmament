@@ -12,9 +12,12 @@ import java.util.Set;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
+    AutoDiscoveryPlugin autoDiscoveryPlugin = new AutoDiscoveryPlugin();
+
     @Override
     public void onLoad(String mixinPackage) {
         MixinExtrasBootstrap.init();
+        autoDiscoveryPlugin.setMixinPackage(mixinPackage);
     }
 
     @Override
@@ -37,7 +40,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public List<String> getMixins() {
-        return null;
+        return autoDiscoveryPlugin.getMixins();
     }
 
     @Override

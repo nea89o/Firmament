@@ -30,7 +30,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
-import moe.nea.firmament.compat.SodiumChunkReloader
 import moe.nea.firmament.events.BakeExtraModelsEvent
 import moe.nea.firmament.events.EarlyResourceReloadEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
@@ -169,7 +168,7 @@ object CustomBlockTextures {
     }
 
     private val sodiumReloadTask = runCatching {
-        SodiumChunkReloader()
+        Class.forName("moe.nea.firmament.compat.sodium.SodiumChunkReloader").getConstructor().newInstance() as Runnable
     }.getOrElse {
         if (FabricLoader.getInstance().isModLoaded("sodium"))
             logger.error("Could not create sodium chunk reloader")
