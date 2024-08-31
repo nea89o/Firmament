@@ -8,6 +8,7 @@
 
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import net.fabricmc.loom.LoomGradleExtension
+import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -96,7 +97,7 @@ val compatSourceSets: MutableSet<SourceSet> = mutableSetOf()
 fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): SourceSet {
     val ss = sourceSets.create(name) {
         this.java.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
-        this.kotlin.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/kotlin")))
+        this.kotlin.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
     }
     compatSourceSets.add(ss)
     loom.createRemapConfigurations(ss)
@@ -111,12 +112,15 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): Source
         (mainSS.runtimeOnlyConfigurationName) {
             extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
         }
+        ("ksp" + ss.name.replaceFirstChar { it.uppercaseChar() }) {
+            extendsFrom(ksp.get())
+        }
     }
     dependencies {
         runtimeOnly(ss.output)
         (ss.implementationConfigurationName)(sourceSets.main.get().output)
     }
-    tasks.jar {
+    tasks.shadowJar {
         from(ss.output)
     }
     return ss
@@ -171,6 +175,8 @@ dependencies {
     include(libs.hypixelmodapi.fabric)
     compileOnly(project(":javaplugin"))
     annotationProcessor(project(":javaplugin"))
+    implementation("com.google.auto.service:auto-service-annotations:1.1.1")
+    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
     include(libs.manninghamMills)
     include(libs.moulconfig)
 
@@ -285,6 +291,7 @@ tasks.shadowJar {
     archiveClassifier.set("dev")
     relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
+    mergeServiceFiles()
 }
 
 tasks.remapJar {

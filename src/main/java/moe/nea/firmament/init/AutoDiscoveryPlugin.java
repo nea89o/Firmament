@@ -146,7 +146,9 @@ public class AutoDiscoveryPlugin {
      */
     private void walkDir(Path classRoot) {
         System.out.println("Trying to find mixins from directory");
-        try (Stream<Path> classes = Files.walk(classRoot.resolve(getMixinBaseDir()))) {
+        var path = classRoot.resolve(getMixinBaseDir());
+        if (!Files.exists(path)) return;
+        try (Stream<Path> classes = Files.walk(path)) {
             classes.map(it -> classRoot.relativize(it).toString())
                    .forEach(this::tryAddMixinClass);
         } catch (IOException e) {

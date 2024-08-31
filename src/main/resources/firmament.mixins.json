@@ -1,0 +1,7 @@
+{
+    "required": true,
+    "plugin": "moe.nea.firmament.init.MixinPlugin",
+    "package": "moe.nea.firmament.mixins",
+    "compatibilityLevel": "JAVA_21",
+    "refmap": "Firmament-refmap.json"
+}

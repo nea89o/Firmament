@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.gui.config
 
 import io.github.notenoughupdates.moulconfig.observer.ObservableList
@@ -36,8 +34,14 @@ object AllConfigsGui {
         }
     }
 
-    fun makeScreen(parent: Screen? = null): Screen {
+    fun makeBuiltInScreen(parent: Screen? = null): Screen {
         return MoulConfigUtils.loadScreen("config/main", MainMapping(allConfigs), parent)
+    }
+
+    fun makeScreen(parent: Screen? = null): Screen {
+        val provider = FirmamentConfigScreenProvider.providers.find { it.key == "builtin" }
+            ?: FirmamentConfigScreenProvider.providers.first()
+        return provider.open(parent)
     }
 
     fun showAllGuis() {

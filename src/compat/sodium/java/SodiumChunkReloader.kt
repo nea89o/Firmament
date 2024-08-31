@@ -1,3 +1,5 @@
+package moe.nea.firmament.compat.sodium
+
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer
 import moe.nea.firmament.mixins.accessor.sodium.AccessorSodiumWorldRenderer
 

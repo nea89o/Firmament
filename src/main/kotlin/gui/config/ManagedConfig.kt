@@ -145,7 +145,8 @@ abstract class ManagedConfig(override val name: String) : ManagedConfigElement()
         latestGuiAppender?.reloadables?.forEach { it() }
     }
 
-    val labelText = Text.translatable("firmament.config.${name}")
+    val translationKey get() = "firmament.config.${name}"
+    val labelText = Text.translatable(translationKey)
 
     fun getConfigEditor(parent: Screen? = null): Screen {
         var screen: Screen? = null

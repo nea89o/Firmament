@@ -20,6 +20,7 @@
     "firmament.poweruser.entity.armor": "Entity Armor:",
     "firmament.poweruser.entity.armor.item": " - %s",
     "firmament.poweruser.entity.passengers": "%s Passengers",
+    "firmament.config.all-configs": "- All Configs -",
     "firmament.config.anniversary": "Anniversary Features",
     "firmament.config.anniversary.shiny-pigs": "Shiny Pigs Tracker",
     "firmament.config.anniversary.pig-hud": "Pig Tracker Hud",
