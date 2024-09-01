@@ -3,6 +3,7 @@
 package moe.nea.firmament.features.debug
 
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.TimeMark
@@ -25,14 +26,4 @@ object DebugView : FirmamentFeature {
         }
     }
 
-    fun recalculateDebugWidget() {
-    }
-
-    override fun onLoad() {
-        TickEvent.subscribe {
-            synchronized(this) {
-                recalculateDebugWidget()
-            }
-        }
-    }
 }

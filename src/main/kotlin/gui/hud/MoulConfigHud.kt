@@ -37,7 +37,7 @@ abstract class MoulConfigHud(
 
     init {
         require(name.matches("^[a-z_/]+$".toRegex()))
-        HudRenderEvent.subscribe {
+        HudRenderEvent.subscribe("MoulConfigHud:render") {
             if (!shouldRender()) return@subscribe
             val renderContext = componentWrapper.createContext(it.context)
             if (fragment == null)
@@ -50,7 +50,7 @@ abstract class MoulConfigHud(
             fragment!!.root.render(renderContextTranslated)
             it.context.matrices.pop()
         }
-        FinalizeResourceManagerEvent.subscribe {
+        FinalizeResourceManagerEvent.subscribe("MoulConfigHud:finalizeResourceManager") {
             MC.resourceManager.registerReloader(object : SynchronousResourceReloader {
                 override fun reload(manager: ResourceManager?) {
                     fragment = null

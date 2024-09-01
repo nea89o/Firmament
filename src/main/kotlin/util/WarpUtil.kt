@@ -57,7 +57,7 @@ object WarpUtil {
     }
 
     init {
-        ProcessChatEvent.subscribe {
+        ProcessChatEvent.subscribe("WarpUtil:processChat") {
             if (it.unformattedString == "You haven't unlocked this fast travel destination!"
                 && lastWarpAttempt.passedTime() < 2.seconds
             ) {

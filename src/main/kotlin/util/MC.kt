@@ -19,7 +19,7 @@ object MC {
     private val messageQueue = ConcurrentLinkedQueue<Text>()
 
     init {
-        TickEvent.subscribe {
+        TickEvent.subscribe("MC:push") {
             while (true) {
                 inGameHud.chatHud.addMessage(messageQueue.poll() ?: break)
             }

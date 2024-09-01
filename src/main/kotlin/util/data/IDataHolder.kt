@@ -56,7 +56,7 @@ interface IDataHolder<T> {
         }
 
         fun registerEvents() {
-            ScreenChangeEvent.subscribe { event ->
+            ScreenChangeEvent.subscribe("IDataHolder:saveOnScreenChange") { event ->
                 performSaves()
                 val p = MinecraftClient.getInstance().player
                 if (p != null) {

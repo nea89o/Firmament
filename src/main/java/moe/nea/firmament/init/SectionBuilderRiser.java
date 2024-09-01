@@ -54,7 +54,8 @@ public class SectionBuilderRiser extends RiserUtils {
 
     private void handle(ClassNode classNode) {
         for (MethodNode method : classNode.methods) {
-            if (method.name.endsWith("$fabric-renderer-indigo$hookChunkBuildTessellate") &&
+            if ((method.name.endsWith("$fabric-renderer-indigo$hookBuildRenderBlock")
+                || method.name.endsWith("$fabric-renderer-indigo$hookChunkBuildTessellate")) &&
                 method.name.startsWith("redirect$")) {
                 handleIndigo(method);
                 return;

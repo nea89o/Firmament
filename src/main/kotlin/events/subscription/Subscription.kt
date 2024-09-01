@@ -13,4 +13,5 @@ data class Subscription<T : FirmamentEvent>(
     val owner: Any,
     val invoke: (T) -> Unit,
     val eventBus: FirmamentEventBus<T>,
+    val methodName: String,
 )

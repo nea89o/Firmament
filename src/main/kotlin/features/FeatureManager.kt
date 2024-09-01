@@ -1,14 +1,12 @@
-
-
 package moe.nea.firmament.features
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.annotations.generated.AllSubscriptions
 import moe.nea.firmament.events.FeaturesInitializedEvent
 import moe.nea.firmament.events.FirmamentEvent
 import moe.nea.firmament.events.subscription.Subscription
+import moe.nea.firmament.events.subscription.SubscriptionList
 import moe.nea.firmament.features.chat.AutoCompletions
 import moe.nea.firmament.features.chat.ChatLinks
 import moe.nea.firmament.features.chat.QuickCommands
@@ -88,13 +86,15 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
     }
 
     fun subscribeEvents() {
-        AllSubscriptions.provideSubscriptions {
-            subscribeSingleEvent(it)
+        SubscriptionList.allLists.forEach {
+            it.provideSubscriptions {
+                subscribeSingleEvent(it)
+            }
         }
     }
 
     private fun <T : FirmamentEvent> subscribeSingleEvent(it: Subscription<T>) {
-        it.eventBus.subscribe(false, it.invoke)
+        it.eventBus.subscribe(false, "${it.owner.javaClass.simpleName}:${it.methodName}", it.invoke)
     }
 
     fun loadFeature(feature: FirmamentFeature) {

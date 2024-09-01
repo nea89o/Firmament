@@ -168,7 +168,11 @@ object CustomBlockTextures {
     }
 
     private val sodiumReloadTask = runCatching {
-        Class.forName("moe.nea.firmament.compat.sodium.SodiumChunkReloader").getConstructor().newInstance() as Runnable
+        val r = Class.forName("moe.nea.firmament.compat.sodium.SodiumChunkReloader")
+            .getConstructor()
+            .newInstance() as Runnable
+        r.run()
+        r
     }.getOrElse {
         if (FabricLoader.getInstance().isModLoaded("sodium"))
             logger.error("Could not create sodium chunk reloader")
@@ -192,7 +196,9 @@ object CustomBlockTextures {
 
     @JvmStatic
     fun getReplacement(block: BlockState, blockPos: BlockPos?): Replacement? {
-        if (isInFallback() && blockPos == null) return null
+        if (isInFallback() && blockPos == null) {
+            return null
+        }
         val replacements = currentIslandReplacements?.lookup?.get(block.block) ?: return null
         for (replacement in replacements) {
             if (replacement.checks == null || matchesPosition(replacement, blockPos))

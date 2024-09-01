@@ -4,6 +4,7 @@ package moe.nea.firmament.features.debug
 
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
@@ -54,15 +55,16 @@ object PowerUserTools : FirmamentFeature {
         }
     var lastCopiedStackViewTime = false
 
-    override fun onLoad() {
-        TickEvent.subscribe {
-            if (!lastCopiedStackViewTime)
-                lastCopiedStack = null
-            lastCopiedStackViewTime = false
-        }
-        ScreenChangeEvent.subscribe {
+    @Subscribe
+    fun resetLastCopiedStack(event: TickEvent) {
+        if (!lastCopiedStackViewTime)
             lastCopiedStack = null
-        }
+        lastCopiedStackViewTime = false
+    }
+
+    @Subscribe
+    fun resetLastCopiedStackOnScreenChange(event: ScreenChangeEvent) {
+        lastCopiedStack = null
     }
 
     fun debugFormat(itemStack: ItemStack): Text {

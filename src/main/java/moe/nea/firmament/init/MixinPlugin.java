@@ -7,16 +7,19 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 
     AutoDiscoveryPlugin autoDiscoveryPlugin = new AutoDiscoveryPlugin();
-
+    public static String mixinPackage;
     @Override
     public void onLoad(String mixinPackage) {
         MixinExtrasBootstrap.init();
+        MixinPlugin.mixinPackage = mixinPackage;
         autoDiscoveryPlugin.setMixinPackage(mixinPackage);
     }
 
@@ -40,7 +43,8 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public List<String> getMixins() {
-        return autoDiscoveryPlugin.getMixins();
+        return autoDiscoveryPlugin.getMixins().stream().filter(it -> this.shouldApplyMixin(null, it))
+            .toList();
     }
 
     @Override
@@ -48,8 +52,10 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     }
 
+    public static List<String> appliedMixins = new ArrayList<>();
+
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-
+        appliedMixins.add(mixinClassName);
     }
 }

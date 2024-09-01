@@ -6,10 +6,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import com.google.devtools.ksp.gradle.KspTaskJvm
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import net.fabricmc.loom.LoomGradleExtension
-import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -102,6 +103,7 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): Source
     compatSourceSets.add(ss)
     loom.createRemapConfigurations(ss)
     val mainSS = sourceSets.main.get()
+    val upperName = ss.name.replaceFirstChar { it.uppercaseChar() }
     configurations {
         (ss.implementationConfigurationName) {
             extendsFrom(getByName(mainSS.compileClasspathConfigurationName))
@@ -112,8 +114,13 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): Source
         (mainSS.runtimeOnlyConfigurationName) {
             extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
         }
-        ("ksp" + ss.name.replaceFirstChar { it.uppercaseChar() }) {
+        ("ksp$upperName") {
             extendsFrom(ksp.get())
+        }
+    }
+    afterEvaluate {
+        tasks.named("ksp${upperName}Kotlin", KspTaskJvm::class) {
+            this.options.add(SubpluginOption("apoption", "firmament.sourceset=${ss.name}"))
         }
     }
     dependencies {

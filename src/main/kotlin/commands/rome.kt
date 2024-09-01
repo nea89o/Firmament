@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.commands
 
 import com.mojang.brigadier.CommandDispatcher
@@ -9,6 +7,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.text.Text
 import moe.nea.firmament.apis.UrsaManager
 import moe.nea.firmament.events.CommandEvent
+import moe.nea.firmament.events.FirmamentEventBus
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
@@ -16,6 +15,7 @@ import moe.nea.firmament.features.inventory.storageoverlay.StorageOverviewScreen
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ManagedOption
+import moe.nea.firmament.init.MixinPlugin
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.FirmFormatters
@@ -201,7 +201,8 @@ fun firmamentCommand() = literal("firmament") {
         thenLiteral("copyEntities") {
             thenExecute {
                 val player = MC.player ?: return@thenExecute
-                player.world.getOtherEntities(player, player.boundingBox.expand(12.0)).forEach(PowerUserTools::showEntity)
+                player.world.getOtherEntities(player, player.boundingBox.expand(12.0))
+                    .forEach(PowerUserTools::showEntity)
             }
         }
         thenLiteral("callUrsa") {
@@ -211,6 +212,32 @@ fun firmamentCommand() = literal("firmament") {
                     val text = UrsaManager.request(this[path].split("/")).bodyAsText()
                     source.sendFeedback(Text.stringifiedTranslatable("firmament.ursa.debugrequest.result", text))
                 }
+            }
+        }
+        thenLiteral("events") {
+            thenExecute {
+                source.sendFeedback(Text.translatable("firmament.event.start"))
+                FirmamentEventBus.allEventBuses.forEach { eventBus ->
+                    source.sendFeedback(Text.translatable(
+                        "firmament.event.bustype",
+                        eventBus.eventType.typeName.removePrefix("moe.nea.firmament")))
+                    eventBus.handlers.forEach { handler ->
+                        source.sendFeedback(Text.translatable(
+                            "firmament.event.handler",
+                            handler.label))
+                    }
+                }
+            }
+        }
+        thenLiteral("mixins") {
+            thenExecute {
+                source.sendFeedback(Text.translatable("firmament.mixins.start"))
+                MixinPlugin.appliedMixins
+                    .map { it.removePrefix(MixinPlugin.mixinPackage) }
+                    .forEach {
+                        source.sendFeedback(Text.literal(" - ").withColor(0xD020F0)
+                                                .append(Text.literal(it).withColor(0xF6BA20)))
+                    }
             }
         }
     }

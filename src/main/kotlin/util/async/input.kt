@@ -24,7 +24,7 @@ private object InputHandler {
     }
 
     init {
-        HandledScreenKeyPressedEvent.subscribe { event ->
+        HandledScreenKeyPressedEvent.subscribe("Input:resumeAfterInput") { event ->
             synchronized(InputHandler) {
                 val toRemove = activeContinuations.filter {
                     event.matches(it.keybind)
