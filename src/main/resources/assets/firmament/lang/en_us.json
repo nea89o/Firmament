@@ -201,5 +201,9 @@
     "firmament.config.pickaxe-info": "Pickaxes",
     "firmament.config.pickaxe-info.ability-cooldown": "Pickaxe Ability Cooldown",
     "firmament.config.pickaxe-info.ability-scale": "Ability Cooldown Scale",
-    "firmament.config.pickaxe-info.fuel-bar": "Drill Fuel Durability Bar"
+    "firmament.config.pickaxe-info.fuel-bar": "Drill Fuel Durability Bar",
+    "firmament.warp-util.no-warp-found": "Could not find an unlocked warp in %s",
+    "firmament.warp-util.already-close": "Already closer to destination than /warp %s",
+    "firmament.warp-util.attempting-to-warp": "Trying to warp to /warp %s",
+    "firmament.warp-util.clear-excluded": "Marked all /warp commands as potentially available."
 }

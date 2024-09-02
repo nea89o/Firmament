@@ -9,6 +9,7 @@
 /buildSrc/.gradle
 /buildSrc/build/
 /*/build
+.kotlin
 
 # Ignore Gradle GUI config
 gradle-app.setting

@@ -1,4 +1,3 @@
-
 package moe.nea.firmament.util
 
 import io.github.moulberry.repo.constants.Islands
@@ -9,6 +8,9 @@ import kotlin.math.sqrt
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.text.Text
 import net.minecraft.util.math.Position
+import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.commands.thenExecute
+import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
@@ -45,15 +47,30 @@ object WarpUtil {
     fun teleportToNearestWarp(island: SkyBlockIsland, pos: Position) {
         val nearestWarp = findNearestWarp(island, pos)
         if (nearestWarp == null) {
-            MC.sendChat(Text.literal("Could not find an unlocked warp in ${island.userFriendlyName}"))
+            MC.sendChat(Text.translatable("firmament.warp-util.no-warp-found", island.userFriendlyName))
             return
         }
         if (island == SBData.skyblockLocation
             && sqrt(squaredDist(pos, nearestWarp)) > 1.1 * sqrt(squaredDist((MC.player ?: return).pos, nearestWarp))
         ) {
+            MC.sendChat(Text.translatable("firmament.warp-util.already-close", nearestWarp.warp))
             return
         }
+        MC.sendChat(Text.translatable("firmament.warp-util.attempting-to-warp", nearestWarp.warp))
+        lastWarpAttempt = TimeMark.now()
+        lastAttemptedWarp = nearestWarp.warp
         MC.sendServerCommand("warp ${nearestWarp.warp}")
+    }
+
+    @Subscribe
+    fun clearUnlockedWarpsCommand(event: CommandEvent.SubCommand) {
+        event.subcommand("clearwarps") {
+            thenExecute {
+                DConfig.data?.excludedWarps?.clear()
+                DConfig.markDirty()
+                source.sendFeedback(Text.translatable("firmament.warp-util.clear-excluded"))
+            }
+        }
     }
 
     init {
@@ -66,7 +83,7 @@ object WarpUtil {
                 MC.sendChat(Text.stringifiedTranslatable("firmament.warp-util.mark-excluded", lastAttemptedWarp))
                 lastWarpAttempt = TimeMark.farPast()
             }
-            if (it.unformattedString == "You may now fast travel to") {
+            if (it.unformattedString.startsWith("You may now fast travel to")) {
                 DConfig.data?.excludedWarps?.clear()
                 DConfig.markDirty()
             }
