@@ -16,7 +16,11 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 
 object WarpUtil {
-    val warps: List<Islands.Warp> get() = RepoManager.neuRepo.constants.islands.warps
+    val warps: Sequence<Islands.Warp> get() = RepoManager.neuRepo.constants.islands.warps
+        .asSequence()
+        .filter { it.warp !in ignoredWarps }
+
+    val ignoredWarps = setOf("carnival", "")
 
     @Serializable
     data class Data(
