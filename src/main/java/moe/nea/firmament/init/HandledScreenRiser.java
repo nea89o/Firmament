@@ -29,7 +29,7 @@ public class HandledScreenRiser extends RiserUtils {
 
     @Override
     public void addTinkerers() {
-        ClassTinkerers.addTransformation(HandledScreen, this::handle);
+        ClassTinkerers.addTransformation(HandledScreen, this::handle, true);
     }
 
     void handle(ClassNode classNode) {

@@ -69,7 +69,7 @@ public class ClientPlayerRiser extends RiserUtils {
 
     @Override
     public void addTinkerers() {
-        ClassTinkerers.addTransformation(AbstractClientPlayerEntity, it -> mapClassNode(it, getTypeForClassName(PlayerEntity)));
-        ClassTinkerers.addTransformation(GuiPlayer, it -> mapClassNode(it, getTypeForClassName(AbstractClientPlayerEntity)));
+        ClassTinkerers.addTransformation(AbstractClientPlayerEntity, it -> mapClassNode(it, getTypeForClassName(PlayerEntity)), true);
+        ClassTinkerers.addTransformation(GuiPlayer, it -> mapClassNode(it, getTypeForClassName(AbstractClientPlayerEntity)), true);
     }
 }
