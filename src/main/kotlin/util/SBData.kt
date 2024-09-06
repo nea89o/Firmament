@@ -24,7 +24,7 @@ object SBData {
     val skyblockLocation: SkyBlockIsland? get() = locraw?.skyblockLocation
     val hasValidLocraw get() = locraw?.server !in listOf("limbo", null)
     val isOnSkyblock get() = locraw?.gametype == "SKYBLOCK"
-    var lastProfileIdRequest = TimeMark.farPast()
+    var profileIdCommandDebounce = TimeMark.farPast()
     fun init() {
         ServerConnectedEvent.subscribe("SBData:onServerConnected") {
             HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)
@@ -37,16 +37,17 @@ object SBData {
                                 it.mode.getOrNull(),
                                 it.map.getOrNull())
                 SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, null))
+                profileIdCommandDebounce = TimeMark.now()
             }
         }
         SkyblockServerUpdateEvent.subscribe("SBData:sendProfileId") {
-            if (!hasReceivedProfile && isOnSkyblock && lastProfileIdRequest.passedTime() > 30.seconds) {
-                lastProfileIdRequest = TimeMark.now()
+            if (!hasReceivedProfile && isOnSkyblock && profileIdCommandDebounce.passedTime() > 10.seconds) {
+                profileIdCommandDebounce = TimeMark.now()
                 MC.sendServerCommand("profileid")
             }
         }
         AllowChatEvent.subscribe("SBData:hideProfileSuggest") { event ->
-            if (event.unformattedString in profileSuggestTexts && lastProfileIdRequest.passedTime() < 5.seconds) {
+            if (event.unformattedString in profileSuggestTexts && profileIdCommandDebounce.passedTime() < 5.seconds) {
                 event.cancel()
             }
         }
