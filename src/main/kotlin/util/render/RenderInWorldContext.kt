@@ -49,6 +49,16 @@ class RenderInWorldContext private constructor(
                                                   .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
                                                   .program(RenderPhase.COLOR_PROGRAM)
                                                   .build(false))
+        val LINES = RenderLayer.of("firmament_rendertype_lines",
+                                   VertexFormats.LINES,
+                                   VertexFormat.DrawMode.LINES,
+                                   RenderLayer.DEFAULT_BUFFER_SIZE,
+                                   false, false, // do we need translucent? i dont think so
+                                   RenderLayer.MultiPhaseParameters.builder()
+                                       .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
+                                       .program(RenderPhase.LINES_PROGRAM)
+                                       .build(false)
+                                   )
     }
 
     fun color(color: me.shedaniel.math.Color) {
@@ -149,12 +159,11 @@ class RenderInWorldContext private constructor(
     }
 
     fun tracer(toWhere: Vec3d, lineWidth: Float = 3f) {
-        val cameraForward = Vector3f(0f, 0f, 1f).rotate(camera.rotation)
+        val cameraForward = Vector3f(0f, 0f, -1f).rotate(camera.rotation)
         line(camera.pos.add(Vec3d(cameraForward)), toWhere, lineWidth = lineWidth)
     }
 
     fun line(points: List<Vec3d>, lineWidth: Float = 10F) {
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram)
         RenderSystem.lineWidth(lineWidth)
         val buffer = tesselator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
 
@@ -176,7 +185,7 @@ class RenderInWorldContext private constructor(
                 .next()
         }
 
-        BufferRenderer.drawWithGlobalProgram(buffer.end())
+        RenderLayers.LINES.draw(buffer.end())
     }
 
     companion object {
