@@ -30,6 +30,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
         val enableModelOverrides by toggle("model-overrides") { true }
         val enableArmorOverrides by toggle("armor-overrides") { true }
         val enableBlockOverrides by toggle("block-overrides") { true }
+        val enableLegacyCIT by toggle("legacy-cit") { true }
     }
 
     override val config: ManagedConfig
