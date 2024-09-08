@@ -163,6 +163,9 @@ val nonModImplentation by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
 }
 
+loom {
+}
+
 dependencies {
     // Minecraft dependencies
     "minecraft"(libs.minecraft)
@@ -213,7 +216,7 @@ dependencies {
     nonModImplentation(libs.repoparser)
     shadowMe(libs.repoparser)
     fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
-
+    modCompileOnly(libs.citresewn)
     transInclude(nonModImplentation(ktor("client-core"))!!)
     transInclude(nonModImplentation(ktor("client-java"))!!)
     transInclude(nonModImplentation(ktor("serialization-kotlinx-json"))!!)
@@ -224,6 +227,7 @@ dependencies {
     // Dev environment preinstalled mods
     modLocalRuntime(libs.bundles.runtime.required)
     modLocalRuntime(libs.bundles.runtime.optional)
+    modImplementation(modLocalRuntime(project.files("citresewn-defaults-1.2.0+1.21.jar"))!!)
     modLocalRuntime(libs.jarvis.fabric)
 
     transInclude.resolvedConfiguration.resolvedArtifacts.forEach {

@@ -28,11 +28,11 @@ public class PatchHeadFeatureRenderer<T extends LivingEntity, M extends EntityMo
 
     @WrapOperation(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/BlockItem;getBlock()Lnet/minecraft/block/Block;"))
-    private Block replaceSkull(BlockItem instance, Operation<Block> original, @Local ItemStack itemStack) {
+    private Block replaceSkull(BlockItem instance, Operation<Block> original, @Local ItemStack itemStack, @Local(argsOnly = true) T entity) {
         var oldBlock = original.call(instance);
         if (oldBlock instanceof AbstractSkullBlock) {
             var bakedModel = this.heldItemRenderer.itemRenderer
-                .getModel(itemStack, null, null, 0);
+                .getModel(itemStack, entity.getWorld(), entity, 0);
             if (bakedModel instanceof BakedModelExtra extra && extra.getHeadModel_firmament() != null)
                 return Blocks.ENCHANTING_TABLE; // Any non skull block. Let's choose the enchanting table because it is very distinct.
         }
