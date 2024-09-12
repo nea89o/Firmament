@@ -61,7 +61,7 @@ class SubscribeAnnotationProcessor(
         }
         subscriptionsFile.close()
         val metaInf = codeGenerator.createNewFileByPath(
-            Dependencies(false),
+            dependencies,
             "META-INF/services/moe.nea.firmament.events.subscription.SubscriptionList", extensionName = "")
             .bufferedWriter()
         metaInf.append("moe.nea.firmament.annotations.generated.")

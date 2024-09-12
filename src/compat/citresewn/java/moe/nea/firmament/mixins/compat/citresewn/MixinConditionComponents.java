@@ -1,6 +1,4 @@
-package moe.nea.firmament.mixins;
-
-// People are complaining but this really is not my place to fix things
+package moe.nea.firmament.mixins.compat.citresewn;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -9,8 +7,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import moe.nea.firmament.compat.citresewn.ConditionNBTMixin;
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures;
-import moe.nea.firmament.util.ConditionNBTMixin;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -29,6 +27,8 @@ import shcm.shsupercm.fabric.citresewn.defaults.cit.conditions.ConditionNBT;
 import shcm.shsupercm.fabric.citresewn.pack.format.PropertyGroup;
 import shcm.shsupercm.fabric.citresewn.pack.format.PropertyKey;
 import shcm.shsupercm.fabric.citresewn.pack.format.PropertyValue;
+
+// People are complaining but this really is not my place to fix things
 
 @Mixin(ConditionComponents.class)
 @Pseudo

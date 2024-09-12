@@ -94,6 +94,18 @@ kotlin {
         }
     }
 }
+fun String.capitalizeN() = replaceFirstChar { it.uppercaseChar() }
+fun innerJarsOf(name: String, dependency: Dependency): FileCollection {
+    val task = tasks.create("unpackInnerJarsFor${name.capitalizeN()}", InnerJarsUnpacker::class) {
+        this.inputJars.setFrom(files(configurations.detachedConfiguration(dependency)))
+        this.outputDir.set(layout.buildDirectory.dir("unpackedJars/$name").also {
+            it.get().asFile.mkdirs()
+        })
+    }
+    println("Constructed innerJars task: ${project.files(task).toList()}")
+    return project.files(task)
+}
+
 val compatSourceSets: MutableSet<SourceSet> = mutableSetOf()
 fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): SourceSet {
     val ss = sourceSets.create(name) {
@@ -103,7 +115,7 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): Source
     compatSourceSets.add(ss)
     loom.createRemapConfigurations(ss)
     val mainSS = sourceSets.main.get()
-    val upperName = ss.name.replaceFirstChar { it.uppercaseChar() }
+    val upperName = ss.name.capitalizeN()
     configurations {
         (ss.implementationConfigurationName) {
             extendsFrom(getByName(mainSS.compileClasspathConfigurationName))
@@ -140,6 +152,7 @@ val SourceSet.modImplementationConfigurationName
         }!!.sourceConfiguration
 val configuredSourceSet = createIsolatedSourceSet("configured")
 val sodiumSourceSet = createIsolatedSourceSet("sodium")
+val citResewnSourceSet = createIsolatedSourceSet("citresewn")
 
 val shadowMe by configurations.creating {
     exclude(group = "org.jetbrains.kotlin")
@@ -163,8 +176,6 @@ val nonModImplentation by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
 }
 
-loom {
-}
 
 dependencies {
     // Minecraft dependencies
@@ -208,6 +219,10 @@ dependencies {
     (configuredSourceSet.modImplementationConfigurationName)(libs.configured)
     (sodiumSourceSet.modImplementationConfigurationName)(libs.sodium)
 
+    (citResewnSourceSet.modImplementationConfigurationName)(
+        innerJarsOf("citresewn", dependencies.create(libs.citresewn.get())).asFileTree)
+    (citResewnSourceSet.modImplementationConfigurationName)(libs.citresewn)
+
     // Actual dependencies
     modCompileOnly(libs.rei.api) {
         exclude(module = "architectury")
@@ -227,7 +242,6 @@ dependencies {
     // Dev environment preinstalled mods
     modLocalRuntime(libs.bundles.runtime.required)
     modLocalRuntime(libs.bundles.runtime.optional)
-    modImplementation(modLocalRuntime(project.files("citresewn-defaults-1.2.0+1.21.jar"))!!)
     modLocalRuntime(libs.jarvis.fabric)
 
     transInclude.resolvedConfiguration.resolvedArtifacts.forEach {

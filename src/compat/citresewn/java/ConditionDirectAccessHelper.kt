@@ -1,4 +1,4 @@
-package moe.nea.firmament.util
+package moe.nea.firmament.compat.citresewn
 
 import java.lang.invoke.MethodHandles
 import java.util.function.BiPredicate
@@ -7,6 +7,7 @@ import shcm.shsupercm.fabric.citresewn.defaults.cit.conditions.ConditionNBT
 
 object ConditionNBTMixin {
     class Helper<StringMatcher> {
+        // TODO: make lambdametafactory work by way of modifying the actual modifiers
 
         val stringMatcherType = ConditionNBT::class.java.getDeclaredField("matchString").type
 

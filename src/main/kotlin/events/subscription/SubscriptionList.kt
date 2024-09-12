@@ -21,5 +21,8 @@ interface SubscriptionList {
                 }
                 .toList()
         }
+        init {
+        	require(allLists.isNotEmpty())
+        }
     }
 }

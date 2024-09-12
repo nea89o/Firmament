@@ -47,7 +47,9 @@
         "fabric": "*",
         "fabric-language-kotlin": ">=${fabric_kotlin_version}",
         "minecraft": ">=${minecraft_version}",
-        "roughlyenoughitems": ">=${rei_version}"
+        "roughlyenoughitems": ">=${rei_version}",
+        "cloth-config": "*",
+        "architectury": "*"
     },
     "custom": {
         "configured": {
@@ -62,7 +64,8 @@
         },
         "mc-publish": {
             "dependencies": [
-                "roughlyenoughitems{modrinth:rei}"
+                "roughlyenoughitems{modrinth:rei}",
+                "architectury{modrinth:architectury-api}"
             ]
         }
     }
