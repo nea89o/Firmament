@@ -1,12 +1,13 @@
-
 @file:UseSerializers(IdentifierSerializer::class)
 
 package moe.nea.firmament.features.texturepack
 
+import java.util.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
+import kotlin.jvm.optionals.getOrNull
 import net.minecraft.item.ArmorMaterial
 import net.minecraft.item.ItemStack
 import net.minecraft.resource.ResourceManager
@@ -20,8 +21,7 @@ import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.features.texturepack.CustomGlobalTextures.logger
 import moe.nea.firmament.util.IdentifierSerializer
-import moe.nea.firmament.util.IdentityCharacteristics
-import moe.nea.firmament.util.computeNullableFunction
+import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.skyBlockId
 
 object CustomGlobalArmorOverrides : SubscriptionOwner {
@@ -59,21 +59,21 @@ object CustomGlobalArmorOverrides : SubscriptionOwner {
     override val delegateFeature: FirmamentFeature
         get() = CustomSkyBlockTextures
 
-    val overrideCache = mutableMapOf<IdentityCharacteristics<ItemStack>, Any>()
+    val overrideCache = WeakCache.memoize<ItemStack, Optional<List<ArmorMaterial.Layer>>>("ArmorOverrides") { stack ->
+        val id = stack.skyBlockId ?: return@memoize Optional.empty()
+        val override = overrides[id.neuItem] ?: return@memoize Optional.empty()
+        for (suboverride in override.overrides) {
+            if (suboverride.predicate.test(stack)) {
+                return@memoize Optional.of(suboverride.bakedLayers)
+            }
+        }
+        return@memoize Optional.of(override.bakedLayers)
+    }
 
     @JvmStatic
     fun overrideArmor(stack: ItemStack): List<ArmorMaterial.Layer>? {
         if (!CustomSkyBlockTextures.TConfig.enableArmorOverrides) return null
-        return overrideCache.computeNullableFunction(IdentityCharacteristics(stack)) {
-            val id = stack.skyBlockId ?: return@computeNullableFunction null
-            val override = overrides[id.neuItem] ?: return@computeNullableFunction null
-            for (suboverride in override.overrides) {
-                if (suboverride.predicate.test(stack)) {
-                    return@computeNullableFunction suboverride.bakedLayers
-                }
-            }
-            return@computeNullableFunction override.bakedLayers
-        }
+        return overrideCache.invoke(stack).getOrNull()
     }
 
     var overrides: Map<String, ArmorOverride> = mapOf()

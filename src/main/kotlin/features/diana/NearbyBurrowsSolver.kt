@@ -14,7 +14,7 @@ import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.util.TimeMark
-import moe.nea.firmament.util.mutableMapWithMaxSize
+import moe.nea.firmament.util.collections.mutableMapWithMaxSize
 import moe.nea.firmament.util.render.RenderInWorldContext.Companion.renderInWorld
 
 object NearbyBurrowsSolver : SubscriptionOwner {

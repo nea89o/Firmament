@@ -17,7 +17,7 @@ import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.memoize
+import moe.nea.firmament.util.collections.memoize
 
 @Serializable
 data class InventoryButton(

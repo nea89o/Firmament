@@ -2,7 +2,9 @@ package moe.nea.firmament.features.texturepack
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
+import java.util.Optional
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
+import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.SkullBlock
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
@@ -12,10 +14,11 @@ import net.minecraft.util.Identifier
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.BakeExtraModelsEvent
 import moe.nea.firmament.events.CustomItemModelEvent
+import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
-import moe.nea.firmament.util.IdentityCharacteristics
+import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.item.decodeProfileTextureProperty
 import moe.nea.firmament.util.skyBlockId
 
@@ -26,7 +29,8 @@ object CustomSkyBlockTextures : FirmamentFeature {
     object TConfig : ManagedConfig(identifier) {
         val enabled by toggle("enabled") { true }
         val skullsEnabled by toggle("skulls-enabled") { true }
-        val cacheDuration by integer("cache-duration", 0, 20) { 1 }
+        val cacheForever by toggle("cache-forever") { true }
+        val cacheDuration by integer("cache-duration", 0, 100) { 1 }
         val enableModelOverrides by toggle("model-overrides") { true }
         val enableArmorOverrides by toggle("armor-overrides") { true }
         val enableBlockOverrides by toggle("block-overrides") { true }
@@ -36,14 +40,31 @@ object CustomSkyBlockTextures : FirmamentFeature {
     override val config: ManagedConfig
         get() = TConfig
 
+    val allItemCaches by lazy {
+        listOf(
+            CustomItemModelEvent.cache.cache,
+            skullTextureCache.cache,
+            CustomGlobalTextures.overrideCache.cache,
+            CustomGlobalArmorOverrides.overrideCache.cache
+        )
+    }
+
+    fun clearAllCaches() {
+        allItemCaches.forEach(WeakCache<*, *, *>::clear)
+    }
+
     @Subscribe
     fun onTick(it: TickEvent) {
+        if (TConfig.cacheForever) return
         if (TConfig.cacheDuration < 1 || it.tickCount % TConfig.cacheDuration == 0) {
-            // TODO: unify all of those caches somehow
-            CustomItemModelEvent.clearCache()
-            skullTextureCache.clear()
-            CustomGlobalTextures.overrideCache.clear()
-            CustomGlobalArmorOverrides.overrideCache.clear()
+            clearAllCaches()
+        }
+    }
+
+    @Subscribe
+    fun onStart(event: FinalizeResourceManagerEvent) {
+        event.registerOnApply("Clear firmament CIT caches") {
+            clearAllCaches()
         }
     }
 
@@ -74,8 +95,14 @@ object CustomSkyBlockTextures : FirmamentFeature {
         it.overrideModel = ModelIdentifier.ofInventoryVariant(Identifier.of("firmskyblock", id.identifier.path))
     }
 
-    private val skullTextureCache = mutableMapOf<IdentityCharacteristics<ProfileComponent>, Any>()
-    private val sentinelPresentInvalid = Object()
+    private val skullTextureCache =
+        WeakCache.memoize<ProfileComponent, Optional<Identifier>>("SkullTextureCache") { component ->
+            val id = getSkullTexture(component) ?: return@memoize Optional.empty()
+            if (!MinecraftClient.getInstance().resourceManager.getResource(id).isPresent) {
+                return@memoize Optional.empty()
+            }
+            return@memoize Optional.of(id)
+        }
 
     private val mcUrlRegex = "https?://textures.minecraft.net/texture/([a-fA-F0-9]+)".toRegex()
 
@@ -100,16 +127,8 @@ object CustomSkyBlockTextures : FirmamentFeature {
         if (type != SkullBlock.Type.PLAYER) return
         if (!TConfig.skullsEnabled) return
         if (component == null) return
-        val ic = IdentityCharacteristics(component)
 
-        val n = skullTextureCache.getOrPut(ic) {
-            val id = getSkullTexture(component) ?: return@getOrPut sentinelPresentInvalid
-            if (!MinecraftClient.getInstance().resourceManager.getResource(id).isPresent) {
-                return@getOrPut sentinelPresentInvalid
-            }
-            return@getOrPut id
-        }
-        if (n === sentinelPresentInvalid) return
-        cir.returnValue = RenderLayer.getEntityTranslucent(n as Identifier)
+        val n = skullTextureCache.invoke(component).getOrNull() ?: return
+        cir.returnValue = RenderLayer.getEntityTranslucent(n)
     }
 }

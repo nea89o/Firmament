@@ -23,6 +23,8 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.collections.InstanceList
+import moe.nea.firmament.util.collections.WeakCache
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -226,6 +228,18 @@ fun firmamentCommand() = literal("firmament") {
                             "firmament.event.handler",
                             handler.label))
                     }
+                }
+            }
+        }
+        thenLiteral("caches") {
+            thenExecute {
+                source.sendFeedback(Text.literal("Caches:"))
+                WeakCache.allInstances.getAll().forEach {
+                    source.sendFeedback(Text.literal(" - ${it.name}: ${it.size}"))
+                }
+                source.sendFeedback(Text.translatable("Instance lists:"))
+                InstanceList.allInstances.getAll().forEach {
+                    source.sendFeedback(Text.literal(" - ${it.name}: ${it.size}"))
                 }
             }
         }

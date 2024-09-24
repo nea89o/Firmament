@@ -14,9 +14,8 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.item.loreAccordingToNbt
-import moe.nea.firmament.util.lastNotNullOfOrNull
-import moe.nea.firmament.util.memoize
-import moe.nea.firmament.util.memoizeIdentity
+import moe.nea.firmament.util.collections.lastNotNullOfOrNull
+import moe.nea.firmament.util.collections.memoizeIdentity
 import moe.nea.firmament.util.unformattedString
 
 object ItemRarityCosmetics : FirmamentFeature {

@@ -204,7 +204,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
     }
 
     override fun asFormattedText(entry: EntryStack<SBItemStack>, value: SBItemStack): Text {
-        return VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asItemStack())
+        return VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack())
     }
 
     override fun hash(entry: EntryStack<SBItemStack>, value: SBItemStack, context: ComparisonContext): Long {
