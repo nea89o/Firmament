@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.features.debug
 
 import java.nio.file.Path
@@ -13,7 +11,6 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
-import moe.nea.firmament.util.errorBoundary
 import moe.nea.firmament.util.iterate
 
 object DeveloperFeatures : FirmamentFeature {
@@ -43,7 +40,9 @@ object DeveloperFeatures : FirmamentFeature {
             MC.player?.sendMessage(Text.translatable("firmament.dev.resourcerebuild.start"))
             val startTime = TimeMark.now()
             process.toHandle().onExit().thenApply {
-                MC.player?.sendMessage(Text.stringifiedTranslatable("firmament.dev.resourcerebuild.done", startTime.passedTime()))
+                MC.player?.sendMessage(Text.stringifiedTranslatable(
+                    "firmament.dev.resourcerebuild.done",
+                    startTime.passedTime()))
                 Unit
             }
         } else {
