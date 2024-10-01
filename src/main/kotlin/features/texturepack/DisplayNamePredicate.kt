@@ -5,8 +5,8 @@ import com.google.gson.JsonElement
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtString
-import moe.nea.firmament.util.item.displayNameAccordingToNbt
-import moe.nea.firmament.util.item.loreAccordingToNbt
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 
 data class DisplayNamePredicate(val stringMatcher: StringMatcher) : FirmamentModelPredicate {
     override fun test(stack: ItemStack): Boolean {

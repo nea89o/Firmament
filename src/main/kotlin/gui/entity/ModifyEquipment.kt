@@ -12,8 +12,8 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import moe.nea.firmament.rei.SBItemStack
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.item.setEncodedSkullOwner
-import moe.nea.firmament.util.item.zeroUUID
+import moe.nea.firmament.util.mc.setEncodedSkullOwner
+import moe.nea.firmament.util.mc.zeroUUID
 
 object ModifyEquipment : EntityModifier {
     val names = mapOf(

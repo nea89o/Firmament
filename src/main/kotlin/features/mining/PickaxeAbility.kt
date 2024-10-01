@@ -21,8 +21,8 @@ import moe.nea.firmament.util.SHORT_NUMBER_FORMAT
 import moe.nea.firmament.util.TIME_PATTERN
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.extraAttributes
-import moe.nea.firmament.util.item.displayNameAccordingToNbt
-import moe.nea.firmament.util.item.loreAccordingToNbt
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.parseTimePattern
 import moe.nea.firmament.util.render.RenderCircleProgress

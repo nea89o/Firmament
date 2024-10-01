@@ -28,8 +28,8 @@ import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.HypixelPetInfo
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.appendLore
-import moe.nea.firmament.util.item.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.appendLore
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.withColor

@@ -3,7 +3,7 @@ package moe.nea.firmament.features.texturepack
 
 import com.google.gson.JsonElement
 import net.minecraft.item.ItemStack
-import moe.nea.firmament.util.item.loreAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 
 class LorePredicate(val matcher: StringMatcher) : FirmamentModelPredicate {
     object Parser : FirmamentModelPredicateParser {

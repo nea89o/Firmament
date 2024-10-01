@@ -27,7 +27,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.item.createSkullItem
+import moe.nea.firmament.util.mc.createSkullItem
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.setSkyBlockFirmamentUiId
 import moe.nea.firmament.util.skyBlockId

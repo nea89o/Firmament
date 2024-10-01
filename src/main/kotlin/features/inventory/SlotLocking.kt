@@ -28,8 +28,8 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
-import moe.nea.firmament.util.item.displayNameAccordingToNbt
-import moe.nea.firmament.util.item.loreAccordingToNbt
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.skyblockUUID
 import moe.nea.firmament.util.unformattedString

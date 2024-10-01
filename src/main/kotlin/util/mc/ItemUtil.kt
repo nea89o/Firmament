@@ -1,13 +1,7 @@
-
-
-package moe.nea.firmament.util
+package moe.nea.firmament.util.mc
 
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtList
 import net.minecraft.text.Text
-import moe.nea.firmament.util.item.loreAccordingToNbt
-
 
 fun ItemStack.appendLore(args: List<Text>) {
     if (args.isEmpty()) return

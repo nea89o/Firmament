@@ -1,8 +1,6 @@
-
-
 @file:UseSerializers(DashlessUUIDSerializer::class, InstantAsLongSerializer::class)
 
-package moe.nea.firmament.util.item
+package moe.nea.firmament.util.mc
 
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.minecraft.MinecraftProfileTexture

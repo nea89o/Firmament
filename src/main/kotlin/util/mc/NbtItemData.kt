@@ -1,6 +1,4 @@
-
-
-package moe.nea.firmament.util.item
+package moe.nea.firmament.util.mc
 
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.LoreComponent

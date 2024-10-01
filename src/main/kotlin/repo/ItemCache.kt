@@ -33,10 +33,10 @@ import moe.nea.firmament.gui.hud.MoulConfigHud
 import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.appendLore
-import moe.nea.firmament.util.item.setCustomName
-import moe.nea.firmament.util.item.setSkullOwner
-import moe.nea.firmament.util.modifyLore
+import moe.nea.firmament.util.mc.appendLore
+import moe.nea.firmament.util.mc.setCustomName
+import moe.nea.firmament.util.mc.setSkullOwner
+import moe.nea.firmament.util.mc.modifyLore
 import moe.nea.firmament.util.skyblockId
 
 object ItemCache : IReloadable {

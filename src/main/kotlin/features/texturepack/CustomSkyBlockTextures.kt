@@ -19,7 +19,7 @@ import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.collections.WeakCache
-import moe.nea.firmament.util.item.decodeProfileTextureProperty
+import moe.nea.firmament.util.mc.decodeProfileTextureProperty
 import moe.nea.firmament.util.skyBlockId
 
 object CustomSkyBlockTextures : FirmamentFeature {

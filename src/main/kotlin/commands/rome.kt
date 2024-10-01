@@ -4,7 +4,9 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import io.ktor.client.statement.bodyAsText
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
+import net.minecraft.text.TextCodecs
 import moe.nea.firmament.apis.UrsaManager
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.FirmamentEventBus
@@ -24,6 +26,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.accessors.messages
 import moe.nea.firmament.util.collections.InstanceList
 import moe.nea.firmament.util.collections.WeakCache
 
@@ -202,6 +205,14 @@ fun firmamentCommand() = literal("firmament") {
 							source.sendFeedback(Text.literal("Enabled $tagText debug logging"))
 						}
 					}
+				}
+			}
+		}
+		thenLiteral("dumpchat") {
+			thenExecute {
+				MC.inGameHud.chatHud.messages.forEach {
+					val nbt = TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, it.content).orThrow
+					println(nbt)
 				}
 			}
 		}
