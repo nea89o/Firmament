@@ -149,7 +149,7 @@ object PickaxeAbility : FirmamentFeature {
 
 
     val cooldownPattern = Pattern.compile("Cooldown: (?<cooldown>$TIME_PATTERN)")
-    val abilityPattern = Pattern.compile("Ability: (?<name>.*) {2}RIGHT CLICK")
+    val abilityPattern = Pattern.compile("(⦾ )?Ability: (?<name>.*) {2}RIGHT CLICK")
     val abilitySwitchPattern =
         Pattern.compile("You selected (?<ability>.*) as your Pickaxe Ability\\. This ability will apply to all of your pickaxes!")
 
