@@ -11,13 +11,16 @@ import net.minecraft.util.Identifier
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.ProcessChatEvent
+import moe.nea.firmament.events.ProfileSwitchEvent
 import moe.nea.firmament.events.SlotClickEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.DurabilityBarEvent
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SHORT_NUMBER_FORMAT
+import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.TIME_PATTERN
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.extraAttributes
@@ -58,14 +61,15 @@ object PickaxeAbility : FirmamentFeature {
         get() = TConfig
 
     fun getCooldownPercentage(name: String, cooldown: Duration): Double {
-        val sinceLastUsage = lastUsage[name]?.passedTime() ?: Duration.INFINITE
+	    val sinceLastUsage = lastUsage[name]?.passedTime() ?: Duration.INFINITE
+	    val sinceLobbyJoin = lobbyJoinTime.passedTime()
+		if (SBData.skyblockLocation == SkyBlockIsland.MINESHAFT) {
+			if (sinceLobbyJoin < sinceLastUsage) {
+				return 1.0
+			}
+		}
         if (sinceLastUsage < cooldown)
             return sinceLastUsage / cooldown
-        val sinceLobbyJoin = lobbyJoinTime.passedTime()
-        val halfCooldown = cooldown / 2
-        if (sinceLobbyJoin < halfCooldown) {
-            return (sinceLobbyJoin / halfCooldown)
-        }
         return 1.0
     }
 
@@ -117,10 +121,14 @@ object PickaxeAbility : FirmamentFeature {
 
     @Subscribe
     fun onWorldReady(event: WorldReadyEvent) {
-        lastUsage.clear()
         lobbyJoinTime = TimeMark.now()
         abilityOverride = null
     }
+
+	@Subscribe
+	fun onProfileSwitch(event: ProfileSwitchEvent) {
+		lastUsage.clear()
+	}
 
     val abilityUsePattern = Pattern.compile("You used your (?<name>.*) Pickaxe Ability!")
     val fuelPattern = Pattern.compile("Fuel: .*/(?<maxFuel>$SHORT_NUMBER_FORMAT)")
@@ -132,7 +140,7 @@ object PickaxeAbility : FirmamentFeature {
 
     fun getCooldownFromLore(itemStack: ItemStack): PickaxeAbilityData? {
         val lore = itemStack.loreAccordingToNbt
-        if (!lore.any { it.unformattedString.contains("Breaking Power") == true })
+        if (!lore.any { it.unformattedString.contains("Breaking Power") })
             return null
         val cooldown = lore.firstNotNullOfOrNull {
             cooldownPattern.useMatch(it.unformattedString) {

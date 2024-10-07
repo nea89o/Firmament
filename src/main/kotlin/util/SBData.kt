@@ -7,6 +7,7 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.seconds
 import moe.nea.firmament.events.AllowChatEvent
 import moe.nea.firmament.events.ProcessChatEvent
+import moe.nea.firmament.events.ProfileSwitchEvent
 import moe.nea.firmament.events.ServerConnectedEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.events.WorldReadyEvent
@@ -54,6 +55,7 @@ object SBData {
         ProcessChatEvent.subscribe(receivesCancelled = true, "SBData:loadProfile") { event ->
             val profileMatch = profileRegex.matchEntire(event.unformattedString)
             if (profileMatch != null) {
+	            val oldProfile = profileId
                 try {
                     profileId = UUID.fromString(profileMatch.groupValues[1])
                     hasReceivedProfile = true
@@ -61,6 +63,9 @@ object SBData {
                     profileId = null
                     e.printStackTrace()
                 }
+	            if (oldProfile != profileId) {
+		            ProfileSwitchEvent.publish(ProfileSwitchEvent(oldProfile, profileId))
+	            }
             }
         }
     }

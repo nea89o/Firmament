@@ -34,6 +34,7 @@ private constructor(
         val HUB = forMode("hub")
         val PRIVATE_ISLAND = forMode("dynamic")
         val RIFT = forMode("rift")
+        val MINESHAFT = forMode("mineshaft")
     }
 
     val userFriendlyName
