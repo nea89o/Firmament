@@ -10,7 +10,7 @@ object DianaWaypoints : FirmamentFeature {
     override val identifier get() = "diana"
     override val config get() = TConfig
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.EVENTS) {
         val ancestralSpadeSolver by toggle("ancestral-spade") { true }
         val ancestralSpadeTeleport by keyBindingWithDefaultUnbound("ancestral-teleport")
         val nearbyWaypoints by toggle("nearby-waypoints") { true }

@@ -21,7 +21,7 @@ object Fixes : FirmamentFeature {
     override val identifier: String
         get() = "fixes"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.MISC) { // TODO: split this config
         val fixUnsignedPlayerSkins by toggle("player-skins") { true }
         var autoSprint by toggle("auto-sprint") { false }
         val autoSprintKeyBinding by keyBindingWithDefaultUnbound("auto-sprint-keybinding")

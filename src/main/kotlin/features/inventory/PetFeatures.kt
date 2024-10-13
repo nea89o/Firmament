@@ -7,7 +7,6 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.petData
-import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 
 object PetFeatures : FirmamentFeature {
@@ -17,7 +16,7 @@ object PetFeatures : FirmamentFeature {
 	override val config: ManagedConfig?
 		get() = TConfig
 
-	object TConfig : ManagedConfig(identifier) {
+	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
 		val highlightEquippedPet by toggle("highlight-pet") { true }
 	}
 

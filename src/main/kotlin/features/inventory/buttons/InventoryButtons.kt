@@ -20,7 +20,7 @@ object InventoryButtons : FirmamentFeature {
     override val identifier: String
         get() = "inventory-buttons"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
         val _openEditor by button("open-editor") {
             openEditor()
         }

@@ -27,7 +27,7 @@ object StorageOverlay : FirmamentFeature {
     override val identifier: String
         get() = "storage-overlay"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
         val alwaysReplace by toggle("always-replace") { true }
         val columns by integer("rows", 1, 10) { 3 }
         val scrollSpeed by integer("scroll-speed", 1, 50) { 10 }

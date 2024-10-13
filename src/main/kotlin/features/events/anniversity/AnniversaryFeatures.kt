@@ -28,7 +28,7 @@ object AnniversaryFeatures : FirmamentFeature {
     override val identifier: String
         get() = "anniversary"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.EVENTS) {
         val enableShinyPigTracker by toggle("shiny-pigs") {true}
         val trackPigCooldown by position("pig-hud", 200, 300) { Point(0.1, 0.2) }
     }

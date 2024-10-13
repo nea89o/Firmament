@@ -26,7 +26,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
     override val identifier: String
         get() = "custom-skyblock-textures"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INTEGRATIONS) { // TODO: should this be its own thing?
         val enabled by toggle("enabled") { true }
         val skullsEnabled by toggle("skulls-enabled") { true }
         val cacheForever by toggle("cache-forever") { true }

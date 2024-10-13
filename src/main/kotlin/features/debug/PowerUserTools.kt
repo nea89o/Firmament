@@ -37,7 +37,7 @@ object PowerUserTools : FirmamentFeature {
 	override val identifier: String
 		get() = "power-user"
 
-	object TConfig : ManagedConfig(identifier) {
+	object TConfig : ManagedConfig(identifier, Category.DEV) {
 		val showItemIds by toggle("show-item-id") { false }
 		val copyItemId by keyBindingWithDefaultUnbound("copy-item-id")
 		val copyTexturePackId by keyBindingWithDefaultUnbound("copy-texture-pack-id")

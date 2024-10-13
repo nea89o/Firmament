@@ -4,11 +4,12 @@ import com.mrcrayfish.configured.api.IConfigEntry
 import com.mrcrayfish.configured.api.IConfigValue
 import net.minecraft.text.Text
 import moe.nea.firmament.gui.config.AllConfigsGui
+import moe.nea.firmament.gui.config.ManagedConfig
 
 object BaseConfigNode : IConfigEntry {
     override fun getChildren(): List<IConfigEntry> {
-        return AllConfigsGui.allConfigs.map {
-            ConfigNode(it)
+        return ManagedConfig.allManagedConfigs.getAll().map {
+            ConfigNode(it) // TODO: fix add categories here
         }
     }
 

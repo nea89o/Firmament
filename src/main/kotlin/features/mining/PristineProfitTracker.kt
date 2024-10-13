@@ -49,7 +49,7 @@ object PristineProfitTracker : FirmamentFeature {
     override val config: ManagedConfig?
         get() = TConfig
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.MINING) {
         val timeout by duration("timeout", 0.seconds, 120.seconds) { 30.seconds }
         val gui by position("position", 80, 30) { Point(0.05, 0.2) }
     }

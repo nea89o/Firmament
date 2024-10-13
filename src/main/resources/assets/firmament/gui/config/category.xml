@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Root xmlns="http://notenoughupdates.org/moulconfig"
+	  xmlns:firm="http://firmament.nea.moe/moulconfig">
+	<Center>
+		<Panel background="VANILLA" insets="10">
+			<Column>
+				<Row>
+					<Align vertical="CENTER">
+						<firm:Button onClick="@close">
+							<Text text="Back"/>
+						</firm:Button>
+					</Align>
+					<Align vertical="CENTER">
+						<Row>
+							<Text text=" "/>
+							<Text text="@name"/>
+						</Row>
+					</Align>
+				</Row>
+				<Spacer height="5"/>
+				<ScrollPanel width="400" height="300">
+					<Array data="@configs">
+						<firm:Fixed width="380" height="30">
+							<Panel background="VANILLA">
+								<Center>
+									<Row>
+										<Center>
+											<Text text="@name"/>
+										</Center>
+										<firm:Button onClick="@openEditor">
+											<Text text="Edit"/>
+										</firm:Button>
+									</Row>
+								</Center>
+							</Panel>
+						</firm:Fixed>
+					</Array>
+				</ScrollPanel>
+			</Column>
+		</Panel>
+	</Center>
+</Root>

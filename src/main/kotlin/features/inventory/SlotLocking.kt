@@ -46,7 +46,7 @@ object SlotLocking : FirmamentFeature {
         val lockedUUIDs: MutableSet<UUID> = mutableSetOf(),
     )
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
         val lockSlot by keyBinding("lock") { GLFW.GLFW_KEY_L }
         val lockUUID by keyBindingWithOutDefaultModifiers("lock-uuid") {
             SavedKeyBinding(GLFW.GLFW_KEY_L, shift = true)

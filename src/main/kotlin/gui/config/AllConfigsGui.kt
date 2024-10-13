@@ -4,24 +4,35 @@ import io.github.notenoughupdates.moulconfig.observer.ObservableList
 import io.github.notenoughupdates.moulconfig.xml.Bind
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
-import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
 object AllConfigsGui {
+//
+//	val allConfigs
+//		get() = listOf(
+//			RepoManager.Config
+//		) + FeatureManager.allFeatures.mapNotNull { it.config }
 
-	val allConfigs
-		get() = listOf(
-			RepoManager.Config
-		) + FeatureManager.allFeatures.mapNotNull { it.config }
+	object ConfigConfig : ManagedConfig("configconfig", Category.META) {
+		val enableYacl by toggle("enable-yacl") { false }
+	}
 
 	fun <T> List<T>.toObservableList(): ObservableList<T> = ObservableList(this)
 
-	class MainMapping(val allConfigs: List<ManagedConfig>) {
+	class CategoryMapping(val category: ManagedConfig.Category) {
 		@get:Bind("configs")
-		val configs = allConfigs.map { EntryMapping(it) }.toObservableList()
+		val configs = category.configs.map { EntryMapping(it) }.toObservableList()
+
+		@Bind
+		fun name() = category.labelText.string
+
+		@Bind
+		fun close() {
+			MC.screen?.close()
+		}
 
 		class EntryMapping(val config: ManagedConfig) {
 			@Bind
@@ -34,12 +45,29 @@ object AllConfigsGui {
 		}
 	}
 
+	class CategoryView {
+		@get:Bind("categories")
+		val categories = ManagedConfig.Category.entries
+			.map { CategoryEntry(it) }
+			.toObservableList()
+
+		class CategoryEntry(val category: ManagedConfig.Category) {
+			@Bind
+			fun name() = category.labelText.string
+
+			@Bind
+			fun open() {
+				MC.screen = MoulConfigUtils.loadScreen("config/category", CategoryMapping(category), MC.screen)
+			}
+		}
+	}
+
 	fun makeBuiltInScreen(parent: Screen? = null): Screen {
-		return MoulConfigUtils.loadScreen("config/main", MainMapping(allConfigs), parent)
+		return MoulConfigUtils.loadScreen("config/main", CategoryView(), parent)
 	}
 
 	fun makeScreen(parent: Screen? = null): Screen {
-		val wantedKey = if (RepoManager.Config.enableYacl) "yacl" else "builtin"
+		val wantedKey = if (ConfigConfig.enableYacl) "yacl" else "builtin"
 		val provider = FirmamentConfigScreenProvider.providers.find { it.key == wantedKey }
 			?: FirmamentConfigScreenProvider.providers.first()
 		return provider.open(parent)

@@ -6,6 +6,7 @@ import com.mrcrayfish.configured.api.IModConfigProvider
 import com.mrcrayfish.configured.api.ModContext
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.config.AllConfigsGui
+import moe.nea.firmament.gui.config.ManagedConfig
 
 /**
  * Registered in `fabric.mod.json` at `custom.configured.providers`
@@ -23,7 +24,7 @@ class ConfiguredCompat : IModConfigProvider {
                     return "firmament.config.all-configs"
                 }
             })
-            AllConfigsGui.allConfigs.mapTo(this) { ConfigCategory(it) }
+            ManagedConfig.allManagedConfigs.getAll().mapTo(this) { ConfigCategory(it) }
         }
     }
 }

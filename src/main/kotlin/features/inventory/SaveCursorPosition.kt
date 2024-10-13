@@ -15,7 +15,7 @@ object SaveCursorPosition : FirmamentFeature {
     override val identifier: String
         get() = "save-cursor-position"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
         val enable by toggle("enable") { true }
         val tolerance by duration("tolerance", 10.milliseconds, 5000.milliseconds) { 500.milliseconds }
     }

@@ -5,7 +5,7 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 
 object CarnivalFeatures : FirmamentFeature {
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.EVENTS) {
         val enableBombSolver by toggle("bombs-solver") { true }
         val displayTutorials by toggle("tutorials") { true }
     }

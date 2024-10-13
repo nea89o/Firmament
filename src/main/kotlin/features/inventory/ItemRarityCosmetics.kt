@@ -22,7 +22,7 @@ object ItemRarityCosmetics : FirmamentFeature {
     override val identifier: String
         get() = "item-rarity-cosmetics"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
         val showItemRarityBackground by toggle("background") { false }
         val showItemRarityInHotbar by toggle("background-hotbar") { false }
     }

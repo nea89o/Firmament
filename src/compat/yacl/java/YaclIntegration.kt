@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.ButtonOption
 import dev.isxander.yacl3.api.ConfigCategory
 import dev.isxander.yacl3.api.LabelOption
 import dev.isxander.yacl3.api.Option
+import dev.isxander.yacl3.api.OptionGroup
 import dev.isxander.yacl3.api.YetAnotherConfigLib
 import dev.isxander.yacl3.api.controller.ControllerBuilder
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder
@@ -17,7 +18,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
-import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ClickHandler
 import moe.nea.firmament.gui.config.DurationHandler
@@ -36,15 +36,20 @@ import moe.nea.firmament.util.FirmFormatters
 @AutoService(FirmamentConfigScreenProvider::class)
 class YaclIntegration : FirmamentConfigScreenProvider {
 	fun buildCategories() =
-		AllConfigsGui.allConfigs
+		ManagedConfig.Category.entries
 			.map(::buildCategory)
 
-	private fun buildCategory(managedConfig: ManagedConfig): ConfigCategory {
+	private fun buildCategory(category: ManagedConfig.Category): ConfigCategory {
 		return ConfigCategory.createBuilder()
-			.name(managedConfig.labelText)
-			.also {
-				it.rootGroupBuilder()
-					.options(buildOptions(managedConfig.sortedOptions))
+			.name(category.labelText)
+			.also { categoryB ->
+				category.configs.forEach {
+					categoryB.group(
+						OptionGroup.createBuilder()
+							.name(it.labelText)
+							.options(buildOptions(it.sortedOptions))
+							.build())
+				}
 			}
 			.build()
 	}
@@ -54,7 +59,10 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 
 	private fun <T : Any> buildOption(managedOption: ManagedOption<T>): Option<*> {
 		val handler = managedOption.handler
-		val binding = Binding.generic(managedOption.default(), managedOption::value, managedOption::value.setter)
+		val binding = Binding.generic(managedOption.default(),
+		                              managedOption::value,
+		                              { managedOption.value = it; managedOption.element.save() })
+
 		fun <T> createDefaultBinding(function: (Option<T>) -> ControllerBuilder<T>): Option.Builder<T> {
 			return Option.createBuilder<T>()
 				.name(managedOption.labelText)

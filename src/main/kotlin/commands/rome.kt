@@ -17,6 +17,7 @@ import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverviewScreen
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
+import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.gui.config.ManagedOption
 import moe.nea.firmament.init.MixinPlugin
 import moe.nea.firmament.repo.HypixelStaticData
@@ -39,11 +40,11 @@ fun firmamentCommand() = literal("firmament") {
 		thenLiteral("toggle") {
 			thenArgument("config", string()) { config ->
 				suggestsList {
-					AllConfigsGui.allConfigs.asSequence().map { it.name }.asIterable()
+					ManagedConfig.allManagedConfigs.getAll().asSequence().map { it.name }.asIterable()
 				}
 				thenArgument("property", string()) { property ->
 					suggestsList {
-						(AllConfigsGui.allConfigs.find { it.name == this[config] } ?: return@suggestsList listOf())
+						(ManagedConfig.allManagedConfigs.getAll().find { it.name == this[config] } ?: return@suggestsList listOf())
 							.allOptions.entries.asSequence().filter { it.value.handler is BooleanHandler }
 							.map { it.key }
 							.asIterable()
@@ -52,7 +53,7 @@ fun firmamentCommand() = literal("firmament") {
 						val config = this[config]
 						val property = this[property]
 
-						val configObj = AllConfigsGui.allConfigs.find { it.name == config }
+						val configObj = ManagedConfig.allManagedConfigs.getAll().find { it.name == config }
 						if (configObj == null) {
 							source.sendFeedback(
 								Text.stringifiedTranslatable(

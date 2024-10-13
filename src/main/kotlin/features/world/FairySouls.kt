@@ -38,7 +38,7 @@ object FairySouls : FirmamentFeature {
     object DConfig : ProfileSpecificDataHolder<Data>(serializer(), "found-fairysouls", ::Data)
 
 
-    object TConfig : ManagedConfig("fairy-souls") {
+    object TConfig : ManagedConfig("fairy-souls", Category.MISC) {
         val displaySouls by toggle("show") { false }
         val resetSouls by button("reset") {
             DConfig.data?.foundSouls?.clear() != null

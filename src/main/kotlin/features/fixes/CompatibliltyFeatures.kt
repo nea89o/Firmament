@@ -16,7 +16,7 @@ object CompatibliltyFeatures : FirmamentFeature {
     override val identifier: String
         get() = "compatibility"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INTEGRATIONS) {
         val enhancedExplosions by toggle("explosion-enabled") { false }
         val explosionSize by integer("explosion-power", 10, 50) { 1 }
     }

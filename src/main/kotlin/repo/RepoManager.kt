@@ -19,7 +19,7 @@ import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
 
 object RepoManager {
-	object Config : ManagedConfig("repo") {
+	object Config : ManagedConfig("repo", Category.META) {
 		var username by string("username") { "NotEnoughUpdates" }
 		var reponame by string("reponame") { "NotEnoughUpdates-REPO" }
 		var branch by string("branch") { "master" }
@@ -30,8 +30,6 @@ object RepoManager {
 			branch = "master"
 			save()
 		}
-
-		val enableYacl by toggle("enable-yacl") { false }
 
 		val disableItemGroups by toggle("disable-item-groups") { true }
 		val reload by button("reload") {

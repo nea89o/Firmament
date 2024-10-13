@@ -15,7 +15,7 @@ object PriceData : FirmamentFeature {
     override val identifier: String
         get() = "price-data"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
         val tooltipEnabled by toggle("enable-always") { true }
         val enableKeybinding by keyBindingWithDefaultUnbound("enable-keybind")
     }

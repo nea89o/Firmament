@@ -26,7 +26,7 @@ object DeveloperFeatures : FirmamentFeature {
             .iterate { it.parent }
             .find { it.resolve("settings.gradle.kts").exists() }
 
-    object TConfig : ManagedConfig("developer") {
+    object TConfig : ManagedConfig("developer", Category.DEV) {
         val autoRebuildResources by toggle("auto-rebuild") { false }
     }
 

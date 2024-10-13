@@ -38,7 +38,7 @@ object Waypoints : FirmamentFeature {
     override val identifier: String
         get() = "waypoints"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.MINING) { // TODO: add to misc
         val tempWaypointDuration by duration("temp-waypoint-duration", 0.seconds, 1.hours) { 30.seconds }
         val showIndex by toggle("show-index") { true }
         val skipToNearest by toggle("skip-to-nearest") { false }

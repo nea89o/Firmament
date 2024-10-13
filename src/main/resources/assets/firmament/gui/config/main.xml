@@ -6,7 +6,7 @@
             <Column>
                 <Text text="Firmament Config"/>
                 <ScrollPanel width="400" height="300">
-                    <Array data="@configs">
+                    <Array data="@categories">
                         <firm:Fixed width="380" height="30">
                             <Panel background="VANILLA">
                                 <Center>
@@ -14,8 +14,8 @@
                                         <Center>
                                             <Text text="@name"/>
                                         </Center>
-                                        <firm:Button onClick="@openEditor">
-                                            <Text text="Edit"/>
+                                        <firm:Button onClick="@open">
+                                            <Text text="Open"/>
                                         </firm:Button>
                                     </Row>
                                 </Center>

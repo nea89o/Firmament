@@ -11,7 +11,7 @@ import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 
 class ManagedOption<T : Any>(
-    val element: ManagedConfigElement,
+    val element: ManagedConfig,
     val propertyName: String,
     val default: () -> T,
     val handler: ManagedConfig.OptionHandler<T>

@@ -35,7 +35,7 @@ object ChatLinks : FirmamentFeature {
     override val identifier: String
         get() = "chat-links"
 
-    object TConfig : ManagedConfig(identifier) {
+    object TConfig : ManagedConfig(identifier, Category.CHAT) {
         val enableLinks by toggle("links-enabled") { true }
         val imageEnabled by toggle("image-enabled") { true }
         val allowAllHosts by toggle("allow-all-hosts") { false }
