@@ -76,6 +76,8 @@
     "firmament.config.configconfig.enable-yacl": "Use YACL Config",
     "firmament.config.repo.branch": "Repo Branch",
 	"firmament.config.configconfig": "Firmaments Config",
+	"firmament.config.commissions": "Commissions",
+	"firmament.config.commissions.highlight-completed": "Highlight Completed",
 	"firmament.config.repo.branch.hint": "dangerous",
     "firmament.config.repo.reset": "Reset",
     "firmament.config.repo.disable-item-groups": "Disable Item Groups",
