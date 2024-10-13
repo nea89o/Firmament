@@ -12,39 +12,40 @@ import moe.nea.firmament.util.ScreenUtil.setScreenLater
 
 object AllConfigsGui {
 
-    val allConfigs
-        get() = listOf(
-            RepoManager.Config
-        ) + FeatureManager.allFeatures.mapNotNull { it.config }
+	val allConfigs
+		get() = listOf(
+			RepoManager.Config
+		) + FeatureManager.allFeatures.mapNotNull { it.config }
 
-    fun <T> List<T>.toObservableList(): ObservableList<T> = ObservableList(this)
+	fun <T> List<T>.toObservableList(): ObservableList<T> = ObservableList(this)
 
-    class MainMapping(val allConfigs: List<ManagedConfig>) {
-        @get:Bind("configs")
-        val configs = allConfigs.map { EntryMapping(it) }.toObservableList()
+	class MainMapping(val allConfigs: List<ManagedConfig>) {
+		@get:Bind("configs")
+		val configs = allConfigs.map { EntryMapping(it) }.toObservableList()
 
-        class EntryMapping(val config: ManagedConfig) {
-            @Bind
-            fun name() = Text.translatable("firmament.config.${config.name}").string
+		class EntryMapping(val config: ManagedConfig) {
+			@Bind
+			fun name() = Text.translatable("firmament.config.${config.name}").string
 
-            @Bind
-            fun openEditor() {
-                config.showConfigEditor(MC.screen)
-            }
-        }
-    }
+			@Bind
+			fun openEditor() {
+				config.showConfigEditor(MC.screen)
+			}
+		}
+	}
 
-    fun makeBuiltInScreen(parent: Screen? = null): Screen {
-        return MoulConfigUtils.loadScreen("config/main", MainMapping(allConfigs), parent)
-    }
+	fun makeBuiltInScreen(parent: Screen? = null): Screen {
+		return MoulConfigUtils.loadScreen("config/main", MainMapping(allConfigs), parent)
+	}
 
-    fun makeScreen(parent: Screen? = null): Screen {
-        val provider = FirmamentConfigScreenProvider.providers.find { it.key == "builtin" }
-            ?: FirmamentConfigScreenProvider.providers.first()
-        return provider.open(parent)
-    }
+	fun makeScreen(parent: Screen? = null): Screen {
+		val wantedKey = if (RepoManager.Config.enableYacl) "yacl" else "builtin"
+		val provider = FirmamentConfigScreenProvider.providers.find { it.key == wantedKey }
+			?: FirmamentConfigScreenProvider.providers.first()
+		return provider.open(parent)
+	}
 
-    fun showAllGuis() {
-        setScreenLater(makeScreen())
-    }
+	fun showAllGuis() {
+		setScreenLater(makeScreen())
+	}
 }

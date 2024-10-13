@@ -85,6 +85,9 @@ allprojects {
 		maven("https://maven.azureaaron.net/snapshots")
 		maven("https://maven.azureaaron.net/releases")
 		maven("https://www.cursemaven.com")
+		maven("https://maven.isxander.dev/releases") {
+			name = "Xander Maven"
+		}
 		mavenLocal()
 	}
 }
@@ -154,6 +157,7 @@ val SourceSet.modImplementationConfigurationName
 val configuredSourceSet = createIsolatedSourceSet("configured")
 val sodiumSourceSet = createIsolatedSourceSet("sodium")
 val citResewnSourceSet = createIsolatedSourceSet("citresewn")
+val yaclSourceSet = createIsolatedSourceSet("yacl")
 
 val shadowMe by configurations.creating {
 	exclude(group = "org.jetbrains.kotlin")
@@ -223,6 +227,7 @@ dependencies {
 	(citResewnSourceSet.modImplementationConfigurationName)(
 		innerJarsOf("citresewn", dependencies.create(libs.citresewn.get())).asFileTree)
 	(citResewnSourceSet.modImplementationConfigurationName)(libs.citresewn)
+	(yaclSourceSet.modImplementationConfigurationName)(libs.yacl)
 
 	// Actual dependencies
 	modCompileOnly(libs.rei.api) {

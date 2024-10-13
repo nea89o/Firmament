@@ -73,6 +73,7 @@
     "firmament.config.repo.username.hint": "NotEnoughUpdates",
     "firmament.config.repo.reponame": "Repo Name",
     "firmament.config.repo.reponame.hint": "NotEnoughUpdates-REPO",
+    "firmament.config.repo.enable-yacl": "Use YACL Config",
     "firmament.config.repo.branch": "Repo Branch",
     "firmament.config.repo.branch.hint": "dangerous",
     "firmament.config.repo.reset": "Reset",

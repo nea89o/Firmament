@@ -32,7 +32,7 @@ data class SavedKeyBinding(
             return Triple(
                 modifiers and GLFW.GLFW_MOD_SHIFT != 0,
                 modifiers and GLFW.GLFW_MOD_CONTROL != 0,
-                modifiers and GLFW.GLFW_MOD_ALT != 0
+                modifiers and GLFW.GLFW_MOD_ALT != 0,
             )
         }
 

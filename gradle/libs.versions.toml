@@ -76,6 +76,9 @@ hypixelmodapi_fabric = "1.0.1+build.1+mc1.21"
 # Update from https://github.com/shedaniel/fabric-asm or https://maven.shedaniel.me/me/shedaniel/mm/
 manninghamMills = "2.4.1"
 
+# Update from https://docs.isxander.dev/yet-another-config-lib/installing-yacl
+yacl = "3.5.0+1.21-fabric"
+
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
@@ -109,22 +112,23 @@ sodium = { module = "maven.modrinth:sodium", version.ref = "sodium" }
 freecammod = { module = "maven.modrinth:freecam", version.ref = "freecammod" }
 citresewn = { module = "maven.modrinth:cit-resewn", version.ref = "citresewn" }
 femalegender = { module = "maven.modrinth:female-gender", version.ref = "femalegender" }
+yacl = { module = "dev.isxander:yet-another-config-lib", version.ref = "yacl" }
 
 [bundles]
 runtime_required = [
-    "architectury_fabric",
-    "rei_fabric",
-    "notenoughanimations",
-    "femalegender",
-    "hypixelmodapi_fabric",
+	"architectury_fabric",
+	"rei_fabric",
+	"notenoughanimations",
+	"femalegender",
+	"hypixelmodapi_fabric",
 ]
 runtime_optional = [
-    "devauth",
-    "freecammod",
-    "sodium",
-#    "qolify",
-    "ncr",
-    "citresewn",
+	"devauth",
+	"freecammod",
+	"sodium",
+	#    "qolify",
+	"ncr",
+	"citresewn",
 ]
 
 [plugins]
