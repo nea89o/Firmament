@@ -1,12 +1,13 @@
-
-package moe.nea.firmament.test
+package moe.nea.firmament.test.util
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import net.minecraft.Bootstrap
+import net.minecraft.SharedConstants
 import moe.nea.firmament.util.removeColorCodes
 
 
-class ColorCode {
+class ColorCodeTest {
     @Test
     fun testWhatever() {
         Assertions.assertEquals("", "".removeColorCodes().toString())

@@ -1,8 +1,14 @@
+@file:OptIn(ExperimentalTypeInference::class, ExperimentalContracts::class)
+
 package moe.nea.firmament.util
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import org.intellij.lang.annotations.Language
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.experimental.ExperimentalTypeInference
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -10,10 +16,14 @@ import kotlin.time.Duration.Companion.seconds
 inline fun <T> String.ifMatches(regex: Regex, block: (MatchResult) -> T): T? =
 	regex.matchEntire(this)?.let(block)
 
-inline fun <T> Pattern.useMatch(string: String, block: Matcher.() -> T): T? =
-	matcher(string)
+inline fun <T> Pattern.useMatch(string: String, block: Matcher.() -> T): T? {
+	contract {
+		callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+	}
+	return matcher(string)
 		.takeIf(Matcher::matches)
 		?.let(block)
+}
 
 @Language("RegExp")
 val TIME_PATTERN = "[0-9]+[ms]"

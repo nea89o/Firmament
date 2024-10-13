@@ -1,0 +1,48 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			enchantments: {
+				efficiency: 10
+			},
+			id: "DIAMOND_PICKAXE",
+			power_ability_scroll: "SAPPHIRE_POWER_SCROLL",
+			timestamp: 1659795180000L,
+			uuid: "d213f48e-d927-4748-a58c-eb80735025b7"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"green","text":"Diamond Pickaxe"}],"italic":false,"text":""}',
+		"minecraft:enchantments": {
+			levels: {
+			}
+		},
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"dark_gray","text":"Breaking Power 4"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Damage: "},{"color":"red","text":"+30"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Speed: "},{"color":"green","text":"+220"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Efficiency X"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Increases how quickly your tool"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"breaks blocks."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"aqua","text":"⦾ "},{"color":"gold","text":"Ability: Mining Speed Boost  "},{"bold":true,"color":"yellow","text":"RIGHT CLICK"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Grants "},{"color":"gold","text":"+200% "},{"color":"gold","text":"⸕ Mining Speed "},{"color":"gray","text":"for"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"green","text":"10s"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_gray","text":"Cooldown: "},{"color":"green","text":"120s"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"dark_gray","text":"This item can be reforged!"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"green","text":"UNCOMMON PICKAXE"}],"italic":false,"text":""}'
+		],
+		"minecraft:unbreakable": {
+			show_in_tooltip: 0b
+		}
+	},
+	count: 1,
+	id: "minecraft:diamond_pickaxe"
+}

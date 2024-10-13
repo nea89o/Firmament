@@ -22,3 +22,8 @@ mutable field net/minecraft/screen/slot/Slot y I
 accessible field net/minecraft/entity/player/PlayerEntity PLAYER_MODEL_PARTS Lnet/minecraft/entity/data/TrackedData;
 accessible field net/minecraft/client/render/WorldRenderer chunks Lnet/minecraft/client/render/BuiltChunkStorage;
 
+# Fix package-private access methods
+accessible method net/minecraft/registry/entry/RegistryEntry$Reference setRegistryKey (Lnet/minecraft/registry/RegistryKey;)V
+accessible method net/minecraft/entity/LivingEntity getHitbox ()Lnet/minecraft/util/math/Box;
+accessible method net/minecraft/registry/entry/RegistryEntryList$Named <init> (Lnet/minecraft/registry/entry/RegistryEntryOwner;Lnet/minecraft/registry/tag/TagKey;)V
+accessible method net/minecraft/registry/entry/RegistryEntry$Reference setValue (Ljava/lang/Object;)V

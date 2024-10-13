@@ -1,0 +1,59 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			donated_museum: 1b,
+			enchantments: {
+				ultimate_wise: 5
+			},
+			ethermerge: 1b,
+			gems: {
+			},
+			id: "ASPECT_OF_THE_VOID",
+			modifier: "heroic",
+			originTag: "ASPECT_OF_THE_VOID",
+			power_ability_scroll: "SAPPHIRE_POWER_SCROLL",
+			timestamp: 1641640380000L,
+			tuned_transmission: 4,
+			uuid: "b0572534-eb14-46cd-90c6-0df878fd56a2"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"dark_purple","text":"Heroic Aspect of the Void"}],"italic":false,"text":""}',
+		"minecraft:enchantment_glint_override": 1b,
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"gray","text":"Damage: "},{"color":"red","text":"+120"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Strength: "},{"color":"red","text":"+132 "},{"color":"blue","text":"(+32)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Bonus Attack Speed: "},{"color":"red","text":"+3% "},{"color":"blue","text":"(+3%)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Intelligence: "},{"color":"green","text":"+80 "},{"color":"blue","text":"(+80)"}],"italic":false,"text":""}',
+			'{"extra":[" ",{"color":"dark_gray","text":"["},{"color":"gray","text":"✎"},{"color":"dark_gray","text":"]"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":""},{"bold":true,"color":"light_purple","text":"Ultimate Wise V"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Reduces the ability mana cost of this"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"item by "},{"color":"green","text":"50%"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"aqua","text":"⦾ "},{"color":"gold","text":"Ability: Instant Transmission  "},{"bold":true,"color":"yellow","text":"RIGHT CLICK"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Teleport "},{"color":"green","text":"12 blocks"},{"color":"gray","text":" ahead of you and"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"gain "},{"color":"green","text":"+50 "},{"color":"white","text":"✦ Speed"},{"color":"gray","text":" for "},{"color":"green","text":"3 seconds"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_gray","text":"Mana Cost: "},{"color":"dark_aqua","text":"23"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Ability: Ether Transmission  "},{"bold":true,"color":"yellow","text":"SNEAK RIGHT CLICK"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Teleport to your targeted block up"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"to "},{"color":"green","text":"61 blocks "},{"color":"gray","text":"away."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"dark_gray","text":"Soulflow Cost: "},{"color":"dark_aqua","text":"1"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_gray","text":"Mana Cost: "},{"color":"dark_aqua","text":"90"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"dark_gray","text":"* "},{"color":"dark_gray","text":"Co-op Soulbound "},{"bold":true,"color":"dark_gray","text":"*"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"dark_purple","text":"EPIC SWORD"}],"italic":false,"text":""}'
+		],
+		"minecraft:unbreakable": {
+			show_in_tooltip: 0b
+		}
+	},
+	count: 1,
+	id: "minecraft:diamond_shovel"
+}

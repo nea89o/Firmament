@@ -28,6 +28,7 @@ import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.focusedItemStack
+import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.skyBlockId
@@ -44,6 +45,7 @@ object PowerUserTools : FirmamentFeature {
 		val copyLoreData by keyBindingWithDefaultUnbound("copy-lore")
 		val copySkullTexture by keyBindingWithDefaultUnbound("copy-skull-texture")
 		val copyEntityData by keyBindingWithDefaultUnbound("entity-data")
+		val copyItemStack by keyBindingWithDefaultUnbound("copy-item-stack")
 	}
 
 	override val config
@@ -125,7 +127,7 @@ object PowerUserTools : FirmamentFeature {
 				Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.modelid", model.toString()))
 		} else if (it.matches(TConfig.copyNbtData)) {
 			// TODO: copy full nbt
-			val nbt = item.get(DataComponentTypes.CUSTOM_DATA)?.nbt?.toString() ?: "<empty>"
+			val nbt = item.get(DataComponentTypes.CUSTOM_DATA)?.nbt?.toPrettyString() ?: "<empty>"
 			ClipboardUtils.setTextContent(nbt)
 			lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.nbt"))
 		} else if (it.matches(TConfig.copyLoreData)) {
@@ -157,6 +159,9 @@ object PowerUserTools : FirmamentFeature {
 					Text.stringifiedTranslatable("firmament.tooltip.copied.skull-id", skullTexture.toString())
 				)
 			println("Copied skull id: $skullTexture")
+		} else if (it.matches(TConfig.copyItemStack)) {
+			ClipboardUtils.setTextContent(item.encode(MC.currentOrDefaultRegistries).toPrettyString())
+			lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.stack"))
 		}
 	}
 

@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament
 
 import com.mojang.brigadier.CommandDispatcher
@@ -33,7 +31,6 @@ import kotlinx.coroutines.plus
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlin.coroutines.EmptyCoroutineContext
-import net.minecraft.client.render.chunk.SectionBuilder
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
@@ -51,98 +48,98 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
 
 object Firmament {
-    const val MOD_ID = "firmament"
+	const val MOD_ID = "firmament"
 
-    val DEBUG = System.getProperty("firmament.debug") == "true"
-    val DATA_DIR: Path = Path.of(".firmament").also { Files.createDirectories(it) }
-    val CONFIG_DIR: Path = Path.of("config/firmament").also { Files.createDirectories(it) }
-    val logger: Logger = LogManager.getLogger("Firmament")
-    private val metadata: ModMetadata by lazy {
-        FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
-    }
-    val version: Version by lazy { metadata.version }
+	val DEBUG = System.getProperty("firmament.debug") == "true"
+	val DATA_DIR: Path = Path.of(".firmament").also { Files.createDirectories(it) }
+	val CONFIG_DIR: Path = Path.of("config/firmament").also { Files.createDirectories(it) }
+	val logger: Logger = LogManager.getLogger("Firmament")
+	private val metadata: ModMetadata by lazy {
+		FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
+	}
+	val version: Version by lazy { metadata.version }
 
-    val json = Json {
-        prettyPrint = DEBUG
-        isLenient = true
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+	val json = Json {
+		prettyPrint = DEBUG
+		isLenient = true
+		ignoreUnknownKeys = true
+		encodeDefaults = true
+	}
 
-    val httpClient by lazy {
-        HttpClient {
-            install(ContentNegotiation) {
-                json(json)
-            }
-            install(ContentEncoding) {
-                gzip()
-                deflate()
-            }
-            install(UserAgent) {
-                agent = "Firmament/$version"
-            }
-            if (DEBUG)
-                install(Logging) {
-                    level = LogLevel.INFO
-                }
-            install(HttpCache)
-        }
-    }
+	val httpClient by lazy {
+		HttpClient {
+			install(ContentNegotiation) {
+				json(json)
+			}
+			install(ContentEncoding) {
+				gzip()
+				deflate()
+			}
+			install(UserAgent) {
+				agent = "Firmament/$version"
+			}
+			if (DEBUG)
+				install(Logging) {
+					level = LogLevel.INFO
+				}
+			install(HttpCache)
+		}
+	}
 
-    val globalJob = Job()
-    val coroutineScope =
-        CoroutineScope(EmptyCoroutineContext + CoroutineName("Firmament")) + SupervisorJob(globalJob)
+	val globalJob = Job()
+	val coroutineScope =
+		CoroutineScope(EmptyCoroutineContext + CoroutineName("Firmament")) + SupervisorJob(globalJob)
 
-    private fun registerCommands(
-        dispatcher: CommandDispatcher<FabricClientCommandSource>,
-        @Suppress("UNUSED_PARAMETER")
-        ctx: CommandRegistryAccess
-    ) {
-        registerFirmamentCommand(dispatcher)
-        CommandEvent.publish(CommandEvent(dispatcher, ctx, MC.networkHandler?.commandDispatcher))
-    }
+	private fun registerCommands(
+		dispatcher: CommandDispatcher<FabricClientCommandSource>,
+		@Suppress("UNUSED_PARAMETER")
+		ctx: CommandRegistryAccess
+	) {
+		registerFirmamentCommand(dispatcher)
+		CommandEvent.publish(CommandEvent(dispatcher, ctx, MC.networkHandler?.commandDispatcher))
+	}
 
-    @JvmStatic
-    fun onInitialize() {
-    }
+	@JvmStatic
+	fun onInitialize() {
+	}
 
-    @JvmStatic
-    fun onClientInitialize() {
-        FeatureManager.subscribeEvents()
-        var tick = 0
-        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
-            TickEvent.publish(TickEvent(tick++))
-        })
-        IDataHolder.registerEvents()
-        RepoManager.initialize()
-        SBData.init()
-        FeatureManager.autoload()
-        HypixelStaticData.spawnDataCollectionLoop()
-        ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
-        ClientLifecycleEvents.CLIENT_STARTED.register(ClientLifecycleEvents.ClientStarted {
-            ClientStartedEvent.publish(ClientStartedEvent())
-        })
-        ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
-            logger.info("Shutting down Firmament coroutines")
-            globalJob.cancel()
-        })
-        registerFirmamentEvents()
-        ItemTooltipCallback.EVENT.register { stack, context, type, lines ->
-            ItemTooltipEvent.publish(ItemTooltipEvent(stack, context, type, lines))
-        }
-        ScreenEvents.AFTER_INIT.register(ScreenEvents.AfterInit { client, screen, scaledWidth, scaledHeight ->
-            ScreenEvents.afterRender(screen)
-                .register(ScreenEvents.AfterRender { screen, drawContext, mouseX, mouseY, tickDelta ->
-                    ScreenRenderPostEvent.publish(ScreenRenderPostEvent(screen, mouseX, mouseY, tickDelta, drawContext))
-                })
-        })
-    }
+	@JvmStatic
+	fun onClientInitialize() {
+		FeatureManager.subscribeEvents()
+		var tick = 0
+		ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
+			TickEvent.publish(TickEvent(tick++))
+		})
+		IDataHolder.registerEvents()
+		RepoManager.initialize()
+		SBData.init()
+		FeatureManager.autoload()
+		HypixelStaticData.spawnDataCollectionLoop()
+		ClientCommandRegistrationCallback.EVENT.register(this::registerCommands)
+		ClientLifecycleEvents.CLIENT_STARTED.register(ClientLifecycleEvents.ClientStarted {
+			ClientStartedEvent.publish(ClientStartedEvent())
+		})
+		ClientLifecycleEvents.CLIENT_STOPPING.register(ClientLifecycleEvents.ClientStopping {
+			logger.info("Shutting down Firmament coroutines")
+			globalJob.cancel()
+		})
+		registerFirmamentEvents()
+		ItemTooltipCallback.EVENT.register { stack, context, type, lines ->
+			ItemTooltipEvent.publish(ItemTooltipEvent(stack, context, type, lines))
+		}
+		ScreenEvents.AFTER_INIT.register(ScreenEvents.AfterInit { client, screen, scaledWidth, scaledHeight ->
+			ScreenEvents.afterRender(screen)
+				.register(ScreenEvents.AfterRender { screen, drawContext, mouseX, mouseY, tickDelta ->
+					ScreenRenderPostEvent.publish(ScreenRenderPostEvent(screen, mouseX, mouseY, tickDelta, drawContext))
+				})
+		})
+	}
 
 
-    fun identifier(path: String) = Identifier.of(MOD_ID, path)
-    inline fun <reified T : Any> tryDecodeJsonFromStream(inputStream: InputStream): Result<T> {
-        return runCatching {
-            json.decodeFromStream<T>(inputStream)
-        }
-    }
+	fun identifier(path: String) = Identifier.of(MOD_ID, path)
+	inline fun <reified T : Any> tryDecodeJsonFromStream(inputStream: InputStream): Result<T> {
+		return runCatching {
+			json.decodeFromStream<T>(inputStream)
+		}
+	}
 }

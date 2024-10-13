@@ -90,6 +90,8 @@ fun CharSequence.removeColorCodes(keepNonColorCodes: Boolean = false): String {
 val Text.unformattedString: String
 	get() = string.removeColorCodes()
 
+val Text.directLiteralStringContent: String? get() = (this.content as? PlainTextContent)?.string()
+
 fun Text.allSiblings(): List<Text> = listOf(this) + siblings.flatMap { it.allSiblings() }
 
 fun MutableText.withColor(formatting: Formatting) = this.styled { it.withColor(formatting).withItalic(false) }

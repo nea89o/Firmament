@@ -1,0 +1,97 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			compact_blocks: 1023815,
+			donated_museum: 1b,
+			drill_fuel: 16621,
+			drill_part_fuel_tank: "titanium_fuel_tank",
+			drill_part_upgrade_module: "goblin_omelette_blue_cheese",
+			enchantments: {
+				compact: 10,
+				efficiency: 5,
+				experience: 3,
+				fortune: 3,
+				paleontologist: 2,
+				pristine: 5
+			},
+			gems: {
+				AMBER_0: {
+					quality: "PERFECT",
+					uuid: "d28be6ae-75eb-49e4-90d8-31759db18d79"
+				},
+				JADE_0: {
+					quality: "PERFECT",
+					uuid: "657fea0b-88e2-483d-9d2c-0b821797a55a"
+				},
+				MINING_0: {
+					quality: "PERFECT",
+					uuid: "257bdcd2-585b-48b9-9517-a2e841dc0574"
+				},
+				MINING_0_gem: "TOPAZ",
+				unlocked_slots: [
+					"JADE_0",
+					"MINING_0"
+				]
+			},
+			id: "TITANIUM_DRILL_4",
+			modifier: "auspicious",
+			rarity_upgrades: 1,
+			timestamp: 1700577120000L,
+			uuid: "367b85ab-5bb4-43b6-a055-084cbaaafc1c"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"light_purple","text":"Auspicious Titanium Drill DR-X655"}],"italic":false,"text":""}',
+		"minecraft:enchantment_glint_override": 1b,
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"dark_gray","text":"Breaking Power 9"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Damage: "},{"color":"red","text":"+75"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Speed: "},{"color":"green","text":"+1,885 "},{"color":"blue","text":"(+75) "},{"color":"light_purple","text":"(+100)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Pristine: "},{"color":"green","text":"+4.5 "},{"color":"light_purple","text":"(+2)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Fortune: "},{"color":"green","text":"+220 "},{"color":"blue","text":"(+20) "},{"color":"light_purple","text":"(+50)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Wisdom: "},{"color":"green","text":"+10"}],"italic":false,"text":""}',
+			'{"extra":[" ",{"color":"gold","text":"["},{"color":"gold","text":"⸕"},{"color":"gold","text":"] "},{"color":"gold","text":"["},{"color":"green","text":"☘"},{"color":"gold","text":"] "},{"color":"gold","text":"["},{"color":"yellow","text":"✦"},{"color":"gold","text":"]"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Compact X"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Efficiency V"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Experience III"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Fortune III"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Paleontologist II"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Prismatic V"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"green","text":"Titanium-Infused Fuel Tank."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":""},{"color":"dark_green","text":"25,000 Max Fuel Capacity."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":""},{"color":"green","text":"-4% Pickaxe Ability Cooldown."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Drill Engine: "},{"color":"red","text":"Not Installed"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Increases "},{"color":"gold","text":"⸕ Mining Speed "},{"color":"gray","text":"with part"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"installed."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"green","text":"Blue Cheese Goblin Omelette Part."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Adds "},{"color":"green","text":"+1 Level "},{"color":"gray","text":"to all of your unlocked "},{"color":"dark_purple","text":"Heart of"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_purple","text":"the Mountain "},{"color":"gray","text":"perks."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Fuel: "},{"color":"dark_green","text":"16,621"},{"color":"dark_gray","text":"/25k"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Ability: Pickobulus  "},{"bold":true,"color":"yellow","text":"RIGHT CLICK"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Throw your pickaxe to create an"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"explosion mining all ores in a "},{"color":"green","text":"3 "},{"color":"gray","text":"block"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"radius."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_gray","text":"Cooldown: "},{"color":"green","text":"48s"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Auspicious Bonus"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Grants "},{"color":"gold","text":"+0.9% "},{"color":"gold","text":"☘ Mining Fortune"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"dark_gray","text":"* "},{"color":"dark_gray","text":"Co-op Soulbound "},{"bold":true,"color":"dark_gray","text":"*"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"light_purple","obfuscated":true,"text":"a"},"",{"bold":false,"extra":[" "],"italic":false,"obfuscated":false,"strikethrough":false,"text":"","underlined":false},{"bold":true,"color":"light_purple","text":"MYTHIC DRILL "},{"bold":true,"color":"light_purple","obfuscated":true,"text":"a"}],"italic":false,"text":""}'
+		]
+	},
+	count: 1,
+	id: "minecraft:prismarine_shard"
+}

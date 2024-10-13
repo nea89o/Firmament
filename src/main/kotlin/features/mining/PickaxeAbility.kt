@@ -1,4 +1,3 @@
-
 package moe.nea.firmament.features.mining
 
 import java.util.regex.Pattern
@@ -30,155 +29,146 @@ import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.parseTimePattern
 import moe.nea.firmament.util.render.RenderCircleProgress
 import moe.nea.firmament.util.render.lerp
+import moe.nea.firmament.util.skyblock.AbilityUtils
 import moe.nea.firmament.util.toShedaniel
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 
 object PickaxeAbility : FirmamentFeature {
-    override val identifier: String
-        get() = "pickaxe-info"
+	override val identifier: String
+		get() = "pickaxe-info"
 
 
-    object TConfig : ManagedConfig(identifier) {
-        val cooldownEnabled by toggle("ability-cooldown") { true }
-        val cooldownScale by integer("ability-scale", 16, 64) { 16 }
-        val drillFuelBar by toggle("fuel-bar") { true }
-    }
+	object TConfig : ManagedConfig(identifier) {
+		val cooldownEnabled by toggle("ability-cooldown") { true }
+		val cooldownScale by integer("ability-scale", 16, 64) { 16 }
+		val drillFuelBar by toggle("fuel-bar") { true }
+	}
 
-    var lobbyJoinTime = TimeMark.farPast()
-    var lastUsage = mutableMapOf<String, TimeMark>()
-    var abilityOverride: String? = null
-    var defaultAbilityDurations = mutableMapOf<String, Duration>(
-        "Mining Speed Boost" to 120.seconds,
-        "Pickobulus" to 110.seconds,
-        "Gemstone Infusion" to 140.seconds,
-        "Hazardous Miner" to 140.seconds,
-        "Maniac Miner" to 59.seconds,
-        "Vein Seeker" to 60.seconds
-    )
+	var lobbyJoinTime = TimeMark.farPast()
+	var lastUsage = mutableMapOf<String, TimeMark>()
+	var abilityOverride: String? = null
+	var defaultAbilityDurations = mutableMapOf<String, Duration>(
+		"Mining Speed Boost" to 120.seconds,
+		"Pickobulus" to 110.seconds,
+		"Gemstone Infusion" to 140.seconds,
+		"Hazardous Miner" to 140.seconds,
+		"Maniac Miner" to 59.seconds,
+		"Vein Seeker" to 60.seconds
+	)
 
-    override val config: ManagedConfig
-        get() = TConfig
+	override val config: ManagedConfig
+		get() = TConfig
 
-    fun getCooldownPercentage(name: String, cooldown: Duration): Double {
-	    val sinceLastUsage = lastUsage[name]?.passedTime() ?: Duration.INFINITE
-	    val sinceLobbyJoin = lobbyJoinTime.passedTime()
+	fun getCooldownPercentage(name: String, cooldown: Duration): Double {
+		val sinceLastUsage = lastUsage[name]?.passedTime() ?: Duration.INFINITE
+		val sinceLobbyJoin = lobbyJoinTime.passedTime()
 		if (SBData.skyblockLocation == SkyBlockIsland.MINESHAFT) {
 			if (sinceLobbyJoin < sinceLastUsage) {
 				return 1.0
 			}
 		}
-        if (sinceLastUsage < cooldown)
-            return sinceLastUsage / cooldown
-        return 1.0
-    }
+		if (sinceLastUsage < cooldown)
+			return sinceLastUsage / cooldown
+		return 1.0
+	}
 
-    @Subscribe
-    fun onSlotClick(it: SlotClickEvent) {
-        if (MC.screen?.title?.unformattedString == "Heart of the Mountain") {
-            val name = it.stack.displayNameAccordingToNbt?.unformattedString ?: return
-            val cooldown = it.stack.loreAccordingToNbt.firstNotNullOfOrNull {
-                cooldownPattern.useMatch(it.unformattedString) {
-                    parseTimePattern(group("cooldown"))
-                }
-            } ?: return
-            defaultAbilityDurations[name] = cooldown
-        }
-    }
+	@Subscribe
+	fun onSlotClick(it: SlotClickEvent) {
+		if (MC.screen?.title?.unformattedString == "Heart of the Mountain") {
+			val name = it.stack.displayNameAccordingToNbt.unformattedString
+			val cooldown = it.stack.loreAccordingToNbt.firstNotNullOfOrNull {
+				cooldownPattern.useMatch(it.unformattedString) {
+					parseTimePattern(group("cooldown"))
+				}
+			} ?: return
+			defaultAbilityDurations[name] = cooldown
+		}
+	}
 
-    @Subscribe
-    fun onDurabilityBar(it: DurabilityBarEvent) {
-        if (!TConfig.drillFuelBar) return
-        val lore = it.item.loreAccordingToNbt
-        if (lore.lastOrNull()?.unformattedString?.contains("DRILL") != true) return
-        val maxFuel = lore.firstNotNullOfOrNull {
-            fuelPattern.useMatch(it.unformattedString) {
-                parseShortNumber(group("maxFuel"))
-            }
-        } ?: return
-        val extra = it.item.extraAttributes
-        if (!extra.contains("drill_fuel")) return
-        val fuel = extra.getInt("drill_fuel")
-        val percentage = fuel / maxFuel.toFloat()
-        it.barOverride = DurabilityBarEvent.DurabilityBar(
-            lerp(
-                DyeColor.RED.toShedaniel(),
-                DyeColor.GREEN.toShedaniel(),
-                percentage
-            ), percentage
-        )
-    }
+	@Subscribe
+	fun onDurabilityBar(it: DurabilityBarEvent) {
+		if (!TConfig.drillFuelBar) return
+		val lore = it.item.loreAccordingToNbt
+		if (lore.lastOrNull()?.unformattedString?.contains("DRILL") != true) return
+		val maxFuel = lore.firstNotNullOfOrNull {
+			fuelPattern.useMatch(it.unformattedString) {
+				parseShortNumber(group("maxFuel"))
+			}
+		} ?: return
+		val extra = it.item.extraAttributes
+		if (!extra.contains("drill_fuel")) return
+		val fuel = extra.getInt("drill_fuel")
+		val percentage = fuel / maxFuel.toFloat()
+		it.barOverride = DurabilityBarEvent.DurabilityBar(
+			lerp(
+				DyeColor.RED.toShedaniel(),
+				DyeColor.GREEN.toShedaniel(),
+				percentage
+			), percentage
+		)
+	}
 
-    @Subscribe
-    fun onChatMessage(it: ProcessChatEvent) {
-        abilityUsePattern.useMatch(it.unformattedString) {
-            lastUsage[group("name")] = TimeMark.now()
-        }
-        abilitySwitchPattern.useMatch(it.unformattedString) {
-            abilityOverride = group("ability")
-        }
-    }
+	@Subscribe
+	fun onChatMessage(it: ProcessChatEvent) {
+		abilityUsePattern.useMatch(it.unformattedString) {
+			lastUsage[group("name")] = TimeMark.now()
+		}
+		abilitySwitchPattern.useMatch(it.unformattedString) {
+			abilityOverride = group("ability")
+		}
+	}
 
-    @Subscribe
-    fun onWorldReady(event: WorldReadyEvent) {
-        lobbyJoinTime = TimeMark.now()
-        abilityOverride = null
-    }
+	@Subscribe
+	fun onWorldReady(event: WorldReadyEvent) {
+		lobbyJoinTime = TimeMark.now()
+		abilityOverride = null
+	}
 
 	@Subscribe
 	fun onProfileSwitch(event: ProfileSwitchEvent) {
 		lastUsage.clear()
 	}
 
-    val abilityUsePattern = Pattern.compile("You used your (?<name>.*) Pickaxe Ability!")
-    val fuelPattern = Pattern.compile("Fuel: .*/(?<maxFuel>$SHORT_NUMBER_FORMAT)")
+	val abilityUsePattern = Pattern.compile("You used your (?<name>.*) Pickaxe Ability!")
+	val fuelPattern = Pattern.compile("Fuel: .*/(?<maxFuel>$SHORT_NUMBER_FORMAT)")
+	val pickaxeAbilityCooldownPattern = Pattern.compile("Your pickaxe ability is on cooldown for (?<remainingCooldown>$TIME_PATTERN)\\.")
 
-    data class PickaxeAbilityData(
-        val name: String,
-        val cooldown: Duration,
-    )
+	data class PickaxeAbilityData(
+		val name: String,
+		val cooldown: Duration,
+	)
 
-    fun getCooldownFromLore(itemStack: ItemStack): PickaxeAbilityData? {
-        val lore = itemStack.loreAccordingToNbt
-        if (!lore.any { it.unformattedString.contains("Breaking Power") })
-            return null
-        val cooldown = lore.firstNotNullOfOrNull {
-            cooldownPattern.useMatch(it.unformattedString) {
-                parseTimePattern(group("cooldown"))
-            }
-        } ?: return null
-        val name = lore.firstNotNullOfOrNull {
-            abilityPattern.useMatch(it.unformattedString) {
-                group("name")
-            }
-        } ?: return null
-        return PickaxeAbilityData(name, cooldown)
-    }
+	fun getCooldownFromLore(itemStack: ItemStack): PickaxeAbilityData? {
+		val lore = itemStack.loreAccordingToNbt
+		if (!lore.any { it.unformattedString.contains("Breaking Power") })
+			return null
+		val ability = AbilityUtils.getAbilities(itemStack).firstOrNull() ?: return null
+		return PickaxeAbilityData(ability.name, ability.cooldown ?: return null)
+	}
 
+	val cooldownPattern = Pattern.compile("Cooldown: (?<cooldown>$TIME_PATTERN)")
+	val abilitySwitchPattern =
+		Pattern.compile("You selected (?<ability>.*) as your Pickaxe Ability\\. This ability will apply to all of your pickaxes!")
 
-    val cooldownPattern = Pattern.compile("Cooldown: (?<cooldown>$TIME_PATTERN)")
-    val abilityPattern = Pattern.compile("(⦾ )?Ability: (?<name>.*) {2}RIGHT CLICK")
-    val abilitySwitchPattern =
-        Pattern.compile("You selected (?<ability>.*) as your Pickaxe Ability\\. This ability will apply to all of your pickaxes!")
-
-
-    @Subscribe
-    fun renderHud(event: HudRenderEvent) {
-        if (!TConfig.cooldownEnabled) return
-        var ability = getCooldownFromLore(MC.player?.getStackInHand(Hand.MAIN_HAND) ?: return) ?: return
-        defaultAbilityDurations[ability.name] = ability.cooldown
-        val ao = abilityOverride
-        if (ao != ability.name && ao != null) {
-            ability = PickaxeAbilityData(ao, defaultAbilityDurations[ao] ?: 120.seconds)
-        }
-        event.context.matrices.push()
-        event.context.matrices.translate(MC.window.scaledWidth / 2F, MC.window.scaledHeight / 2F, 0F)
-        event.context.matrices.scale(TConfig.cooldownScale.toFloat(), TConfig.cooldownScale.toFloat(), 1F)
-        RenderCircleProgress.renderCircle(
-            event.context, Identifier.of("firmament", "textures/gui/circle.png"),
-            getCooldownPercentage(ability.name, ability.cooldown).toFloat(),
-            0f, 1f, 0f, 1f
-        )
-        event.context.matrices.pop()
-    }
+	@Subscribe
+	fun renderHud(event: HudRenderEvent) {
+		if (!TConfig.cooldownEnabled) return
+		if (!event.isRenderingCursor) return
+		var ability = getCooldownFromLore(MC.player?.getStackInHand(Hand.MAIN_HAND) ?: return) ?: return
+		defaultAbilityDurations[ability.name] = ability.cooldown
+		val ao = abilityOverride
+		if (ao != ability.name && ao != null) {
+			ability = PickaxeAbilityData(ao, defaultAbilityDurations[ao] ?: 120.seconds)
+		}
+		event.context.matrices.push()
+		event.context.matrices.translate(MC.window.scaledWidth / 2F, MC.window.scaledHeight / 2F, 0F)
+		event.context.matrices.scale(TConfig.cooldownScale.toFloat(), TConfig.cooldownScale.toFloat(), 1F)
+		RenderCircleProgress.renderCircle(
+			event.context, Identifier.of("firmament", "textures/gui/circle.png"),
+			getCooldownPercentage(ability.name, ability.cooldown).toFloat(),
+			0f, 1f, 0f, 1f
+		)
+		event.context.matrices.pop()
+	}
 }
