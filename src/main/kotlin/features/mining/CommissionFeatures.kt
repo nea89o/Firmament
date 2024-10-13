@@ -20,8 +20,7 @@ object CommissionFeatures {
 		if (MC.screenName != "Commissions") return
 		val stack = event.slot.stack
 		if(stack.loreAccordingToNbt.any { it.unformattedString == "COMPLETED" }) {
-			event.context.drawSprite(
-				event.slot.x, event.slot.y, 0, 16, 16,
+			event.highlight(
 				MC.guiAtlasManager.getSprite(Identifier.of("firmament:completed_commission_background"))
 			)
 		}

@@ -5,6 +5,7 @@ package moe.nea.firmament.util
 import java.util.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import moe.nea.firmament.Firmament
 
@@ -61,7 +62,7 @@ object TemplateUtil {
 
     fun <T> encodeTemplate(sharePrefix: String, data: T, serializer: SerializationStrategy<T>): String {
         require(sharePrefix.endsWith("/"))
-        return intoBase64Encoded(sharePrefix + Firmament.json.encodeToString(serializer, data))
+        return intoBase64Encoded(sharePrefix + Firmament.tightJson.encodeToString(serializer, data))
     }
 
     inline fun <reified T : Any> maybeDecodeTemplate(sharePrefix: String, data: String): T? =

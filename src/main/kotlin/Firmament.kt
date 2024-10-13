@@ -65,6 +65,10 @@ object Firmament {
 		ignoreUnknownKeys = true
 		encodeDefaults = true
 	}
+	val tightJson = Json(from = json) {
+		prettyPrint = false
+	}
+
 
 	val httpClient by lazy {
 		HttpClient {
