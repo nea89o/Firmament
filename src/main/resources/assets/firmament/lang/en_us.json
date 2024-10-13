@@ -80,6 +80,8 @@
     "firmament.config.repo.disable-item-groups": "Disable Item Groups",
     "firmament.config.repo.reload": "Reload Item List",
     "firmament.config.repo.redownload": "Redownload Item List",
+    "firmament.config.pets": "Pets",
+    "firmament.config.pets.highlight-pet": "Highlight active pet",
     "firmament.ursa.debugrequest.start": "Ursa request launched",
     "firmament.ursa.debugrequest.result": "Ursa request succeeded: %s",
     "firmament.sbinfo.nolocraw": "No locraw data available",

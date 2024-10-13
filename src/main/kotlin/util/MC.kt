@@ -86,6 +86,7 @@ object MC {
 	inline var screen
 		get() = instance.currentScreen
 		set(value) = instance.setScreen(value)
+	val screenName get() = screen?.title?.unformattedString?.trim()
 	inline val handledScreen: HandledScreen<*>? get() = instance.currentScreen as? HandledScreen<*>
 	inline val window get() = instance.window
 	inline val currentRegistries: RegistryWrapper.WrapperLookup? get() = world?.registryManager

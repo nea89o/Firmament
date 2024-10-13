@@ -21,6 +21,7 @@ import moe.nea.firmament.features.fixes.CompatibliltyFeatures
 import moe.nea.firmament.features.fixes.Fixes
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.ItemRarityCosmetics
+import moe.nea.firmament.features.inventory.PetFeatures
 import moe.nea.firmament.features.inventory.PriceData
 import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
@@ -67,6 +68,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(CompatibliltyFeatures)
             loadFeature(AnniversaryFeatures)
             loadFeature(QuickCommands)
+	        loadFeature(PetFeatures)
             loadFeature(SaveCursorPosition)
             loadFeature(CustomSkyBlockTextures)
             loadFeature(PriceData)
