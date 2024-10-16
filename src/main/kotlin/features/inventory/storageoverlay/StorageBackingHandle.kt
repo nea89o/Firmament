@@ -1,7 +1,9 @@
-
+@file:OptIn(ExperimentalContracts::class)
 
 package moe.nea.firmament.features.inventory.storageoverlay
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.screen.GenericContainerScreenHandler
@@ -39,6 +41,9 @@ sealed interface StorageBackingHandle {
          * selection screen.
          */
         fun fromScreen(screen: Screen?): StorageBackingHandle? {
+	        contract {
+		        returnsNotNull() implies (screen != null)
+	        }
             if (screen == null) return null
             if (screen !is GenericContainerScreen) return null
             val title = screen.title.unformattedString

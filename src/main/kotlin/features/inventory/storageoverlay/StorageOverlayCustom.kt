@@ -80,6 +80,7 @@ class StorageOverlayCustom(
 		                   screen.screenHandler.slots.take(screen.screenHandler.rows * 9).drop(9),
 		                   Point((screen as AccessorHandledScreen).x_Firmament, screen.y_Firmament))
 		overview.drawScrollBar(drawContext)
+		overview.drawControls(drawContext, mouseX, mouseY)
 	}
 
 	override fun moveSlot(slot: Slot) {

@@ -1,14 +1,26 @@
 package moe.nea.firmament.features.inventory.storageoverlay
 
+import io.github.notenoughupdates.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.gui.MouseEvent
+import io.github.notenoughupdates.moulconfig.gui.component.ColumnComponent
+import io.github.notenoughupdates.moulconfig.gui.component.PanelComponent
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import moe.nea.firmament.gui.EmptyComponent
+import moe.nea.firmament.gui.FirmButtonComponent
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.MoulConfigUtils.adopt
+import moe.nea.firmament.util.MoulConfigUtils.clickMCComponentInPlace
+import moe.nea.firmament.util.MoulConfigUtils.drawMCComponentInPlace
 import moe.nea.firmament.util.assertTrueOr
+import moe.nea.firmament.util.customgui.customGui
 
 class StorageOverlayScreen : Screen(Text.literal("")) {
 
@@ -24,6 +36,9 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val MAIN_INVENTORY_Y = 9
 		val SCROLL_BAR_WIDTH = 8
 		val SCROLL_BAR_HEIGHT = 16
+		val CONTROL_WIDTH = 70
+		val CONTROL_BACKGROUND_WIDTH = CONTROL_WIDTH + PLAYER_Y_INSET
+		val CONTROL_HEIGHT = 100
 	}
 
 	var isExiting: Boolean = false
@@ -39,6 +54,8 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val y = height / 2 - (overviewHeight + PLAYER_HEIGHT) / 2
 		val playerX = width / 2 - PLAYER_WIDTH / 2
 		val playerY = y + overviewHeight - PLAYER_Y_INSET
+		val controlX = x - CONTROL_WIDTH
+		val controlY = y + overviewHeight / 2 - CONTROL_HEIGHT / 2
 		val totalWidth = overviewWidth
 		val totalHeight = overviewHeight - PLAYER_Y_INSET + PLAYER_HEIGHT
 	}
@@ -74,6 +91,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 	val slotRowSprite = Identifier.of("firmament:storageoverlay/storage_row")
 	val scrollbarBackground = Identifier.of("firmament:storageoverlay/scroll_bar_background")
 	val scrollbarKnob = Identifier.of("firmament:storageoverlay/scroll_bar_knob")
+	val controllerBackground = Identifier.of("firmament:storageoverlay/storage_controls")
 
 	override fun close() {
 		isExiting = true
@@ -86,6 +104,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		drawPages(context, mouseX, mouseY, delta, null, null, Point())
 		drawScrollBar(context)
 		drawPlayerInventory(context, mouseX, mouseY, delta)
+		drawControls(context, mouseX, mouseY)
 	}
 
 	fun getScrollbarPercentage(): Float {
@@ -104,6 +123,39 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			sbRect.minX, sbRect.minY + (getScrollbarPercentage() * (sbRect.height - SCROLL_BAR_HEIGHT)).toInt(),
 			SCROLL_BAR_WIDTH, SCROLL_BAR_HEIGHT
 		)
+	}
+
+	fun editPages() {
+		isExiting = true
+		val hs = MC.screen as? HandledScreen<*>
+		if (StorageBackingHandle.fromScreen(hs) is StorageBackingHandle.Overview) {
+			hs.customGui = null
+		} else {
+			MC.sendCommand("storage")
+		}
+	}
+
+	val guiContext = GuiContext(EmptyComponent())
+	private val knobStub = EmptyComponent()
+	val editButton = PanelComponent(ColumnComponent(FirmButtonComponent(TextComponent("Edit"), action = ::editPages)),
+	                                8, PanelComponent.DefaultBackgroundRenderer.TRANSPARENT)
+
+	init {
+		guiContext.adopt(editButton)
+		guiContext.adopt(knobStub)
+	}
+
+	fun drawControls(context: DrawContext, mouseX: Int, mouseY: Int) {
+		context.drawGuiTexture(
+			controllerBackground,
+			measurements.controlX,
+			measurements.controlY,
+			CONTROL_BACKGROUND_WIDTH, CONTROL_HEIGHT)
+		context.drawMCComponentInPlace(
+			editButton,
+			measurements.controlX, measurements.controlY,
+			CONTROL_WIDTH, CONTROL_HEIGHT,
+			mouseX, mouseY)
 	}
 
 	fun drawBackgrounds(context: DrawContext) {
@@ -182,7 +234,10 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		context.disableScissor()
 	}
 
-	var knobGrabbed = false
+
+	var knobGrabbed: Boolean
+		get() = guiContext.focusedElement == knobStub
+		set(value) = knobStub.setFocus(value)
 
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		return mouseClicked(mouseX, mouseY, button, null)
@@ -193,6 +248,12 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			knobGrabbed = false
 			return true
 		}
+		if (clickMCComponentInPlace(editButton,
+		                            measurements.controlX, measurements.controlY,
+		                            CONTROL_WIDTH, CONTROL_HEIGHT,
+		                            mouseX.toInt(), mouseY.toInt(),
+		                            MouseEvent.Click(button, false))
+		) return true
 		return super.mouseReleased(mouseX, mouseY, button)
 	}
 
@@ -226,6 +287,12 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			knobGrabbed = true
 			return true
 		}
+		if (clickMCComponentInPlace(editButton,
+		                            measurements.controlX, measurements.controlY,
+		                            CONTROL_WIDTH, CONTROL_HEIGHT,
+		                            mouseX.toInt(), mouseY.toInt(),
+		                            MouseEvent.Click(button, true))
+		) return true
 		return false
 	}
 
@@ -309,6 +376,10 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			Rectangle(measurements.playerX,
 			          measurements.playerY,
 			          PLAYER_WIDTH,
-			          PLAYER_HEIGHT))
+			          PLAYER_HEIGHT),
+			Rectangle(measurements.controlX,
+			          measurements.controlY,
+			          CONTROL_WIDTH,
+			          CONTROL_HEIGHT))
 	}
 }
