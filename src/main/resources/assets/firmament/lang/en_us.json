@@ -177,6 +177,8 @@
     "firmament.config.slot-locking": "Slot Locking",
     "firmament.config.slot-locking.lock": "Lock Slot",
     "firmament.config.slot-locking.lock-uuid": "Lock UUID (Lock Item)",
+    "firmament.config.slot-locking.bind": "Bind Slot",
+    "firmament.config.slot-locking.require-quick-move": "Require Shift-Click for Bind",
     "firmament.config.fixes.auto-sprint": "Auto Sprint",
     "firmament.config.fixes.auto-sprint-keybinding": "Auto Sprint KeyBinding",
     "firmament.config.fixes.auto-sprint-hud": "Sprint State Hud",

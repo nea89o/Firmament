@@ -1,5 +1,3 @@
-
-
 @file:UseSerializers(DashlessUUIDSerializer::class)
 
 package moe.nea.firmament.features.inventory
@@ -13,11 +11,15 @@ import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.GenericContainerScreenHandler
+import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Identifier
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.events.HandledScreenForegroundEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
+import moe.nea.firmament.events.HandledScreenKeyReleasedEvent
 import moe.nea.firmament.events.IsSlotProtectedEvent
+import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -28,176 +30,325 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
+import moe.nea.firmament.util.json.DashlessUUIDSerializer
+import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
+import moe.nea.firmament.util.mc.SlotUtils.swapWithHotBar
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
-import moe.nea.firmament.util.json.DashlessUUIDSerializer
+import moe.nea.firmament.util.render.drawLine
 import moe.nea.firmament.util.skyblockUUID
 import moe.nea.firmament.util.unformattedString
 
 object SlotLocking : FirmamentFeature {
-    override val identifier: String
-        get() = "slot-locking"
+	override val identifier: String
+		get() = "slot-locking"
 
-    @Serializable
-    data class Data(
-        val lockedSlots: MutableSet<Int> = mutableSetOf(),
-        val lockedSlotsRift: MutableSet<Int> = mutableSetOf(),
+	@Serializable
+	data class Data(
+		val lockedSlots: MutableSet<Int> = mutableSetOf(),
+		val lockedSlotsRift: MutableSet<Int> = mutableSetOf(),
+		val lockedUUIDs: MutableSet<UUID> = mutableSetOf(),
+		val boundSlots: MutableMap<Int, Int> = mutableMapOf()
+	)
 
-        val lockedUUIDs: MutableSet<UUID> = mutableSetOf(),
-    )
+	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
+		val lockSlot by keyBinding("lock") { GLFW.GLFW_KEY_L }
+		val lockUUID by keyBindingWithOutDefaultModifiers("lock-uuid") {
+			SavedKeyBinding(GLFW.GLFW_KEY_L, shift = true)
+		}
+		val slotBind by keyBinding("bind") { GLFW.GLFW_KEY_L }
+		val slotBindRequireShift by toggle("require-quick-move") { true }
+	}
 
-    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
-        val lockSlot by keyBinding("lock") { GLFW.GLFW_KEY_L }
-        val lockUUID by keyBindingWithOutDefaultModifiers("lock-uuid") {
-            SavedKeyBinding(GLFW.GLFW_KEY_L, shift = true)
-        }
-    }
+	override val config: TConfig
+		get() = TConfig
 
-    override val config: TConfig
-        get() = TConfig
+	object DConfig : ProfileSpecificDataHolder<Data>(serializer(), "locked-slots", ::Data)
 
-    object DConfig : ProfileSpecificDataHolder<Data>(serializer(), "locked-slots", ::Data)
+	val lockedUUIDs get() = DConfig.data?.lockedUUIDs
 
-    val lockedUUIDs get() = DConfig.data?.lockedUUIDs
+	val lockedSlots
+		get() = when (SBData.skyblockLocation) {
+			SkyBlockIsland.RIFT -> DConfig.data?.lockedSlotsRift
+			null -> null
+			else -> DConfig.data?.lockedSlots
+		}
 
-    val lockedSlots
-        get() = when (SBData.skyblockLocation) {
-            SkyBlockIsland.RIFT -> DConfig.data?.lockedSlotsRift
-            null -> null
-            else -> DConfig.data?.lockedSlots
-        }
+	fun isSalvageScreen(screen: HandledScreen<*>?): Boolean {
+		if (screen == null) return false
+		return screen.title.unformattedString.contains("Salvage Item")
+	}
 
-    fun isSalvageScreen(screen: HandledScreen<*>?): Boolean {
-        if (screen == null) return false
-        return screen.title.unformattedString.contains("Salvage Item")
-    }
+	fun isTradeScreen(screen: HandledScreen<*>?): Boolean {
+		if (screen == null) return false
+		val handler = screen.screenHandler as? GenericContainerScreenHandler ?: return false
+		if (handler.inventory.size() < 9) return false
+		val middlePane = handler.inventory.getStack(handler.inventory.size() - 5)
+		if (middlePane == null) return false
+		return middlePane.displayNameAccordingToNbt?.unformattedString == "⇦ Your stuff"
+	}
 
-    fun isTradeScreen(screen: HandledScreen<*>?): Boolean {
-        if (screen == null) return false
-        val handler = screen.screenHandler as? GenericContainerScreenHandler ?: return false
-        if (handler.inventory.size() < 9) return false
-        val middlePane = handler.inventory.getStack(handler.inventory.size() - 5)
-        if (middlePane == null) return false
-        return middlePane.displayNameAccordingToNbt?.unformattedString == "⇦ Your stuff"
-    }
+	fun isNpcShop(screen: HandledScreen<*>?): Boolean {
+		if (screen == null) return false
+		val handler = screen.screenHandler as? GenericContainerScreenHandler ?: return false
+		if (handler.inventory.size() < 9) return false
+		val sellItem = handler.inventory.getStack(handler.inventory.size() - 5)
+		if (sellItem == null) return false
+		if (sellItem.displayNameAccordingToNbt?.unformattedString == "Sell Item") return true
+		val lore = sellItem.loreAccordingToNbt
+		return (lore.lastOrNull() ?: return false).unformattedString == "Click to buyback!"
+	}
 
-    fun isNpcShop(screen: HandledScreen<*>?): Boolean {
-        if (screen == null) return false
-        val handler = screen.screenHandler as? GenericContainerScreenHandler ?: return false
-        if (handler.inventory.size() < 9) return false
-        val sellItem = handler.inventory.getStack(handler.inventory.size() - 5)
-        if (sellItem == null) return false
-        if (sellItem.displayNameAccordingToNbt?.unformattedString == "Sell Item") return true
-        val lore = sellItem.loreAccordingToNbt
-        return (lore.lastOrNull() ?: return false).unformattedString == "Click to buyback!"
-    }
+	@Subscribe
+	fun onSalvageProtect(event: IsSlotProtectedEvent) {
+		if (event.slot == null) return
+		if (!event.slot.hasStack()) return
+		if (event.slot.stack.displayNameAccordingToNbt?.unformattedString != "Salvage Items") return
+		val inv = event.slot.inventory
+		var anyBlocked = false
+		for (i in 0 until event.slot.index) {
+			val stack = inv.getStack(i)
+			if (IsSlotProtectedEvent.shouldBlockInteraction(null, SlotActionType.THROW, stack))
+				anyBlocked = true
+		}
+		if (anyBlocked) {
+			event.protectSilent()
+		}
+	}
 
-    @Subscribe
-    fun onSalvageProtect(event: IsSlotProtectedEvent) {
-        if (event.slot == null) return
-        if (!event.slot.hasStack()) return
-        if (event.slot.stack.displayNameAccordingToNbt?.unformattedString != "Salvage Items") return
-        val inv = event.slot.inventory
-        var anyBlocked = false
-        for (i in 0 until event.slot.index) {
-            val stack = inv.getStack(i)
-            if (IsSlotProtectedEvent.shouldBlockInteraction(null, SlotActionType.THROW, stack))
-                anyBlocked = true
-        }
-        if (anyBlocked) {
-            event.protectSilent()
-        }
-    }
+	@Subscribe
+	fun onProtectUuidItems(event: IsSlotProtectedEvent) {
+		val doesNotDeleteItem = event.actionType == SlotActionType.SWAP
+			|| event.actionType == SlotActionType.PICKUP
+			|| event.actionType == SlotActionType.QUICK_MOVE
+			|| event.actionType == SlotActionType.QUICK_CRAFT
+			|| event.actionType == SlotActionType.CLONE
+			|| event.actionType == SlotActionType.PICKUP_ALL
+		val isSellOrTradeScreen =
+			isNpcShop(MC.handledScreen) || isTradeScreen(MC.handledScreen) || isSalvageScreen(MC.handledScreen)
+		if ((!isSellOrTradeScreen || event.slot?.inventory !is PlayerInventory)
+			&& doesNotDeleteItem
+		) return
+		val stack = event.itemStack ?: return
+		val uuid = stack.skyblockUUID ?: return
+		if (uuid in (lockedUUIDs ?: return)) {
+			event.protect()
+		}
+	}
 
-    @Subscribe
-    fun onProtectUuidItems(event: IsSlotProtectedEvent) {
-        val doesNotDeleteItem = event.actionType == SlotActionType.SWAP
-            || event.actionType == SlotActionType.PICKUP
-            || event.actionType == SlotActionType.QUICK_MOVE
-            || event.actionType == SlotActionType.QUICK_CRAFT
-            || event.actionType == SlotActionType.CLONE
-            || event.actionType == SlotActionType.PICKUP_ALL
-        val isSellOrTradeScreen =
-            isNpcShop(MC.handledScreen) || isTradeScreen(MC.handledScreen) || isSalvageScreen(MC.handledScreen)
-        if ((!isSellOrTradeScreen || event.slot?.inventory !is PlayerInventory)
-            && doesNotDeleteItem
-        ) return
-        val stack = event.itemStack ?: return
-        val uuid = stack.skyblockUUID ?: return
-        if (uuid in (lockedUUIDs ?: return)) {
-            event.protect()
-        }
-    }
+	@Subscribe
+	fun onProtectSlot(it: IsSlotProtectedEvent) {
+		if (it.slot != null && it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())) {
+			it.protect()
+		}
+	}
 
-    @Subscribe
-    fun onProtectSlot(it: IsSlotProtectedEvent) {
-        if (it.slot != null && it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())) {
-            it.protect()
-        }
-    }
+	@Subscribe
+	fun onQuickMoveBoundSlot(it: IsSlotProtectedEvent) {
+		val boundSlots = DConfig.data?.boundSlots ?: mapOf()
+		val isValidAction =
+			it.actionType == SlotActionType.QUICK_MOVE || (it.actionType == SlotActionType.PICKUP && !TConfig.slotBindRequireShift)
+		if (!isValidAction) return
+		val handler = MC.handledScreen?.screenHandler ?: return
+		val slot = it.slot
+		if (slot != null && it.slot.inventory is PlayerInventory) {
+			val boundSlot = boundSlots.entries.find {
+				it.value == slot.index || it.key == slot.index
+			} ?: return
+			it.protectSilent()
+			val inventorySlot = MC.handledScreen?.getSlotByIndex(boundSlot.value, true)
+			inventorySlot?.swapWithHotBar(handler, boundSlot.key)
+		}
+	}
 
-    @Subscribe
-    fun onLockUUID(it: HandledScreenKeyPressedEvent) {
-        if (!it.matches(TConfig.lockUUID)) return
-        val inventory = MC.handledScreen ?: return
-        inventory as AccessorHandledScreen
+	@Subscribe
+	fun onLockUUID(it: HandledScreenKeyPressedEvent) {
+		if (!it.matches(TConfig.lockUUID)) return
+		val inventory = MC.handledScreen ?: return
+		inventory as AccessorHandledScreen
 
-        val slot = inventory.focusedSlot_Firmament ?: return
-        val stack = slot.stack ?: return
-        val uuid = stack.skyblockUUID ?: return
-        val lockedUUIDs = lockedUUIDs ?: return
-        if (uuid in lockedUUIDs) {
-            lockedUUIDs.remove(uuid)
-        } else {
-            lockedUUIDs.add(uuid)
-        }
-        DConfig.markDirty()
-        CommonSoundEffects.playSuccess()
-        it.cancel()
-    }
+		val slot = inventory.focusedSlot_Firmament ?: return
+		val stack = slot.stack ?: return
+		val uuid = stack.skyblockUUID ?: return
+		val lockedUUIDs = lockedUUIDs ?: return
+		if (uuid in lockedUUIDs) {
+			lockedUUIDs.remove(uuid)
+		} else {
+			lockedUUIDs.add(uuid)
+		}
+		DConfig.markDirty()
+		CommonSoundEffects.playSuccess()
+		it.cancel()
+	}
 
-    @Subscribe
-    fun onLockSlot(it: HandledScreenKeyPressedEvent) {
-        if (!it.matches(TConfig.lockSlot)) return
-        val inventory = MC.handledScreen ?: return
-        inventory as AccessorHandledScreen
 
-        val slot = inventory.focusedSlot_Firmament ?: return
-        val lockedSlots = lockedSlots ?: return
-        if (slot.inventory is PlayerInventory) {
-            if (slot.index in lockedSlots) {
-                lockedSlots.remove(slot.index)
-            } else {
-                lockedSlots.add(slot.index)
-            }
-            DConfig.markDirty()
-            CommonSoundEffects.playSuccess()
-        }
-    }
+	@Subscribe
+	fun onLockSlotKeyRelease(it: HandledScreenKeyReleasedEvent) {
+		val inventory = MC.handledScreen ?: return
+		inventory as AccessorHandledScreen
+		val slot = inventory.focusedSlot_Firmament
+		val storedSlot = storedLockingSlot ?: return
 
-    @Subscribe
-    fun onRenderSlotOverlay(it: SlotRenderEvents.After) {
-        val isSlotLocked = it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())
-        val isUUIDLocked = (it.slot.stack?.skyblockUUID) in (lockedUUIDs ?: setOf())
-        if (isSlotLocked || isUUIDLocked) {
-            RenderSystem.disableDepthTest()
-            it.context.drawSprite(
-                it.slot.x, it.slot.y, 0,
-                16, 16,
-                MC.guiAtlasManager.getSprite(
-                    when {
-                        isSlotLocked ->
-                            (Identifier.of("firmament:slot_locked"))
+		if (it.matches(TConfig.slotBind) && slot != storedSlot && slot != null && slot.isHotbar() != storedSlot.isHotbar()) {
+			storedLockingSlot = null
+			val hotBarSlot = if (slot.isHotbar()) slot else storedSlot
+			val invSlot = if (slot.isHotbar()) storedSlot else slot
+			val boundSlots = DConfig.data?.boundSlots ?: return
+			lockedSlots?.remove(hotBarSlot.index)
+			lockedSlots?.remove(invSlot.index)
+			boundSlots.entries.removeIf {
+				it.value == invSlot.index
+			}
+			boundSlots[hotBarSlot.index] = invSlot.index
+			DConfig.markDirty()
+			CommonSoundEffects.playSuccess()
+			return
+		}
+		if (it.matches(TConfig.lockSlot) && slot == storedSlot) {
+			storedLockingSlot = null
+			toggleSlotLock(slot)
+			return
+		}
+		if (it.matches(TConfig.slotBind)) {
+			storedLockingSlot = null
+		}
+	}
 
-                        isUUIDLocked ->
-                            (Identifier.of("firmament:uuid_locked"))
+	@Subscribe
+	fun onRenderAllBoundSlots(event: HandledScreenForegroundEvent) {
+		val boundSlots = DConfig.data?.boundSlots ?: return
+		fun findByIndex(index: Int) = event.screen.getSlotByIndex(index, true)
+		val accScreen = event.screen as AccessorHandledScreen
+		val sx = accScreen.x_Firmament
+		val sy = accScreen.y_Firmament
+		boundSlots.entries.forEach {
+			val hotbarSlot = findByIndex(it.key) ?: return@forEach
+			val inventorySlot = findByIndex(it.value) ?: return@forEach
 
-                        else ->
-                            error("unreachable")
-                    }
-                )
-            )
-            RenderSystem.enableDepthTest()
-        }
-    }
+			val (hotX, hotY) = hotbarSlot.lineCenter()
+			val (invX, invY) = inventorySlot.lineCenter()
+			event.context.drawLine(
+				invX + sx, invY + sy,
+				hotX + sx, hotY + sy,
+				me.shedaniel.math.Color.ofOpaque(0x00FF00)
+			)
+			event.context.drawBorder(hotbarSlot.x + sx,
+			                         hotbarSlot.y + sy,
+			                         16, 16, 0xFF00FF00u.toInt())
+			event.context.drawBorder(inventorySlot.x + sx,
+			                         inventorySlot.y + sy,
+			                         16, 16, 0xFF00FF00u.toInt())
+		}
+	}
+
+	@Subscribe
+	fun onRenderCurrentDraggingSlot(event: HandledScreenForegroundEvent) {
+		val draggingSlot = storedLockingSlot ?: return
+		val accScreen = event.screen as AccessorHandledScreen
+		val hoveredSlot = accScreen.focusedSlot_Firmament
+			?.takeIf { it.inventory is PlayerInventory }
+			?.takeIf { it == draggingSlot || it.isHotbar() != draggingSlot.isHotbar() }
+		val sx = accScreen.x_Firmament
+		val sy = accScreen.y_Firmament
+		val (borderX, borderY) = draggingSlot.lineCenter()
+		event.context.drawBorder(draggingSlot.x + sx, draggingSlot.y + sy, 16, 16, 0xFF00FF00u.toInt())
+		if (hoveredSlot == null) {
+			event.context.drawLine(
+				borderX + sx, borderY + sy,
+				event.mouseX, event.mouseY,
+				me.shedaniel.math.Color.ofOpaque(0x00FF00)
+			)
+		} else if (hoveredSlot != draggingSlot) {
+			val (hovX, hovY) = hoveredSlot.lineCenter()
+			event.context.drawLine(
+				borderX + sx, borderY + sy,
+				hovX + sx, hovY + sy,
+				me.shedaniel.math.Color.ofOpaque(0x00FF00)
+			)
+			event.context.drawBorder(hoveredSlot.x + sx,
+			                         hoveredSlot.y + sy,
+			                         16, 16, 0xFF00FF00u.toInt())
+		}
+	}
+
+	fun Slot.lineCenter(): Pair<Int, Int> {
+		return if (isHotbar()) {
+			x + 9 to y
+		} else {
+			x + 9 to y + 17
+		}
+	}
+
+
+	fun Slot.isHotbar(): Boolean {
+		return index < 9
+	}
+
+	@Subscribe
+	fun onScreenChange(event: ScreenChangeEvent) {
+		storedLockingSlot = null
+	}
+
+	var storedLockingSlot: Slot? = null
+
+	fun toggleSlotLock(slot: Slot) {
+		val lockedSlots = lockedSlots ?: return
+		val boundSlots = DConfig.data?.boundSlots ?: mutableMapOf()
+		if (slot.inventory is PlayerInventory) {
+			if (boundSlots.entries.removeIf {
+					it.value == slot.index || it.key == slot.index
+				}) {
+				// intentionally do nothing
+			} else if (slot.index in lockedSlots) {
+				lockedSlots.remove(slot.index)
+			} else {
+				lockedSlots.add(slot.index)
+			}
+			DConfig.markDirty()
+			CommonSoundEffects.playSuccess()
+		}
+	}
+
+	@Subscribe
+	fun onLockSlot(it: HandledScreenKeyPressedEvent) {
+		val inventory = MC.handledScreen ?: return
+		inventory as AccessorHandledScreen
+
+		val slot = inventory.focusedSlot_Firmament ?: return
+		if (slot.inventory !is PlayerInventory) return
+		if (it.matches(TConfig.slotBind)) {
+			storedLockingSlot = storedLockingSlot ?: slot
+			return
+		}
+		if (!it.matches(TConfig.lockSlot)) {
+			return
+		}
+		toggleSlotLock(slot)
+	}
+
+	@Subscribe
+	fun onRenderSlotOverlay(it: SlotRenderEvents.After) {
+		val isSlotLocked = it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())
+		val isUUIDLocked = (it.slot.stack?.skyblockUUID) in (lockedUUIDs ?: setOf())
+		if (isSlotLocked || isUUIDLocked) {
+			RenderSystem.disableDepthTest()
+			it.context.drawSprite(
+				it.slot.x, it.slot.y, 0,
+				16, 16,
+				MC.guiAtlasManager.getSprite(
+					when {
+						isSlotLocked ->
+							(Identifier.of("firmament:slot_locked"))
+
+						isUUIDLocked ->
+							(Identifier.of("firmament:uuid_locked"))
+
+						else ->
+							error("unreachable")
+					}
+				)
+			)
+			RenderSystem.enableDepthTest()
+		}
+	}
 }

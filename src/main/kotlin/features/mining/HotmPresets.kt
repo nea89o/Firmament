@@ -29,6 +29,7 @@ import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.customgui.CustomGui
 import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.mc.CommonTextures
+import moe.nea.firmament.util.mc.SlotUtils.clickRightMouseButton
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
@@ -102,26 +103,6 @@ object HotmPresets {
 
 		var hasScrolled = false
 		var hasAll = false
-
-		fun Slot.clickMiddleMouseButton(handler: ScreenHandler) {
-			MC.interactionManager?.clickSlot(
-				handler.syncId,
-				this.id,
-				2,
-				SlotActionType.CLONE,
-				MC.player
-			)
-		}
-
-		fun Slot.clickRightMouseButton(handler: ScreenHandler) {
-			MC.interactionManager?.clickSlot(
-				handler.syncId,
-				this.id,
-				1,
-				SlotActionType.PICKUP,
-				MC.player
-			)
-		}
 
 		override fun mouseClick(mouseX: Double, mouseY: Double, button: Int): Boolean {
 			if (!hasScrolled) {
