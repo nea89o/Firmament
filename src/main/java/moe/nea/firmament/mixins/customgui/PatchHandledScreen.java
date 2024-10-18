@@ -34,10 +34,18 @@ public class PatchHandledScreen<T extends ScreenHandler> extends Screen implemen
 	protected int x;
 	@Shadow
 	protected int y;
+	@Shadow
+	protected int backgroundHeight;
+	@Shadow
+	protected int backgroundWidth;
 	@Unique
 	public CustomGui override;
 	@Unique
 	public boolean hasRememberedSlots = false;
+	@Unique
+	private int originalBackgroundWidth;
+	@Unique
+	private int originalBackgroundHeight;
 
 	protected PatchHandledScreen(Text title) {
 		super(title);
@@ -51,6 +59,14 @@ public class PatchHandledScreen<T extends ScreenHandler> extends Screen implemen
 
 	@Override
 	public void setCustomGui_Firmament(@Nullable CustomGui gui) {
+		if (this.override != null) {
+			backgroundHeight = originalBackgroundHeight;
+			backgroundWidth = originalBackgroundWidth;
+		}
+		if (gui != null) {
+			originalBackgroundHeight = backgroundHeight;
+			originalBackgroundWidth = backgroundWidth;
+		}
 		this.override = gui;
 	}
 
