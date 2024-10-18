@@ -40,6 +40,8 @@ object RepoManager {
 			save()
 			RepoManager.launchAsyncUpdate(true)
 		}
+		val alwaysSuperCraft by toggle("enable-super-craft") { true }
+
 	}
 
 	val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash

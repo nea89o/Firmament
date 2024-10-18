@@ -13,8 +13,10 @@ import kotlin.jvm.optionals.getOrNull
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.NbtComponent
 import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
+import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
@@ -68,6 +70,17 @@ value class SkyblockId(val neuItem: String) {
 }
 
 val NEUItem.skyblockId get() = SkyblockId(skyblockItemId)
+
+fun NEUItem.guessRecipeId(): String? {
+	if (!skyblockItemId.contains(";")) return skyblockItemId
+	val item = this.asItemStack()
+	val (id, extraId) = skyblockItemId.split(";")
+	if (item.item == Items.ENCHANTED_BOOK) {
+		return "ENCHANTED_BOOK_${id}_${extraId}"
+	}
+	if (item.petData != null) return id
+	return null
+}
 
 @Serializable
 data class HypixelPetInfo(
