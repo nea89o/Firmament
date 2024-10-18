@@ -191,6 +191,7 @@
     "firmament.config.custom-skyblock-textures.cache-duration": "Model Cache Duration",
     "firmament.config.custom-skyblock-textures.model-overrides": "Enable model overrides/predicates",
     "firmament.config.custom-skyblock-textures.legacy-cit": "Enable legacy CIT Resewn compat",
+    "firmament.config.custom-skyblock-textures.recolor-text": "Allow packs to recolor text",
     "firmament.config.custom-skyblock-textures.armor-overrides": "Enable Armor re-texturing",
     "firmament.config.custom-skyblock-textures.block-overrides": "Enable Block re-modelling",
     "firmament.config.custom-skyblock-textures.enabled": "Enable Custom Item Textures",
