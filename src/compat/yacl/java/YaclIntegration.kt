@@ -13,9 +13,12 @@ import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder
 import dev.isxander.yacl3.api.controller.StringControllerBuilder
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder
+import dev.isxander.yacl3.gui.YACLScreen
+import dev.isxander.yacl3.gui.tab.ListHolderWidget
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
+import net.minecraft.client.gui.Element
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.gui.config.BooleanHandler
@@ -121,7 +124,23 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 		get() = "yacl"
 
 	override fun open(parent: Screen?): Screen {
-		return buildConfig().generateScreen(parent)
+		return object : YACLScreen(buildConfig(), parent) {
+			override fun setFocused(focused: Element?) {
+				if (this.focused is KeybindingWidget &&
+					focused is ListHolderWidget<*>
+				) {
+					return
+				}
+				super.setFocused(focused)
+			}
+
+			override fun shouldCloseOnEsc(): Boolean {
+				if (focused is KeybindingWidget) {
+					return false
+				}
+				return super.shouldCloseOnEsc()
+			}
+		}
 	}
 
 }

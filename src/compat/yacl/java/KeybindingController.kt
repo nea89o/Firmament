@@ -31,41 +31,53 @@ class KeybindingController(
 			{ option.pendingValue() },
 			{ option.requestSet(it) },
 			{ screen.focused = null },
-			{ screen.focused = button }
+			{ screen.focused = button },
 		)
-		button = object : ControllerWidget<KeybindingController>(this, screen, widgetDimension) {
-			override fun getHoveredControlWidth(): Int {
-				return 130
-			}
-
-			override fun getValueText(): Text {
-				return sm.label
-			}
-
-			override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-				return sm.keyboardEvent(keyCode, true)
-			}
-
-			override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-				return sm.keyboardEvent(keyCode, false)
-			}
-
-			override fun unfocus() {
-				sm.onLostFocus()
-			}
-
-			override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-				if (button == 0 && isHovered) {
-					sm.onClick()
-					return true
-				}
-				return super.mouseClicked(mouseX, mouseY, button)
-			}
-		}
+		button = KeybindingWidget(sm, this, screen, widgetDimension)
 		option.addListener { t, u ->
 			sm.updateLabel()
 		}
 		sm.updateLabel()
 		return button
+	}
+}
+
+class KeybindingWidget(
+	val sm: KeyBindingStateManager,
+	controller: KeybindingController,
+	screen: YACLScreen,
+	dimension: Dimension<Int>
+) : ControllerWidget<KeybindingController>(controller, screen, dimension) {
+	override fun getHoveredControlWidth(): Int {
+		return 130
+	}
+
+	override fun getValueText(): Text {
+		return sm.label
+	}
+
+	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		return sm.keyboardEvent(keyCode, true)
+	}
+
+	override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		return sm.keyboardEvent(keyCode, false)
+	}
+
+	override fun unfocus() {
+		sm.onLostFocus()
+	}
+
+	override fun setFocused(focused: Boolean) {
+		super.setFocused(focused)
+		if (!focused) sm.onLostFocus()
+	}
+
+	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+		if (button == 0 && isHovered) {
+			sm.onClick()
+			return true
+		}
+		return super.mouseClicked(mouseX, mouseY, button)
 	}
 }
