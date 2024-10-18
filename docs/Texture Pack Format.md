@@ -8,12 +8,11 @@ SPDX-License-Identifier: CC0-1.0
 
 ## Items by internal id (ExtraAttributes)
 
-Find the internal id of the item. This is usually stored in the ExtraAttributes tag (Check the Power User Config for
+Find the internal id of the item. This is usually stored in the ExtraAttributes tag (Check the Power User Config for 
 keybinds). Once you found it, create an item model in a resource pack like you would for
-a vanilla item model, but at the coordinate `firmskyblock:<internalid>`. So for an aspect of the end, this would be
+a vanilla item model, but at the coordinate `firmskyblock:<internalid>`. So for an aspect of the end, this would be 
 `firmskyblock:models/item/aspect_of_the_end.json` (or `assets/firmskyblock/models/item/aspect_of_the_end.json`). Then,
-just use a normal minecraft item model.
-See https://github.com/romangraef/BadSkyblockTP/blob/master/assets/firmskyblock/models/item/magma_rod.json
+just use a normal minecraft item model. See https://github.com/romangraef/BadSkyblockTP/blob/master/assets/firmskyblock/models/item/magma_rod.json
 as an example.
 
 ## (Placed) Skulls by texture id
@@ -33,21 +32,18 @@ head model.
 
 ```json5
 {
-	"parent": "minecraft:item/generated",
-	"textures": {
-		"layer0": "firmskyblock:item/regular_texture"
-	},
-	"firmament:head_model": "minecraft:block/diamond_block"
-	// when wearing on the head render a diamond block instead (can be any item model, including custom ones)
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "firmskyblock:item/regular_texture"
+    },
+    "firmament:head_model": "minecraft:block/diamond_block" // when wearing on the head render a diamond block instead (can be any item model, including custom ones)
 }
 ```
 
 ## Predicates
 
-Firmament adds the ability for more
-complex [item model predicates](https://minecraft.wiki/w/Tutorials/Models#Item_predicates).
-Those predicates work on any model, including models for vanilla items, but they don't mix very well with vanilla model
-overrides.
+Firmament adds the ability for more complex [item model predicates](https://minecraft.wiki/w/Tutorials/Models#Item_predicates).
+Those predicates work on any model, including models for vanilla items, but they don't mix very well with vanilla model overrides.
 Vanilla predicates only ever get parsed at the top level, so including a vanilla predicate inside of a more complex
 firmament parser will result in an ignored predicate.
 
@@ -55,21 +51,21 @@ firmament parser will result in an ignored predicate.
 
 ```json
 {
-	"parent": "minecraft:item/handheld",
-	"textures": {
-		"layer0": "firmskyblock:item/bat_wand"
-	},
-	"overrides": [
-		{
-			"predicate": {
-				"firmament:display_name": {
-					"regex": ".*§d.*",
-					"color": "preserve"
-				}
-			},
-			"model": "firmskyblock:item/recombobulated_bat_wand"
-		}
-	]
+    "parent": "minecraft:item/handheld",
+    "textures": {
+        "layer0": "firmskyblock:item/bat_wand"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "firmament:display_name": {
+                    "regex": ".*§d.*",
+                    "color": "preserve"
+                }
+            },
+            "model": "firmskyblock:item/recombobulated_bat_wand"
+        }
+    ]
 }
 ```
 
@@ -93,8 +89,8 @@ Tries to find at least one lore line that matches the given [string matcher](#st
 
 ```json
 "firmament:lore": {
-"regex": "Mode: Red Mushrooms",
-"color": "strip"
+  "regex": "Mode: Red Mushrooms",
+  "color": "strip"
 }
 ```
 
@@ -118,8 +114,8 @@ Inlined match:
 
 ```json5
 "firmament:extra_attributes": {
-"path": "gems.JADE_0",
-"string": "PERFECT"
+    "path": "gems.JADE_0",
+    "string": "PERFECT"
 }
 ```
 
@@ -127,10 +123,10 @@ Sub object match:
 
 ```json5
 "firmament:extra_attributes": {
-"path": "gems.JADE_0",
-"match": {
-"string": "PERFECT"
-}
+    "path": "gems.JADE_0",
+    "match": {
+        "string": "PERFECT"
+    }    
 }
 ```
 
@@ -141,11 +137,11 @@ further filter by level and some other pet info.
 
 ```json5
 "firmament:pet" {
-	"id": "WOLF",
-	"exp": ">=25353230",
-	"tier": "[RARE,LEGENDARY]",
-	"level": "[50,)",
-	"candyUsed": 0
+    "id": "WOLF",
+    "exp": ">=25353230",
+    "tier": "[RARE,LEGENDARY]",
+    "level": "[50,)",
+    "candyUsed": 0
 }
 ```
 
@@ -159,24 +155,24 @@ further filter by level and some other pet info.
 
 Every part of this matcher is optional.
 
+
 #### Logic Operators
 
 Logic operators allow to combine other firmament predicates into one. This is done by building boolean operators:
 
 ```json5
 "firmament:any": [
-{
-"firmament:display_name": "SkyBlock Menu (Click)"
-},
-{
-"firmament:display_name": "SkyBlock",
-"firmament:lore": "Some Lore Requirement"
-}
+  {
+    "firmament:display_name": "SkyBlock Menu (Click)"
+  },
+  {
+    "firmament:display_name": "SkyBlock",
+    "firmament:lore": "Some Lore Requirement"
+  }    
 ]
 ```
 
-This `firmament:any` test if the display name is either "SkyBlock Menu (Click)" or "SkyBlock" (aka any of the child
-predicates match).
+This `firmament:any` test if the display name is either "SkyBlock Menu (Click)" or "SkyBlock" (aka any of the child predicates match).
 
 Similarly, there is `firmament:all`, which requires all of its children to match.
 
@@ -201,28 +197,27 @@ Directly specifying a raw string value expects the string to be *exactly* equal,
 
 #### Complex
 
-A complex string matcher allows you to specify whether the string will get its color codes removed or not before
-matching
+A complex string matcher allows you to specify whether the string will get its color codes removed or not before matching
+
 
 ```json5
 "firmament:display_name": {
-"color": "strip",
-"color": "preserve",
-// When omitting the color property alltogether, you will fall back to "strip"
+  "color": "strip",
+  "color": "preserve", 
+  // When omitting the color property alltogether, you will fall back to "strip"
 }
 ```
-
 In that same object you can then also specify how the string will be matched using another property. You can only ever
 specify one of these other matchers and one color preserving property.
 
 ```json5
 "firmament:display_name": {
-"color": "strip",
-// You can use a "regex" property to use a java.util.Pattern regex. It will try to match the entire string.
-"regex": "So[me] Regex",
-// You can use an "equals" property to test if the entire string is equal to some value. 
-// Equals is faster than regex, but also more limited.  
-"equals": "Some Text"
+  "color": "strip",
+  // You can use a "regex" property to use a java.util.Pattern regex. It will try to match the entire string.
+  "regex": "So[me] Regex",
+  // You can use an "equals" property to test if the entire string is equal to some value. 
+  // Equals is faster than regex, but also more limited.  
+  "equals": "Some Text"    
 }
 ```
 
@@ -233,10 +228,9 @@ This matches a number against either a range or a specific number.
 #### Direct number
 
 You can directly specify a number using that value directly:
-
 ```json5
 "firmament:pet": {
-"level": 100
+    "level": 100
 }
 ```
 
@@ -246,9 +240,10 @@ This is best for whole numbers, since decimal numbers can be really close togeth
 
 For ranges you can instead use an interval. This uses the standard mathematical notation for those as a string:
 
+
 ```json5
 "firmament:pet": {
-"level": "(50,100]"
+    "level": "(50,100]"
 }
 ```
 
@@ -266,12 +261,12 @@ For more information in intervals check out [Wikipedia](https://en.wikipedia.org
 
 #### Operators
 
-If instead of specifying a range you just need to specify one boundary you can also use the standard operators to
+If instead of specifying a range you just need to specify one boundary you can also use the standard operators to 
 compare your number:
 
 ```json5
 "firmament:pet": {
-"level": "<50"
+    "level": "<50"
 }
 ```
 
@@ -288,8 +283,8 @@ The `string` type matches like a regular [string matcher](#string-matcher):
 
 ```json
 "string": {
-"color": "strip",
-"regex": "^aaa bbb$"
+    "color": "strip",
+    "regex": "^aaa bbb$"
 }
 ```
 
@@ -303,23 +298,23 @@ Or as a range:
 
 ```json
 "long": {
-"min": 0,
-"max": 1000
+    "min": 0,
+    "max": 1000
 }
 ```
 
-Min and max are both optional, but you need to specify at least one. By default `min` is inclusive and `max` is
-exclusive.
+Min and max are both optional, but you need to specify at least one. By default `min` is inclusive and `max` is exclusive.
 You can override that like so:
 
 ```json
 "short": {
-"min": 0,
-"max": 1000,
-"minExclusive": true,
-"maxExclusive": false
+    "min": 0,
+    "max": 1000,
+    "minExclusive": true,
+    "maxExclusive": false
 }
 ```
+
 
 > [!WARNING]
 > This syntax for numbers is *just* for **NBT values**. This is also why specifying the type of the number is necessary.
@@ -327,22 +322,22 @@ You can override that like so:
 
 ## Armor textures
 
-You can re-*texture* armors, but not re-*model* them with firmament.
+You can re-*texture* armors, but not re-*model* them with firmament. 
 
 To retexture a piece of armor place a json file at `assets/firmskyblock/overrides/armor_models/*.json`.
 
 ```json
 {
-	"item_ids": [
-		"TARANTULA_BOOTS",
-		"TARANTULA_LEGGINGS"
-		// ETC
-	],
-	"layers": [
-		{
-			"identifier": "firmskyblock:tarantula"
-		}
-	]
+    "item_ids": [
+        "TARANTULA_BOOTS",
+        "TARANTULA_LEGGINGS",
+        // ETC
+    ],
+    "layers": [
+        {
+            "identifier": "firmskyblock:tarantula"
+        }
+    ]
 }
 ```
 
@@ -360,8 +355,8 @@ If you want to apply armor tint to the texture you will usually want two layers.
 
 ```json
 {
-	"identifier": "firmskyblock:angler",
-	"tint": true
+    "identifier": "firmskyblock:angler",
+    "tint": true
 }
 ```
 
@@ -371,8 +366,8 @@ The second layer will have no tint applied, but will have a suffix:
 
 ```json
 {
-	"identifier": "firmskyblock:angler",
-	"suffix": "_overlay"
+    "identifier": "firmskyblock:angler",
+    "suffix": "_overlay"
 }
 ```
 
@@ -393,30 +388,30 @@ Firmament predicates will work. You will also just directly specify new layers i
 
 ```json
 {
-	"item_ids": [
-		"TARANTULA_BOOTS",
-		"TARANTULA_LEGGINGS"
-		// ETC
-	],
-	"layers": [
-		{
-			"identifier": "firmskyblock:tarantula"
-		}
-	],
-	"overrides": [
-		{
-			"layers": [
-				{
-					"identifier": "firmskyblock:tarantula_maxed"
-				}
-			],
-			"predicate": {
-				"firmament:lore": {
-					"regex": "Piece Bonus: +285.*"
-				}
-			}
-		}
-	]
+    "item_ids": [
+        "TARANTULA_BOOTS",
+        "TARANTULA_LEGGINGS",
+        // ETC
+    ],
+    "layers": [
+        {
+            "identifier": "firmskyblock:tarantula"
+        }
+    ],
+    "overrides": [
+        {
+            "layers": [
+                {
+                    "identifier": "firmskyblock:tarantula_maxed"
+                }
+            ],
+            "predicate": {
+                "firmament:lore": {
+                    "regex": "Piece Bonus: +285.*"
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -449,7 +444,7 @@ not screens from other mods. You can also target specific texts via a [string ma
 
 Most texture replacement is done based on the SkyBlock id of the item. However, some items you might want to re-texture
 do not have an id. The next best alternative you had before was just to replace the vanilla item and add a bunch of
-predicates. This tries to fix this problem, at the cost of being more performance intensive than the other re-texturing
+predicates. This tries to fix this problem, at the cost of being more performance intensive than the other re-texturing 
 methods.
 
 The entrypoint to global overrides is `firmskyblock:overrides/item`. Put your overrides into that folder, with one file
@@ -457,20 +452,20 @@ per override.
 
 ```json5
 {
-	"screen": "testrp:chocolate_factory",
-	"model": "testrp:time_tower",
-	"predicate": {
-		"firmament:display_name": {
-			"regex": "Time Tower.*"
-		}
-	}
+    "screen": "testrp:chocolate_factory",
+    "model": "testrp:time_tower",
+    "predicate": {
+        "firmament:display_name": {
+            "regex": "Time Tower.*"
+        }
+    }
 }
 ```
 
 There are three parts to the override.
 
 The `model` is an *item id* that the item will be replaced with. This means the
-model will be loaded from `assets/<namespace>/models/item/<id>.json`. Make sure to use your own namespace to
+model will be loaded from `assets/<namespace>/models/item/<id>.json`.  Make sure to use your own namespace to
 avoid collisions with other texture packs that might use the same id for a gui.
 
 The `predicate` is just a normal [predicate](#predicates). This one does not support the vanilla predicates. You can
@@ -487,7 +482,7 @@ to avoid collisions with other texture packs that might use the same id for a sc
 
 ```json
 {
-	"title": "Chocolate Factory"
+    "title": "Chocolate Factory"
 }
 ```
 
@@ -496,40 +491,40 @@ Currently, the only supported filter is `title`, which accepts a [string matcher
 
 ## Block Model Replacements
 
-Firmament adds the ability to retexture block models. Supported renderers are vanilla, indigo (fabric), sodium (and
+Firmament adds the ability to retexture block models. Supported renderers are vanilla, indigo (fabric), sodium (and 
 anything sodium based). Firmament performs gentle world reloading so that even when the world data gets updated very
 late by the server there should be no flicker.
 
-If you want to replace block textures in the world you can do so using block overrides. Those are stored in
+If you want to replace block textures in the world you can do so using block overrides. Those are stored in 
 `assets/firmskyblock/overrides/blocks/<id>.json`. The id does not matter, all overrides are loaded. This file specifies
 which block models are replaced under which conditions:
 
 ```json
 {
-	"modes": [
-		"mining_3"
-	],
-	"area": [
-		{
-			"min": [
-				-31,
-				200,
-				-117
-			],
-			"max": [
-				12,
-				223,
-				-95
-			]
-		}
-	],
-	"replacements": {
-		"minecraft:blue_wool": "firmskyblock:mithril_deep",
-		"minecraft:light_blue_wool": {
-			"block": "firmskyblock:mithril_deep",
-			"sound": "minecraft:block.wet_sponge.hit"
-		}
-	}
+    "modes": [
+        "mining_3"
+    ],
+    "area": [
+        {
+            "min": [
+                -31,
+                200,
+                -117
+            ],
+            "max": [
+                12,
+                223,
+                -95
+            ]
+        }
+    ],
+    "replacements": {
+        "minecraft:blue_wool": "firmskyblock:mithril_deep",
+        "minecraft:light_blue_wool": {
+            "block": "firmskyblock:mithril_deep",
+            "sound": "minecraft:block.wet_sponge.hit"
+        }
+    }
 }
 ```
 
@@ -546,6 +541,6 @@ which block models are replaced under which conditions:
 
 > A quick note about optimization: Not specifying an area (by just omitting the `area` field) is quicker than having an
 > area encompass the entire map.
->
+> 
 > If you need to use multiple `area`s for unrelated sections of the world it might be a performance improvement to move
 > unrelated models to different files to reduce the amount of area checks being done for each block.
