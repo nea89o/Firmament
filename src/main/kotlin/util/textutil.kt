@@ -3,6 +3,7 @@ package moe.nea.firmament.util
 import net.minecraft.text.MutableText
 import net.minecraft.text.PlainTextContent
 import net.minecraft.text.Text
+import net.minecraft.text.TextColor
 import net.minecraft.text.TranslatableTextContent
 import net.minecraft.util.Formatting
 import moe.nea.firmament.Firmament
@@ -91,6 +92,30 @@ val Text.unformattedString: String
 	get() = string.removeColorCodes()
 
 val Text.directLiteralStringContent: String? get() = (this.content as? PlainTextContent)?.string()
+
+fun Text.getLegacyFormatString() =
+	run {
+		val sb = StringBuilder()
+		for (component in iterator()) {
+			sb.append(component.style.color?.toChatFormatting()?.toString() ?: "§r")
+			sb.append(component.directLiteralStringContent)
+			sb.append("§r")
+		}
+		sb.toString()
+	}
+
+private val textColorLUT = Formatting.entries
+	.mapNotNull { formatting -> formatting.colorValue?.let { it to formatting } }
+	.toMap()
+
+fun TextColor.toChatFormatting(): Formatting? {
+	return textColorLUT[this.rgb]
+}
+
+fun Text.iterator(): Sequence<Text> {
+	return sequenceOf(this) + siblings.asSequence()
+		.flatMap { it.iterator() } // TODO: in theory we want to properly inherit styles here
+}
 
 fun Text.allSiblings(): List<Text> = listOf(this) + siblings.flatMap { it.allSiblings() }
 

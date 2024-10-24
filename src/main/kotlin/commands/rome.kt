@@ -30,6 +30,8 @@ import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.accessors.messages
 import moe.nea.firmament.util.collections.InstanceList
 import moe.nea.firmament.util.collections.WeakCache
+import moe.nea.firmament.util.mc.SNbtFormatter
+import moe.nea.firmament.util.unformattedString
 
 
 fun firmamentCommand() = literal("firmament") {
@@ -44,7 +46,8 @@ fun firmamentCommand() = literal("firmament") {
 				}
 				thenArgument("property", string()) { property ->
 					suggestsList {
-						(ManagedConfig.allManagedConfigs.getAll().find { it.name == this[config] } ?: return@suggestsList listOf())
+						(ManagedConfig.allManagedConfigs.getAll().find { it.name == this[config] }
+							?: return@suggestsList listOf())
 							.allOptions.entries.asSequence().filter { it.value.handler is BooleanHandler }
 							.map { it.key }
 							.asIterable()
@@ -214,6 +217,16 @@ fun firmamentCommand() = literal("firmament") {
 				MC.inGameHud.chatHud.messages.forEach {
 					val nbt = TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, it.content).orThrow
 					println(nbt)
+				}
+			}
+			thenArgument("search", string()) { search ->
+				thenExecute {
+					MC.inGameHud.chatHud.messages
+						.filter { this[search] in it.content.unformattedString }
+						.forEach {
+							val nbt = TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, it.content).orThrow
+							println(SNbtFormatter.prettify(nbt))
+						}
 				}
 			}
 		}

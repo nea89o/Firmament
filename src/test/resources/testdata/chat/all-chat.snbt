@@ -1,0 +1,162 @@
+{
+	extra: [
+		{
+			bold: 0b,
+			color: "#555555",
+			hoverEvent: {
+				action: "show_text",
+				contents: {
+					clickEvent: {
+						action: "run_command",
+						value: "command"
+					},
+					strikethrough: 0b,
+					text: "§b[MVP§d+§b] lrg89§f
+
+§7SkyBlock Level: §8[§9302§8]
+§7Skill Average: §648.1
+
+§7Emblem: §6♫
+§8Harp Master
+
+§7§8Unlocked for All Harp Songs Perfected.
+
+§7Perfect Completions: §b37"
+				}
+			},
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: "[",
+			underlined: 0b
+		},
+		{
+			bold: 0b,
+			color: "#5555FF",
+			hoverEvent: {
+				action: "show_text",
+				contents: {
+					clickEvent: {
+						action: "run_command",
+						value: "command"
+					},
+					strikethrough: 0b,
+					text: "§b[MVP§d+§b] lrg89§f
+
+§7SkyBlock Level: §8[§9302§8]
+§7Skill Average: §648.1
+
+§7Emblem: §6♫
+§8Harp Master
+
+§7§8Unlocked for All Harp Songs Perfected.
+
+§7Perfect Completions: §b37"
+				}
+			},
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: "302",
+			underlined: 0b
+		},
+		{
+			bold: 0b,
+			color: "#555555",
+			hoverEvent: {
+				action: "show_text",
+				contents: {
+					clickEvent: {
+						action: "run_command",
+						value: "command"
+					},
+					strikethrough: 0b,
+					text: "§b[MVP§d+§b] lrg89§f
+
+§7SkyBlock Level: §8[§9302§8]
+§7Skill Average: §648.1
+
+§7Emblem: §6♫
+§8Harp Master
+
+§7§8Unlocked for All Harp Songs Perfected.
+
+§7Perfect Completions: §b37"
+				}
+			},
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: "] ",
+			underlined: 0b
+		},
+		{
+			bold: 0b,
+			color: "#FFAA00",
+			hoverEvent: {
+				action: "show_text",
+				contents: {
+					clickEvent: {
+						action: "run_command",
+						value: "command"
+					},
+					strikethrough: 0b,
+					text: "§b[MVP§d+§b] lrg89§f
+
+§7SkyBlock Level: §8[§9302§8]
+§7Skill Average: §648.1
+
+§7Emblem: §6♫
+§8Harp Master
+
+§7§8Unlocked for All Harp Songs Perfected.
+
+§7Perfect Completions: §b37"
+				}
+			},
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: "♫ ",
+			underlined: 0b
+		},
+		{
+			bold: 0b,
+			color: "#55FFFF",
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: "[MVP",
+			underlined: 0b
+		},
+		{
+			bold: 0b,
+			color: "#FF55FF",
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: "+",
+			underlined: 0b
+		},
+		{
+			bold: 0b,
+			color: "#55FFFF",
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: "] lrg89",
+			underlined: 0b
+		},
+		{
+			bold: 0b,
+			color: "#FFFFFF",
+			italic: 0b,
+			obfuscated: 0b,
+			strikethrough: 0b,
+			text: ": test",
+			underlined: 0b
+		}
+	],
+	strikethrough: 0b,
+	text: ""
+}
