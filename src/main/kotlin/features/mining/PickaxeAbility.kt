@@ -40,7 +40,7 @@ object PickaxeAbility : FirmamentFeature {
 
 
 	object TConfig : ManagedConfig(identifier, Category.MINING) {
-		val cooldownEnabled by toggle("ability-cooldown") { true }
+		val cooldownEnabled by toggle("ability-cooldown") { false }
 		val cooldownScale by integer("ability-scale", 16, 64) { 16 }
 		val drillFuelBar by toggle("fuel-bar") { true }
 	}
