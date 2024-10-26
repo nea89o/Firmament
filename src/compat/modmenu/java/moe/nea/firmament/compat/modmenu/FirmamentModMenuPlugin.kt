@@ -1,6 +1,4 @@
-
-
-package moe.nea.firmament.modmenu
+package moe.nea.firmament.compat.modmenu
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory
 import com.terraformersmc.modmenu.api.ModMenuApi
@@ -11,4 +9,3 @@ class FirmamentModMenuPlugin : ModMenuApi {
         return ConfigScreenFactory { AllConfigsGui.makeScreen(it) }
     }
 }
-

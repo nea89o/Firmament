@@ -184,6 +184,7 @@ val citResewnSourceSet = createIsolatedSourceSet("citresewn")
 val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement")
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
+val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 
 dependencies {
 	// Minecraft dependencies
@@ -196,9 +197,9 @@ dependencies {
 	// Fabric dependencies
 	modImplementation(libs.fabric.loader)
 	modImplementation(libs.fabric.kotlin)
-	modImplementation(libs.modmenu)
 	modImplementation(libs.moulconfig)
 	modImplementation(libs.manninghamMills)
+	(modmenuSourceSet.modImplementationConfigurationName)(libs.modmenu)
 	(explosiveEnhancementSourceSet.modImplementationConfigurationName)(libs.explosiveenhancement)
 	modImplementation(libs.hypixelmodapi)
 	include(libs.hypixelmodapi.fabric)
@@ -251,6 +252,7 @@ dependencies {
 	modLocalRuntime(libs.bundles.runtime.required)
 	modLocalRuntime(libs.bundles.runtime.optional)
 	modLocalRuntime(libs.jarvis.fabric)
+	modLocalRuntime(libs.modmenu)
 
 	transInclude.resolvedConfiguration.resolvedArtifacts.forEach {
 		include(it.moduleVersion.id.toString())

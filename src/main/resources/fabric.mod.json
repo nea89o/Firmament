@@ -34,7 +34,7 @@
             "moe.nea.firmament.rei.FirmamentReiPlugin"
         ],
         "modmenu": [
-            "moe.nea.firmament.modmenu.FirmamentModMenuPlugin"
+            "moe.nea.firmament.compat.modmenu.FirmamentModMenuPlugin"
         ],
         "jarvis": [
             "moe.nea.firmament.jarvis.JarvisIntegration"
