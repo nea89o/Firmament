@@ -1,5 +1,4 @@
-
-package moe.nea.firmament.mixins.custommodels;
+package moe.nea.firmament.mixins.compat.wildfiregender;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

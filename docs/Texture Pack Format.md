@@ -21,7 +21,7 @@ Find the texture id of a skull. This is the hash part of an url like
 `https://textures.minecraft.net/texture/bc8ea1f51f253ff5142ca11ae45193a4ad8c3ab5e9c6eec8ba7a4fcb7bac40` (so after the
 /texture/). You can find it in game for placed skulls using the keybinding in the Power User Config. Then place the
 replacement texture at `firmskyblock:textures/placedskulls/<thathash>.png`. Keep in mind that you will probably replace
-the texture with another skin texture, meaning that skin texture has it's own hash. Do not mix those up, you need to use
+the texture with another skin texture, meaning that skin texture has its own hash. Do not mix those up, you need to use
 the hash of the old skin.
 
 ## Armor Skull Models

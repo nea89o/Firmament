@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlin.coroutines.EmptyCoroutineContext
@@ -59,9 +60,11 @@ object Firmament {
 	}
 	val version: Version by lazy { metadata.version }
 
+	@OptIn(ExperimentalSerializationApi::class)
 	val json = Json {
 		prettyPrint = DEBUG
 		isLenient = true
+		allowTrailingComma = true
 		ignoreUnknownKeys = true
 		encodeDefaults = true
 	}

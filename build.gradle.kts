@@ -183,6 +183,7 @@ val sodiumSourceSet = createIsolatedSourceSet("sodium")
 val citResewnSourceSet = createIsolatedSourceSet("citresewn")
 val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement")
+val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
 
 dependencies {
 	// Minecraft dependencies
@@ -222,7 +223,7 @@ dependencies {
 	modCompileOnly(libs.jarvis.api)
 	include(libs.jarvis.fabric)
 
-	modCompileOnly(libs.femalegender)
+	(wildfireGenderSourceSet.modImplementationConfigurationName)(libs.femalegender)
 	(configuredSourceSet.modImplementationConfigurationName)(libs.configured)
 	(sodiumSourceSet.modImplementationConfigurationName)(libs.sodium)
 
@@ -239,7 +240,6 @@ dependencies {
 	nonModImplentation(libs.repoparser)
 	shadowMe(libs.repoparser)
 	fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
-	modCompileOnly(libs.citresewn)
 	transInclude(nonModImplentation(ktor("client-core"))!!)
 	transInclude(nonModImplentation(ktor("client-java"))!!)
 	transInclude(nonModImplentation(ktor("serialization-kotlinx-json"))!!)
