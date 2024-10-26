@@ -154,10 +154,6 @@ val SourceSet.modImplementationConfigurationName
 		loom.remapConfigurations.find {
 			it.targetConfigurationName.get() == this.implementationConfigurationName
 		}!!.sourceConfiguration
-val configuredSourceSet = createIsolatedSourceSet("configured")
-val sodiumSourceSet = createIsolatedSourceSet("sodium")
-val citResewnSourceSet = createIsolatedSourceSet("citresewn")
-val yaclSourceSet = createIsolatedSourceSet("yacl")
 
 val shadowMe by configurations.creating {
 	exclude(group = "org.jetbrains.kotlin")
@@ -182,6 +178,12 @@ val nonModImplentation by configurations.creating {
 }
 
 
+val configuredSourceSet = createIsolatedSourceSet("configured")
+val sodiumSourceSet = createIsolatedSourceSet("sodium")
+val citResewnSourceSet = createIsolatedSourceSet("citresewn")
+val yaclSourceSet = createIsolatedSourceSet("yacl")
+val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement")
+
 dependencies {
 	// Minecraft dependencies
 	"minecraft"(libs.minecraft)
@@ -196,7 +198,7 @@ dependencies {
 	modImplementation(libs.modmenu)
 	modImplementation(libs.moulconfig)
 	modImplementation(libs.manninghamMills)
-	modCompileOnly(libs.explosiveenhancement)
+	(explosiveEnhancementSourceSet.modImplementationConfigurationName)(libs.explosiveenhancement)
 	modImplementation(libs.hypixelmodapi)
 	include(libs.hypixelmodapi.fabric)
 	compileOnly(project(":javaplugin"))
