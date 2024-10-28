@@ -1,6 +1,6 @@
 
 
-package moe.nea.firmament.rei
+package moe.nea.firmament.compat.rei
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUForgeRecipe
@@ -12,13 +12,14 @@ import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.entry.EntryStack
-import moe.nea.firmament.rei.recipes.SBCraftingRecipe
-import moe.nea.firmament.rei.recipes.SBEssenceUpgradeRecipe
-import moe.nea.firmament.rei.recipes.SBForgeRecipe
-import moe.nea.firmament.rei.recipes.SBKatRecipe
-import moe.nea.firmament.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.compat.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
+import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
+import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
+import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.repo.EssenceRecipeProvider
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.repo.SBItemStack
 
 
 val SkyblockCraftingRecipeDynamicGenerator =

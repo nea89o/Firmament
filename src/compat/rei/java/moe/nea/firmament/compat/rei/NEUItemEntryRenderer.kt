@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-package moe.nea.firmament.rei
+package moe.nea.firmament.compat.rei
 
 import com.mojang.blaze3d.platform.GlStateManager.DstFactor
 import com.mojang.blaze3d.platform.GlStateManager.SrcFactor
@@ -30,7 +30,8 @@ import net.minecraft.client.texture.SpriteAtlasTexture
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.tooltip.TooltipType
-import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
+import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
+import moe.nea.firmament.repo.SBItemStack
 
 object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<SBItemStack, BakedModel> {
     override fun render(

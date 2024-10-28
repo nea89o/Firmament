@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.inventory
 
+import io.github.moulberry.repo.data.NEUCraftingRecipe
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Formatting
@@ -7,15 +8,14 @@ import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
-import moe.nea.firmament.rei.FirmamentReiPlugin.Companion.asItemEntry
-import moe.nea.firmament.rei.SBItemEntryDefinition
-import moe.nea.firmament.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.skyblockId
 
 object CraftingOverlay : FirmamentFeature {
 
 	private var screen: GenericContainerScreen? = null
-	private var recipe: SBCraftingRecipe? = null
+	private var recipe: NEUCraftingRecipe? = null
 	private var useNextScreen = false
 	private val craftingOverlayIndices = listOf(
 		10, 11, 12,
@@ -24,7 +24,7 @@ object CraftingOverlay : FirmamentFeature {
 	)
 	val CRAFTING_SCREEN_NAME = "Craft Item"
 
-	fun setOverlay(screen: GenericContainerScreen?, recipe: SBCraftingRecipe) {
+	fun setOverlay(screen: GenericContainerScreen?, recipe: NEUCraftingRecipe) {
 		this.screen = screen
 		if (screen == null) {
 			useNextScreen = true
@@ -52,10 +52,12 @@ object CraftingOverlay : FirmamentFeature {
 		if (slot.inventory != screen?.screenHandler?.inventory) return
 		val recipeIndex = craftingOverlayIndices.indexOf(slot.index)
 		if (recipeIndex < 0) return
-		val expectedItem = recipe.neuRecipe.inputs[recipeIndex]
+		val expectedItem = recipe.inputs[recipeIndex]
 		val actualStack = slot.stack ?: ItemStack.EMPTY!!
-		val actualEntry = SBItemEntryDefinition.getEntry(actualStack).value
-		if ((actualEntry.skyblockId.neuItem != expectedItem.itemId || actualEntry.getStackSize() < expectedItem.amount) && expectedItem.amount.toInt() != 0) {
+		val actualEntry = SBItemStack(actualStack)
+		if ((actualEntry.skyblockId != expectedItem.skyblockId || actualEntry.getStackSize() < expectedItem.amount)
+			&& expectedItem.amount.toInt() != 0
+		) {
 			event.context.fill(
 				event.slot.x,
 				event.slot.y,
@@ -65,7 +67,7 @@ object CraftingOverlay : FirmamentFeature {
 			)
 		}
 		if (!slot.hasStack()) {
-			val itemStack = SBItemEntryDefinition.getEntry(expectedItem).asItemEntry().value
+			val itemStack = SBItemStack(expectedItem)?.asImmutableItemStack() ?: return
 			event.context.drawItem(itemStack, event.slot.x, event.slot.y)
 			event.context.drawItemInSlot(
 				MC.font,

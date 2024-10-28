@@ -1,4 +1,4 @@
-package moe.nea.firmament.rei
+package moe.nea.firmament.compat.rei
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
@@ -23,12 +23,13 @@ import net.minecraft.util.Identifier
 import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
-import moe.nea.firmament.rei.recipes.SBCraftingRecipe
-import moe.nea.firmament.rei.recipes.SBEssenceUpgradeRecipe
-import moe.nea.firmament.rei.recipes.SBForgeRecipe
-import moe.nea.firmament.rei.recipes.SBKatRecipe
-import moe.nea.firmament.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.compat.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
+import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
+import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
+import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
@@ -63,7 +64,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 					MC.sendCommand("craft")
 					shouldReturn = false
 				}
-				CraftingOverlay.setOverlay(screen as? GenericContainerScreen, display)
+				CraftingOverlay.setOverlay(screen as? GenericContainerScreen, display.neuRecipe)
 			}
 			if (context.isActuallyCrafting && useSuperCraft) {
 				shouldReturn = false

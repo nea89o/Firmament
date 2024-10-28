@@ -1,6 +1,6 @@
 
 
-package moe.nea.firmament.rei.recipes
+package moe.nea.firmament.compat.rei.recipes
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUIngredient
@@ -15,7 +15,7 @@ import me.shedaniel.rei.api.common.util.EntryStacks
 import net.minecraft.block.Blocks
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.rei.SBItemEntryDefinition
+import moe.nea.firmament.compat.rei.SBItemEntryDefinition
 
 class SBCraftingRecipe(override val neuRecipe: NEUCraftingRecipe) : SBRecipe() {
     override fun getCategoryIdentifier(): CategoryIdentifier<*> = Category.catIdentifier

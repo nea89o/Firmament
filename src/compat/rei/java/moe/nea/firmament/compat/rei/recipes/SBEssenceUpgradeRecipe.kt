@@ -1,5 +1,5 @@
 
-package moe.nea.firmament.rei.recipes
+package moe.nea.firmament.compat.rei.recipes
 
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
@@ -10,9 +10,9 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategory
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.rei.SBItemEntryDefinition
-import moe.nea.firmament.rei.SBItemStack
+import moe.nea.firmament.compat.rei.SBItemEntryDefinition
 import moe.nea.firmament.repo.EssenceRecipeProvider
+import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
 
 class SBEssenceUpgradeRecipe(override val neuRecipe: EssenceRecipeProvider.EssenceUpgradeRecipe) : SBRecipe() {

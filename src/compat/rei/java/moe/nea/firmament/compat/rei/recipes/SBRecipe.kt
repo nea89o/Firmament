@@ -1,12 +1,10 @@
-
-
-package moe.nea.firmament.rei.recipes
+package moe.nea.firmament.compat.rei.recipes
 
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEURecipe
 import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.entry.EntryIngredient
-import moe.nea.firmament.rei.SBItemEntryDefinition
+import moe.nea.firmament.compat.rei.SBItemEntryDefinition
 import moe.nea.firmament.util.SkyblockId
 
 abstract class SBRecipe : Display {

@@ -1,5 +1,5 @@
 
-package moe.nea.firmament.rei.recipes
+package moe.nea.firmament.compat.rei.recipes
 
 import io.github.moulberry.repo.data.NEUMobDropRecipe
 import me.shedaniel.math.Point
@@ -15,8 +15,8 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.entity.EntityRenderer
-import moe.nea.firmament.gui.entity.EntityWidget
-import moe.nea.firmament.rei.SBItemEntryDefinition
+import moe.nea.firmament.compat.rei.EntityWidget
+import moe.nea.firmament.compat.rei.SBItemEntryDefinition
 
 class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
     override fun getCategoryIdentifier(): CategoryIdentifier<*> = Category.categoryIdentifier
@@ -73,8 +73,8 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
                         tt.removeAt(1)
                     add(
                         Widgets.withTooltip(
-                            EntityWidget(entity, Point(bounds.minX + 5, bounds.minY + 15)),
-                            tt
+	                        EntityWidget(entity, Point(bounds.minX + 5, bounds.minY + 15)),
+	                        tt
                         )
                     )
                 }

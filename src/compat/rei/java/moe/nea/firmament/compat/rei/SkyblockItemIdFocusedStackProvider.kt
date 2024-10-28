@@ -1,6 +1,6 @@
 
 
-package moe.nea.firmament.rei
+package moe.nea.firmament.compat.rei
 
 import dev.architectury.event.CompoundEventResult
 import me.shedaniel.math.Point

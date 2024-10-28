@@ -185,6 +185,7 @@ val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement")
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
+val reiSourceSet = createIsolatedSourceSet("rei")
 
 dependencies {
 	// Minecraft dependencies
@@ -199,6 +200,8 @@ dependencies {
 	modImplementation(libs.fabric.kotlin)
 	modImplementation(libs.moulconfig)
 	modImplementation(libs.manninghamMills)
+	modImplementation(libs.basicMath)
+	include(libs.basicMath)
 	(modmenuSourceSet.modImplementationConfigurationName)(libs.modmenu)
 	(explosiveEnhancementSourceSet.modImplementationConfigurationName)(libs.explosiveenhancement)
 	modImplementation(libs.hypixelmodapi)
@@ -234,13 +237,14 @@ dependencies {
 	(yaclSourceSet.modImplementationConfigurationName)(libs.yacl)
 
 	// Actual dependencies
-	modCompileOnly(libs.rei.api) {
+	(reiSourceSet.modImplementationConfigurationName)(libs.rei.api) {
 		exclude(module = "architectury")
 		exclude(module = "architectury-fabric")
 	}
 	nonModImplentation(libs.repoparser)
 	shadowMe(libs.repoparser)
 	fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
+	// TODO: get rid of ktor. lowkey ballooning file size and like not neccessary at all for what i am doing.0
 	transInclude(nonModImplentation(ktor("client-core"))!!)
 	transInclude(nonModImplentation(ktor("client-java"))!!)
 	transInclude(nonModImplentation(ktor("serialization-kotlinx-json"))!!)

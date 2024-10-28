@@ -1,5 +1,5 @@
 
-package moe.nea.firmament.rei.recipes
+package moe.nea.firmament.compat.rei.recipes
 
 import io.github.moulberry.repo.data.NEUKatUpgradeRecipe
 import io.github.notenoughupdates.moulconfig.common.IMinecraft
@@ -26,9 +26,9 @@ import net.minecraft.client.gui.Element
 import net.minecraft.item.Items
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.rei.PetData
-import moe.nea.firmament.rei.SBItemEntryDefinition
-import moe.nea.firmament.rei.SBItemStack
+import moe.nea.firmament.compat.rei.SBItemEntryDefinition
+import moe.nea.firmament.repo.PetData
+import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId

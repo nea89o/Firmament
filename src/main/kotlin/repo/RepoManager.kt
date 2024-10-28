@@ -14,7 +14,6 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.events.ReloadRegistrationEvent
 import moe.nea.firmament.gui.config.ManagedConfig
-import moe.nea.firmament.rei.PetData
 import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
 
@@ -139,9 +138,9 @@ object RepoManager {
 			return null
 		}
 		val intIndex = rarityIndex.toInt()
-		if (intIndex !in Rarity.values().indices) return null
+		if (intIndex !in Rarity.entries.indices) return null
 		if (petId !in neuRepo.constants.petNumbers) return null
-		return PetData(Rarity.values()[intIndex], petId, 0.0, true)
+		return PetData(Rarity.entries[intIndex], petId, 0.0, true)
 	}
 
 }

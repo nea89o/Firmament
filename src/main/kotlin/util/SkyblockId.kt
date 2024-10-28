@@ -2,6 +2,7 @@
 
 package moe.nea.firmament.util
 
+import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
 import java.util.Optional
@@ -61,7 +62,8 @@ value class SkyblockId(val neuItem: String) {
 	}
 
 	companion object {
-		val COINS: SkyblockId = SkyblockId("SKYBLOCK_COIN")
+		val COINS: SkyblockId = SkyblockId(NEUIngredient.NEU_SENTINEL_COINS)
+		val SENTINEL_EMPTY: SkyblockId = SkyblockId(NEUIngredient.NEU_SENTINEL_EMPTY)
 		private val bazaarEnchantmentRegex = "ENCHANTMENT_(\\D*)_(\\d+)".toRegex()
 		val NULL: SkyblockId = SkyblockId("null")
 		val PET_NULL: SkyblockId = SkyblockId("null_pet")
@@ -70,6 +72,7 @@ value class SkyblockId(val neuItem: String) {
 }
 
 val NEUItem.skyblockId get() = SkyblockId(skyblockItemId)
+val NEUIngredient.skyblockId get() = SkyblockId(itemId)
 
 fun NEUItem.guessRecipeId(): String? {
 	if (!skyblockItemId.contains(";")) return skyblockItemId

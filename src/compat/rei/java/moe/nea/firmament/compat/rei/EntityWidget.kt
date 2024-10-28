@@ -1,10 +1,10 @@
-
-package moe.nea.firmament.gui.entity
+package moe.nea.firmament.compat.rei
 
 import me.shedaniel.math.Dimension
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds
+import moe.nea.firmament.gui.entity.EntityRenderer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.Element
 import net.minecraft.entity.LivingEntity
@@ -19,7 +19,7 @@ class EntityWidget(val entity: LivingEntity, val point: Point) : WidgetWithBound
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         try {
             if (!hasErrored)
-                EntityRenderer.renderEntity(entity, context, point.x, point.y, mouseX.toFloat(), mouseY.toFloat())
+	            EntityRenderer.renderEntity(entity, context, point.x, point.y, mouseX.toFloat(), mouseY.toFloat())
         } catch (ex: Exception) {
             EntityRenderer.logger.error("Failed to render constructed entity: $entity", ex)
             hasErrored = true

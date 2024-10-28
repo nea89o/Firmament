@@ -1,6 +1,6 @@
 
 
-package moe.nea.firmament.rei.recipes
+package moe.nea.firmament.compat.rei.recipes
 
 import io.github.moulberry.repo.data.NEUForgeRecipe
 import me.shedaniel.math.Point
@@ -17,8 +17,8 @@ import kotlin.time.Duration.Companion.seconds
 import net.minecraft.block.Blocks
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.rei.SBItemEntryDefinition
-import moe.nea.firmament.rei.plus
+import moe.nea.firmament.compat.rei.SBItemEntryDefinition
+import moe.nea.firmament.compat.rei.plus
 
 class SBForgeRecipe(override val neuRecipe: NEUForgeRecipe) : SBRecipe() {
     override fun getCategoryIdentifier(): CategoryIdentifier<*> = Category.categoryIdentifier

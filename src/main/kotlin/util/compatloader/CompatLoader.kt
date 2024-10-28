@@ -2,10 +2,13 @@ package moe.nea.firmament.util.compatloader
 
 import java.util.ServiceLoader
 import net.fabricmc.loader.api.FabricLoader
+import kotlin.reflect.KClass
 import kotlin.streams.asSequence
 import moe.nea.firmament.Firmament
 
 abstract class CompatLoader<T : Any>(val kClass: Class<T>) {
+	constructor(kClass: KClass<T>) : this(kClass.java)
+
 	val loader: ServiceLoader<T> = ServiceLoader.load(kClass)
 	val allValidInstances by lazy {
 		loader.reload()

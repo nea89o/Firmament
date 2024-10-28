@@ -15,8 +15,8 @@ import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.gui.hud.MoulConfigHud
-import moe.nea.firmament.rei.SBItemEntryDefinition
 import moe.nea.firmament.repo.ItemNameLookup
+import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SHORT_NUMBER_FORMAT
 import moe.nea.firmament.util.SkyblockId
@@ -197,9 +197,9 @@ object AnniversaryFeatures : FirmamentFeature {
             }
 
             val itemStack = if (backedBy is Reward.Items) {
-                SBItemEntryDefinition.getEntry(backedBy.item, backedBy.amount)
+	            SBItemStack(backedBy.item, backedBy.amount)
             } else {
-                SBItemEntryDefinition.getEntry(SkyblockId.NULL)
+	            SBItemStack(SkyblockId.NULL)
             }
 
             @Bind
@@ -207,7 +207,7 @@ object AnniversaryFeatures : FirmamentFeature {
                 return when (backedBy) {
                     is Reward.Coins -> "Coins"
                     is Reward.EXP -> backedBy.skill
-                    is Reward.Items -> itemStack.value.asItemStack().name.string
+                    is Reward.Items -> itemStack.asImmutableItemStack().name.string
                     is Reward.Unknown -> backedBy.text
                 }
             }
