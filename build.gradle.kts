@@ -9,6 +9,7 @@
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.google.gson.JsonArray
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
+import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
@@ -24,6 +25,7 @@ plugins {
 	alias(libs.plugins.loom)
 	id("com.github.johnrengelman.shadow") version "8.1.1"
 	id("moe.nea.licenseextractificator")
+	id("moe.nea.mc-auto-translations") version "0.0.1"
 }
 
 version = getGitTagInfo()
@@ -110,6 +112,11 @@ fun innerJarsOf(name: String, dependency: Dependency): FileCollection {
 	return project.files(task)
 }
 
+val collectTranslations by tasks.registering(CollectTranslations::class) {
+	this.baseTranslations.from(file("translations/en_us.json"))
+	this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
+}
+
 val compatSourceSets: MutableSet<SourceSet> = mutableSetOf()
 fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): SourceSet {
 	val ss = sourceSets.create(name) {
@@ -145,6 +152,9 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): Source
 	}
 	tasks.shadowJar {
 		from(ss.output)
+	}
+	collectTranslations {
+		this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
 	}
 	return ss
 }
@@ -300,6 +310,11 @@ loom {
 	}
 }
 
+mcAutoTranslations {
+	translationFunction.set("moe.nea.firmament.util.tr")
+	translationFunctionResolved.set("moe.nea.firmament.util.trResolved")
+}
+
 tasks.test {
 	useJUnitPlatform()
 }
@@ -356,6 +371,9 @@ tasks.processResources {
 	}
 	exclude("**/*.license")
 	from(tasks.scanLicenses)
+	from(collectTranslations) {
+		into("assets/firmament/lang")
+	}
 }
 
 tasks.scanLicenses {

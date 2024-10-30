@@ -31,6 +31,7 @@ import moe.nea.firmament.util.accessors.messages
 import moe.nea.firmament.util.collections.InstanceList
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.mc.SNbtFormatter
+import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 
 
@@ -262,15 +263,16 @@ fun firmamentCommand() = literal("firmament") {
 		}
 		thenLiteral("events") {
 			thenExecute {
-				source.sendFeedback(Text.translatable("firmament.event.start"))
+				source.sendFeedback(tr("firmament.event.start", "Event Bus Readout:"))
 				FirmamentEventBus.allEventBuses.forEach { eventBus ->
-					source.sendFeedback(Text.translatable(
+					val prefixName = eventBus.eventType.typeName.removePrefix("moe.nea.firmament")
+					source.sendFeedback(tr(
 						"firmament.event.bustype",
-						eventBus.eventType.typeName.removePrefix("moe.nea.firmament")))
+						"- $prefixName:"))
 					eventBus.handlers.forEach { handler ->
-						source.sendFeedback(Text.translatable(
+						source.sendFeedback(tr(
 							"firmament.event.handler",
-							handler.label))
+							"   * ${handler.label}"))
 					}
 				}
 			}

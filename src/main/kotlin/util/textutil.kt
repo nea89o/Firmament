@@ -164,3 +164,7 @@ fun Text.transformEachRecursively(function: (Text) -> Text): Text {
 		}
 	}
 }
+
+fun tr(key: String, default: String): Text = error("Compiler plugin did not run.")
+fun trResolved(key: String, vararg args: Any) = Text.translatable(key, *args)
+

@@ -25,6 +25,9 @@ pluginManagement {
             name = "jitpack"
             url = uri("https://jitpack.io")
         }
+	    maven {
+		    url = uri("https://repo.nea.moe/releases")
+	    }
         mavenCentral()
         gradlePluginPortal()
     }
