@@ -128,7 +128,7 @@ runtime_required = [
 ]
 runtime_optional = [
 	"devauth",
-	"freecammod",
+	#	"freecammod",
 	"sodium",
 	#    "qolify",
 	"ncr",

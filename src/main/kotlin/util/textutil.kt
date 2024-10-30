@@ -1,5 +1,6 @@
 package moe.nea.firmament.util
 
+import net.minecraft.text.ClickEvent
 import net.minecraft.text.MutableText
 import net.minecraft.text.PlainTextContent
 import net.minecraft.text.Text
@@ -119,7 +120,30 @@ fun Text.iterator(): Sequence<Text> {
 
 fun Text.allSiblings(): List<Text> = listOf(this) + siblings.flatMap { it.allSiblings() }
 
-fun MutableText.withColor(formatting: Formatting) = this.styled { it.withColor(formatting).withItalic(false) }
+fun MutableText.withColor(formatting: Formatting): MutableText = this.styled {
+	it.withColor(formatting)
+		.withItalic(false)
+		.withBold(false)
+}
+
+fun MutableText.blue() = withColor(Formatting.BLUE)
+fun MutableText.aqua() = withColor(Formatting.AQUA)
+fun MutableText.lime() = withColor(Formatting.GREEN)
+fun MutableText.darkGreen() = withColor(Formatting.DARK_GREEN)
+fun MutableText.yellow() = withColor(Formatting.YELLOW)
+fun MutableText.grey() = withColor(Formatting.GRAY)
+fun MutableText.red() = withColor(Formatting.RED)
+fun MutableText.white() = withColor(Formatting.WHITE)
+fun MutableText.bold(): MutableText = styled { it.withBold(true) }
+
+
+fun MutableText.clickCommand(command: String): MutableText {
+	require(command.startsWith("/"))
+	return this.styled {
+		it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND,
+		                             "/firm disablereiwarning"))
+	}
+}
 
 fun Text.transformEachRecursively(function: (Text) -> Text): Text {
 	val c = this.content

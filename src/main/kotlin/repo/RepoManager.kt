@@ -40,7 +40,7 @@ object RepoManager {
 			RepoManager.launchAsyncUpdate(true)
 		}
 		val alwaysSuperCraft by toggle("enable-super-craft") { true }
-
+		var warnForMissingItemListMod by toggle("warn-for-missing-item-list-mod") { true }
 	}
 
 	val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash

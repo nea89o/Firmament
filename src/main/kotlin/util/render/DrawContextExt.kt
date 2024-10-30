@@ -12,6 +12,7 @@ fun DrawContext.isUntranslatedGuiDrawContext(): Boolean {
 
 fun DrawContext.drawLine(fromX: Int, fromY: Int, toX: Int, toY: Int, color: Color) {
 	// TODO: push scissors
+	// TODO: use matrix translations and a different render layer
 	if (toY < fromY) {
 		drawLine(toX, toY, fromX, fromY, color)
 		return
