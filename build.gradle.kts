@@ -7,7 +7,6 @@
  */
 
 import com.google.devtools.ksp.gradle.KspTaskJvm
-import com.google.gson.JsonArray
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
@@ -101,7 +100,7 @@ kotlin {
 	}
 }
 fun String.capitalizeN() = replaceFirstChar { it.uppercaseChar() }
-fun innerJarsOf(name: String, dependency: Dependency): FileCollection {
+fun innerJarsOf(name: String, dependency: Dependency): Provider<FileTree> {
 	val task = tasks.create("unpackInnerJarsFor${name.capitalizeN()}", InnerJarsUnpacker::class) {
 		this.inputJars.setFrom(files(configurations.detachedConfiguration(dependency)))
 		this.outputDir.set(layout.buildDirectory.dir("unpackedJars/$name").also {
@@ -109,7 +108,11 @@ fun innerJarsOf(name: String, dependency: Dependency): FileCollection {
 		})
 	}
 	println("Constructed innerJars task: ${project.files(task).toList()}")
-	return project.files(task)
+	return project.provider {
+		val files = project.files(task)
+		files.files // Force resolution
+		files.asFileTree
+	}
 }
 
 val collectTranslations by tasks.registering(CollectTranslations::class) {
@@ -242,7 +245,8 @@ dependencies {
 	(sodiumSourceSet.modImplementationConfigurationName)(libs.sodium)
 
 	(citResewnSourceSet.modImplementationConfigurationName)(
-		innerJarsOf("citresewn", dependencies.create(libs.citresewn.get())).asFileTree)
+		innerJarsOf("citresewn", dependencies.create(libs.citresewn.get()))
+	)
 	(citResewnSourceSet.modImplementationConfigurationName)(libs.citresewn)
 	(yaclSourceSet.modImplementationConfigurationName)(libs.yacl)
 
