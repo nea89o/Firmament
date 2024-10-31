@@ -61,8 +61,7 @@
         },
         "mc-publish": {
             "dependencies": [
-                "roughlyenoughitems{modrinth:rei}",
-                "architectury{modrinth:architectury-api}"
+                "roughlyenoughitems(recommended){modrinth:rei}"
             ]
         }
     }
