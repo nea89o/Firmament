@@ -100,18 +100,22 @@ kotlin {
 	}
 }
 fun String.capitalizeN() = replaceFirstChar { it.uppercaseChar() }
+// Usually a normal sync takes care of this, but in CI everything needs to run in one shot, so we need to improvise.
+val unpackAllJars by tasks.registering
 fun innerJarsOf(name: String, dependency: Dependency): Provider<FileTree> {
 	val task = tasks.create("unpackInnerJarsFor${name.capitalizeN()}", InnerJarsUnpacker::class) {
+		doFirst {
+			println("Unpacking JARs for $name")
+		}
 		this.inputJars.setFrom(files(configurations.detachedConfiguration(dependency)))
 		this.outputDir.set(layout.buildDirectory.dir("unpackedJars/$name").also {
 			it.get().asFile.mkdirs()
 		})
 	}
-	println("Constructed innerJars task: ${project.files(task).toList()}")
+	unpackAllJars { dependsOn(task) }
+	println("Constructed innerJars task: ${project.files(task).asFileTree.toList().map {it to it.exists()}}")
 	return project.provider {
-		val files = project.files(task)
-		files.files // Force resolution
-		files.asFileTree
+		project.files(task).asFileTree
 	}
 }
 
