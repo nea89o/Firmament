@@ -12,8 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ItemModelGenerator.class)
 public class ItemModelGeneratorJsonUnbakedModelCopy {
     @ModifyReturnValue(method = "create", at = @At("RETURN"))
-    private JsonUnbakedModel copyHeadModel(JsonUnbakedModel original, @Local(argsOnly = true) JsonUnbakedModel oldModel) {
-        ((JsonUnbakedModelFirmExtra) original).setHeadModel_firmament(((JsonUnbakedModelFirmExtra) oldModel).getHeadModel_firmament());
+    private JsonUnbakedModel copyExtraModelData(JsonUnbakedModel original, @Local(argsOnly = true) JsonUnbakedModel oldModel) {
+        var extra = ((JsonUnbakedModelFirmExtra) original);
+		var oldExtra = ((JsonUnbakedModelFirmExtra) oldModel);
+		extra.setHeadModel_firmament(oldExtra.getHeadModel_firmament());
+		extra.setTintOverrides_firmament(oldExtra.getTintOverrides_firmament());
         return original;
     }
 }

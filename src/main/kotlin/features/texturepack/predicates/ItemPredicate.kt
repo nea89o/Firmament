@@ -1,8 +1,10 @@
 
-package moe.nea.firmament.features.texturepack
+package moe.nea.firmament.features.texturepack.predicates
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack

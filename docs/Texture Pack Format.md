@@ -40,6 +40,41 @@ head model.
 }
 ```
 
+## Tint Overrides
+
+Some items get naturally tinted by Minecraft's rendering. Examples include leather armour, spawn eggs, potions and more.
+If you want to avoid your textures getting tinted, one thing you can do is use a higher texture layer:
+
+```json
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+		// Notice the layer1 instead of layer0 here
+        "layer1": "firmskyblock:item/regular_texture"
+    }
+}
+```
+
+Some items, however, tint *all* layers. For those items you can instead specify a tint override:
+
+```json
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "firmskyblock:item/regular_texture"
+    },
+    "firmament:tint_overrides": {
+        "0": -1
+    }
+}
+```
+
+This forces layer 0 to be tinted with the color `-1` (pure white, aka no tint). This property is inherited, so if you
+attach it to one of your root models that you `"parent"` other models to, all those models will have their tints
+overridden. When the property is inherited, only layers specified in the child actually overwrite the parent layers.
+You can use `"0": null` to remove the tint override in a child, which will cause a fallback to the vanilla tinting
+behaviour.
+
 ## Predicates
 
 Firmament adds the ability for more complex [item model predicates](https://minecraft.wiki/w/Tutorials/Models#Item_predicates).

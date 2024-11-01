@@ -1,9 +1,12 @@
 
-package moe.nea.firmament.features.texturepack
+package moe.nea.firmament.features.texturepack.predicates
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import moe.nea.firmament.features.texturepack.CustomModelOverrideParser
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import net.minecraft.item.ItemStack
 
 class OrPredicate(val children: Array<FirmamentModelPredicate>) : FirmamentModelPredicate {
@@ -16,7 +19,7 @@ class OrPredicate(val children: Array<FirmamentModelPredicate>) : FirmamentModel
             val children =
                 (jsonElement as JsonArray)
                     .flatMap {
-                        CustomModelOverrideParser.parsePredicates(it as JsonObject)
+	                    CustomModelOverrideParser.parsePredicates(it as JsonObject)
                     }
                     .toTypedArray()
             return OrPredicate(children)

@@ -1,12 +1,12 @@
 
-package moe.nea.firmament.features.texturepack
+package moe.nea.firmament.features.texturepack.predicates
 
 import com.google.gson.JsonElement
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
+import moe.nea.firmament.features.texturepack.StringMatcher
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtElement
-import net.minecraft.nbt.NbtString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
-import moe.nea.firmament.util.mc.loreAccordingToNbt
 
 data class DisplayNamePredicate(val stringMatcher: StringMatcher) : FirmamentModelPredicate {
     override fun test(stack: ItemStack): Boolean {

@@ -1,10 +1,13 @@
 
-package moe.nea.firmament.features.texturepack
+package moe.nea.firmament.features.texturepack.predicates
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
+import moe.nea.firmament.features.texturepack.StringMatcher
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtByte
 import net.minecraft.nbt.NbtCompound
@@ -210,8 +213,8 @@ fun interface NbtMatcher {
 }
 
 data class ExtraAttributesPredicate(
-    val path: NbtPrism,
-    val matcher: NbtMatcher,
+	val path: NbtPrism,
+	val matcher: NbtMatcher,
 ) : FirmamentModelPredicate {
 
     object Parser : FirmamentModelPredicateParser {

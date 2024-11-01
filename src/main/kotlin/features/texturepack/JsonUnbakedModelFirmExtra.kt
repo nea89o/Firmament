@@ -7,4 +7,8 @@ interface JsonUnbakedModelFirmExtra {
 
     fun setHeadModel_firmament(identifier: Identifier?)
     fun getHeadModel_firmament(): Identifier?
+
+	fun setTintOverrides_firmament(tintOverrides: TintOverrides?)
+	fun getTintOverrides_firmament(): TintOverrides
+
 }

@@ -1,4 +1,4 @@
-package moe.nea.firmament.features.texturepack
+package moe.nea.firmament.features.texturepack.predicates
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive

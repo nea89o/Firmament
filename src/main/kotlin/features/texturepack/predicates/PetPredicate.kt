@@ -1,18 +1,22 @@
 
-package moe.nea.firmament.features.texturepack
+package moe.nea.firmament.features.texturepack.predicates
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
+import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
+import moe.nea.firmament.features.texturepack.RarityMatcher
+import moe.nea.firmament.features.texturepack.StringMatcher
 import net.minecraft.item.ItemStack
 import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.util.petData
 
-class PetPredicate(
-    val petId: StringMatcher?,
-    val tier: RarityMatcher?,
-    val exp: NumberMatcher?,
-    val candyUsed: NumberMatcher?,
-    val level: NumberMatcher?,
+data class PetPredicate(
+	val petId: StringMatcher?,
+	val tier: RarityMatcher?,
+	val exp: NumberMatcher?,
+	val candyUsed: NumberMatcher?,
+	val level: NumberMatcher?,
 ) : FirmamentModelPredicate {
 
     override fun test(stack: ItemStack): Boolean {
@@ -58,9 +62,5 @@ class PetPredicate(
                 levelMatcher,
             )
         }
-    }
-
-    override fun toString(): String {
-        return super.toString()
     }
 }

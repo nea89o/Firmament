@@ -9,13 +9,13 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
-import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.events.ReloadRegistrationEvent
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.tr
 
 object RepoManager {
 	object Config : ManagedConfig("repo", Category.META) {
@@ -108,12 +108,13 @@ object RepoManager {
 		try {
 			ItemCache.ReloadProgressHud.reportProgress("Reloading from Disk",
 			                                           0,
-			                                           -1) // TODO: replace with a proper boundy bar
+			                                           -1) // TODO: replace with a proper bouncy bar
 			ItemCache.ReloadProgressHud.isEnabled = true
 			neuRepo.reload()
 		} catch (exc: NEURepositoryException) {
 			MinecraftClient.getInstance().player?.sendMessage(
-				Text.literal("Failed to reload repository. This will result in some mod features not working.")
+				tr("firmament.repo.reloadfail",
+				   "Failed to reload repository. This will result in some mod features not working.")
 			)
 			ItemCache.ReloadProgressHud.isEnabled = false
 			exc.printStackTrace()

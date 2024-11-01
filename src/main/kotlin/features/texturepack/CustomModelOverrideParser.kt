@@ -6,6 +6,14 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import moe.nea.firmament.features.texturepack.predicates.AndPredicate
+import moe.nea.firmament.features.texturepack.predicates.DisplayNamePredicate
+import moe.nea.firmament.features.texturepack.predicates.ExtraAttributesPredicate
+import moe.nea.firmament.features.texturepack.predicates.ItemPredicate
+import moe.nea.firmament.features.texturepack.predicates.LorePredicate
+import moe.nea.firmament.features.texturepack.predicates.NotPredicate
+import moe.nea.firmament.features.texturepack.predicates.OrPredicate
+import moe.nea.firmament.features.texturepack.predicates.PetPredicate
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 
