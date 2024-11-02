@@ -172,7 +172,7 @@ class RenderInWorldContext private constructor(
         points.zipWithNext().forEach { (a, b) ->
             val normal = Vector3f(b.x.toFloat(), b.y.toFloat(), b.z.toFloat())
                 .sub(a.x.toFloat(), a.y.toFloat(), a.z.toFloat())
-//                .normalize()
+                .normalize()
             val lastNormal0 = lastNormal ?: normal
             lastNormal = normal
             buffer.vertex(matrix.positionMatrix, a.x.toFloat(), a.y.toFloat(), a.z.toFloat())

@@ -37,7 +37,7 @@ void main() {
         gl_Position = vec4(-2.0, -2.0, -2.0, 1.0);
         return; // I don't care for these people
     }
-    if (linePosStartBehind || linePosEndBehind) {
+    if ((linePosStartBehind || linePosEndBehind) && false) {
         ndc1.z = 0.0;
         ndc2.z = 0.0;
         linePosStart.w = 1.0;
