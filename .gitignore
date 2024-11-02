@@ -28,5 +28,6 @@ gradle-app.setting
 
 # loom runClient
 /run/
+/logs/
 *.xsd
 *.png~
