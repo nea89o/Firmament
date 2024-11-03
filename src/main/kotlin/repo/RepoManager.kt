@@ -9,10 +9,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
+import net.minecraft.recipe.display.CuttingRecipeDisplay
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.events.ReloadRegistrationEvent
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.tr
@@ -77,7 +79,7 @@ object RepoManager {
 
 	private fun trySendClientboundUpdateRecipesPacket(): Boolean {
 		return MinecraftClient.getInstance().world != null && MinecraftClient.getInstance().networkHandler?.onSynchronizeRecipes(
-			SynchronizeRecipesS2CPacket(mutableListOf())
+			SynchronizeRecipesS2CPacket(mutableMapOf(), CuttingRecipeDisplay.Grouping.empty())
 		) != null
 	}
 
@@ -92,7 +94,7 @@ object RepoManager {
 
 	fun launchAsyncUpdate(force: Boolean = false) {
 		Firmament.coroutineScope.launch {
-			ItemCache.ReloadProgressHud.reportProgress("Downloading", 0, -1) // TODO: replace with a proper boundy bar
+			ItemCache.ReloadProgressHud.reportProgress("Downloading", 0, -1) // TODO: replace with a proper bouncy bar
 			ItemCache.ReloadProgressHud.isEnabled = true
 			try {
 				RepoDownloadManager.downloadUpdate(force)
@@ -112,7 +114,7 @@ object RepoManager {
 			ItemCache.ReloadProgressHud.isEnabled = true
 			neuRepo.reload()
 		} catch (exc: NEURepositoryException) {
-			MinecraftClient.getInstance().player?.sendMessage(
+			MC.sendChat(
 				tr("firmament.repo.reloadfail",
 				   "Failed to reload repository. This will result in some mod features not working.")
 			)

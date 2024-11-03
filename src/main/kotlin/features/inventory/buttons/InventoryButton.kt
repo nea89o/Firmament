@@ -18,6 +18,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.collections.memoize
+import moe.nea.firmament.util.render.drawGuiTexture
 
 @Serializable
 data class InventoryButton(
@@ -54,13 +55,13 @@ data class InventoryButton(
     }
 
     fun render(context: DrawContext) {
-        context.drawSprite(
+        context.drawGuiTexture(
             0,
             0,
             0,
             dimensions.width,
             dimensions.height,
-            MC.guiAtlasManager.getSprite(Identifier.of("firmament:inventory_button_background"))
+            Identifier.of("firmament:inventory_button_background")
         )
         context.drawItem(getItem(), 1, 1)
     }

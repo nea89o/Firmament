@@ -1,9 +1,14 @@
 package moe.nea.firmament.repo
 
+import com.mojang.serialization.Codec
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.github.moulberry.repo.constants.PetNumbers
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import net.minecraft.item.ItemStack
+import net.minecraft.network.RegistryByteBuf
+import net.minecraft.network.codec.PacketCodec
+import net.minecraft.network.codec.PacketCodecs
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.ItemCache.asItemStack
@@ -40,6 +45,21 @@ data class SBItemStack constructor(
 	}
 
 	companion object {
+		val PACKET_CODEC: PacketCodec<in RegistryByteBuf, SBItemStack> = PacketCodec.tuple(
+			SkyblockId.PACKET_CODEC, { it.skyblockId },
+			PacketCodecs.VAR_INT, { it.stackSize },
+			{ id, count -> SBItemStack(id, count) }
+		)
+		val CODEC: Codec<SBItemStack> = RecordCodecBuilder.create {
+			it.group(
+				SkyblockId.CODEC.fieldOf("skyblockId").forGetter { it.skyblockId },
+				Codec.INT.fieldOf("count").forGetter { it.stackSize },
+			).apply(it) { id, count ->
+				SBItemStack(id, count)
+			}
+		}
+		val EMPTY = SBItemStack(SkyblockId.NULL, 0)
+
 		operator fun invoke(itemStack: ItemStack): SBItemStack {
 			val skyblockId = itemStack.skyBlockId ?: SkyblockId.NULL
 			return SBItemStack(
@@ -114,6 +134,8 @@ data class SBItemStack constructor(
 			val itemStack = itemStack_ ?: run {
 				if (skyblockId == SkyblockId.COINS)
 					return@run ItemCache.coinItem(stackSize).also { it.appendLore(extraLore) }
+				if (stackSize == 0)
+					return@run ItemStack.EMPTY
 				val replacementData = mutableMapOf<String, String>()
 				injectReplacementDataForPets(replacementData)
 				return@run neuItem.asItemStack(idHint = skyblockId, replacementData)

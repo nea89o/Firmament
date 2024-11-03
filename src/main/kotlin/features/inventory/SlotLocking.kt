@@ -35,6 +35,7 @@ import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
 import moe.nea.firmament.util.mc.SlotUtils.swapWithHotBar
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.render.GuiRenderLayers
 import moe.nea.firmament.util.render.drawLine
 import moe.nea.firmament.util.skyblockUUID
 import moe.nea.firmament.util.unformattedString
@@ -211,6 +212,11 @@ object SlotLocking : FirmamentFeature {
 		}
 		if (it.matches(TConfig.slotBind)) {
 			storedLockingSlot = null
+			val boundSlots = DConfig.data?.boundSlots ?: return
+			if (slot != null)
+				boundSlots.entries.removeIf {
+					it.value == slot.index || it.key == slot.index
+				}
 		}
 	}
 
@@ -331,24 +337,22 @@ object SlotLocking : FirmamentFeature {
 		val isSlotLocked = it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())
 		val isUUIDLocked = (it.slot.stack?.skyblockUUID) in (lockedUUIDs ?: setOf())
 		if (isSlotLocked || isUUIDLocked) {
-			RenderSystem.disableDepthTest()
-			it.context.drawSprite(
-				it.slot.x, it.slot.y, 0,
+			it.context.drawGuiTexture(
+				GuiRenderLayers.GUI_TEXTURED_NO_DEPTH,
+				when {
+					isSlotLocked ->
+						(Identifier.of("firmament:slot_locked"))
+
+					isUUIDLocked ->
+						(Identifier.of("firmament:uuid_locked"))
+
+					else ->
+						error("unreachable")
+				},
+				it.slot.x, it.slot.y,
 				16, 16,
-				MC.guiAtlasManager.getSprite(
-					when {
-						isSlotLocked ->
-							(Identifier.of("firmament:slot_locked"))
-
-						isUUIDLocked ->
-							(Identifier.of("firmament:uuid_locked"))
-
-						else ->
-							error("unreachable")
-					}
-				)
+				-1
 			)
-			RenderSystem.enableDepthTest()
 		}
 	}
 }

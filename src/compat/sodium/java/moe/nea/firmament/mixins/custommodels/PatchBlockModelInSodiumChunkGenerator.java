@@ -3,8 +3,8 @@ package moe.nea.firmament.mixins.custommodels;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import me.jellysquid.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderMeshingTask;
 import moe.nea.firmament.features.texturepack.CustomBlockTextures;
+import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderMeshingTask;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.block.BlockModels;
 import net.minecraft.client.render.model.BakedModel;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ChunkBuilderMeshingTask.class)
 public class PatchBlockModelInSodiumChunkGenerator {
     @WrapOperation(
-        method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
+        method = "execute(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lnet/caffeinemc/mods/sodium/client/util/task/CancellationToken;)Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/BlockModels;getModel(Lnet/minecraft/block/BlockState;)Lnet/minecraft/client/render/model/BakedModel;"))
     private BakedModel replaceBlockModel(BlockModels instance, BlockState state, Operation<BakedModel> original,
                                          @Local(name = "blockPos") BlockPos.Mutable pos) {

@@ -5,6 +5,7 @@ accessible class net/minecraft/client/font/TextRenderer$Drawer
 accessible field net/minecraft/client/gui/hud/InGameHud SCOREBOARD_ENTRY_COMPARATOR Ljava/util/Comparator;
 
 accessible field net/minecraft/client/render/item/HeldItemRenderer itemRenderer Lnet/minecraft/client/render/item/ItemRenderer;
+accessible field net/minecraft/client/render/item/ItemModels missingModelSupplier Ljava/util/function/Supplier;
 
 accessible class net/minecraft/client/render/model/json/ModelOverride$Deserializer
 accessible class net/minecraft/client/render/model/json/ModelOverrideList$BakedOverride
@@ -14,7 +15,7 @@ accessible field net/minecraft/entity/passive/AbstractHorseEntity items Lnet/min
 accessible field net/minecraft/entity/passive/AbstractHorseEntity SADDLED_FLAG I
 accessible field net/minecraft/entity/passive/AbstractHorseEntity HORSE_FLAGS Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/resource/NamespaceResourceManager loadMetadata (Lnet/minecraft/resource/InputSupplier;)Lnet/minecraft/resource/metadata/ResourceMetadata;
-accessible method net/minecraft/client/gui/DrawContext drawTexturedQuad (Lnet/minecraft/util/Identifier;IIIIIFFFFFFFF)V
+accessible method net/minecraft/client/gui/DrawContext drawTexturedQuad (Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIIIFFFFI)V
 
 mutable field net/minecraft/screen/slot/Slot x I
 mutable field net/minecraft/screen/slot/Slot y I
@@ -27,3 +28,4 @@ accessible method net/minecraft/registry/entry/RegistryEntry$Reference setRegist
 accessible method net/minecraft/entity/LivingEntity getHitbox ()Lnet/minecraft/util/math/Box;
 accessible method net/minecraft/registry/entry/RegistryEntryList$Named <init> (Lnet/minecraft/registry/entry/RegistryEntryOwner;Lnet/minecraft/registry/tag/TagKey;)V
 accessible method net/minecraft/registry/entry/RegistryEntry$Reference setValue (Ljava/lang/Object;)V
+accessible field net/minecraft/client/render/model/WrapperBakedModel wrapped Lnet/minecraft/client/render/model/BakedModel;

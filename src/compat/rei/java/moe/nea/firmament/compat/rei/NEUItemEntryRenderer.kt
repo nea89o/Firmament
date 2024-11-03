@@ -25,163 +25,128 @@ import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.OverlayTexture
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.model.BakedModel
-import net.minecraft.client.render.model.json.ModelTransformationMode
 import net.minecraft.client.texture.SpriteAtlasTexture
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.tooltip.TooltipType
+import net.minecraft.item.ModelTransformationMode
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 
 object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<SBItemStack, BakedModel> {
-    override fun render(
-        entry: EntryStack<SBItemStack>,
-        context: DrawContext,
-        bounds: Rectangle,
-        mouseX: Int,
-        mouseY: Int,
-        delta: Float
-    ) {
-        entry.asItemEntry().render(context, bounds, mouseX, mouseY, delta)
-    }
+	override fun render(
+		entry: EntryStack<SBItemStack>,
+		context: DrawContext,
+		bounds: Rectangle,
+		mouseX: Int,
+		mouseY: Int,
+		delta: Float
+	) {
+		entry.asItemEntry().render(context, bounds, mouseX, mouseY, delta)
+	}
 
-    val minecraft = MinecraftClient.getInstance()
+	val minecraft = MinecraftClient.getInstance()
 
-    override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
-        val stack = entry.value.asImmutableItemStack()
-        val lore = stack.getTooltip(
-            Item.TooltipContext.DEFAULT,
-            null,
-            TooltipType.BASIC
-        )
-        return Tooltip.create(lore)
-    }
+	override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
+		val stack = entry.value.asImmutableItemStack()
 
-    override fun getExtraData(entry: EntryStack<SBItemStack>): BakedModel {
-        return minecraft.itemRenderer.getModel(entry.asItemEntry().value, minecraft.world, minecraft.player, 0)
-    }
+		val lore = mutableListOf(stack.displayNameAccordingToNbt)
+		lore.addAll(stack.loreAccordingToNbt)
 
-    override fun getBatchIdentifier(entry: EntryStack<SBItemStack>?, bounds: Rectangle?, extraData: BakedModel): Int {
-        return 1738923 + if (extraData.isSideLit) 1 else 0
-    }
+		// TODO: tags aren't sent as early now so some tooltip components that use tags will crash the game
+//		stack.getTooltip(
+//			Item.TooltipContext.create(
+//				tooltipContext.vanillaContext().registryLookup
+//					?: MC.defaultRegistries
+//			),
+//			MC.player,
+//			TooltipType.BASIC
+//		)
+		return Tooltip.create(lore)
+	}
 
-    override fun startBatch(
-        entry: EntryStack<SBItemStack>,
-        model: BakedModel,
-        graphics: DrawContext,
-        delta: Float
-    ) {
-        val modelViewStack = RenderSystem.getModelViewStack()
-        modelViewStack.pushMatrix()
-        modelViewStack.scale(20.0f, 20.0f, 1.0f)
-        RenderSystem.applyModelViewMatrix()
-        setupGL(model)
-    }
+	override fun getExtraData(entry: EntryStack<SBItemStack>): BakedModel {
+		return MC.itemRenderer.getModel(entry.asItemEntry().value,
+		                                MC.world,
+		                                MC.player, 0)
 
-    fun setupGL(model: BakedModel) {
-        minecraft.textureManager.getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
-            .setFilter(false, false)
-        RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
-        RenderSystem.enableBlend()
-        RenderSystem.blendFunc(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA)
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-        val sideLit = model.isSideLit
-        if (!sideLit) {
-            DiffuseLighting.disableGuiDepthLighting()
-        }
-    }
+	}
 
-    override fun renderBase(
-        entry: EntryStack<SBItemStack>,
-        model: BakedModel,
-        graphics: DrawContext,
-        immediate: VertexConsumerProvider.Immediate,
-        bounds: Rectangle,
-        mouseX: Int,
-        mouseY: Int,
-        delta: Float
-    ) {
-        if (entry.isEmpty) return
-        val value = entry.asItemEntry().value
-        graphics.matrices.push()
-        graphics.matrices.translate(bounds.centerX.toFloat() / 20.0f, bounds.centerY.toFloat() / 20.0f, 0.0f)
-        graphics.matrices.scale(
-            bounds.getWidth().toFloat() / 20.0f,
-            -(bounds.getWidth() + bounds.getHeight()).toFloat() / 2.0f / 20.0f,
-            1.0f
-        )
-        minecraft
-            .itemRenderer
-            .renderItem(
-                value,
-                ModelTransformationMode.GUI,
-                false,
-                graphics.matrices,
-                immediate,
-                LightmapTextureManager.MAX_LIGHT_COORDINATE,
-                OverlayTexture.DEFAULT_UV,
-                model
-            )
-        graphics.matrices.pop()
+	override fun getBatchIdentifier(entry: EntryStack<SBItemStack>, bounds: Rectangle?, extraData: BakedModel): Int {
+		return 1738923 + if (extraData.isSideLit) 1 else 0
+	}
 
-    }
 
-    override fun afterBase(
-        entry: EntryStack<SBItemStack>,
-        model: BakedModel,
-        graphics: DrawContext,
-        delta: Float
-    ) {
-        RenderSystem.getModelViewStack().popMatrix()
-        RenderSystem.applyModelViewMatrix()
-        this.endGL(model)
-    }
+	override fun startBatch(entryStack: EntryStack<SBItemStack>, e: BakedModel, drawContext: DrawContext, v: Float) {
+		MC.textureManager.getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
+			.setFilter(false, false)
+		RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
+		RenderSystem.enableBlend()
+		RenderSystem.blendFunc(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA)
+		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+		if (!e.isSideLit) {
+			DiffuseLighting.disableGuiDepthLighting()
+		}
+	}
 
-    fun endGL(model: BakedModel) {
-        RenderSystem.enableDepthTest()
-        val sideLit = model.isSideLit
-        if (!sideLit) {
-            DiffuseLighting.enableGuiDepthLighting()
-        }
-    }
+	override fun renderBase(
+		entryStack: EntryStack<SBItemStack>,
+		model: BakedModel,
+		drawContext: DrawContext,
+		immediate: VertexConsumerProvider.Immediate,
+		bounds: Rectangle,
+		i: Int,
+		i1: Int,
+		v: Float
+	) {
+		if (entryStack.isEmpty) return
+		drawContext.matrices.push()
+		drawContext.matrices.translate(bounds.centerX.toDouble(), bounds.centerY.toDouble(), 0.0)
+		// TODO: check the scaling here again
+		drawContext.matrices.scale(
+			bounds.width.toFloat(),
+			(bounds.height + bounds.height) / -2F,
+			(bounds.width + bounds.height) / 2f)
+		MC.itemRenderer.renderItem(
+			entryStack.value.asImmutableItemStack(),
+			ModelTransformationMode.GUI,
+			false, drawContext.matrices,
+			immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE,
+			OverlayTexture.DEFAULT_UV,
+			model
+		)
+		drawContext.matrices.pop()
+	}
 
-    override fun renderOverlay(
-        entry: EntryStack<SBItemStack>,
-        extraData: BakedModel,
-        graphics: DrawContext,
-        immediate: VertexConsumerProvider.Immediate,
-        bounds: Rectangle,
-        mouseX: Int,
-        mouseY: Int,
-        delta: Float
-    ) {
-        val modelViewStack = RenderSystem.getModelViewStack()
-        modelViewStack.pushMatrix()
-        modelViewStack.mul(graphics.matrices.peek().positionMatrix)
-        modelViewStack.translate(bounds.x.toFloat(), bounds.y.toFloat(), 0.0f)
-        modelViewStack.scale(
-            bounds.width.toFloat() / 16.0f,
-            -(bounds.getWidth() + bounds.getHeight()).toFloat() / 2.0f / 16.0f,
-            1.0f
-        )
-        RenderSystem.applyModelViewMatrix()
-        renderOverlay(DrawContext(minecraft, graphics.vertexConsumers), entry.asItemEntry())
-        modelViewStack.popMatrix()
-        RenderSystem.applyModelViewMatrix()
-    }
+	override fun afterBase(entryStack: EntryStack<SBItemStack>?, e: BakedModel, drawContext: DrawContext?, v: Float) {
+		RenderSystem.enableDepthTest()
+		if (!e.isSideLit)
+			DiffuseLighting.enableGuiDepthLighting()
+	}
 
-    fun renderOverlay(graphics: DrawContext, entry: EntryStack<ItemStack>) {
-        if (!entry.isEmpty) {
-            graphics.drawItemInSlot(MinecraftClient.getInstance().textRenderer, entry.value, 0, 0, null)
-        }
-    }
+	override fun renderOverlay(
+		entryStack: EntryStack<SBItemStack>,
+		e: BakedModel,
+		drawContext: DrawContext,
+		immediate: VertexConsumerProvider.Immediate,
+		bounds: Rectangle,
+		i: Int,
+		i1: Int,
+		v: Float
+	) {
+		if (entryStack.isEmpty) return
+		val modelViewStack = RenderSystem.getModelViewStack()
+		modelViewStack.pushMatrix()
+		modelViewStack.mul(drawContext.matrices.peek().positionMatrix)
+		modelViewStack.translate(bounds.x.toFloat(), bounds.y.toFloat(), 0F)
+		modelViewStack.scale(bounds.width / 16.0f,
+		                     (bounds.width + bounds.height) / 2.0f / 16.0f,
+		                     1.0f) // TODO: weird scale again
+		drawContext.drawStackOverlay(MC.font, entryStack.value.asImmutableItemStack(), 0, 0, null)
+		modelViewStack.popMatrix()
+	}
 
-    override fun endBatch(
-        entry: EntryStack<SBItemStack>?,
-        extraData: BakedModel?,
-        graphics: DrawContext?,
-        delta: Float
-    ) {
-    }
+	override fun endBatch(entryStack: EntryStack<SBItemStack>?, e: BakedModel?, drawContext: DrawContext?, v: Float) {
+	}
 
 }

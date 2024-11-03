@@ -8,6 +8,7 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,13 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemRenderer.class)
 public abstract class GlobalModelOverridePatch {
 
-    @Shadow
-    public abstract ItemModels getModels();
+	@Shadow
+	@Final
+	private ItemModels models;
 
-    @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
-    private void overrideGlobalModel(
-        ItemStack stack, World world, LivingEntity entity,
-        int seed, CallbackInfoReturnable<BakedModel> cir) {
-        CustomGlobalTextures.replaceGlobalModel(this.getModels(), stack, cir);
-    }
+	@Inject(method = "getModel(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;I)Lnet/minecraft/client/render/model/BakedModel;", at = @At("HEAD"), cancellable = true)
+	private void overrideGlobalModel(
+		ItemStack stack, World world, LivingEntity entity,
+		int seed, CallbackInfoReturnable<BakedModel> cir) {
+		CustomGlobalTextures.replaceGlobalModel(this.models, stack, cir);
+	}
 }

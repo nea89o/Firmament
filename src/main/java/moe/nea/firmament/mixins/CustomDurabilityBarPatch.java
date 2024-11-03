@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(DrawContext.class)
 public class CustomDurabilityBarPatch {
     @WrapOperation(
-        method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+        method = "drawItemBar",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isItemBarVisible()Z")
     )
     private boolean onIsItemBarVisible(
@@ -29,7 +29,7 @@ public class CustomDurabilityBarPatch {
         return barOverride.get() != null;
     }
 
-    @WrapOperation(method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+    @WrapOperation(method = "drawItemBar",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItemBarStep()I"))
     private int overrideItemStep(
         ItemStack instance, Operation<Integer> original,
@@ -40,7 +40,7 @@ public class CustomDurabilityBarPatch {
         return original.call(instance);
     }
 
-    @WrapOperation(method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
+    @WrapOperation(method = "drawItemBar",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItemBarColor()I"))
     private int overrideItemColor(
         ItemStack instance, Operation<Integer> original,

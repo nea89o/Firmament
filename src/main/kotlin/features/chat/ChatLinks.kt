@@ -13,8 +13,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlin.math.min
 import net.minecraft.client.gui.screen.ChatScreen
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.texture.NativeImage
 import net.minecraft.client.texture.NativeImageBackedTexture
+import net.minecraft.scoreboard.ScoreboardCriterion.RenderType
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.HoverEvent
 import net.minecraft.text.Style
@@ -28,6 +30,7 @@ import moe.nea.firmament.events.ScreenRenderPostEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.render.drawTexture
 import moe.nea.firmament.util.transformEachRecursively
 import moe.nea.firmament.util.unformattedString
 

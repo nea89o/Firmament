@@ -3,9 +3,13 @@ package moe.nea.firmament.util
 import io.github.moulberry.repo.data.Coordinate
 import java.util.concurrent.ConcurrentLinkedQueue
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.client.option.GameOptions
+import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.render.WorldRenderer
+import net.minecraft.client.render.item.ItemRenderer
+import net.minecraft.client.world.ClientWorld
+import net.minecraft.entity.Entity
 import net.minecraft.item.Item
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import net.minecraft.registry.BuiltinRegistries
@@ -14,7 +18,9 @@ import net.minecraft.registry.RegistryWrapper
 import net.minecraft.resource.ReloadableResourceManagerImpl
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 import moe.nea.firmament.events.TickEvent
+import moe.nea.firmament.events.WorldReadyEvent
 
 object MC {
 
@@ -28,6 +34,9 @@ object MC {
 			while (true) {
 				(nextTickTodos.poll() ?: break).invoke()
 			}
+		}
+		WorldReadyEvent.subscribe("MC:ready") {
+			this.lastWorld
 		}
 	}
 
@@ -69,6 +78,7 @@ object MC {
 
 
 	inline val resourceManager get() = (instance.resourceManager as ReloadableResourceManagerImpl)
+	inline val itemRenderer: ItemRenderer get() = instance.itemRenderer
 	inline val worldRenderer: WorldRenderer get() = instance.worldRenderer
 	inline val networkHandler get() = player?.networkHandler
 	inline val instance get() = MinecraftClient.getInstance()
@@ -79,11 +89,11 @@ object MC {
 	inline val inGameHud get() = instance.inGameHud
 	inline val font get() = instance.textRenderer
 	inline val soundManager get() = instance.soundManager
-	inline val player get() = instance.player
-	inline val camera get() = instance.cameraEntity
+	inline val player: ClientPlayerEntity? get() = instance.player
+	inline val camera: Entity? get() = instance.cameraEntity
 	inline val guiAtlasManager get() = instance.guiAtlasManager
-	inline val world get() = instance.world
-	inline var screen
+	inline val world: ClientWorld? get() = instance.world
+	inline var screen: Screen?
 		get() = instance.currentScreen
 		set(value) = instance.setScreen(value)
 	val screenName get() = screen?.title?.unformattedString?.trim()
@@ -92,7 +102,13 @@ object MC {
 	inline val currentRegistries: RegistryWrapper.WrapperLookup? get() = world?.registryManager
 	val defaultRegistries: RegistryWrapper.WrapperLookup = BuiltinRegistries.createWrapperLookup()
 	inline val currentOrDefaultRegistries get() = currentRegistries ?: defaultRegistries
-	val defaultItems: RegistryWrapper.Impl<Item> = defaultRegistries.getWrapperOrThrow(RegistryKeys.ITEM)
+	val defaultItems: RegistryWrapper.Impl<Item> = defaultRegistries.getOrThrow(RegistryKeys.ITEM)
+	var lastWorld: World? = null
+		get() {
+			field = world ?: field
+			return field
+		}
+		private set
 }
 
 

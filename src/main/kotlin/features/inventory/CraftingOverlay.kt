@@ -69,7 +69,7 @@ object CraftingOverlay : FirmamentFeature {
 		if (!slot.hasStack()) {
 			val itemStack = SBItemStack(expectedItem)?.asImmutableItemStack() ?: return
 			event.context.drawItem(itemStack, event.slot.x, event.slot.y)
-			event.context.drawItemInSlot(
+			event.context.drawStackOverlay(
 				MC.font,
 				itemStack,
 				event.slot.x,

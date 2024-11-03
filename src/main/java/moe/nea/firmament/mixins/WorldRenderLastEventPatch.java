@@ -5,8 +5,10 @@ package moe.nea.firmament.mixins;
 import com.llamalad7.mixinextras.sugar.Local;
 import moe.nea.firmament.events.WorldRenderLastEvent;
 import net.minecraft.client.render.*;
+import net.minecraft.client.util.Handle;
+import net.minecraft.client.util.ObjectAllocator;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.world.tick.TickManager;
+import net.minecraft.util.profiler.Profiler;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,22 +18,30 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldRenderer.class)
-public class WorldRenderLastEventPatch {
-    @Shadow
-    @Final
-    private BufferBuilderStorage bufferBuilders;
+public abstract class WorldRenderLastEventPatch {
+	@Shadow
+	@Final
+	private BufferBuilderStorage bufferBuilders;
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;renderChunkDebugInfo(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/Camera;)V", shift = At.Shift.BEFORE))
-    public void onWorldRenderLast(
-        RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer,
-        LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, Matrix4f matrix4f2,
-        CallbackInfo ci, @Local MatrixStack matrixStack
-    ) {
-        var event = new WorldRenderLastEvent(
-            matrixStack, tickCounter, renderBlockOutline,
-            camera, gameRenderer, lightmapTextureManager,
-            this.bufferBuilders.getEntityVertexConsumers()
-        );
-        WorldRenderLastEvent.Companion.publish(event);
-    }
+	@Shadow
+	@Final
+	private DefaultFramebufferSet framebufferSet;
+
+	@Shadow
+	protected abstract void checkEmpty(MatrixStack matrices);
+
+	@Inject(method = "method_62214", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;pop()V", shift = At.Shift.AFTER))
+	public void onWorldRenderLast(Fog fog, RenderTickCounter tickCounter, Camera camera, Profiler profiler, Matrix4f matrix4f, Matrix4f matrix4f2, Handle handle, Handle handle2, Handle handle3, Handle handle4, boolean bl, Frustum frustum, Handle handle5, CallbackInfo ci) {
+		var imm = this.bufferBuilders.getEntityVertexConsumers();
+		var stack = new MatrixStack();
+		// TODO: pre-cancel this event if F1 is active
+		var event = new WorldRenderLastEvent(
+			stack, tickCounter,
+			camera,
+			imm
+		);
+		WorldRenderLastEvent.Companion.publish(event);
+		imm.draw();
+		checkEmpty(stack);
+	}
 }

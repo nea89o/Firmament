@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
+import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import net.minecraft.text.TextCodecs
 import net.minecraft.util.hit.BlockHitResult
@@ -54,15 +55,13 @@ object PowerUserTools : FirmamentFeature {
 	var lastCopiedStack: Pair<ItemStack, Text>? = null
 		set(value) {
 			field = value
-			if (value != null)
-				lastCopiedStackViewTime = true
+			if (value != null) lastCopiedStackViewTime = true
 		}
 	var lastCopiedStackViewTime = false
 
 	@Subscribe
 	fun resetLastCopiedStack(event: TickEvent) {
-		if (!lastCopiedStackViewTime)
-			lastCopiedStack = null
+		if (!lastCopiedStackViewTime) lastCopiedStack = null
 		lastCopiedStackViewTime = false
 	}
 
@@ -154,13 +153,13 @@ object PowerUserTools : FirmamentFeature {
 			}
 			ClipboardUtils.setTextContent(skullTexture.toString())
 			lastCopiedStack =
-				Pair(
-					item,
-					Text.stringifiedTranslatable("firmament.tooltip.copied.skull-id", skullTexture.toString())
-				)
+				Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skull-id", skullTexture.toString()))
 			println("Copied skull id: $skullTexture")
 		} else if (it.matches(TConfig.copyItemStack)) {
-			ClipboardUtils.setTextContent(item.encode(MC.currentOrDefaultRegistries).toPrettyString())
+			ClipboardUtils.setTextContent(
+				ItemStack.CODEC
+					.encodeStart(MC.currentOrDefaultRegistries.getOps(NbtOps.INSTANCE), item)
+					.orThrow.toPrettyString())
 			lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.stack"))
 		}
 	}

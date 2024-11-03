@@ -3,7 +3,6 @@ package moe.nea.firmament.features.texturepack
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import moe.nea.firmament.util.ErrorUtil
-import moe.nea.firmament.util.assertNotNullOr
 
 data class TintOverrides(
 	val layerMap: Map<Int, TintOverride> = mapOf()
@@ -14,21 +13,22 @@ data class TintOverrides(
 		val EMPTY = TintOverrides()
 		private val threadLocal = object : ThreadLocal<TintOverrides>() {}
 		fun enter(overrides: TintOverrides?) {
-			ErrorUtil.softCheck("Double entered tintOverrides") {
-				threadLocal.get() == null
-			}
+			ErrorUtil.softCheck("Double entered tintOverrides",
+			                    threadLocal.get() == null)
 			threadLocal.set(overrides ?: EMPTY)
 		}
 
 		fun exit(overrides: TintOverrides?) {
-			ErrorUtil.softCheck("Exited with non matching enter tintOverrides") {
-				threadLocal.get() == (overrides ?: EMPTY)
-			}
+			ErrorUtil.softCheck("Exited with non matching enter tintOverrides",
+			                    threadLocal.get() == (overrides ?: EMPTY))
 			threadLocal.remove()
 		}
 
-		fun getCurrentOverrides() =
-			assertNotNullOr(threadLocal.get(), "Got current tintOverrides without entering") { EMPTY }
+		fun getCurrentOverrides(): TintOverrides {
+			return ErrorUtil.notNullOr(threadLocal.get(), "Got current tintOverrides without entering") {
+				EMPTY
+			}
+		}
 
 		fun parse(jsonObject: JsonObject): TintOverrides {
 			val map = mutableMapOf<Int, TintOverride>()

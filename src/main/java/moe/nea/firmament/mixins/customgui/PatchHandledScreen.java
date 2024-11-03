@@ -14,7 +14,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -88,29 +87,18 @@ public class PatchHandledScreen<T extends ScreenHandler> extends Screen implemen
 	}
 
 
-	@Unique
-	private Slot didBeforeSlotRender;
-
 	@WrapOperation(
-		method = "render",
+		method = "drawSlots",
 		at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/util/collection/DefaultedList;get(I)Ljava/lang/Object;"))
-	private Object beforeSlotRender(DefaultedList instance, int index, Operation<Object> original, @Local(argsOnly = true) DrawContext context) {
-		var slot = (Slot) original.call(instance, index);
+			target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V"))
+	private void beforeSlotRender(HandledScreen instance, DrawContext context, Slot slot, Operation<Void> original) {
 		if (override != null) {
-			didBeforeSlotRender = slot;
 			override.beforeSlotRender(context, slot);
 		}
-		return slot;
-	}
-
-	@Inject(method = "render",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;size()I"))
-	private void afterSlotRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		if (override != null && didBeforeSlotRender != null) {
-			override.afterSlotRender(context, didBeforeSlotRender);
-			didBeforeSlotRender = null;
+		original.call(instance, context, slot);
+		if (override != null) {
+			override.afterSlotRender(context, slot);
 		}
 	}
 

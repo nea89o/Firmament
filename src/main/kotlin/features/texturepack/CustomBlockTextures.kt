@@ -244,7 +244,7 @@ object CustomBlockTextures {
             .flatMap { it.lookup.values }
             .flatten()
             .mapTo(mutableSetOf()) { it.replacement.blockModelIdentifier }
-            .forEach { event.addNonItemModel(it) }
+            .forEach { event.addNonItemModel(it, it.id) }
     }
 
     private fun prepare(manager: ResourceManager): BakedReplacements {
@@ -263,7 +263,7 @@ object CustomBlockTextures {
                 val island = SkyBlockIsland.forMode(mode)
                 val islandMpa = map.getOrPut(island, ::mutableMapOf)
                 for ((blockId, replacement) in json.replacements) {
-                    val block = MC.defaultRegistries.getWrapperOrThrow(RegistryKeys.BLOCK)
+                    val block = MC.defaultRegistries.getOrThrow(RegistryKeys.BLOCK)
                         .getOptional(RegistryKey.of(RegistryKeys.BLOCK, blockId))
                         .getOrNull()
                     if (block == null) {

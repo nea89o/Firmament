@@ -8,6 +8,7 @@ import kotlin.experimental.inv
 import kotlin.experimental.or
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.SpawnReason
 import net.minecraft.entity.passive.AbstractHorseEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -19,11 +20,11 @@ object ModifyHorse : EntityModifier {
         var entity: AbstractHorseEntity = entity
         info["kind"]?.let {
             entity = when (it.asString) {
-                "skeleton" -> EntityType.SKELETON_HORSE.create(fakeWorld)!!
-                "zombie" -> EntityType.ZOMBIE_HORSE.create(fakeWorld)!!
-                "mule" -> EntityType.MULE.create(fakeWorld)!!
-                "donkey" -> EntityType.DONKEY.create(fakeWorld)!!
-                "horse" -> EntityType.HORSE.create(fakeWorld)!!
+                "skeleton" -> EntityType.SKELETON_HORSE.create(fakeWorld, SpawnReason.LOAD)!!
+                "zombie" -> EntityType.ZOMBIE_HORSE.create(fakeWorld, SpawnReason.LOAD)!!
+                "mule" -> EntityType.MULE.create(fakeWorld, SpawnReason.LOAD)!!
+                "donkey" -> EntityType.DONKEY.create(fakeWorld, SpawnReason.LOAD)!!
+                "horse" -> EntityType.HORSE.create(fakeWorld, SpawnReason.LOAD)!!
                 else -> error("Unknown horse kind $it")
             }
         }

@@ -2,6 +2,7 @@
 
 package moe.nea.firmament.util
 
+import com.mojang.serialization.Codec
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
@@ -16,6 +17,9 @@ import net.minecraft.component.type.NbtComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.network.RegistryByteBuf
+import net.minecraft.network.codec.PacketCodec
+import net.minecraft.network.codec.PacketCodecs
 import net.minecraft.util.Identifier
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.set
@@ -68,6 +72,9 @@ value class SkyblockId(val neuItem: String) {
 		val NULL: SkyblockId = SkyblockId("null")
 		val PET_NULL: SkyblockId = SkyblockId("null_pet")
 		private val illlegalPathRegex = "[^a-z0-9_.-/]".toRegex()
+		val CODEC = Codec.STRING.xmap({ SkyblockId(it) }, { it.neuItem })
+		val PACKET_CODEC: PacketCodec<in RegistryByteBuf, SkyblockId> =
+			PacketCodecs.STRING.xmap({ SkyblockId(it) }, { it.neuItem })
 	}
 }
 

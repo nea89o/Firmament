@@ -21,7 +21,9 @@ plugins {
 	alias(libs.plugins.kotlin.plugin.serialization)
 	alias(libs.plugins.kotlin.plugin.powerassert)
 	alias(libs.plugins.kotlin.plugin.ksp)
-	alias(libs.plugins.loom)
+	//	alias(libs.plugins.loom)
+	// TODO: use arch loom once they update to 1.8
+	id("fabric-loom") version "1.8.9"
 	id("com.github.johnrengelman.shadow") version "8.1.1"
 	id("moe.nea.licenseextractificator")
 	id("moe.nea.mc-auto-translations") version "0.0.1"
@@ -104,16 +106,12 @@ fun String.capitalizeN() = replaceFirstChar { it.uppercaseChar() }
 val unpackAllJars by tasks.registering
 fun innerJarsOf(name: String, dependency: Dependency): Provider<FileTree> {
 	val task = tasks.create("unpackInnerJarsFor${name.capitalizeN()}", InnerJarsUnpacker::class) {
-		doFirst {
-			println("Unpacking JARs for $name")
-		}
 		this.inputJars.setFrom(files(configurations.detachedConfiguration(dependency)))
 		this.outputDir.set(layout.buildDirectory.dir("unpackedJars/$name").also {
 			it.get().asFile.mkdirs()
 		})
 	}
 	unpackAllJars { dependsOn(task) }
-	println("Constructed innerJars task: ${project.files(task).asFileTree.toList().map {it to it.exists()}}")
 	return project.provider {
 		project.files(task).asFileTree
 	}
@@ -125,15 +123,32 @@ val collectTranslations by tasks.registering(CollectTranslations::class) {
 }
 
 val compatSourceSets: MutableSet<SourceSet> = mutableSetOf()
-fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): SourceSet {
+fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabled: Boolean = true): SourceSet {
 	val ss = sourceSets.create(name) {
-		this.java.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
-		this.kotlin.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
+		if (isEnabled) {
+			this.java.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
+			this.kotlin.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
+		} else {
+			this.java.setSrcDirs(listOf<File>())
+			this.kotlin.setSrcDirs(listOf<File>())
+		}
+	}
+	val mainSS = sourceSets.main.get()
+	val upperName = ss.name.capitalizeN()
+	afterEvaluate {
+		tasks.named("ksp${upperName}Kotlin", KspTaskJvm::class) {
+			this.options.add(SubpluginOption("apoption", "firmament.sourceset=${ss.name}"))
+		}
+		tasks.named("compile${upperName}Kotlin", KotlinCompile::class) {
+			this.enabled = isEnabled
+		}
+		tasks.named("compile${upperName}Java", JavaCompile::class) {
+			this.enabled = isEnabled
+		}
 	}
 	compatSourceSets.add(ss)
 	loom.createRemapConfigurations(ss)
-	val mainSS = sourceSets.main.get()
-	val upperName = ss.name.capitalizeN()
+	if (!isEnabled) return ss
 	configurations {
 		(ss.implementationConfigurationName) {
 			extendsFrom(getByName(mainSS.compileClasspathConfigurationName))
@@ -146,11 +161,6 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): Source
 		}
 		("ksp$upperName") {
 			extendsFrom(ksp.get())
-		}
-	}
-	afterEvaluate {
-		tasks.named("ksp${upperName}Kotlin", KspTaskJvm::class) {
-			this.options.add(SubpluginOption("apoption", "firmament.sourceset=${ss.name}"))
 		}
 	}
 	dependencies {
@@ -195,14 +205,15 @@ val nonModImplentation by configurations.creating {
 }
 
 
-val configuredSourceSet = createIsolatedSourceSet("configured")
+val configuredSourceSet = createIsolatedSourceSet("configured",
+                                                  isEnabled = false) // Wait for update (also low prio, because configured sucks)
 val sodiumSourceSet = createIsolatedSourceSet("sodium")
-val citResewnSourceSet = createIsolatedSourceSet("citresewn")
+val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false) // TODO: Wait for update
 val yaclSourceSet = createIsolatedSourceSet("yacl")
-val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement")
-val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
+val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
+val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false) // TODO: wait on their port
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
-val reiSourceSet = createIsolatedSourceSet("rei")
+val reiSourceSet = createIsolatedSourceSet("rei") // TODO: read through https://hackmd.io/@shedaniel/rei17_primer
 
 dependencies {
 	// Minecraft dependencies
@@ -299,7 +310,7 @@ loom {
 			         compatSourceSets.joinToString(File.pathSeparator) {
 				         File(it.output.classesDirs.asPath).absolutePath
 			         })
-			property("mixin.debug", "true")
+			property("mixin.debug.export", "true")
 
 			parseEnvFile(file(".env")).forEach { (t, u) ->
 				environmentVariable(t, u)
@@ -360,7 +371,7 @@ tasks.shadowJar {
 }
 
 tasks.remapJar {
-	injectAccessWidener.set(true)
+//	injectAccessWidener.set(true)
 	inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
 	dependsOn(tasks.shadowJar)
 	archiveClassifier.set("")

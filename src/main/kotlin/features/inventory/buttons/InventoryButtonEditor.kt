@@ -84,7 +84,6 @@ class InventoryButtonEditor(
         context.matrices.push()
         context.matrices.translate(0f, 0f, -10f)
         context.fill(lastGuiRect.minX, lastGuiRect.minY, lastGuiRect.maxX, lastGuiRect.maxY, -1)
-        context.setShaderColor(1f, 1f, 1f, 1f)
         context.matrices.pop()
         for (button in buttons) {
             val buttonPosition = button.getBounds(lastGuiRect)

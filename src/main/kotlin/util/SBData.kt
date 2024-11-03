@@ -37,7 +37,7 @@ object SBData {
                                 it.serverType.getOrNull()?.name?.uppercase(),
                                 it.mode.getOrNull(),
                                 it.map.getOrNull())
-                SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, null))
+                SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, locraw))
                 profileIdCommandDebounce = TimeMark.now()
             }
         }

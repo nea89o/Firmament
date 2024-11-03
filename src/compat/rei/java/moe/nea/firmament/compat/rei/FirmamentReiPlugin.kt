@@ -11,7 +11,6 @@ import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandler
 import me.shedaniel.rei.api.client.registry.transfer.TransferHandlerRegistry
 import me.shedaniel.rei.api.common.entry.EntryStack
-import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
@@ -20,18 +19,17 @@ import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import moe.nea.firmament.events.HandledScreenPushREIEvent
-import moe.nea.firmament.features.inventory.CraftingOverlay
-import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.compat.rei.recipes.SBCraftingRecipe
 import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.events.HandledScreenPushREIEvent
+import moe.nea.firmament.features.inventory.CraftingOverlay
+import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.guessRecipeId
 import moe.nea.firmament.util.skyblockId
@@ -74,9 +72,6 @@ class FirmamentReiPlugin : REIClientPlugin {
 		})
 	}
 
-	override fun registerEntryTypes(registry: EntryTypeRegistry) {
-		registry.register(SKYBLOCK_ITEM_TYPE_ID, SBItemEntryDefinition)
-	}
 
 	override fun registerCategories(registry: CategoryRegistry) {
 		registry.add(SBCraftingRecipe.Category)

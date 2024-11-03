@@ -23,14 +23,13 @@ public abstract class SlotUpdateListener extends ClientCommonNetworkHandler {
 
 	@Inject(
 		method = "onScreenHandlerSlotUpdate",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/tutorial/TutorialManager;onSlotUpdate(Lnet/minecraft/item/ItemStack;)V"))
+		at = @At(value = "TAIL"))
 	private void onSingleSlotUpdate(
 		ScreenHandlerSlotUpdateS2CPacket packet,
 		CallbackInfo ci) {
 		var player = this.client.player;
 		assert player != null;
-		if (packet.getSyncId() == ScreenHandlerSlotUpdateS2CPacket.UPDATE_PLAYER_INVENTORY_SYNC_ID
-			|| packet.getSyncId() == 0) {
+		if (packet.getSyncId() == 0) {
 			PlayerInventoryUpdate.Companion.publish(new PlayerInventoryUpdate.Single(packet.getSlot(), packet.getStack()));
 		} else if (packet.getSyncId() == player.currentScreenHandler.syncId) {
 			ChestInventoryUpdateEvent.Companion.publish(
@@ -40,8 +39,7 @@ public abstract class SlotUpdateListener extends ClientCommonNetworkHandler {
 	}
 
 	@Inject(method = "onInventory",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V",
-			shift = At.Shift.AFTER))
+		at = @At("TAIL"))
 	private void onMultiSlotUpdate(InventoryS2CPacket packet, CallbackInfo ci) {
 		var player = this.client.player;
 		assert player != null;

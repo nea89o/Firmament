@@ -4,6 +4,7 @@ package moe.nea.firmament.features.inventory
 
 import java.awt.Color
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
@@ -16,6 +17,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.collections.lastNotNullOfOrNull
 import moe.nea.firmament.util.collections.memoizeIdentity
+import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.unformattedString
 
 object ItemRarityCosmetics : FirmamentFeature {
@@ -43,10 +45,10 @@ object ItemRarityCosmetics : FirmamentFeature {
         "SUPREME" to Formatting.DARK_RED,
     ).mapValues {
         val c = Color(it.value.colorValue!!)
-        Triple(c.red / 255F, c.green / 255F, c.blue / 255F)
+        c.rgb
     }
 
-    private fun getSkyblockRarity0(itemStack: ItemStack): Triple<Float, Float, Float>? {
+    private fun getSkyblockRarity0(itemStack: ItemStack): Int? {
         return itemStack.loreAccordingToNbt.lastNotNullOfOrNull {
             val entry = it.unformattedString
             rarityToColor.entries.find { (k, v) -> k in entry }?.value
@@ -57,13 +59,13 @@ object ItemRarityCosmetics : FirmamentFeature {
 
 
     fun drawItemStackRarity(drawContext: DrawContext, x: Int, y: Int, item: ItemStack) {
-        val (r, g, b) = getSkyblockRarity(item) ?: return
-        drawContext.drawSprite(
+        val rgb = getSkyblockRarity(item) ?: return
+        drawContext.drawGuiTexture(
+	        RenderLayer::getGuiTextured,
+	        Identifier.of("firmament:item_rarity_background"),
             x, y,
-            0,
             16, 16,
-            MC.guiAtlasManager.getSprite(Identifier.of("firmament:item_rarity_background")),
-            r, g, b, 1F
+            rgb
         )
     }
 

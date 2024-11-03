@@ -3,20 +3,19 @@
 package moe.nea.firmament.events
 
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.texture.Sprite
 import net.minecraft.screen.slot.Slot
 import net.minecraft.util.Identifier
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.render.drawGuiTexture
 
 interface SlotRenderEvents {
     val context: DrawContext
     val slot: Slot
-    val mouseX: Int
-    val mouseY: Int
-    val delta: Float
 
-	fun highlight(sprite: Sprite) {
-		context.drawSprite(
+	fun highlight(sprite: Identifier) {
+		context.drawGuiTexture(
 			slot.x, slot.y, 0, 16, 16,
 			sprite
 		)
@@ -24,9 +23,6 @@ interface SlotRenderEvents {
 
     data class Before(
         override val context: DrawContext, override val slot: Slot,
-        override val mouseX: Int,
-        override val mouseY: Int,
-        override val delta: Float
     ) : FirmamentEvent(),
         SlotRenderEvents {
         companion object : FirmamentEventBus<Before>()
@@ -34,9 +30,6 @@ interface SlotRenderEvents {
 
     data class After(
         override val context: DrawContext, override val slot: Slot,
-        override val mouseX: Int,
-        override val mouseY: Int,
-        override val delta: Float
     ) : FirmamentEvent(),
         SlotRenderEvents {
         companion object : FirmamentEventBus<After>()

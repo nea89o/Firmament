@@ -37,10 +37,10 @@ object DeveloperFeatures : FirmamentFeature {
             builder.directory(gradleDir.toFile())
             builder.inheritIO()
             val process = builder.start()
-            MC.player?.sendMessage(Text.translatable("firmament.dev.resourcerebuild.start"))
+            MC.sendChat(Text.translatable("firmament.dev.resourcerebuild.start"))
             val startTime = TimeMark.now()
             process.toHandle().onExit().thenApply {
-                MC.player?.sendMessage(Text.stringifiedTranslatable(
+                MC.sendChat(Text.stringifiedTranslatable(
                     "firmament.dev.resourcerebuild.done",
                     startTime.passedTime()))
                 Unit

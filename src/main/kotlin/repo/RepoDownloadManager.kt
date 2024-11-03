@@ -5,7 +5,7 @@ package moe.nea.firmament.repo
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsChannel
-import io.ktor.utils.io.jvm.nio.copyTo
+import io.ktor.utils.io.copyTo
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path

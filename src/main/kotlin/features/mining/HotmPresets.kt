@@ -9,9 +9,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.Items
 import net.minecraft.screen.GenericContainerScreenHandler
-import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.Slot
-import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -31,6 +29,7 @@ import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.mc.CommonTextures
 import moe.nea.firmament.util.mc.SlotUtils.clickRightMouseButton
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 
@@ -81,7 +80,7 @@ object HotmPresets {
 		override fun render(drawContext: DrawContext, delta: Float, mouseX: Int, mouseY: Int) {
 			drawContext.drawGuiTexture(
 				CommonTextures.genericWidget(),
-				bounds.x, bounds.y, 0,
+				bounds.x, bounds.y,
 				bounds.width,
 				bounds.height,
 			)
@@ -191,7 +190,7 @@ object HotmPresets {
 		if (hotmInventoryName == MC.screenName
 			&& event.slot.stack.displayNameAccordingToNbt.unformattedString in highlightedPerks
 		) {
-			event.highlight(MC.guiAtlasManager.getSprite(Firmament.identifier("hotm_perk_preset")))
+			event.highlight((Firmament.identifier("hotm_perk_preset")))
 		}
 	}
 

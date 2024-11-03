@@ -104,12 +104,13 @@ object AncestralSpadeSolver : SubscriptionOwner {
 		if (!isEnabled()) return
 		RenderInWorldContext.renderInWorld(event) {
 			nextGuess?.let {
-				color(1f, 1f, 0f, 0.5f)
-				tinyBlock(it, 1f)
+				tinyBlock(it, 1f, 0x80FFFFFF.toInt())
+				// TODO: replace this
 				color(1f, 1f, 0f, 1f)
 				tracer(it, lineWidth = 3f)
 			}
 			if (particlePositions.size > 2 && lastDing.passedTime() < 10.seconds && nextGuess != null) {
+				// TODO: replace this // TODO: add toggle
 				color(0f, 1f, 0f, 0.7f)
 				line(particlePositions)
 			}

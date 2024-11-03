@@ -21,6 +21,7 @@ class ScreenRegistryHoveredItemStackProvider : HoveredItemStackProvider {
 		return entryStack.value as? ItemStack ?: entryStack.cheatsAs().value
 	}
 }
+
 @AutoService(HoveredItemStackProvider::class)
 @CompatLoader.RequireMod("roughlyenoughitems")
 class OverlayHoveredItemStackProvider : HoveredItemStackProvider {

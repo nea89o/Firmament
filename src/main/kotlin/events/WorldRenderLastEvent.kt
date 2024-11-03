@@ -17,10 +17,7 @@ import net.minecraft.util.math.Vec3d
 data class WorldRenderLastEvent(
     val matrices: MatrixStack,
     val tickCounter: RenderTickCounter,
-    val renderBlockOutline: Boolean,
     val camera: Camera,
-    val gameRenderer: GameRenderer,
-    val lightmapTextureManager: LightmapTextureManager,
     val vertexConsumers: VertexConsumerProvider.Immediate,
 ) : FirmamentEvent() {
     companion object : FirmamentEventBus<WorldRenderLastEvent>()

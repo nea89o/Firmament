@@ -2,6 +2,9 @@
 
 package moe.nea.firmament.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import moe.nea.firmament.events.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -20,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.Iterator;
 
 @Mixin(HandledScreen.class)
 public abstract class MixinHandledScreen<T extends ScreenHandler> {
@@ -90,15 +95,12 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> {
 	}
 
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onAfterDrawSlot(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, int i, int j, int k, Slot slot) {
-		SlotRenderEvents.After event = new SlotRenderEvents.After(context, slot, mouseX, mouseY, delta);
-		SlotRenderEvents.After.Companion.publish(event);
-	}
-
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onBeforeDrawSlot(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, int i, int j, int k, Slot slot) {
-		SlotRenderEvents.Before event = new SlotRenderEvents.Before(context, slot, mouseX, mouseY, delta);
-		SlotRenderEvents.Before.Companion.publish(event);
+	@WrapOperation(method = "drawSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V"))
+	public void onDrawSlots(HandledScreen instance, DrawContext context, Slot slot, Operation<Void> original) {
+		var before = new SlotRenderEvents.Before(context, slot);
+		SlotRenderEvents.Before.Companion.publish(before);
+		original.call(instance, context, slot);
+		var after = new SlotRenderEvents.After(context, slot);
+		SlotRenderEvents.After.Companion.publish(after);
 	}
 }

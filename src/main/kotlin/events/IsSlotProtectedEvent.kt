@@ -37,7 +37,7 @@ data class IsSlotProtectedEvent(
             val event = IsSlotProtectedEvent(slot, action, false, itemStackOverride)
             publish(event)
             if (event.isProtected && !event.silent) {
-                MC.player?.sendMessage(Text.translatable("firmament.protectitem").append(event.itemStack.name))
+                MC.sendChat(Text.translatable("firmament.protectitem").append(event.itemStack.name))
                 CommonSoundEffects.playFailure()
             }
             return event.isProtected

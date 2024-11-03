@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
+// TODO: rework this
 @Mixin(EntityIdFix.class)
 public abstract class DFUEntityIdFixPatch extends DataFix {
     @Shadow

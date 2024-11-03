@@ -1,11 +1,11 @@
 package moe.nea.firmament.mixins.custommodels;
 
-import com.google.gson.annotations.SerializedName;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import moe.nea.firmament.features.texturepack.BakedModelExtra;
 import moe.nea.firmament.features.texturepack.JsonUnbakedModelFirmExtra;
 import moe.nea.firmament.features.texturepack.TintOverrides;
+import moe.nea.firmament.util.ErrorUtil;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.Baker;
 import net.minecraft.client.render.model.ModelRotation;
@@ -18,15 +18,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Collection;
 import java.util.Objects;
 
 @Mixin(JsonUnbakedModel.class)
-public class JsonUnbakedModelDataHolder implements JsonUnbakedModelFirmExtra {
+public abstract class JsonUnbakedModelDataHolder implements JsonUnbakedModelFirmExtra {
 	@Shadow
 	@Nullable
 	protected JsonUnbakedModel parent;
+
+	@Shadow
+	public abstract String toString();
+
 	@Unique
 	@Nullable
 	public Identifier headModel;
@@ -67,31 +72,59 @@ public class JsonUnbakedModelDataHolder implements JsonUnbakedModelFirmExtra {
 		return ((JsonUnbakedModelFirmExtra) this.parent).getHeadModel_firmament();
 	}
 
-	@ModifyReturnValue(method = "getModelDependencies", at = @At("RETURN"))
-	private Collection<Identifier> addDependencies(Collection<Identifier> original) {
+	@Inject(method = "resolve", at = @At("HEAD"))
+	private void addDependencies(UnbakedModel.Resolver resolver, CallbackInfo ci) {
 		var headModel = getHeadModel_firmament();
 		if (headModel != null) {
-			original.add(headModel);
+			resolver.resolve(headModel);
+		}
+	}
+
+	private void addExtraBakeInfo(BakedModel bakedModel, Baker baker) {
+		if (!this.toString().contains("minecraft") && this.toString().contains("crimson")) {
+			System.out.println("Found non minecraft model " + this);
+		}
+		var extra = BakedModelExtra.cast(bakedModel);
+		if (extra != null) {
+			var headModel = getHeadModel_firmament();
+			if (headModel != null) {
+				extra.setHeadModel_firmament(baker.bake(headModel, ModelRotation.X0_Y0));
+			}
+			if (getTintOverrides_firmament().hasOverrides()) {
+				extra.setTintOverrides_firmament(getTintOverrides_firmament());
+			}
+		}
+	}
+
+	/**
+	 * @see ProvideBakerToJsonUnbakedModelPatch
+	 */
+	@Override
+	public void storeExtraBaker_firmament(@NotNull Baker baker) {
+		this.storedBaker = baker;
+	}
+
+	@Unique
+	private Baker storedBaker;
+
+	@ModifyReturnValue(
+		method = "bake(Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Z)Lnet/minecraft/client/render/model/BakedModel;",
+		at = @At("RETURN"))
+	private BakedModel bakeExtraInfoWithoutBaker(BakedModel original) {
+		if (storedBaker != null) {
+			addExtraBakeInfo(original, storedBaker);
+			storedBaker = null;
 		}
 		return original;
 	}
 
 	@ModifyReturnValue(
-		method = "bake(Lnet/minecraft/client/render/model/Baker;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Z)Lnet/minecraft/client/render/model/BakedModel;",
+		method = {
+			"bake(Lnet/minecraft/client/render/model/Baker;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;)Lnet/minecraft/client/render/model/BakedModel;"
+		},
 		at = @At(value = "RETURN"))
 	private BakedModel bakeExtraInfo(BakedModel original, @Local(argsOnly = true) Baker baker) {
-		if (original instanceof BakedModelExtra extra) {
-			var headModel = getHeadModel_firmament();
-			if (headModel != null) {
-				UnbakedModel unbakedModel = baker.getOrLoadModel(headModel);
-				extra.setHeadModel_firmament(
-					Objects.equals(unbakedModel, parent)
-						? null
-						: baker.bake(headModel, ModelRotation.X0_Y0));
-			}
-			if (getTintOverrides_firmament().hasOverrides())
-				extra.setTintOverrides_firmament(getTintOverrides_firmament());
-		}
+		addExtraBakeInfo(original, baker);
 		return original;
 	}
 }

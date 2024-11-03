@@ -76,13 +76,10 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
         u1: Float, v1: Float,
         u2: Float, v2: Float,
     ) {
-        RenderSystem.setShaderTexture(0, texture)
-        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram)
+		val buf = worldContext.vertexConsumers.getBuffer(RenderLayer.getGuiTexturedOverlay(texture))
         val hw = width / 2F
         val hh = height / 2F
         val matrix4f: Matrix4f = worldContext.matrixStack.peek().positionMatrix
-        val buf = Tessellator.getInstance()
-            .begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR)
         buf.vertex(matrix4f, -hw, -hh, 0F)
             .color(-1)
             .texture(u1, v1).next()
@@ -95,7 +92,7 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
         buf.vertex(matrix4f, +hw, -hh, 0F)
             .color(-1)
             .texture(u2, v1).next()
-        BufferRenderer.drawWithGlobalProgram(buf.end())
+	    worldContext.vertexConsumers.draw()
     }
 
 }

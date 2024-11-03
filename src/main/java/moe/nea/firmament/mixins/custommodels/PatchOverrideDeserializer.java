@@ -22,29 +22,29 @@ import java.util.Map;
 @Mixin(ModelOverride.Deserializer.class)
 public class PatchOverrideDeserializer {
 
-    @ModifyReturnValue(
-        method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/render/model/json/ModelOverride;",
-        at = @At(value = "RETURN"))
-    private ModelOverride addCustomOverrides(ModelOverride original, @Local JsonObject jsonObject) {
-        var originalData = (ModelOverrideData) original;
-        originalData.setFirmamentOverrides(CustomModelOverrideParser.parseCustomModelOverrides(jsonObject));
-        return original;
-    }
+	@ModifyReturnValue(
+		method = "deserialize(Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/client/render/model/json/ModelOverride;",
+		at = @At(value = "RETURN"))
+	private ModelOverride addCustomOverrides(ModelOverride original, @Local JsonObject jsonObject) {
+		var originalData = (ModelOverrideData) (Object) original;
+		originalData.setFirmamentOverrides(CustomModelOverrideParser.parseCustomModelOverrides(jsonObject));
+		return original;
+	}
 
-    @ModifyExpressionValue(
-        method = "deserializeMinPropertyValues(Lcom/google/gson/JsonObject;)Ljava/util/List;",
-        at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
-    private Object removeFirmamentPredicatesFromJsonIteration(Object original, @Local Map.Entry<String, JsonElement> entry) {
-        if (entry.getKey().startsWith("firmament:")) return new JsonPrimitive(0F);
-        return original;
-    }
+	@ModifyExpressionValue(
+		method = "deserializeMinPropertyValues(Lcom/google/gson/JsonObject;)Ljava/util/List;",
+		at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;"))
+	private Object removeFirmamentPredicatesFromJsonIteration(Object original, @Local Map.Entry<String, JsonElement> entry) {
+		if (entry.getKey().startsWith("firmament:")) return new JsonPrimitive(0F);
+		return original;
+	}
 
-    @Inject(
-        method = "deserializeMinPropertyValues",
-        at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;")
-    )
-    private void whatever(JsonObject object, CallbackInfoReturnable<List<ModelOverride.Condition>> cir,
-                          @Local Map<Identifier, Float> maps) {
-        maps.entrySet().removeIf(it -> it.getKey().getNamespace().equals("firmament"));
-    }
+	@Inject(
+		method = "deserializeMinPropertyValues",
+		at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;")
+	)
+	private void whatever(JsonObject object, CallbackInfoReturnable<List<ModelOverride.Condition>> cir,
+	                      @Local Map<Identifier, Float> maps) {
+		maps.entrySet().removeIf(it -> it.getKey().getNamespace().equals("firmament"));
+	}
 }

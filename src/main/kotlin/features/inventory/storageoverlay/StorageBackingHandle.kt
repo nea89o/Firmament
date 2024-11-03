@@ -40,6 +40,7 @@ sealed interface StorageBackingHandle {
          * representable as a [StorageBackingHandle], meaning another screen is open, for example the enderchest icon
          * selection screen.
          */
+        @OptIn(ExperimentalContracts::class)
         fun fromScreen(screen: Screen?): StorageBackingHandle? {
 	        contract {
 		        returnsNotNull() implies (screen != null)

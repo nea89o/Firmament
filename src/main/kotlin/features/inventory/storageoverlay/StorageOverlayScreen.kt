@@ -21,6 +21,7 @@ import moe.nea.firmament.util.MoulConfigUtils.clickMCComponentInPlace
 import moe.nea.firmament.util.MoulConfigUtils.drawMCComponentInPlace
 import moe.nea.firmament.util.assertTrueOr
 import moe.nea.firmament.util.customgui.customGui
+import moe.nea.firmament.util.render.drawGuiTexture
 
 class StorageOverlayScreen : Screen(Text.literal("")) {
 
@@ -162,13 +163,11 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		context.drawGuiTexture(upperBackgroundSprite,
 		                       measurements.x,
 		                       measurements.y,
-		                       0,
 		                       measurements.overviewWidth,
 		                       measurements.overviewHeight)
 		context.drawGuiTexture(playerInventorySprite,
 		                       measurements.playerX,
 		                       measurements.playerY,
-		                       0,
 		                       PLAYER_WIDTH,
 		                       PLAYER_HEIGHT)
 	}
@@ -188,7 +187,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		items.withIndex().forEach { (index, item) ->
 			val (x, y) = getPlayerInventorySlotPosition(index)
 			context.drawItem(item, x, y, 0)
-			context.drawItemInSlot(textRenderer, item, x, y)
+			context.drawStackOverlay(textRenderer, item, x, y)
 		}
 	}
 
@@ -357,7 +356,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			val slotY = (index / 9) * SLOT_SIZE + y + 4 + textRenderer.fontHeight + 1
 			if (slots == null) {
 				context.drawItem(stack, slotX, slotY)
-				context.drawItemInSlot(textRenderer, stack, slotX, slotY)
+				context.drawStackOverlay(textRenderer, stack, slotX, slotY)
 			} else {
 				val slot = slots[index]
 				slot.x = slotX - slotOffset.x

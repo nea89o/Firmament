@@ -146,7 +146,7 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
                 it.overrides
                     .asSequence()
                     .filter { it.predicate.test(stack) }
-                    .map { models.modelManager.getModel(ModelIdentifier(it.model, "inventory")) }
+                    .map { models.getModel(it.model) }
                     .firstOrNull()
             }
             .intoOptional()

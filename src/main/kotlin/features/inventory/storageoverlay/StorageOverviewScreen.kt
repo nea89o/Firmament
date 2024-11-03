@@ -111,7 +111,7 @@ class StorageOverviewScreen() : Screen(Text.empty()) {
                 context.fill(x, y, x + 18, y + 18, 0x40808080.toInt())
             }
             context.drawItem(stack, x + 1, y + 1)
-            context.drawItemInSlot(MC.font, stack, x + 1, y + 1)
+            context.drawStackOverlay(MC.font, stack, x + 1, y + 1)
         }
     }
 

@@ -6,6 +6,7 @@ import io.github.moulberry.repo.data.Coordinate
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import net.minecraft.text.Text
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ProcessChatEvent
@@ -98,9 +99,8 @@ object FairySouls : FirmamentFeature {
     fun onWorldRender(it: WorldRenderLastEvent) {
         if (!TConfig.displaySouls) return
         renderInWorld(it) {
-            color(1F, 1F, 0F, 0.8F)
             currentMissingSouls.forEach {
-                block(it.blockPos)
+                block(it.blockPos, 0x80FFFF00.toInt())
             }
             color(1f, 0f, 1f, 1f)
             currentLocationSouls.forEach {
