@@ -211,6 +211,11 @@ object SlotLocking : FirmamentFeature {
 		}
 		if (it.matches(TConfig.slotBind)) {
 			storedLockingSlot = null
+			val boundSlots = DConfig.data?.boundSlots ?: return
+			if (slot != null)
+				boundSlots.entries.removeIf {
+					it.value == slot.index || it.key == slot.index
+				}
 		}
 	}
 
