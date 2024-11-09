@@ -27,7 +27,7 @@ plugins {
 	id("moe.nea.mc-auto-translations") version "0.0.1"
 }
 
-version = getGitTagInfo()
+version = getGitTagInfo() + "-mc${libs.versions.minecraft.get()}"
 group = rootProject.property("maven_group").toString()
 
 java {
