@@ -29,3 +29,7 @@ accessible method net/minecraft/entity/LivingEntity getHitbox ()Lnet/minecraft/u
 accessible method net/minecraft/registry/entry/RegistryEntryList$Named <init> (Lnet/minecraft/registry/entry/RegistryEntryOwner;Lnet/minecraft/registry/tag/TagKey;)V
 accessible method net/minecraft/registry/entry/RegistryEntry$Reference setValue (Ljava/lang/Object;)V
 accessible field net/minecraft/client/render/model/WrapperBakedModel wrapped Lnet/minecraft/client/render/model/BakedModel;
+accessible method net/minecraft/entity/passive/TameableEntity isInSameTeam (Lnet/minecraft/entity/Entity;)Z
+accessible method net/minecraft/entity/Entity isInSameTeam (Lnet/minecraft/entity/Entity;)Z
+accessible method net/minecraft/registry/entry/RegistryEntry$Reference setTags (Ljava/util/Collection;)V
+accessible method net/minecraft/registry/entry/RegistryEntryList$Named setEntries (Ljava/util/List;)V
