@@ -45,6 +45,6 @@ class SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
 	}
 
 	override val icon: ItemStack = ItemStack(Blocks.CRAFTING_TABLE)
-	override val title: Text = tr("firmament.category.crafting", "SkyBlock Crafting")
+	override val title: Text = tr("firmament.category.crafting", "SkyBlock Crafting") // TODO: fix tr not being included in jars
 	override val identifier: Identifier = Firmament.identifier("crafting_recipe")
 }

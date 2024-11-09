@@ -26,7 +26,7 @@ plugins {
 	id("fabric-loom") version "1.8.9"
 	id("com.github.johnrengelman.shadow") version "8.1.1"
 	id("moe.nea.licenseextractificator")
-	id("moe.nea.mc-auto-translations") version "0.0.1"
+	id("moe.nea.mc-auto-translations") version "0.1.0"
 }
 
 version = getGitTagInfo() + "-mc${libs.versions.minecraft.get()}"
