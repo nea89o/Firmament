@@ -28,7 +28,7 @@ object RenderCircleProgress {
 	) {
 		RenderSystem.enableBlend()
 		drawContext.draw {
-			val bufferBuilder = it.getBuffer(RenderLayer.getGuiTexturedOverlay(texture))
+			val bufferBuilder = it.getBuffer(GuiRenderLayers.GUI_TEXTURED_TRIS.apply(texture))
 			val matrix: Matrix4f = drawContext.matrices.peek().positionMatrix
 
 			val corners = listOf(

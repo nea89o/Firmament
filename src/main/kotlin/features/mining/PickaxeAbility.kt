@@ -127,12 +127,15 @@ object PickaxeAbility : FirmamentFeature {
 
 	@Subscribe
 	fun onProfileSwitch(event: ProfileSwitchEvent) {
-		lastUsage.clear()
+		lastUsage.entries.removeIf {
+			it.value < lobbyJoinTime
+		}
 	}
 
 	val abilityUsePattern = Pattern.compile("You used your (?<name>.*) Pickaxe Ability!")
 	val fuelPattern = Pattern.compile("Fuel: .*/(?<maxFuel>$SHORT_NUMBER_FORMAT)")
-	val pickaxeAbilityCooldownPattern = Pattern.compile("Your pickaxe ability is on cooldown for (?<remainingCooldown>$TIME_PATTERN)\\.")
+	val pickaxeAbilityCooldownPattern =
+		Pattern.compile("Your pickaxe ability is on cooldown for (?<remainingCooldown>$TIME_PATTERN)\\.")
 
 	data class PickaxeAbilityData(
 		val name: String,

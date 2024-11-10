@@ -8,6 +8,7 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.RenderLayer.MultiPhaseParameters
 import net.minecraft.client.render.RenderPhase
 import net.minecraft.client.render.VertexFormat
+import net.minecraft.client.render.VertexFormat.DrawMode
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.util.Identifier
 import net.minecraft.util.TriState
@@ -22,13 +23,26 @@ object GuiRenderLayers {
 	val GUI_TEXTURED_NO_DEPTH = Util.memoize<Identifier, RenderLayer> { texture: Identifier ->
 		RenderLayer.of("firmament_gui_textured_no_depth",
 		               VertexFormats.POSITION_TEXTURE_COLOR,
-		               VertexFormat.DrawMode.QUADS,
-		               RenderLayer.CUTOUT_BUFFER_SIZE,
+		               DrawMode.QUADS,
+		               DEFAULT_BUFFER_SIZE,
 		               MultiPhaseParameters.builder()
 			               .texture(RenderPhase.Texture(texture, TriState.FALSE, false))
 			               .program(RenderPhase.POSITION_TEXTURE_COLOR_PROGRAM)
 			               .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-						   .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
+			               .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
+			               .build(false))
+	}
+	val GUI_TEXTURED_TRIS = Util.memoize { texture: Identifier ->
+		RenderLayer.of("firmament_gui_textured_overlay_tris",
+		               VertexFormats.POSITION_TEXTURE_COLOR,
+		               DrawMode.TRIANGLES,
+		               DEFAULT_BUFFER_SIZE,
+		               MultiPhaseParameters.builder()
+			               .texture(RenderPhase.Texture(texture, TriState.DEFAULT, false))
+			               .program(RenderPhase.POSITION_TEXTURE_COLOR_PROGRAM)
+			               .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
+			               .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
+			               .writeMaskState(RenderPhase.COLOR_MASK)
 			               .build(false))
 	}
 }
