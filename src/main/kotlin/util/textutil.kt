@@ -90,7 +90,7 @@ fun CharSequence.removeColorCodes(keepNonColorCodes: Boolean = false): String {
 }
 
 val Text.unformattedString: String
-	get() = string.removeColorCodes()
+	get() = string.removeColorCodes() // TODO: maybe shortcircuit this with .visit
 
 val Text.directLiteralStringContent: String? get() = (this.content as? PlainTextContent)?.string()
 
