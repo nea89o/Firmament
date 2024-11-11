@@ -38,7 +38,9 @@ java {
 		languageVersion.set(JavaLanguageVersion.of(21))
 	}
 }
-
+loom {
+	mixin.useLegacyMixinAp.set(false)
+}
 
 tasks.withType(KotlinCompile::class) {
 	compilerOptions {
