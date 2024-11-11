@@ -6,8 +6,11 @@ import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds
 import moe.nea.firmament.gui.entity.EntityRenderer
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.Drawable
 import net.minecraft.client.gui.Element
+import net.minecraft.client.gui.ParentElement
 import net.minecraft.entity.LivingEntity
+
 
 class EntityWidget(val entity: LivingEntity, val point: Point) : WidgetWithBounds() {
     override fun children(): List<Element> {

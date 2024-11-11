@@ -104,16 +104,12 @@ fun String.capitalizeN() = replaceFirstChar { it.uppercaseChar() }
 val unpackAllJars by tasks.registering
 fun innerJarsOf(name: String, dependency: Dependency): Provider<FileTree> {
 	val task = tasks.create("unpackInnerJarsFor${name.capitalizeN()}", InnerJarsUnpacker::class) {
-		doFirst {
-			println("Unpacking JARs for $name")
-		}
 		this.inputJars.setFrom(files(configurations.detachedConfiguration(dependency)))
 		this.outputDir.set(layout.buildDirectory.dir("unpackedJars/$name").also {
 			it.get().asFile.mkdirs()
 		})
 	}
 	unpackAllJars { dependsOn(task) }
-	println("Constructed innerJars task: ${project.files(task).asFileTree.toList().map {it to it.exists()}}")
 	return project.provider {
 		project.files(task).asFileTree
 	}
@@ -159,6 +155,10 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name"): Source
 	}
 	tasks.shadowJar {
 		from(ss.output)
+	}
+	// TODO: figure out why inheritances are not being respected by tiny kotlin names
+	tasks.remapJar {
+		classpath.from(configurations.getByName(ss.compileClasspathConfigurationName))
 	}
 	collectTranslations {
 		this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
