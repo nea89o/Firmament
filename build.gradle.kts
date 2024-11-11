@@ -172,6 +172,10 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 	tasks.shadowJar {
 		from(ss.output)
 	}
+	// TODO: figure out why inheritances are not being respected by tiny kotlin names
+	tasks.remapJar {
+		classpath.from(configurations.getByName(ss.compileClasspathConfigurationName))
+	}
 	collectTranslations {
 		this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
 	}
@@ -373,7 +377,6 @@ tasks.shadowJar {
 }
 
 tasks.remapJar {
-//	injectAccessWidener.set(true)
 	inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
 	dependsOn(tasks.shadowJar)
 	archiveClassifier.set("")
