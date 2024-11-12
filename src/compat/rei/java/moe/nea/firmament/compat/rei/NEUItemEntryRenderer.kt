@@ -27,7 +27,9 @@ import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.model.BakedModel
 import net.minecraft.client.texture.SpriteAtlasTexture
 import net.minecraft.item.ModelTransformationMode
+import net.minecraft.item.tooltip.TooltipType
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
+import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
@@ -52,7 +54,12 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
 
 		val lore = mutableListOf(stack.displayNameAccordingToNbt)
 		lore.addAll(stack.loreAccordingToNbt)
-
+		ItemTooltipEvent.publish(ItemTooltipEvent(
+			stack,
+			tooltipContext.vanillaContext(),
+			TooltipType.BASIC,
+			lore
+		))
 		// TODO: tags aren't sent as early now so some tooltip components that use tags will crash the game
 //		stack.getTooltip(
 //			Item.TooltipContext.create(
