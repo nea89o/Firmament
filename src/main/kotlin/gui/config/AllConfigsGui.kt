@@ -17,7 +17,7 @@ object AllConfigsGui {
 
 	object ConfigConfig : ManagedConfig("configconfig", Category.META) {
 		val enableYacl by toggle("enable-yacl") { false }
-		val enableMoulConfig by toggle("enable-moulconfig") { false }
+		val enableMoulConfig by toggle("enable-moulconfig") { true }
 	}
 
 	fun <T> List<T>.toObservableList(): ObservableList<T> = ObservableList(this)
