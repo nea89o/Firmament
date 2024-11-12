@@ -13,13 +13,12 @@ interface FirmamentConfigScreenProvider {
 		val providers by lazy {
 			allValidInstances
 				.filter { it.isEnabled }
-				.sortedWith(Comparator.comparing(
-					{ it.key },
-					Comparator<String> { left, right ->
-						if (left == "builtin") return@Comparator -1
-						if (right == "builtin") return@Comparator 1
-						return@Comparator left.compareTo(right)
-					})).toList()
+				.sortedWith(
+					Comparator
+						.comparing<FirmamentConfigScreenProvider, Boolean>({ it.key == "builtin" })
+						.reversed()
+						.then(Comparator.comparing({ it.key }))
+				).toList()
 		}
 	}
 }
