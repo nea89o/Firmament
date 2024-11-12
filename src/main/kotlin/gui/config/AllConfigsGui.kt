@@ -4,7 +4,6 @@ import io.github.notenoughupdates.moulconfig.observer.ObservableList
 import io.github.notenoughupdates.moulconfig.xml.Bind
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
-import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils
 import moe.nea.firmament.util.ScreenUtil.setScreenLater
@@ -18,6 +17,7 @@ object AllConfigsGui {
 
 	object ConfigConfig : ManagedConfig("configconfig", Category.META) {
 		val enableYacl by toggle("enable-yacl") { false }
+		val enableMoulConfig by toggle("enable-moulconfig") { false }
 	}
 
 	fun <T> List<T>.toObservableList(): ObservableList<T> = ObservableList(this)
@@ -67,7 +67,11 @@ object AllConfigsGui {
 	}
 
 	fun makeScreen(parent: Screen? = null): Screen {
-		val wantedKey = if (ConfigConfig.enableYacl) "yacl" else "builtin"
+		val wantedKey = when {
+			ConfigConfig.enableMoulConfig -> "moulconfig"
+			ConfigConfig.enableYacl -> "yacl"
+			else -> "builtin"
+		}
 		val provider = FirmamentConfigScreenProvider.providers.find { it.key == wantedKey }
 			?: FirmamentConfigScreenProvider.providers.first()
 		return provider.open(parent)

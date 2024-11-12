@@ -4,7 +4,7 @@ import net.minecraft.Bootstrap
 import net.minecraft.SharedConstants
 import moe.nea.firmament.util.TimeMark
 
- object FirmTestBootstrap {
+object FirmTestBootstrap {
 	val loadStart = TimeMark.now()
 
 	init {

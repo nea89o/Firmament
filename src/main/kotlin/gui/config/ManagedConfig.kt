@@ -176,7 +176,7 @@ abstract class ManagedConfig(
 	}
 
 	val translationKey get() = "firmament.config.${name}"
-	val labelText = Text.translatable(translationKey)
+	val labelText: Text = Text.translatable(translationKey)
 
 	fun getConfigEditor(parent: Screen? = null): Screen {
 		var screen: Screen? = null

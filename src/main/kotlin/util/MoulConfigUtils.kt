@@ -234,6 +234,19 @@ object MoulConfigUtils {
 	// TODO: move this utility into moulconfig (also rework guicontext into an interface so i can make this mesh better into vanilla)
 	fun GuiContext.adopt(element: GuiComponent) = element.foldRecursive(Unit, { comp, unit -> comp.context = this })
 
+	inline fun <T, R> GetSetter<T>.xmap(crossinline fromT: (T) -> R, crossinline toT: (R) -> T): GetSetter<R> {
+		val outer = this
+		return object : GetSetter<R> {
+			override fun get(): R {
+				return fromT(outer.get())
+			}
+
+			override fun set(newValue: R) {
+				outer.set(toT(newValue))
+			}
+		}
+	}
+
 	fun clickMCComponentInPlace(
 		component: GuiComponent,
 		x: Int,

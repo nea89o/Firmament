@@ -1,9 +1,7 @@
 package moe.nea.firmament.gui.config
 
-import java.util.ServiceLoader
-import kotlin.streams.asSequence
 import net.minecraft.client.gui.screen.Screen
-import moe.nea.firmament.Firmament
+import moe.nea.firmament.util.compatloader.CompatLoader
 
 interface FirmamentConfigScreenProvider {
 	val key: String
@@ -11,17 +9,10 @@ interface FirmamentConfigScreenProvider {
 
 	fun open(parent: Screen?): Screen
 
-	companion object {
-		private val loader = ServiceLoader.load(FirmamentConfigScreenProvider::class.java)
-
+	companion object : CompatLoader<FirmamentConfigScreenProvider>(FirmamentConfigScreenProvider::class) {
 		val providers by lazy {
-			loader.stream().asSequence().mapNotNull { service ->
-				kotlin.runCatching { service.get() }
-					.getOrElse {
-						Firmament.logger.warn("Could not load config provider ${service.type()}", it)
-						null
-					}
-			}.filter { it.isEnabled }
+			allValidInstances
+				.filter { it.isEnabled }
 				.sortedWith(Comparator.comparing(
 					{ it.key },
 					Comparator<String> { left, right ->

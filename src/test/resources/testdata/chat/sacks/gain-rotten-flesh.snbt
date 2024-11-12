@@ -1,0 +1,101 @@
+{
+	color: "#FFAA00",
+	extra: [
+		{
+			color: "#55FF55",
+			hoverEvent: {
+				action: "show_text",
+				contents: {
+					color: "#55FF55",
+					extra: [
+						{
+							color: "#55FF55",
+							strikethrough: 0b,
+							text: "  +1 "
+						},
+						{
+							color: "#FFFF55",
+							strikethrough: 0b,
+							text: "Rotten Flesh"
+						},
+						{
+							color: "#555555",
+							strikethrough: 0b,
+							text: " (Combat Sack)"
+						},
+						{
+							strikethrough: 0b,
+							text: "
+
+"
+						},
+						{
+							color: "#555555",
+							strikethrough: 0b,
+							text: "This message can be disabled in the settings."
+						}
+					],
+					strikethrough: 0b,
+					text: "Added items:
+"
+				}
+			},
+			strikethrough: 0b,
+			text: "+1"
+		},
+		{
+			color: "#FFFF55",
+			hoverEvent: {
+				action: "show_text",
+				contents: {
+					color: "#55FF55",
+					extra: [
+						{
+							color: "#55FF55",
+							strikethrough: 0b,
+							text: "  +1 "
+						},
+						{
+							color: "#FFFF55",
+							strikethrough: 0b,
+							text: "Rotten Flesh"
+						},
+						{
+							color: "#555555",
+							strikethrough: 0b,
+							text: " (Combat Sack)"
+						},
+						{
+							strikethrough: 0b,
+							text: "
+
+"
+						},
+						{
+							color: "#555555",
+							strikethrough: 0b,
+							text: "This message can be disabled in the settings."
+						}
+					],
+					strikethrough: 0b,
+					text: "Added items:
+"
+				}
+			},
+			strikethrough: 0b,
+			text: " item"
+		},
+		{
+			color: "#FFFF55",
+			strikethrough: 0b,
+			text: "."
+		},
+		{
+			color: "#555555",
+			strikethrough: 0b,
+			text: " (Last 5s.)"
+		}
+	],
+	strikethrough: 0b,
+	text: "[Sacks] "
+}

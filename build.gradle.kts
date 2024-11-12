@@ -150,7 +150,10 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 	}
 	compatSourceSets.add(ss)
 	loom.createRemapConfigurations(ss)
-	if (!isEnabled) return ss
+	if (!isEnabled) {
+		ss.output.files.forEach { it.deleteRecursively() }
+		return ss
+	}
 	configurations {
 		(ss.implementationConfigurationName) {
 			extendsFrom(getByName(mainSS.compileClasspathConfigurationName))
@@ -219,7 +222,8 @@ val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false) // TODO: wait on their port
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
-val reiSourceSet = createIsolatedSourceSet("rei") // TODO: read through https://hackmd.io/@shedaniel/rei17_primer
+val reiSourceSet = createIsolatedSourceSet("rei")
+val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
 
 dependencies {
 	// Minecraft dependencies
@@ -377,6 +381,7 @@ tasks.shadowJar {
 }
 
 tasks.remapJar {
+//	injectAccessWidener.set(true)
 	inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
 	dependsOn(tasks.shadowJar)
 	archiveClassifier.set("")

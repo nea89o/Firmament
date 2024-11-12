@@ -30,7 +30,7 @@ class KeyBindingHandler(val name: String, val managedConfig: ManagedConfig) :
 		return Json.decodeFromJsonElement(element)
 	}
 
-	override fun emitGuiElements(opt: ManagedOption<SavedKeyBinding>, guiAppender: GuiAppender) {
+	fun createButtonComponent(opt: ManagedOption<SavedKeyBinding>): FirmButtonComponent {
 		lateinit var button: FirmButtonComponent
 		val sm = KeyBindingStateManager(
 			{ opt.value },
@@ -67,7 +67,11 @@ class KeyBindingHandler(val name: String, val managedConfig: ManagedConfig) :
 			}
 		}
 		sm.updateLabel()
-		guiAppender.appendLabeledRow(opt.labelText, button)
+		return button
+	}
+
+	override fun emitGuiElements(opt: ManagedOption<SavedKeyBinding>, guiAppender: GuiAppender) {
+		guiAppender.appendLabeledRow(opt.labelText, createButtonComponent(opt))
 	}
 
 }
