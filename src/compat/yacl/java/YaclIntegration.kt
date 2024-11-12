@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.ButtonOption
 import dev.isxander.yacl3.api.ConfigCategory
 import dev.isxander.yacl3.api.LabelOption
 import dev.isxander.yacl3.api.Option
+import dev.isxander.yacl3.api.OptionDescription
 import dev.isxander.yacl3.api.OptionGroup
 import dev.isxander.yacl3.api.YetAnotherConfigLib
 import dev.isxander.yacl3.api.controller.ControllerBuilder
@@ -69,6 +70,7 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 		fun <T> createDefaultBinding(function: (Option<T>) -> ControllerBuilder<T>): Option.Builder<T> {
 			return Option.createBuilder<T>()
 				.name(managedOption.labelText)
+				.description(OptionDescription.of(managedOption.labelDescription))
 				.binding(binding as Binding<T>)
 				.controller { function(it) }
 		}

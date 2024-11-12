@@ -18,7 +18,7 @@ abstract class ProcessedEditableOptionFirm<T : Any>(
 	}
 
 	override fun getDescription(): String {
-		return "Missing description" // TODO: add description
+		return managedOption.labelDescription.string
 	}
 
 	override fun explicitNotifyChange() {

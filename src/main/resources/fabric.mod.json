@@ -14,7 +14,8 @@
     ],
     "contact": {
         "discord": "https://discord.gg/64pFP94AWA",
-        "sources": "https://git.nea.moe/nea/firmament/"
+        "sources": "https://github.com/nea89o/Firmament",
+		"modrinth": "https://modrinth.com/mod/firmament"
     },
     "license": "GPL 3.0 or Later",
     "accessWidener": "firmament.accesswidener",

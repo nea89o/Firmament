@@ -2,7 +2,10 @@ package moe.nea.firmament.compat.moulconfig
 
 import com.google.auto.service.AutoService
 import io.github.notenoughupdates.moulconfig.Config
+import io.github.notenoughupdates.moulconfig.DescriptionRendereringBehaviour
+import io.github.notenoughupdates.moulconfig.Social
 import io.github.notenoughupdates.moulconfig.common.IMinecraft
+import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
 import io.github.notenoughupdates.moulconfig.gui.GuiComponent
 import io.github.notenoughupdates.moulconfig.gui.GuiElementWrapper
 import io.github.notenoughupdates.moulconfig.gui.GuiOptionEditor
@@ -22,10 +25,14 @@ import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import io.github.notenoughupdates.moulconfig.processor.ProcessedCategory
 import io.github.notenoughupdates.moulconfig.processor.ProcessedOption
 import java.lang.reflect.Type
+import java.net.URI
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.util.Identifier
+import net.minecraft.util.Util
+import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ClickHandler
 import moe.nea.firmament.gui.config.DurationHandler
@@ -37,6 +44,7 @@ import moe.nea.firmament.gui.config.KeyBindingHandler
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.gui.config.ManagedOption
 import moe.nea.firmament.gui.config.StringHandler
+import moe.nea.firmament.gui.toMoulConfig
 import moe.nea.firmament.keybindings.SavedKeyBinding
 import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.FirmFormatters
@@ -287,6 +295,47 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 			override fun shouldAutoFocusSearchbar(): Boolean {
 				return true
 			}
+
+			override fun getTitle(): String {
+				return "Firmament"
+			}
+
+			@Deprecated("Deprecated in java")
+			override fun executeRunnable(runnableId: Int) {
+				if (runnableId >= 0)
+					ErrorUtil.softError("Executed runnable $runnableId")
+			}
+
+			override fun getDescriptionBehaviour(option: ProcessedOption?): DescriptionRendereringBehaviour {
+				return DescriptionRendereringBehaviour.EXPAND_PANEL
+			}
+
+			fun mkSocial(name: String, identifier: Identifier, link: String) = object : Social() {
+				override fun onClick() {
+					Util.getOperatingSystem().open(URI(link))
+				}
+
+				override fun getTooltip(): List<String> {
+					return listOf(name)
+				}
+
+				override fun getIcon(): MyResourceLocation {
+					return identifier.toMoulConfig()
+				}
+			}
+
+			private val socials = listOf<Social>(
+				mkSocial("Discord", Firmament.identifier("textures/socials/discord.png"),
+				         Firmament.modContainer.metadata.contact.get("discord").get()),
+				mkSocial("Source Code", Firmament.identifier("textures/socials/git.png"),
+				         Firmament.modContainer.metadata.contact.get("sources").get()),
+				mkSocial("Modrinth", Firmament.identifier("textures/socials/modrinth.png"),
+				         Firmament.modContainer.metadata.contact.get("modrinth").get()),
+			)
+
+			override fun getSocials(): List<Social> {
+				return socials
+			}
 		}
 		val categories = ManagedConfig.Category.entries.map {
 			val options = mutableListOf<ProcessedOptionFirm>()
@@ -295,7 +344,7 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 				val categoryAccordionId = nextAccordionId++
 				options.add(object : ProcessedOptionFirm(-1, configObject) {
 					override fun getDebugDeclarationLocation(): String {
-						return "FirmamentConfig:$config.name"
+						return "FirmamentConfig:${config.name}"
 					}
 
 					override fun getName(): String {

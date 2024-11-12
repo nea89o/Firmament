@@ -26,7 +26,7 @@ class ProcessedCategoryFirm(
 	}
 
 	override fun getDescription(): String {
-		return "Missing description" // TODO: add description
+		return category.description.string
 	}
 
 	override fun getIdentifier(): String {

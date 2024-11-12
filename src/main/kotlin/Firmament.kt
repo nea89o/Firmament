@@ -49,6 +49,7 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
 
 object Firmament {
+	val modContainer by lazy { FabricLoader.getInstance().getModContainer(MOD_ID).get() }
 	const val MOD_ID = "firmament"
 
 	val DEBUG = System.getProperty("firmament.debug") == "true"

@@ -44,6 +44,7 @@ abstract class ManagedConfig(
 		;
 
 		val labelText: Text = Text.translatable("firmament.config.category.${name.lowercase()}")
+		val description: Text = Text.translatable("firmament.config.category.${name.lowercase()}.description")
 		val configs: MutableList<ManagedConfig> = mutableListOf()
 	}
 

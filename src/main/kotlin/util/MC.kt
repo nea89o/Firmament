@@ -3,6 +3,7 @@ package moe.nea.firmament.util
 import io.github.moulberry.repo.data.Coordinate
 import java.util.concurrent.ConcurrentLinkedQueue
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.hud.InGameHud
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.network.ClientPlayerEntity
@@ -28,9 +29,10 @@ object MC {
 
 	init {
 		TickEvent.subscribe("MC:push") {
-			while (true) {
-				inGameHud.chatHud.addMessage(messageQueue.poll() ?: break)
-			}
+			if (inGameHud.chatHud != null && world != null)
+				while (true) {
+					inGameHud.chatHud.addMessage(messageQueue.poll() ?: break)
+				}
 			while (true) {
 				(nextTickTodos.poll() ?: break).invoke()
 			}
@@ -41,7 +43,7 @@ object MC {
 	}
 
 	fun sendChat(text: Text) {
-		if (instance.isOnThread)
+		if (instance.isOnThread && inGameHud.chatHud != null && world != null)
 			inGameHud.chatHud.addMessage(text)
 		else
 			messageQueue.add(text)
@@ -86,7 +88,7 @@ object MC {
 	inline val interactionManager get() = instance.interactionManager
 	inline val textureManager get() = instance.textureManager
 	inline val options get() = instance.options
-	inline val inGameHud get() = instance.inGameHud
+	inline val inGameHud: InGameHud get() = instance.inGameHud
 	inline val font get() = instance.textRenderer
 	inline val soundManager get() = instance.soundManager
 	inline val player: ClientPlayerEntity? get() = instance.player
