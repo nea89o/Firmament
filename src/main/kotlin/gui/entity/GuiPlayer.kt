@@ -33,7 +33,9 @@ class GuiPlayer(world: ClientWorld?, profile: GameProfile?) : AbstractClientPlay
 	}
 
 	fun postInit() {
+		skinTexture = DefaultSkinHelper.getSkinTextures(this.getUuid()).texture
 		lastVelocity = Vec3d.ZERO
+		model = Model.WIDE
 	}
 
 	override fun isCreative(): Boolean {
@@ -44,7 +46,7 @@ class GuiPlayer(world: ClientWorld?, profile: GameProfile?) : AbstractClientPlay
 		return false
 	}
 
-	var skinTexture: Identifier = DefaultSkinHelper.getSkinTextures(this.getUuid()).texture
+	lateinit var skinTexture: Identifier
 	var capeTexture: Identifier? = null
 	var model: Model = Model.WIDE
 	override fun getSkinTextures(): SkinTextures {
