@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2022 Free Software Foundation Europe e.V. <https://fsfe.org>
+# SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Pre commit checks
+
+on: [ push, pull_request ]
+
+jobs:
+    reuse:
+        name: Run REUSE Compliance check
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+                name: Checkout Repository
+            -   name: REUSE Compliance Check
+                uses: fsfe/reuse-action@140e81ab76b30d9c5641b7b11e28222b3a11f8f9
+
+    pre-commit-generate:
+        name: Generate PRE-Commit hooks
+        runs-on: ubuntu-latest
+        outputs:
+            hooks: ${{ steps.generate-matrix.outputs.hooks }}
+        steps:
+            -   uses: actions/checkout@v4
+                name: Checkout Repository+
+            -   name: Generate matrix
+                id: generate-matrix
+                run: |
+                    printf 'hooks=' >>"$GITHUB_OUTPUT"
+                    # Note: GitHub runner image mentions a yq already being installed. That is not jq but for yaml, but another unrelated program
+                    pipx run yq -c '[.repos[]|.hooks[]|.id]' <.pre-commit-config.yaml | tee -a "$GITHUB_OUTPUT"
+                    echo >>"$GITHUB_OUTPUT"
+                    cat "$GITHUB_OUTPUT"
+    pre-commit:
+        runs-on: ubuntu-latest
+        needs: pre-commit-generate
+        strategy:
+            matrix:
+                hook: ${{ fromJSON(needs.pre-commit-generate.outputs.hooks) }}
+        name: 'PRE-Commit: ${{ matrix.hook }}'
+        steps:
+            -   uses: actions/checkout@v4
+                name: Checkout Repository
+            -   uses: actions/setup-python@v4
+                name: Setup Python
+            -   name: Check ${{ matrix.hook }}
+                uses: pre-commit/action@v3.0.1
+                with:
+                    extra_args: ${{ matrix.hook }} --all-files
