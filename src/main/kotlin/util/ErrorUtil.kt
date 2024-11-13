@@ -37,6 +37,31 @@ object ErrorUtil {
 		else Firmament.logger.error(message)
 	}
 
+	class Catch<T> private constructor(val value: T?, val exc: Throwable?) {
+		inline fun or(block: (exc: Throwable) -> T): T {
+			contract {
+				callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+			}
+			if (exc != null) return block(exc)
+			@Suppress("UNCHECKED_CAST")
+			return value as T
+		}
+
+		companion object {
+			fun <T> fail(exception: Throwable): Catch<T> = Catch(null, exception)
+			fun <T> succeed(value: T): Catch<T> = Catch(value, null)
+		}
+	}
+
+	inline fun <T> catch(message: String, block: () -> T): Catch<T> {
+		try {
+			return Catch.succeed(block())
+		} catch (exc: Throwable) {
+			softError(message, exc)
+			return Catch.fail(exc)
+		}
+	}
+
 	inline fun <T : Any> notNullOr(nullable: T?, message: String, orElse: () -> T): T {
 		contract {
 			callsInPlace(orElse, InvocationKind.AT_MOST_ONCE)

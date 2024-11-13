@@ -10,9 +10,10 @@ import net.minecraft.client.gui.Element
 import net.minecraft.client.gui.ParentElement
 import net.minecraft.entity.LivingEntity
 import moe.nea.firmament.gui.entity.EntityRenderer
+import moe.nea.firmament.util.ErrorUtil
 
 
-class EntityWidget(val entity: LivingEntity, val point: Point) : WidgetWithBounds() {
+class EntityWidget(val entity: LivingEntity?, val point: Point) : WidgetWithBounds() {
 	override fun children(): List<Element> {
 		return emptyList()
 	}
@@ -22,9 +23,9 @@ class EntityWidget(val entity: LivingEntity, val point: Point) : WidgetWithBound
 	override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
 		try {
 			if (!hasErrored)
-				EntityRenderer.renderEntity(entity, context, point.x, point.y, mouseX.toFloat(), mouseY.toFloat())
+				EntityRenderer.renderEntity(entity!!, context, point.x, point.y, mouseX.toFloat(), mouseY.toFloat())
 		} catch (ex: Exception) {
-			EntityRenderer.logger.error("Failed to render constructed entity: $entity", ex)
+			ErrorUtil.softError("Failed to render constructed entity: $entity", ex)
 			hasErrored = true
 		}
 		if (hasErrored) {

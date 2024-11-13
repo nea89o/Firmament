@@ -3,7 +3,6 @@ package moe.nea.firmament.gui.entity
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import org.apache.logging.log4j.LogManager
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.atan
@@ -15,8 +14,8 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SpawnReason
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
+import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.assertNotNullOr
 import moe.nea.firmament.util.iterate
 import moe.nea.firmament.util.openFirmamentResource
 import moe.nea.firmament.util.render.enableScissorWithTranslation
@@ -76,18 +75,15 @@ object EntityRenderer {
 		"name" to ModifyName,
 	)
 
-	val logger = LogManager.getLogger("Firmament.Entity")
 	fun applyModifiers(entityId: String, modifiers: List<JsonObject>): LivingEntity? {
-		val entityType = assertNotNullOr(entityIds[entityId]) {
-			logger.error("Could not create entity with id $entityId")
+		val entityType = ErrorUtil.notNullOr(entityIds[entityId], "Could not create entity with id $entityId") {
 			return null
 		}
-		var entity = entityType()
+		var entity = ErrorUtil.catch("") { entityType() }.or { return null }
 		for (modifierJson in modifiers) {
-			val modifier = assertNotNullOr(modifierJson["type"]?.asString?.let(entityModifiers::get)) {
-				logger.error("Unknown modifier $modifierJson")
-				return null
-			}
+			val modifier = ErrorUtil.notNullOr(
+				modifierJson["type"]?.asString?.let(entityModifiers::get),
+				"Could not create entity with id $entityId. Failed to apply modifier $modifierJson") { return null }
 			entity = modifier.apply(entity, modifierJson)
 		}
 		return entity
@@ -95,8 +91,7 @@ object EntityRenderer {
 
 	fun constructEntity(info: JsonObject): LivingEntity? {
 		val modifiers = (info["modifiers"] as JsonArray?)?.map { it.asJsonObject } ?: emptyList()
-		val entityType = assertNotNullOr(info["entity"]?.asString) {
-			logger.error("Missing entity type on entity object")
+		val entityType = ErrorUtil.notNullOr(info["entity"]?.asString, "Missing entity type on entity object") {
 			return null
 		}
 		return applyModifiers(entityType, modifiers)

@@ -39,44 +39,42 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
 				} else {
 					EntityRenderer.applyModifiers(source, listOf())
 				}
-				if (entity != null) {
-					val level = display.neuRecipe.level
-					val fullMobName =
-						if (level > 0) Text.translatable("firmament.recipe.mobs.name", level, display.neuRecipe.name)
-						else Text.translatable("firmament.recipe.mobs.name.nolevel", display.neuRecipe.name)
-					val tt = mutableListOf<Text>()
-					tt.add((fullMobName))
-					tt.add(Text.literal(""))
-					if (display.neuRecipe.coins > 0) {
-						tt.add(Text.stringifiedTranslatable("firmament.recipe.mobs.coins", display.neuRecipe.coins))
-					}
-					if (display.neuRecipe.combatExperience > 0) {
-						tt.add(
-							Text.stringifiedTranslatable(
-								"firmament.recipe.mobs.combat",
-								display.neuRecipe.combatExperience
-							)
-						)
-					}
-					if (display.neuRecipe.enchantingExperience > 0) {
-						tt.add(
-							Text.stringifiedTranslatable(
-								"firmament.recipe.mobs.exp",
-								display.neuRecipe.enchantingExperience
-							)
-						)
-					}
-					if (display.neuRecipe.extra != null)
-						display.neuRecipe.extra.mapTo(tt) { Text.literal(it) }
-					if (tt.size == 2)
-						tt.removeAt(1)
-					add(
-						Widgets.withTooltip(
-							EntityWidget(entity, Point(bounds.minX + 5, bounds.minY + 15)),
-							tt
+				val level = display.neuRecipe.level
+				val fullMobName =
+					if (level > 0) Text.translatable("firmament.recipe.mobs.name", level, display.neuRecipe.name)
+					else Text.translatable("firmament.recipe.mobs.name.nolevel", display.neuRecipe.name)
+				val tt = mutableListOf<Text>()
+				tt.add((fullMobName))
+				tt.add(Text.literal(""))
+				if (display.neuRecipe.coins > 0) {
+					tt.add(Text.stringifiedTranslatable("firmament.recipe.mobs.coins", display.neuRecipe.coins))
+				}
+				if (display.neuRecipe.combatExperience > 0) {
+					tt.add(
+						Text.stringifiedTranslatable(
+							"firmament.recipe.mobs.combat",
+							display.neuRecipe.combatExperience
 						)
 					)
 				}
+				if (display.neuRecipe.enchantingExperience > 0) {
+					tt.add(
+						Text.stringifiedTranslatable(
+							"firmament.recipe.mobs.exp",
+							display.neuRecipe.enchantingExperience
+						)
+					)
+				}
+				if (display.neuRecipe.extra != null)
+					display.neuRecipe.extra.mapTo(tt) { Text.literal(it) }
+				if (tt.size == 2)
+					tt.removeAt(1)
+				add(
+					Widgets.withTooltip(
+						EntityWidget(entity, Point(bounds.minX + 5, bounds.minY + 15)),
+						tt
+					)
+				)
 				add(
 					Widgets.createLabel(Point(bounds.minX + 15, bounds.minY + 5), Text.literal(display.neuRecipe.name))
 						.leftAligned()
