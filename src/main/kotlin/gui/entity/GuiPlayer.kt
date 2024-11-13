@@ -9,6 +9,7 @@ import net.minecraft.client.util.SkinTextures.Model
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 
 /**
@@ -21,12 +22,18 @@ fun makeGuiPlayer(world: World): GuiPlayer {
 		Float::class.javaPrimitiveType,
 		GameProfile::class.java
 	)
-	return constructor.newInstance(world, BlockPos.ORIGIN, 0F, GameProfile(UUID.randomUUID(), "Linnea"))
+	val player = constructor.newInstance(world, BlockPos.ORIGIN, 0F, GameProfile(UUID.randomUUID(), "Linnea"))
+	player.postInit()
+	return player
 }
 
 class GuiPlayer(world: ClientWorld?, profile: GameProfile?) : AbstractClientPlayerEntity(world, profile) {
 	override fun isSpectator(): Boolean {
 		return false
+	}
+
+	fun postInit() {
+		lastVelocity = Vec3d.ZERO
 	}
 
 	override fun isCreative(): Boolean {
