@@ -60,8 +60,13 @@ object SackUtil {
 	@Subscribe
 	fun updateFromChat(event: ProcessChatEvent) {
 		if (!event.unformattedString.startsWith("[Sacks]")) return
+		getUpdatesFromMessage(event.text)
+	}
+
+	fun getUpdatesFromMessage(text: Text): List<SackUpdate> {
 		val update = ChatUpdate()
-		event.text.siblings.forEach(update::updateFromHoverText)
+		text.siblings.forEach(update::updateFromHoverText)
+		return update.updates
 	}
 
 	data class SackUpdate(

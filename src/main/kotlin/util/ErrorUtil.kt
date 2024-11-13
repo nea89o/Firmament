@@ -10,7 +10,7 @@ import moe.nea.firmament.Firmament
 @Suppress("NOTHING_TO_INLINE") // Suppressed since i want the logger to not pick up the ErrorUtil stack-frame
 object ErrorUtil {
 	var aggressiveErrors = run {
-		Thread.currentThread().stackTrace.any { it.className.startsWith("org.junit.") } || Firmament.DEBUG
+		TestUtil.isInTest || Firmament.DEBUG
 			|| ErrorUtil::class.java.desiredAssertionStatus()
 	}
 

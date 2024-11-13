@@ -102,7 +102,7 @@ object MC {
 	inline val handledScreen: HandledScreen<*>? get() = instance.currentScreen as? HandledScreen<*>
 	inline val window get() = instance.window
 	inline val currentRegistries: RegistryWrapper.WrapperLookup? get() = world?.registryManager
-	val defaultRegistries: RegistryWrapper.WrapperLookup = BuiltinRegistries.createWrapperLookup()
+	val defaultRegistries: RegistryWrapper.WrapperLookup by lazy { BuiltinRegistries.createWrapperLookup() }
 	inline val currentOrDefaultRegistries get() = currentRegistries ?: defaultRegistries
 	val defaultItems: RegistryWrapper.Impl<Item> = defaultRegistries.getOrThrow(RegistryKeys.ITEM)
 	var lastWorld: World? = null

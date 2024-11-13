@@ -7,6 +7,8 @@
  */
 
 import com.google.devtools.ksp.gradle.KspTaskJvm
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
@@ -219,7 +221,8 @@ val configuredSourceSet = createIsolatedSourceSet("configured",
 val sodiumSourceSet = createIsolatedSourceSet("sodium")
 val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false) // TODO: Wait for update
 val yaclSourceSet = createIsolatedSourceSet("yacl")
-val explosiveEnhancementSourceSet = createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
+val explosiveEnhancementSourceSet =
+	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false) // TODO: wait on their port
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei")
@@ -344,7 +347,35 @@ mcAutoTranslations {
 	translationFunctionResolved.set("moe.nea.firmament.util.trResolved")
 }
 
+val downloadTestRepo by tasks.registering(RepoDownload::class) {
+	this.hash.set(project.property("firmament.compiletimerepohash") as String)
+}
+
+val updateTestRepo by tasks.registering {
+	outputs.upToDateWhen { false }
+	doLast {
+		val propertiesFile = rootProject.file("gradle.properties")
+		val json =
+			Gson().fromJson(uri("https://api.github.com/repos/NotEnoughUpdates/NotEnoughUpdates-REPO/branches/master")
+				                .toURL().readText(), JsonObject::class.java)
+		val latestSha = json["commit"].asJsonObject["sha"].asString
+		var text = propertiesFile.readText()
+		text = text.replace("firmament\\.compiletimerepohash=[^\n]*".toRegex(),
+		                    "firmament.compiletimerepohash=$latestSha")
+		propertiesFile.writeText(text)
+	}
+}
+
+
 tasks.test {
+	val wd =file("build/testWorkDir")
+	workingDir(wd)
+	dependsOn(downloadTestRepo)
+	doFirst {
+		wd.mkdirs()
+		wd.resolve("config").deleteRecursively()
+		systemProperty("firmament.testrepo", downloadTestRepo.flatMap { it.outputDirectory.asFile }.map { it.absolutePath }.get())
+	}
 	useJUnitPlatform()
 }
 

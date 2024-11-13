@@ -5,6 +5,7 @@ import io.github.moulberry.repo.NEURepositoryException
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.NEURecipe
 import io.github.moulberry.repo.data.Rarity
+import java.nio.file.Path
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
@@ -14,9 +15,11 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.events.ReloadRegistrationEvent
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.TestUtil
 import moe.nea.firmament.util.tr
 
 object RepoManager {
@@ -49,28 +52,31 @@ object RepoManager {
 
 	var recentlyFailedToUpdateItemList = false
 
-	val neuRepo: NEURepository = NEURepository.of(RepoDownloadManager.repoSavedLocation).apply {
-		registerReloadListener(ItemCache)
-		registerReloadListener(ExpLadders)
-		registerReloadListener(ItemNameLookup)
-		ReloadRegistrationEvent.publish(ReloadRegistrationEvent(this))
-		registerReloadListener {
-			Firmament.coroutineScope.launch(MinecraftDispatcher) {
-				if (!trySendClientboundUpdateRecipesPacket()) {
-					logger.warn("Failed to issue a ClientboundUpdateRecipesPacket (to reload REI). This may lead to an outdated item list.")
-					recentlyFailedToUpdateItemList = true
-				}
-			}
-		}
-	}
-
 	val essenceRecipeProvider = EssenceRecipeProvider()
 	val recipeCache = BetterRepoRecipeCache(essenceRecipeProvider)
 
-	init {
-		neuRepo.registerReloadListener(essenceRecipeProvider)
-		neuRepo.registerReloadListener(recipeCache)
+	fun makeNEURepository(path: Path): NEURepository {
+		return NEURepository.of(path).apply {
+			registerReloadListener(ItemCache)
+			registerReloadListener(ExpLadders)
+			registerReloadListener(ItemNameLookup)
+			ReloadRegistrationEvent.publish(ReloadRegistrationEvent(this))
+			registerReloadListener {
+				if (TestUtil.isInTest) return@registerReloadListener
+				Firmament.coroutineScope.launch(MinecraftDispatcher) {
+					if (!trySendClientboundUpdateRecipesPacket()) {
+						logger.warn("Failed to issue a ClientboundUpdateRecipesPacket (to reload REI). This may lead to an outdated item list.")
+						recentlyFailedToUpdateItemList = true
+					}
+				}
+			}
+			registerReloadListener(essenceRecipeProvider)
+			registerReloadListener(recipeCache)
+		}
 	}
+
+	lateinit var neuRepo: NEURepository
+		private set
 
 	fun getAllRecipes() = neuRepo.items.items.values.asSequence().flatMap { it.recipes }
 
@@ -106,6 +112,11 @@ object RepoManager {
 		}
 	}
 
+	fun reloadForTest(from: Path) {
+		neuRepo = makeNEURepository(from)
+		reload()
+	}
+
 	fun reload() {
 		try {
 			ItemCache.ReloadProgressHud.reportProgress("Reloading from Disk",
@@ -114,20 +125,34 @@ object RepoManager {
 			ItemCache.ReloadProgressHud.isEnabled = true
 			neuRepo.reload()
 		} catch (exc: NEURepositoryException) {
+			ErrorUtil.softError("Failed to reload repository", exc)
 			MC.sendChat(
 				tr("firmament.repo.reloadfail",
 				   "Failed to reload repository. This will result in some mod features not working.")
 			)
 			ItemCache.ReloadProgressHud.isEnabled = false
-			exc.printStackTrace()
 		}
 	}
 
+	private var wasInitialized = false
 	fun initialize() {
+		if (wasInitialized) return
+		wasInitialized = true
+		System.getProperty("firmament.testrepo")?.let { compTimeRepo ->
+			reloadForTest(Path.of(compTimeRepo))
+			return
+		}
+		neuRepo = makeNEURepository(RepoDownloadManager.repoSavedLocation)
 		if (Config.autoUpdate) {
 			launchAsyncUpdate()
 		} else {
 			reload()
+		}
+	}
+
+	init {
+		if (TestUtil.isInTest) {
+			initialize()
 		}
 	}
 
