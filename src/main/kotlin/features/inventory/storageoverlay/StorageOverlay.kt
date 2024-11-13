@@ -28,6 +28,7 @@ object StorageOverlay : FirmamentFeature {
 	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
 		val alwaysReplace by toggle("always-replace") { true }
 		val columns by integer("rows", 1, 10) { 3 }
+		val height by integer("height", 80, 3000) { 3 * 18 * 6 }
 		val scrollSpeed by integer("scroll-speed", 1, 50) { 10 }
 		val inverseScroll by toggle("inverse-scroll") { false }
 		val padding by integer("padding", 1, 20) { 5 }

@@ -50,7 +50,9 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val innerScrollPanelWidth = PAGE_WIDTH * pageWidthCount + (pageWidthCount - 1) * PADDING
 		val overviewWidth = innerScrollPanelWidth + 3 * PADDING + SCROLL_BAR_WIDTH
 		val x = width / 2 - overviewWidth / 2
-		val overviewHeight = minOf(3 * 18 * 6, height - PLAYER_HEIGHT - minOf(80, height / 10))
+		val overviewHeight = minOf(
+			height - PLAYER_HEIGHT - minOf(80, height / 10),
+			StorageOverlay.TConfig.height)
 		val innerScrollPanelHeight = overviewHeight - PADDING * 2
 		val y = height / 2 - (overviewHeight + PLAYER_HEIGHT) / 2
 		val playerX = width / 2 - PLAYER_WIDTH / 2

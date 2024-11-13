@@ -202,6 +202,8 @@
 	"firmament.config.storage-overlay": "Storage Overlay",
 	"firmament.config.storage-overlay.always-replace": "Always Open Overlay",
 	"firmament.config.storage-overlay.always-replace.description": "Always replace the ender chest with Firmament's storage overlay.",
+	"firmament.config.storage-overlay.height": "Storage Height",
+	"firmament.config.storage-overlay.height.description": "The height of the scrollable storage panel.",
 	"firmament.config.storage-overlay.inverse-scroll": "Invert Scroll",
 	"firmament.config.storage-overlay.inverse-scroll.description": "Invert the mouse wheel scrolling in Firmament's storage overlay.",
 	"firmament.config.storage-overlay.margin": "Margin",
