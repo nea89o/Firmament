@@ -3,7 +3,14 @@
 # SPDX-License-Identifier: CC0-1.0
 
 repos:
-  - repo: https://github.com/fsfe/reuse-tool
-    rev: v3.1.0a1
-    hooks:
-      - id: reuse
+    -   repo: https://github.com/fsfe/reuse-tool
+        rev: v3.1.0a1
+        hooks:
+            -   id: reuse
+    -   repo: local
+        hooks:
+            -   id: ordered_translations
+                name: "Check translation ordering"
+                language: script
+                files: translations/.*
+                entry: ./check-translation-ordering.sh
