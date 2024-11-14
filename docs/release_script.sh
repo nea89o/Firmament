@@ -84,7 +84,6 @@ parse_commandline "$@"
 set -euo pipefail
 
 REMOTE=origin
-BRANCH=master
 
 basedir="$(dirname "$(dirname "$(realpath "$0")")")"
 echo "Found base directory at $basedir"
@@ -104,8 +103,10 @@ if [ -n "$(git status --porcelain)" ] && [ "$_arg_no_check" == off ]; then
     exit 1
 fi
 
-if ! [[ "$(git rev-parse --abbrev-ref HEAD)" = "$BRANCH" ]]; then
-    echo "Not on branch $BRANCH."
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if ! [[ "$current_branch" = "master" ]] && ! [[ "$current_branch" = mc-* ]]; then
+    echo "Not on branch master or a mc- branch."
     exit 1
 fi
 
@@ -117,8 +118,15 @@ oldversion="$(git describe --tags --abbrev=0|tr -d '\n')"
 
 echo "Choosing old version as $oldversion"
 
+# TODO: auto choose next version based on a command line flag: --minor --hotfix --major as well as minecraft info from libs.versions.toml
 echo -n "Choosing next version as: "
 read newversion
+
+if ! [[ "$newversion" = *+mc* ]] && [ "$_arg_no_check" == off ]; then
+	echo "Illegal next version $newversion. Please use a.b.c+mcx.y.z"
+	exit 1
+fi
+
 echo "Confirming new version as $newversion"
 
 echo Committing release commit
@@ -153,7 +161,7 @@ cat "$releasenotes"
 echo ----------------------------------------------
 
 echo Pushing to github
-git push "$REMOTE" "$BRANCH" "$newversion"
+git push "$REMOTE" "HEAD" "$newversion"
 
 if command -v gh; then
     echo Creating github release
