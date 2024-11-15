@@ -386,7 +386,7 @@ in game as the regular SkyBlock id, not the resource pack identifier).
 ### Layers
 
 The `layers` specify the multiple texture layers that will be used when rendering. For non leather armor, or armor
-ignoring the leather armor ting just one layer is enough.
+ignoring the leather armor tint just one layer is enough.
 
 If you want to apply armor tint to the texture you will usually want two layers. The first layer has a tint applied:
 
