@@ -1,0 +1,20 @@
+#SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+#
+#SPDX-License-Identifier: CC0-1.0
+
+version = 1
+
+[[annotations]]
+path = ["src/**/*"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]
+
+[[annotations]]
+path = ["pnpm-lock.yaml"]
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = ["Auto Generated"]
+
+[[annotations]]
+path = ["*.json", "*.mjs", ".vscode/*"]
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]

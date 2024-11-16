@@ -1,0 +1,12 @@
+---
+import Head, {type Props as HeadProps} from "./Head.astro";
+
+type Props = {} & HeadProps;
+---
+
+<html>
+<Head {...Astro.props}></Head>
+<body>
+
+</body>
+</html>
