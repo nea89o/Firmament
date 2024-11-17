@@ -27,7 +27,7 @@ import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 
 /**
- * A skyblock item id, as used by the NEU repo.
+ * A SkyBlock item id, as used by the NEU repo.
  * This is not exactly the format used by HyPixel, but is mostly the same.
  * Usually this id splits an id used by HyPixel into more sub items. For example `PET` becomes `$PET_ID;$PET_RARITY`,
  * with those values extracted from other metadata.

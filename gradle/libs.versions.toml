@@ -60,7 +60,7 @@ hotswap_agent = "1.4.2-SNAPSHOT"
 # Update from https://github.com/LlamaLad7/MixinExtras/tags
 mixinextras = "0.4.1"
 
-jarvis = "1.1.3"
+jarvis = "1.1.4"
 nealisp = "1.1.0"
 
 # Update from https://github.com/NotEnoughUpdates/MoulConfig/tags
