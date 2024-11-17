@@ -1,4 +1,3 @@
-
 package moe.nea.firmament.features.mining
 
 import io.github.notenoughupdates.moulconfig.xml.Bind
@@ -21,113 +20,125 @@ import moe.nea.firmament.util.parseIntWithComma
 import moe.nea.firmament.util.useMatch
 
 object PristineProfitTracker : FirmamentFeature {
-    override val identifier: String
-        get() = "pristine-profit"
+	override val identifier: String
+		get() = "pristine-profit"
 
-    enum class GemstoneKind(
-        val label: String,
-        val flawedId: SkyblockId,
-    ) {
-        SAPPHIRE("Sapphire", SkyblockId("FLAWED_SAPPHIRE_GEM")),
-        RUBY("Ruby", SkyblockId("FLAWED_RUBY_GEM")),
-        AMETHYST("Amethyst", SkyblockId("FLAWED_AMETHYST_GEM")),
-        AMBER("Amber", SkyblockId("FLAWED_AMBER_GEM")),
-        TOPAZ("Topaz", SkyblockId("FLAWED_TOPAZ_GEM")),
-        JADE("Jade", SkyblockId("FLAWED_JADE_GEM")),
-        JASPER("Jasper", SkyblockId("FLAWED_JASPER_GEM")),
-        OPAL("Opal", SkyblockId("FLAWED_OPAL_GEM")),
-    }
+	enum class GemstoneKind(
+		val label: String,
+	) {
+		SAPPHIRE("Sapphire"),
+		RUBY("Ruby"),
+		AMETHYST("Amethyst"),
+		AMBER("Amber"),
+		TOPAZ("Topaz"),
+		JADE("Jade"),
+		JASPER("Jasper"),
+		OPAL("Opal"),
+		;
 
-    @Serializable
-    data class Data(
-        var maxMoneyPerSecond: Double = 1.0,
-        var maxCollectionPerSecond: Double = 1.0,
-    )
+		val flawedId: SkyblockId = SkyblockId("FLAWED_${name}_GEM")
+		val fineId: SkyblockId = SkyblockId("FINE_${name}_GEM")
+	}
 
-    object DConfig : ProfileSpecificDataHolder<Data>(serializer(), identifier, ::Data)
+	@Serializable
+	data class Data(
+		var maxMoneyPerSecond: Double = 1.0,
+		var maxCollectionPerSecond: Double = 1.0,
+	)
 
-    override val config: ManagedConfig?
-        get() = TConfig
+	object DConfig : ProfileSpecificDataHolder<Data>(serializer(), identifier, ::Data)
 
-    object TConfig : ManagedConfig(identifier, Category.MINING) {
-        val timeout by duration("timeout", 0.seconds, 120.seconds) { 30.seconds }
-        val gui by position("position", 80, 30) { Point(0.05, 0.2) }
-    }
+	override val config: ManagedConfig?
+		get() = TConfig
 
-    val sellingStrategy = BazaarPriceStrategy.SELL_ORDER
+	object TConfig : ManagedConfig(identifier, Category.MINING) {
+		val timeout by duration("timeout", 0.seconds, 120.seconds) { 30.seconds }
+		val gui by position("position", 80, 30) { Point(0.05, 0.2) }
+		val useFineGemstones by toggle("fine-gemstones") { false }
+	}
 
-    val pristineRegex =
-        "PRISTINE! You found . Flawed (?<kind>${
-            GemstoneKind.entries.joinToString("|") { it.label }
-        }) Gemstone x(?<count>[0-9,]+)!".toPattern()
+	val sellingStrategy = BazaarPriceStrategy.SELL_ORDER
 
-    val collectionHistogram = Histogram<Double>(10000, 180.seconds)
-    val moneyHistogram = Histogram<Double>(10000, 180.seconds)
+	val pristineRegex =
+		"PRISTINE! You found . Flawed (?<kind>${
+			GemstoneKind.entries.joinToString("|") { it.label }
+		}) Gemstone x(?<count>[0-9,]+)!".toPattern()
 
-    object ProfitHud : MoulConfigHud("pristine_profit", TConfig.gui) {
-        @field:Bind
-        var moneyCurrent: Double = 0.0
+	val collectionHistogram = Histogram<Double>(10000, 180.seconds)
 
-        @field:Bind
-        var moneyMax: Double = 1.0
+	/**
+	 * Separate histogram for money, since money changes based on gemstone, therefore we cannot calculate money from collection.
+	 */
+	val moneyHistogram = Histogram<Double>(10000, 180.seconds)
 
-        @field:Bind
-        var moneyText = ""
+	object ProfitHud : MoulConfigHud("pristine_profit", TConfig.gui) {
+		@field:Bind
+		var moneyCurrent: Double = 0.0
 
-        @field:Bind
-        var collectionCurrent = 0.0
+		@field:Bind
+		var moneyMax: Double = 1.0
 
-        @field:Bind
-        var collectionMax = 1.0
+		@field:Bind
+		var moneyText = ""
 
-        @field:Bind
-        var collectionText = ""
-        override fun shouldRender(): Boolean = collectionHistogram.latestUpdate().passedTime() < TConfig.timeout
-    }
+		@field:Bind
+		var collectionCurrent = 0.0
 
-    val SECONDS_PER_HOUR = 3600
-    val ROUGHS_PER_FLAWED = 80
+		@field:Bind
+		var collectionMax = 1.0
 
-    fun updateUi() {
-        val collectionPerSecond = collectionHistogram.averagePer({ it }, 1.seconds)
-        val moneyPerSecond = moneyHistogram.averagePer({ it }, 1.seconds)
-        if (collectionPerSecond == null || moneyPerSecond == null) return
-        ProfitHud.collectionCurrent = collectionPerSecond
-        ProfitHud.collectionText = Text.stringifiedTranslatable("firmament.pristine-profit.collection",
-                                                                formatCommas(collectionPerSecond * SECONDS_PER_HOUR,
-                                                                             1)).formattedString()
-        ProfitHud.moneyCurrent = moneyPerSecond
-        ProfitHud.moneyText = Text.stringifiedTranslatable("firmament.pristine-profit.money",
-                                                           formatCommas(moneyPerSecond * SECONDS_PER_HOUR, 1))
-            .formattedString()
-        val data = DConfig.data
-        if (data != null) {
-            if (data.maxCollectionPerSecond < collectionPerSecond && collectionHistogram.oldestUpdate()
-                    .passedTime() > 30.seconds
-            ) {
-                data.maxCollectionPerSecond = collectionPerSecond
-                DConfig.markDirty()
-            }
-            if (data.maxMoneyPerSecond < moneyPerSecond && moneyHistogram.oldestUpdate().passedTime() > 30.seconds) {
-                data.maxMoneyPerSecond = moneyPerSecond
-                DConfig.markDirty()
-            }
-            ProfitHud.collectionMax = maxOf(data.maxCollectionPerSecond, collectionPerSecond)
-            ProfitHud.moneyMax = maxOf(data.maxMoneyPerSecond, moneyPerSecond)
-        }
-    }
+		@field:Bind
+		var collectionText = ""
+		override fun shouldRender(): Boolean = collectionHistogram.latestUpdate().passedTime() < TConfig.timeout
+	}
+
+	val SECONDS_PER_HOUR = 3600
+	val ROUGHS_PER_FLAWED = 80
+	val FLAWED_PER_FINE = 80
+	val ROUGHS_PER_FINE = ROUGHS_PER_FLAWED * FLAWED_PER_FINE
+
+	fun updateUi() {
+		val collectionPerSecond = collectionHistogram.averagePer({ it }, 1.seconds)
+		val moneyPerSecond = moneyHistogram.averagePer({ it }, 1.seconds)
+		if (collectionPerSecond == null || moneyPerSecond == null) return
+		ProfitHud.collectionCurrent = collectionPerSecond
+		ProfitHud.collectionText = Text.stringifiedTranslatable("firmament.pristine-profit.collection",
+		                                                        formatCommas(collectionPerSecond * SECONDS_PER_HOUR,
+		                                                                     1)).formattedString()
+		ProfitHud.moneyCurrent = moneyPerSecond
+		ProfitHud.moneyText = Text.stringifiedTranslatable("firmament.pristine-profit.money",
+		                                                   formatCommas(moneyPerSecond * SECONDS_PER_HOUR, 1))
+			.formattedString()
+		val data = DConfig.data
+		if (data != null) {
+			if (data.maxCollectionPerSecond < collectionPerSecond && collectionHistogram.oldestUpdate()
+					.passedTime() > 30.seconds
+			) {
+				data.maxCollectionPerSecond = collectionPerSecond
+				DConfig.markDirty()
+			}
+			if (data.maxMoneyPerSecond < moneyPerSecond && moneyHistogram.oldestUpdate().passedTime() > 30.seconds) {
+				data.maxMoneyPerSecond = moneyPerSecond
+				DConfig.markDirty()
+			}
+			ProfitHud.collectionMax = maxOf(data.maxCollectionPerSecond, collectionPerSecond)
+			ProfitHud.moneyMax = maxOf(data.maxMoneyPerSecond, moneyPerSecond)
+		}
+	}
 
 
-    @Subscribe
-    fun onMessage(it: ProcessChatEvent) {
-        pristineRegex.useMatch(it.unformattedString) {
-            val gemstoneKind = GemstoneKind.valueOf(group("kind").uppercase())
-            val flawedCount = parseIntWithComma(group("count"))
-            val moneyAmount = sellingStrategy.getSellPrice(gemstoneKind.flawedId) * flawedCount
-            moneyHistogram.record(moneyAmount)
-            val collectionAmount = flawedCount * ROUGHS_PER_FLAWED
-            collectionHistogram.record(collectionAmount.toDouble())
-            updateUi()
-        }
-    }
+	@Subscribe
+	fun onMessage(it: ProcessChatEvent) {
+		pristineRegex.useMatch(it.unformattedString) {
+			val gemstoneKind = GemstoneKind.valueOf(group("kind").uppercase())
+			val flawedCount = parseIntWithComma(group("count"))
+			val moneyAmount =
+				if (TConfig.useFineGemstones) sellingStrategy.getSellPrice(gemstoneKind.fineId) * flawedCount / FLAWED_PER_FINE
+				else sellingStrategy.getSellPrice(gemstoneKind.flawedId) * flawedCount
+			moneyHistogram.record(moneyAmount)
+			val collectionAmount = flawedCount * ROUGHS_PER_FLAWED
+			collectionHistogram.record(collectionAmount.toDouble())
+			updateUi()
+		}
+	}
 }

@@ -157,6 +157,8 @@
 	"firmament.config.price-data.enable-keybind": "Enable only with Keybinding",
 	"firmament.config.price-data.enable-keybind.description": "Only show auction/bazaar prices when holding this keybinding. Unbind to always show.",
 	"firmament.config.pristine-profit": "Pristine Profit Tracker",
+	"firmament.config.pristine-profit.fine-gemstones": "Use Fine Gemstones",
+	"firmament.config.pristine-profit.fine-gemstones.description": "Use the (more stable) price of fine gemstones, instead of flawed gemstones.",
 	"firmament.config.pristine-profit.position": "Position",
 	"firmament.config.pristine-profit.position.description": "Edit the pristine profit hud location.",
 	"firmament.config.pristine-profit.timeout": "Timeout (0 = disabled)",
