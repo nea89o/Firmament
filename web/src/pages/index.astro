@@ -3,6 +3,7 @@ import Hero from "../components/Hero.astro"
 import Base from "../layouts/Base.astro";
 import Image from "../panorama.png";
 import NavBar from "../components/NavBar.astro";
+import Content from "../layouts/Content.astro";
 ---
 
 <Base title="Firmament">
@@ -12,4 +13,8 @@ import NavBar from "../components/NavBar.astro";
 		<a href="https://modrinth.com/mod/firmament" class="bg-amber-300 hover:bg-yellow-400 rounded-full text-black text-lg transition duration-300 hover:scale-110 hover:shadow-lg py-1 px-5">Download now</a>
 	</Hero>
 	<NavBar navStyle="transparent"></NavBar>
+	<Content>
+		Firmament is a 1.21 Minecraft mod for Hypixel SkyBlock. It has a variety of features such as an item list,
+		mining features.
+	</Content>
 </Base>

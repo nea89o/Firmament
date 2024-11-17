@@ -1,4 +1,5 @@
 ---
+import NavLink from "./NavLink.astro";
 export type Props = {
 	navStyle?: 'transparent' | 'full'
 }
@@ -7,20 +8,19 @@ const navbar = Astro.props.navStyle ?? 'full';
 ---
 
 <nav
-	class={`max-w-screen-xl bg-gray-800 flex flex-wrap items-center justify-between mx-auto px-2 py-1 leading-tight ${navbar == 'transparent' ? 'bg-opacity-50 backdrop-blur-lg absolute z-10 w-full top-0' : ''}`}>
+	class={`bg-gray-800 flex flex-wrap items-center justify-between mx-auto px-2 py-2 leading-tight w-full ${navbar == 'transparent' ? 'bg-opacity-50 backdrop-blur-lg absolute z-10 top-0' : 'border-b-white border-b'}`}>
 	<a href="/" class="flex items-center space-x-3">
 		<!--<img src=""/> TODO: add logo -->
 		<span class="self-center font-semibold whitespace-nowrap">Firmament</span>
 	</a>
 	<div class="block w-auto">
 		<ul class="font-medium flex-row mt-0 flex border-0">
-			<li>
-				<a class="px-1"
-				   href="https://github.com/nea89o/Firmament/blob/master/docs/Texture%20Pack%20Format.md">Docs</a>
-			</li>
-			<li>
-				<a class="px-1" href="/texture-packs">Texture Packs</a>
-			</li>
+			<NavLink link="/docs/texture-pack-format">
+				Docs
+			</NavLink>
+			<NavLink link="/texture-packs">
+				Texture Packs
+			</NavLink>
 		</ul>
 	</div>
 </nav>
