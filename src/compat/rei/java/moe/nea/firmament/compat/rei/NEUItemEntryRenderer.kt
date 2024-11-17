@@ -18,6 +18,7 @@ import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext
 import me.shedaniel.rei.api.common.entry.EntryStack
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.DiffuseLighting
@@ -31,6 +32,7 @@ import net.minecraft.item.tooltip.TooltipType
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
@@ -48,18 +50,29 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
 	}
 
 	val minecraft = MinecraftClient.getInstance()
+	var canUseVanillaTooltipEvents = false
 
 	override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
 		val stack = entry.value.asImmutableItemStack()
 
 		val lore = mutableListOf(stack.displayNameAccordingToNbt)
 		lore.addAll(stack.loreAccordingToNbt)
-		ItemTooltipEvent.publish(ItemTooltipEvent(
-			stack,
-			tooltipContext.vanillaContext(),
-			TooltipType.BASIC,
-			lore
-		))
+		if (canUseVanillaTooltipEvents) {
+			try {
+				ItemTooltipCallback.EVENT.invoker().getTooltip(
+					stack, tooltipContext.vanillaContext(), TooltipType.BASIC, lore
+				)
+			} catch (ex: Exception) {
+				ErrorUtil.softError("Failed to use vanilla tooltips", ex)
+			}
+		} else {
+			ItemTooltipEvent.publish(ItemTooltipEvent(
+				stack,
+				tooltipContext.vanillaContext(),
+				TooltipType.BASIC,
+				lore
+			))
+		}
 		// TODO: tags aren't sent as early now so some tooltip components that use tags will crash the game
 //		stack.getTooltip(
 //			Item.TooltipContext.create(
