@@ -90,6 +90,9 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
     fun subscribeEvents() {
         SubscriptionList.allLists.forEach {
             it.provideSubscriptions {
+				it.owner.javaClass.classes.forEach {
+					runCatching { it.getDeclaredField("INSTANCE").get(null) }
+				}
                 subscribeSingleEvent(it)
             }
         }

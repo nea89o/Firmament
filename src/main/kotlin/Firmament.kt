@@ -35,6 +35,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import net.minecraft.command.CommandRegistryAccess
 import net.minecraft.util.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
+import moe.nea.firmament.events.ClientInitEvent
 import moe.nea.firmament.events.ClientStartedEvent
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.ItemTooltipEvent
@@ -141,6 +142,7 @@ object Firmament {
 					ScreenRenderPostEvent.publish(ScreenRenderPostEvent(screen, mouseX, mouseY, tickDelta, drawContext))
 				})
 		})
+		ClientInitEvent.publish(ClientInitEvent())
 	}
 
 

@@ -49,6 +49,7 @@ object MC {
 			messageQueue.add(text)
 	}
 
+	@Deprecated("Use checked method instead", replaceWith = ReplaceWith("sendCommand(command)"))
 	fun sendServerCommand(command: String) {
 		val nh = player?.networkHandler ?: return
 		nh.sendPacket(

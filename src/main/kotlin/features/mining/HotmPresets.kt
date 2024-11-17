@@ -34,9 +34,6 @@ import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 
 object HotmPresets {
-	object Config : ManagedConfig("hotm-presets", Category.MINING) {
-	}
-
 	val SHARE_PREFIX = "FIRMHOTM/"
 
 	@Serializable

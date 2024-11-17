@@ -23,6 +23,7 @@ import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtOps
+import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.config.HudMeta
@@ -33,11 +34,11 @@ import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.TestUtil
+import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
 import moe.nea.firmament.util.mc.appendLore
 import moe.nea.firmament.util.mc.modifyLore
 import moe.nea.firmament.util.mc.setCustomName
 import moe.nea.firmament.util.mc.setSkullOwner
-import moe.nea.firmament.util.skyblockId
 
 object ItemCache : IReloadable {
 	private val cache: MutableMap<String, ItemStack> = ConcurrentHashMap()
@@ -67,6 +68,8 @@ object ItemCache : IReloadable {
 			null
 		}
 
+	val ItemStack.isBroken
+		get() = get(FirmamentDataComponentTypes.IS_BROKEN) ?: false
 	fun brokenItemStack(neuItem: NEUItem?, idHint: SkyblockId? = null): ItemStack {
 		return ItemStack(Items.PAINTING).apply {
 			setCustomName(Text.literal(neuItem?.displayName ?: idHint?.neuItem ?: "null"))
@@ -78,6 +81,10 @@ object ItemCache : IReloadable {
 					)
 				)
 			)
+			set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(NbtCompound().apply {
+				put("ID", NbtString.of(neuItem?.skyblockItemId ?: idHint?.neuItem ?: "null"))
+			}))
+			set(FirmamentDataComponentTypes.IS_BROKEN, true)
 		}
 	}
 
