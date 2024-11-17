@@ -6,6 +6,7 @@ accessible field net/minecraft/client/gui/hud/InGameHud SCOREBOARD_ENTRY_COMPARA
 
 accessible field net/minecraft/client/render/item/HeldItemRenderer itemRenderer Lnet/minecraft/client/render/item/ItemRenderer;
 accessible field net/minecraft/client/render/item/ItemModels missingModelSupplier Ljava/util/function/Supplier;
+mutable field net/minecraft/client/render/model/json/ModelOverrideList conditionTypes [Lnet/minecraft/util/Identifier;
 
 accessible class net/minecraft/client/render/model/json/ModelOverride$Deserializer
 accessible class net/minecraft/client/render/model/json/ModelOverrideList$BakedOverride

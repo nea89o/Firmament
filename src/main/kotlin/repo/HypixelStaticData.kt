@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager
 import org.lwjgl.glfw.GLFW
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.SerialName
@@ -74,6 +75,7 @@ object HypixelStaticData {
 			while (true) {
 				logger.info("Updating NEU prices")
 				updatePrices()
+				delay(10.minutes)
 			}
 		}
 	}

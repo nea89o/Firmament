@@ -6,7 +6,6 @@ package moe.nea.firmament.features.texturepack
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import org.slf4j.LoggerFactory
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.jvm.optionals.getOrNull
@@ -35,132 +34,131 @@ import moe.nea.firmament.util.json.SingletonSerializableList
 import moe.nea.firmament.util.runNull
 
 object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalTextures.CustomGuiTextureOverride>(),
-    SubscriptionOwner {
-    override val delegateFeature: FirmamentFeature
-        get() = CustomSkyBlockTextures
+	SubscriptionOwner {
+	override val delegateFeature: FirmamentFeature
+		get() = CustomSkyBlockTextures
 
-    class CustomGuiTextureOverride(
-        val classes: List<ItemOverrideCollection>
-    )
+	class CustomGuiTextureOverride(
+		val classes: List<ItemOverrideCollection>
+	)
 
-    @Serializable
-    data class GlobalItemOverride(
-        val screen: @Serializable(SingletonSerializableList::class) List<Identifier>,
-        val model: Identifier,
-        val predicate: FirmamentModelPredicate,
-    )
+	@Serializable
+	data class GlobalItemOverride(
+		val screen: @Serializable(SingletonSerializableList::class) List<Identifier>,
+		val model: Identifier,
+		val predicate: FirmamentModelPredicate,
+	)
 
-    @Serializable
-    data class ScreenFilter(
-        val title: StringMatcher,
-    )
+	@Serializable
+	data class ScreenFilter(
+		val title: StringMatcher,
+	)
 
-    data class ItemOverrideCollection(
-        val screenFilter: ScreenFilter,
-        val overrides: List<GlobalItemOverride>,
-    )
+	data class ItemOverrideCollection(
+		val screenFilter: ScreenFilter,
+		val overrides: List<GlobalItemOverride>,
+	)
 
-    @Subscribe
-    fun onStart(event: FinalizeResourceManagerEvent) {
-        MC.resourceManager.registerReloader(this)
-    }
+	@Subscribe
+	fun onStart(event: FinalizeResourceManagerEvent) {
+		MC.resourceManager.registerReloader(this)
+	}
 
-    @Subscribe
-    fun onEarlyReload(event: EarlyResourceReloadEvent) {
-        preparationFuture = CompletableFuture
-            .supplyAsync(
-                {
-                    prepare(event.resourceManager)
-                }, event.preparationExecutor)
-    }
+	@Subscribe
+	fun onEarlyReload(event: EarlyResourceReloadEvent) {
+		preparationFuture = CompletableFuture
+			.supplyAsync(
+				{
+					prepare(event.resourceManager)
+				}, event.preparationExecutor)
+	}
 
-    @Subscribe
-    fun onBakeModels(event: BakeExtraModelsEvent) {
-        for (guiClassOverride in preparationFuture.join().classes) {
-            for (override in guiClassOverride.overrides) {
-                event.addItemModel(ModelIdentifier(override.model, "inventory"))
-            }
-        }
-    }
+	@Subscribe
+	fun onBakeModels(event: BakeExtraModelsEvent) {
+		for (guiClassOverride in preparationFuture.join().classes) {
+			for (override in guiClassOverride.overrides) {
+				event.addItemModel(ModelIdentifier(override.model, "inventory"))
+			}
+		}
+	}
 
-    @Volatile
-    var preparationFuture: CompletableFuture<CustomGuiTextureOverride> = CompletableFuture.completedFuture(
-        CustomGuiTextureOverride(listOf()))
+	@Volatile
+	var preparationFuture: CompletableFuture<CustomGuiTextureOverride> = CompletableFuture.completedFuture(
+		CustomGuiTextureOverride(listOf()))
 
-    override fun prepare(manager: ResourceManager?, profiler: Profiler?): CustomGuiTextureOverride {
-        return preparationFuture.join()
-    }
+	override fun prepare(manager: ResourceManager?, profiler: Profiler?): CustomGuiTextureOverride {
+		return preparationFuture.join()
+	}
 
-    override fun apply(prepared: CustomGuiTextureOverride, manager: ResourceManager?, profiler: Profiler?) {
-        this.guiClassOverrides = prepared
-    }
+	override fun apply(prepared: CustomGuiTextureOverride, manager: ResourceManager?, profiler: Profiler?) {
+		this.guiClassOverrides = prepared
+	}
 
-    val logger = LoggerFactory.getLogger(CustomGlobalTextures::class.java)
-    fun prepare(manager: ResourceManager): CustomGuiTextureOverride {
-        val overrideResources =
-            manager.findResources("overrides/item") { it.namespace == "firmskyblock" && it.path.endsWith(".json") }
-                .mapNotNull {
-                    Firmament.tryDecodeJsonFromStream<GlobalItemOverride>(it.value.inputStream).getOrElse { ex ->
-                        logger.error("Failed to load global item override at ${it.key}", ex)
-                        null
-                    }
-                }
+	val logger = LoggerFactory.getLogger(CustomGlobalTextures::class.java)
+	fun prepare(manager: ResourceManager): CustomGuiTextureOverride {
+		val overrideResources =
+			manager.findResources("overrides/item") { it.namespace == "firmskyblock" && it.path.endsWith(".json") }
+				.mapNotNull {
+					Firmament.tryDecodeJsonFromStream<GlobalItemOverride>(it.value.inputStream).getOrElse { ex ->
+						logger.error("Failed to load global item override at ${it.key}", ex)
+						null
+					}
+				}
 
-        val byGuiClass = overrideResources.flatMap { override -> override.screen.toSet().map { it to override } }
-            .groupBy { it.first }
-        val guiClasses = byGuiClass.entries
-            .mapNotNull {
-                val key = it.key
-                val guiClassResource =
-                    manager.getResource(Identifier.of(key.namespace, "filters/screen/${key.path}.json"))
-                        .getOrNull()
-                        ?: return@mapNotNull runNull {
-                            logger.error("Failed to locate screen filter at $key")
-                        }
-                val screenFilter =
-                    Firmament.tryDecodeJsonFromStream<ScreenFilter>(guiClassResource.inputStream)
-                        .getOrElse { ex ->
-                            logger.error("Failed to load screen filter at $key", ex)
-                            return@mapNotNull null
-                        }
-                ItemOverrideCollection(screenFilter, it.value.map { it.second })
-            }
-        logger.info("Loaded ${overrideResources.size} global item overrides")
-        return CustomGuiTextureOverride(guiClasses)
-    }
+		val byGuiClass = overrideResources.flatMap { override -> override.screen.toSet().map { it to override } }
+			.groupBy { it.first }
+		val guiClasses = byGuiClass.entries
+			.mapNotNull {
+				val key = it.key
+				val guiClassResource =
+					manager.getResource(Identifier.of(key.namespace, "filters/screen/${key.path}.json"))
+						.getOrNull()
+						?: return@mapNotNull runNull {
+							logger.error("Failed to locate screen filter at $key")
+						}
+				val screenFilter =
+					Firmament.tryDecodeJsonFromStream<ScreenFilter>(guiClassResource.inputStream)
+						.getOrElse { ex ->
+							logger.error("Failed to load screen filter at $key", ex)
+							return@mapNotNull null
+						}
+				ItemOverrideCollection(screenFilter, it.value.map { it.second })
+			}
+		logger.info("Loaded ${overrideResources.size} global item overrides")
+		return CustomGuiTextureOverride(guiClasses)
+	}
 
-    var guiClassOverrides = CustomGuiTextureOverride(listOf())
+	var guiClassOverrides = CustomGuiTextureOverride(listOf())
 
-    var matchingOverrides: Set<ItemOverrideCollection> = setOf()
+	var matchingOverrides: Set<ItemOverrideCollection> = setOf()
 
-    @Subscribe
-    fun onOpenGui(event: ScreenChangeEvent) {
-        val newTitle = event.new?.title ?: Text.empty()
-        matchingOverrides = guiClassOverrides.classes
-            .filterTo(mutableSetOf()) { it.screenFilter.title.matches(newTitle) }
-    }
+	@Subscribe
+	fun onOpenGui(event: ScreenChangeEvent) {
+		val newTitle = event.new?.title ?: Text.empty()
+		matchingOverrides = guiClassOverrides.classes
+			.filterTo(mutableSetOf()) { it.screenFilter.title.matches(newTitle) }
+	}
 
-    val overrideCache = WeakCache.memoize<ItemStack, ItemModels, Optional<BakedModel>>("CustomGlobalTextureModelOverrides") { stack, models ->
-        matchingOverrides
-            .firstNotNullOfOrNull {
-                it.overrides
-                    .asSequence()
-                    .filter { it.predicate.test(stack) }
-                    .map { models.getModel(it.model) }
-                    .firstOrNull()
-            }
-            .intoOptional()
-    }
+	val overrideCache =
+		WeakCache.memoize<ItemStack, ItemModels, Optional<BakedModel>>("CustomGlobalTextureModelOverrides") { stack, models ->
+			matchingOverrides
+				.firstNotNullOfOrNull {
+					it.overrides
+						.asSequence()
+						.filter { it.predicate.test(stack) }
+						.map { models.getModel(it.model) }
+						.firstOrNull()
+				}
+				.intoOptional()
+		}
 
-    @JvmStatic
-    fun replaceGlobalModel(
-        models: ItemModels,
-        stack: ItemStack,
-        cir: CallbackInfoReturnable<BakedModel>
-    ) {
-        overrideCache.invoke(stack, models)
-            .ifPresent(cir::setReturnValue)
-    }
+	@JvmStatic
+	fun replaceGlobalModel(
+		models: ItemModels,
+		stack: ItemStack,
+	): BakedModel? {
+		return overrideCache.invoke(stack, models).getOrNull()
+	}
 
 
 }

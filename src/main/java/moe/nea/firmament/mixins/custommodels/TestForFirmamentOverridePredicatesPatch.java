@@ -2,7 +2,10 @@
 package moe.nea.firmament.mixins.custommodels;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import moe.nea.firmament.Firmament;
 import moe.nea.firmament.features.texturepack.BakedOverrideData;
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures;
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicate;
@@ -10,12 +13,22 @@ import moe.nea.firmament.features.texturepack.ModelOverrideData;
 import net.minecraft.client.render.model.json.ModelOverride;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
+import java.util.List;
+import java.util.Objects;
+
 @Mixin(ModelOverrideList.class)
 public class TestForFirmamentOverridePredicatesPatch {
+
+	@Shadow
+	private Identifier[] conditionTypes;
 
 	@ModifyArg(method = "<init>(Lnet/minecraft/client/render/model/Baker;Ljava/util/List;)V",
 		at = @At(
@@ -26,8 +39,14 @@ public class TestForFirmamentOverridePredicatesPatch {
 		@Local ModelOverride modelOverride
 	) {
 		var bakedOverride = (ModelOverrideList.BakedOverride) element;
-		((BakedOverrideData) (Object) bakedOverride)
-			.setFirmamentOverrides(((ModelOverrideData) (Object) modelOverride).getFirmamentOverrides());
+		var modelOverrideData = ModelOverrideData.cast(modelOverride);
+		BakedOverrideData.cast(bakedOverride)
+		                 .setFirmamentOverrides(modelOverrideData.getFirmamentOverrides());
+		if (conditionTypes.length == 0 &&
+			    modelOverrideData.getFirmamentOverrides() != null &&
+			    modelOverrideData.getFirmamentOverrides().length > 0) {
+			conditionTypes = new Identifier[]{Firmament.INSTANCE.identifier("sentinel/enforce_model_override_evaluation")};
+		}
 		return element;
 	}
 
