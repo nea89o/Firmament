@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Iterator;
 
-@Mixin(HandledScreen.class)
+@Mixin(value = HandledScreen.class, priority = 990)
 public abstract class MixinHandledScreen<T extends ScreenHandler> {
 
 	@Shadow
