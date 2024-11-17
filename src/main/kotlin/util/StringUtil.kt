@@ -5,5 +5,9 @@ object StringUtil {
 		return splitToSequence(" ") // TODO: better boundaries
 	}
 
+	fun parseIntWithComma(string: String): Int {
+		return string.replace(",", "").toInt()
+	}
+
 	fun Iterable<String>.unwords() = joinToString(" ")
 }

@@ -16,7 +16,7 @@ import moe.nea.firmament.util.FirmFormatters.formatCommas
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.formattedString
-import moe.nea.firmament.util.parseIntWithComma
+import moe.nea.firmament.util.StringUtil.parseIntWithComma
 import moe.nea.firmament.util.useMatch
 
 object PristineProfitTracker : FirmamentFeature {
