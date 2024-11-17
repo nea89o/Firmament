@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.gui.EmptyComponent
 import moe.nea.firmament.gui.FirmButtonComponent
 import moe.nea.firmament.util.MC
@@ -21,6 +22,7 @@ import moe.nea.firmament.util.MoulConfigUtils.clickMCComponentInPlace
 import moe.nea.firmament.util.MoulConfigUtils.drawMCComponentInPlace
 import moe.nea.firmament.util.assertTrueOr
 import moe.nea.firmament.util.customgui.customGui
+import moe.nea.firmament.util.mc.FakeSlot
 import moe.nea.firmament.util.render.drawGuiTexture
 
 class StorageOverlayScreen : Screen(Text.literal("")) {
@@ -356,9 +358,12 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		inv.stacks.forEachIndexed { index, stack ->
 			val slotX = (index % 9) * SLOT_SIZE + x + 1
 			val slotY = (index / 9) * SLOT_SIZE + y + 4 + textRenderer.fontHeight + 1
+			val fakeSlot = FakeSlot(stack, slotX, slotY)
 			if (slots == null) {
+				SlotRenderEvents.Before.publish(SlotRenderEvents.Before(context, fakeSlot))
 				context.drawItem(stack, slotX, slotY)
 				context.drawStackOverlay(textRenderer, stack, slotX, slotY)
+				SlotRenderEvents.After.publish(SlotRenderEvents.After(context, fakeSlot))
 			} else {
 				val slot = slots[index]
 				slot.x = slotX - slotOffset.x
