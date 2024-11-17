@@ -1,12 +1,13 @@
 ---
 import Head, {type Props as HeadProps} from "./Head.astro";
-
-type Props = {} & HeadProps;
+type Props = {
+} & HeadProps;
 ---
 
 <html>
 <Head {...Astro.props}></Head>
-<body>
-
+<body class="bg-gray-800 text-white">
+<slot/>
+<footer></footer>
 </body>
 </html>

@@ -1,10 +1,15 @@
 ---
-import Head from "../components/Head.astro";
+import Hero from "../components/Hero.astro"
+import Base from "../layouts/Base.astro";
+import Image from "../panorama.png";
+import NavBar from "../components/NavBar.astro";
 ---
 
-<html lang="en">
-<Head title="Firmament"></Head>
-<body>
-<h1>Astro</h1>
-</body>
-</html>
+<Base title="Firmament">
+	<Hero image={Image} alt="A panorama shot of the HyPixel SkyBlock hub">
+		<h1 class="text-4xl font-bold leading-tight mb-4">Firmament</h1>
+		<p class="text-lg text-gray-300 mb-8">Hypixel SkyBlock Utility Mod</p>
+		<a href="https://modrinth.com/mod/firmament" class="bg-amber-300 hover:bg-yellow-400 rounded-full text-black text-lg transition duration-300 hover:scale-110 hover:shadow-lg py-1 px-5">Download now</a>
+	</Hero>
+	<NavBar navStyle="transparent"></NavBar>
+</Base>
