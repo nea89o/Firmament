@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+on:
+    - push
+name: Web
+jobs:
+    build-website:
+        runs-on: ubuntu-latest
+        name: Astro Build
+        steps:
+            -   uses: actions/checkout@v4
+                name: Checkout Code
+            -   name: Setup node
+                uses: actions/setup-node@v4
+                with:
+                    node-version: 23
+            -   name: Setup PNPM
+                uses: pnpm/action-setup@v4
+                with:
+                    package_json_file: 'web/package.json'
+            -   name: Build Astro
+                run: |
+                    cd web
+                    pnpm install --frozen-lockfile
+                    pnpm build
+            -   name: Upload web artifact
+                uses: actions/upload-pages-artifact@v3
+                with:
+                    path: web/dist/
+    deploy-website:
+        name: Deploy Website
+        runs-on: ubuntu-latest
+        needs: build-website
+        if: ${{ 'push' == github.event_name && 'master' == github.ref_name && '637563904' == github.repository_id }}
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        permissions:
+            pages: write
+            id-token: write
+        steps:
+            -   uses: actions/download-artifact@v4
+                name: Download web artifact
+            -   name: Deploy github pages
+                id: deployment
+                uses: actions/deploy-pages@v4
