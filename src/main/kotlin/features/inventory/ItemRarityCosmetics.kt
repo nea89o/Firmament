@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.features.inventory
 
 import java.awt.Color
@@ -13,74 +11,64 @@ import moe.nea.firmament.events.HotbarItemRenderEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
-import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.collections.lastNotNullOfOrNull
 import moe.nea.firmament.util.collections.memoizeIdentity
-import moe.nea.firmament.util.render.drawGuiTexture
+import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.unformattedString
 
 object ItemRarityCosmetics : FirmamentFeature {
-    override val identifier: String
-        get() = "item-rarity-cosmetics"
+	override val identifier: String
+		get() = "item-rarity-cosmetics"
 
-    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
-        val showItemRarityBackground by toggle("background") { false }
-        val showItemRarityInHotbar by toggle("background-hotbar") { false }
-    }
+	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
+		val showItemRarityBackground by toggle("background") { false }
+		val showItemRarityInHotbar by toggle("background-hotbar") { false }
+	}
 
-    override val config: ManagedConfig
-        get() = TConfig
+	override val config: ManagedConfig
+		get() = TConfig
 
-    private val rarityToColor = mapOf(
-        "UNCOMMON" to Formatting.GREEN,
-        "COMMON" to Formatting.WHITE,
-        "RARE" to Formatting.DARK_BLUE,
-        "EPIC" to Formatting.DARK_PURPLE,
-        "LEGENDARY" to Formatting.GOLD,
-        "LEGENJERRY" to Formatting.GOLD,
-        "MYTHIC" to Formatting.LIGHT_PURPLE,
-        "DIVINE" to Formatting.BLUE,
-        "SPECIAL" to Formatting.DARK_RED,
-        "SUPREME" to Formatting.DARK_RED,
-    ).mapValues {
-        val c = Color(it.value.colorValue!!)
-        c.rgb
-    }
+	private val rarityToColor = mapOf(
+		Rarity.UNCOMMON to Formatting.GREEN,
+		Rarity.COMMON to Formatting.WHITE,
+		Rarity.RARE to Formatting.DARK_BLUE,
+		Rarity.EPIC to Formatting.DARK_PURPLE,
+		Rarity.LEGENDARY to Formatting.GOLD,
+		Rarity.MYTHIC to Formatting.LIGHT_PURPLE,
+		Rarity.DIVINE to Formatting.BLUE,
+		Rarity.SPECIAL to Formatting.DARK_RED,
+		Rarity.VERY_SPECIAL to Formatting.DARK_RED,
+		Rarity.SUPREME to Formatting.DARK_RED,
+	).mapValues {
+		val c = Color(it.value.colorValue!!)
+		c.rgb
+	}
 
-    private fun getSkyblockRarity0(itemStack: ItemStack): Int? {
-        return itemStack.loreAccordingToNbt.lastNotNullOfOrNull {
-            val entry = it.unformattedString
-            rarityToColor.entries.find { (k, v) -> k in entry }?.value
-        }
-    }
-
-    val getSkyblockRarity = ::getSkyblockRarity0.memoizeIdentity(100)
-
-
-    fun drawItemStackRarity(drawContext: DrawContext, x: Int, y: Int, item: ItemStack) {
-        val rgb = getSkyblockRarity(item) ?: return
-        drawContext.drawGuiTexture(
-	        RenderLayer::getGuiTextured,
-	        Identifier.of("firmament:item_rarity_background"),
-            x, y,
-            16, 16,
-            rgb
-        )
-    }
+	fun drawItemStackRarity(drawContext: DrawContext, x: Int, y: Int, item: ItemStack) {
+		val rarity = Rarity.fromItem(item) ?: return
+		val rgb = rarityToColor[rarity] ?: 0xFF00FF80.toInt()
+		drawContext.drawGuiTexture(
+			RenderLayer::getGuiTextured,
+			Identifier.of("firmament:item_rarity_background"),
+			x, y,
+			16, 16,
+			rgb
+		)
+	}
 
 
-    @Subscribe
-    fun onRenderSlot(it: SlotRenderEvents.Before) {
-        if (!TConfig.showItemRarityBackground) return
-        val stack = it.slot.stack ?: return
-        drawItemStackRarity(it.context, it.slot.x, it.slot.y, stack)
-    }
+	@Subscribe
+	fun onRenderSlot(it: SlotRenderEvents.Before) {
+		if (!TConfig.showItemRarityBackground) return
+		val stack = it.slot.stack ?: return
+		drawItemStackRarity(it.context, it.slot.x, it.slot.y, stack)
+	}
 
-    @Subscribe
-    fun onRenderHotbarItem(it: HotbarItemRenderEvent) {
-        if (!TConfig.showItemRarityInHotbar) return
-        val stack = it.item
-        drawItemStackRarity(it.context, it.x, it.y, stack)
-    }
+	@Subscribe
+	fun onRenderHotbarItem(it: HotbarItemRenderEvent) {
+		if (!TConfig.showItemRarityInHotbar) return
+		val stack = it.item
+		drawItemStackRarity(it.context, it.x, it.y, stack)
+	}
 }

@@ -101,7 +101,7 @@ data class HypixelPetInfo(
 	val uuid: UUID? = null,
 	val active: Boolean = false,
 ) {
-	val skyblockId get() = SkyblockId("${type.uppercase()};${tier.ordinal}")
+	val skyblockId get() = SkyblockId("${type.uppercase()};${tier.ordinal}") // TODO: is this ordinal set up correctly?
 }
 
 private val jsonparser = Json { ignoreUnknownKeys = true }
@@ -125,8 +125,8 @@ val ItemStack.skyblockUUID: UUID?
 private val petDataCache = WeakCache.memoize<ItemStack, Optional<HypixelPetInfo>>("PetInfo") {
 	val jsonString = it.extraAttributes.getString("petInfo")
 	if (jsonString.isNullOrBlank()) return@memoize Optional.empty()
-	runCatching { jsonparser.decodeFromString<HypixelPetInfo>(jsonString) }
-		.getOrElse { null }.intoOptional()
+	ErrorUtil.catch<HypixelPetInfo?>("Could not decode hypixel pet info") { jsonparser.decodeFromString<HypixelPetInfo>(jsonString) }
+		.or { null }.intoOptional()
 }
 
 val ItemStack.petData: HypixelPetInfo?

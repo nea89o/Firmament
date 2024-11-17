@@ -1,6 +1,6 @@
 
 
-package moe.nea.firmament.util
+package moe.nea.firmament.util.accessors
 
 import me.shedaniel.math.Rectangle
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen

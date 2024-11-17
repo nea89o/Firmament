@@ -14,7 +14,7 @@ import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.data.DataHolder
-import moe.nea.firmament.util.getRectangle
+import moe.nea.firmament.util.accessors.getRectangle
 
 object InventoryButtons : FirmamentFeature {
     override val identifier: String
