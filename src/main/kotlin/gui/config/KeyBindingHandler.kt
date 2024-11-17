@@ -6,7 +6,6 @@ import io.github.notenoughupdates.moulconfig.deps.libninepatch.NinePatch
 import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
 import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
 import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
-import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -34,7 +33,10 @@ class KeyBindingHandler(val name: String, val managedConfig: ManagedConfig) :
 		lateinit var button: FirmButtonComponent
 		val sm = KeyBindingStateManager(
 			{ opt.value },
-			{ opt.value = it },
+			{
+				opt.value = it
+				opt.element.save()
+			},
 			{ button.blur() },
 			{ button.requestFocus() }
 		)

@@ -122,17 +122,16 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					return GuiOptionEditorBoolean(this, -1, configObject)
 				}
 
-				override fun get(): Any {
-					return managedOption.value
+				override fun toT(any: Any?): Boolean? {
+					return any as Boolean
 				}
 
 				override fun getType(): Type {
 					return Boolean::class.java
 				}
 
-				override fun set(value: Any?): Boolean {
-					managedOption.value = value as Boolean
-					return true
+				override fun fromT(t: Boolean): Any {
+					return t
 				}
 			}
 		}
@@ -142,17 +141,16 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					return GuiOptionEditorText(this)
 				}
 
-				override fun get(): Any {
-					return managedOption.value
-				}
-
 				override fun getType(): Type {
 					return String::class.java
 				}
 
-				override fun set(value: Any?): Boolean {
-					managedOption.value = value as String
-					return true
+				override fun fromT(t: String): Any {
+					return t
+				}
+
+				override fun toT(any: Any?): String? {
+					return any as String
 				}
 			}
 		}
@@ -162,17 +160,16 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					return GuiOptionEditorButton(this, -1, "Click", configObject)
 				}
 
-				override fun get(): Any {
+				override fun toT(any: Any?): Unit? {
+					return null
+				}
+
+				override fun fromT(t: Unit): Any {
 					return Runnable { handler.runnable() }
 				}
 
 				override fun getType(): Type {
 					return Runnable::class.java
-				}
-
-				override fun set(value: Any?): Boolean {
-					ErrorUtil.softError("Trying to set a buttons data")
-					return false
 				}
 			}
 		}
@@ -182,20 +179,18 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					return GuiOptionEditorButton(this, -1, "Edit HUD", configObject)
 				}
 
-				override fun get(): Any {
+				override fun fromT(t: HudMeta): Any {
 					return Runnable {
 						handler.openEditor(option, MC.screen!!)
 					}
 				}
 
+
 				override fun getType(): Type {
 					return Runnable::class.java
 				}
 
-				override fun set(value: Any?): Boolean {
-					ErrorUtil.softError("Trying to assign to a hud meta")
-					return false
-				}
+				override fun toT(any: Any?): HudMeta? = null
 			}
 		}
 		register(DurationHandler::class.java) { handler, option, categoryAccordionId, configObject ->
@@ -213,7 +208,8 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					)
 				}
 
-				override fun get(): Any {
+				override fun toT(any: Any?): Duration? = null
+				override fun fromT(t: Duration): Any {
 					ErrorUtil.softError("Getting on a slider component")
 					return Unit
 				}
@@ -222,10 +218,6 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					return Nothing::class.java
 				}
 
-				override fun set(value: Any?): Boolean {
-					ErrorUtil.softError("Setting on a slider component")
-					return false
-				}
 			}
 		}
 		register(IntegerHandler::class.java) { handler, option, categoryAccordionId, configObject ->
@@ -243,18 +235,14 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					)
 				}
 
-				override fun get(): Any {
+				override fun toT(any: Any?): Int? = null
+				override fun fromT(t: Int): Any {
 					ErrorUtil.softError("Getting on a slider component")
 					return Unit
 				}
 
 				override fun getType(): Type {
 					return Nothing::class.java
-				}
-
-				override fun set(value: Any?): Boolean {
-					ErrorUtil.softError("Setting on a slider component")
-					return false
 				}
 			}
 		}
@@ -269,18 +257,17 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					}
 				}
 
-				override fun get(): Any {
-					ErrorUtil.softError("Getting on a keybinding")
-					return Unit
+				override fun toT(any: Any?): SavedKeyBinding? {
+					return null
 				}
 
 				override fun getType(): Type {
 					return Nothing::class.java
 				}
 
-				override fun set(value: Any?): Boolean {
-					ErrorUtil.softError("Setting on a keybinding")
-					return false
+				override fun fromT(t: SavedKeyBinding): Any {
+					ErrorUtil.softError("Cannot get a keybinding editor")
+					return Unit
 				}
 			}
 		}
