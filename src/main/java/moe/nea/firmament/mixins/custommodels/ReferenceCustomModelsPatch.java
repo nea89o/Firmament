@@ -29,7 +29,6 @@ public abstract class ReferenceCustomModelsPatch {
 	private void addFirmamentReferencedModels(
 		BlockStatesLoader.BlockStateDefinition definition, CallbackInfo ci
 	) {
-		inputs.keySet().stream().filter(it->it.toString().contains("firm")).forEach(System.out::println);
 		BakeExtraModelsEvent.Companion.publish(new BakeExtraModelsEvent(
 			(modelIdentifier, identifier) -> addTopLevelModel(modelIdentifier, new ItemModel(identifier))));
 
