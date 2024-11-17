@@ -7,9 +7,15 @@ on:
         types:
             - published
 
+name: Publishing
+
 jobs:
     upload-to-modrinth:
         runs-on: ubuntu-latest
+        name: "Modrinth"
+        environment:
+            name: Modrinth
+            url: ${{ steps.mc-publish.outputs.modrinth-url }}
         steps:
             -   run: |
                     gh release download "$TAG" -p '*.jar' --repo "$REPO"
@@ -22,6 +28,7 @@ jobs:
                 env:
                     CHANGELOG: ${{ github.event.release.body }}
             -   uses: Kir-Antipov/mc-publish@v3.3
+                id: mc-publish
                 with:
                     modrinth-id: IJNUBZ2a
                     modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
