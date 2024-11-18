@@ -118,12 +118,20 @@ object RepoManager {
 	}
 
 	fun reload() {
+		if (!TestUtil.isInTest && !MC.instance.isOnThread) {
+			MC.instance.send {
+				reload()
+			}
+			return
+		}
 		try {
 			ItemCache.ReloadProgressHud.reportProgress("Reloading from Disk",
 			                                           0,
 			                                           -1) // TODO: replace with a proper bouncy bar
 			ItemCache.ReloadProgressHud.isEnabled = true
+			logger.info("Repo reload started.")
 			neuRepo.reload()
+			logger.info("Repo reload completed.")
 		} catch (exc: NEURepositoryException) {
 			ErrorUtil.softError("Failed to reload repository", exc)
 			MC.sendChat(
@@ -171,4 +179,7 @@ object RepoManager {
 		return PetData(Rarity.entries[intIndex], petId, 0.0, true)
 	}
 
+	fun getRepoRef(): String {
+		return "${Config.username}/${Config.reponame}#${Config.branch}"
+	}
 }

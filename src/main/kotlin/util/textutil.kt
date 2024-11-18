@@ -130,6 +130,8 @@ fun MutableText.blue() = withColor(Formatting.BLUE)
 fun MutableText.aqua() = withColor(Formatting.AQUA)
 fun MutableText.lime() = withColor(Formatting.GREEN)
 fun MutableText.darkGreen() = withColor(Formatting.DARK_GREEN)
+fun MutableText.purple() = withColor(Formatting.DARK_PURPLE)
+fun MutableText.pink() = withColor(Formatting.LIGHT_PURPLE)
 fun MutableText.yellow() = withColor(Formatting.YELLOW)
 fun MutableText.grey() = withColor(Formatting.GRAY)
 fun MutableText.red() = withColor(Formatting.RED)
@@ -165,6 +167,6 @@ fun Text.transformEachRecursively(function: (Text) -> Text): Text {
 	}
 }
 
-fun tr(key: String, default: String): Text = error("Compiler plugin did not run.")
-fun trResolved(key: String, vararg args: Any) = Text.translatable(key, *args)
+fun tr(key: String, default: String): MutableText = error("Compiler plugin did not run.")
+fun trResolved(key: String, vararg args: Any): MutableText = Text.stringifiedTranslatable(key, *args)
 
