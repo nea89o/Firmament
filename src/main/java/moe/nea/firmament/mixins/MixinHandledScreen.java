@@ -62,10 +62,6 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> {
 		}
 	}
 
-	boolean keyReleased_firmament(int keyCode, int scanCode, int modifiers) {
-		return HandledScreenKeyReleasedEvent.Companion.publish(new HandledScreenKeyReleasedEvent((HandledScreen<?>) (Object) this, keyCode, scanCode, modifiers)).getCancelled();
-	}
-
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;drawForeground(Lnet/minecraft/client/gui/DrawContext;II)V", shift = At.Shift.AFTER))
 	public void onAfterRenderForeground(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		context.getMatrices().push();

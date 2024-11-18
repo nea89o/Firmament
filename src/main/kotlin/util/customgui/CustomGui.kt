@@ -76,4 +76,16 @@ abstract class CustomGui {
 	open fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
 		return false
 	}
+
+	open fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		return false
+	}
+
+	open fun charTyped(chr: Char, modifiers: Int): Boolean {
+		return false
+	}
+
+	open fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		return false
+	}
 }

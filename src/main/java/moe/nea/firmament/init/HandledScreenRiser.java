@@ -32,12 +32,18 @@ public class HandledScreenRiser extends RiserUtils {
 	String keyReleased = remapper.mapMethodName("intermediary", Intermediary.<Element>className(),
 	                                            Intermediary.methodName(Element::keyReleased),
 	                                            keyReleasedDesc.getDescriptor());
+	// public boolean charTyped(char chr, int modifiers)
+	Type charTypedDesc = Type.getMethodType(Type.BOOLEAN_TYPE, Type.CHAR_TYPE, Type.INT_TYPE);
+	String charTyped = remapper.mapMethodName("intermediary", Intermediary.<Element>className(),
+	                                          Intermediary.methodName(Element::charTyped),
+	                                          charTypedDesc.getDescriptor());
 
 
 	@Override
 	public void addTinkerers() {
 		ClassTinkerers.addTransformation(HandledScreen, this::addMouseScroll, true);
 		ClassTinkerers.addTransformation(HandledScreen, this::addKeyReleased, true);
+		ClassTinkerers.addTransformation(HandledScreen, this::addCharTyped, true);
 	}
 
 	/**
@@ -70,86 +76,77 @@ public class HandledScreenRiser extends RiserUtils {
 	}
 
 	void addKeyReleased(ClassNode classNode) {
-		var keyReleasedNode = findMethod(classNode, keyReleased, keyReleasedDesc);
+		addSuperInjector(
+			classNode, keyReleased, keyReleasedDesc, "keyReleased_firmament",
+			insns -> {
+				// ALOAD 0, load this
+				insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				// ILOAD 1-3, load args
+				insns.add(new VarInsnNode(Opcodes.ILOAD, 1));
+				insns.add(new VarInsnNode(Opcodes.ILOAD, 2));
+				insns.add(new VarInsnNode(Opcodes.ILOAD, 3));
+			});
+	}
+
+	void addCharTyped(ClassNode classNode) {
+		addSuperInjector(
+			classNode, charTyped, charTypedDesc, "charTyped_firmament",
+			insns -> {
+				// ALOAD 0, load this
+				insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				// ILOAD 1-2, load args. chars = ints
+				insns.add(new VarInsnNode(Opcodes.ILOAD, 1));
+				insns.add(new VarInsnNode(Opcodes.ILOAD, 2));
+			});
+	}
+
+	void addSuperInjector(
+		ClassNode classNode,
+		String name,
+		Type desc,
+		String firmamentName,
+		Consumer<InsnList> loadArgs
+	) {
+		var keyReleasedNode = findMethod(classNode, name, desc);
 		if (keyReleasedNode == null) {
 			keyReleasedNode = new MethodNode(
 				Modifier.PUBLIC,
-				keyReleased,
-				keyReleasedDesc.getDescriptor(),
+				name,
+				desc.getDescriptor(),
 				null,
 				new String[0]
 			);
 			var insns = keyReleasedNode.instructions;
-			// ALOAD 0, load this
-			insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			// ILOAD 1-3, load args
-			insns.add(new VarInsnNode(Opcodes.ILOAD, 1));
-			insns.add(new VarInsnNode(Opcodes.ILOAD, 2));
-			insns.add(new VarInsnNode(Opcodes.ILOAD, 3));
+			loadArgs.accept(insns);
 			// INVOKESPECIAL call super method
 			insns.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, getTypeForClassName(Screen).getInternalName(),
-			                             keyReleased, keyReleasedDesc.getDescriptor()));
+			                             name, desc.getDescriptor()));
 			// IRETURN return int on stack (booleans are int at runtime)
 			insns.add(new InsnNode(Opcodes.IRETURN));
 			classNode.methods.add(keyReleasedNode);
 		}
-		insertTrueHandler(keyReleasedNode, insns -> {
-			// ALOAD 0, load this
-			insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			// ILOAD 1-3, load args
-			insns.add(new VarInsnNode(Opcodes.ILOAD, 1));
-			insns.add(new VarInsnNode(Opcodes.ILOAD, 2));
-			insns.add(new VarInsnNode(Opcodes.ILOAD, 3));
-		}, insns -> {
+		insertTrueHandler(keyReleasedNode, loadArgs, insns -> {
 			// INVOKEVIRTUAL call custom handler
 			insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
 			                             getTypeForClassName(HandledScreen).getInternalName(),
-			                             "keyReleased_firmament",
-			                             keyReleasedDesc.getDescriptor()));
+			                             firmamentName,
+			                             desc.getDescriptor()));
 		});
+
 	}
 
 	void addMouseScroll(ClassNode classNode) {
-		MethodNode mouseScrolledNode = findMethod(classNode, mouseScrolled, mouseScrolledDesc);
-		if (mouseScrolledNode == null) {
-			mouseScrolledNode = new MethodNode(
-				Modifier.PUBLIC,
-				mouseScrolled,
-				mouseScrolledDesc.getDescriptor(),
-				null,
-				new String[0]
-			);
-			var insns = mouseScrolledNode.instructions;
-			// ALOAD 0, load this
-			insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			// DLOAD 1-4, load the 4 argument doubles. Note that since doubles are two entries wide we skip 2 each time.
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 1));
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 3));
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 5));
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 7));
-			// INVOKESPECIAL call super method
-			insns.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, getTypeForClassName(Screen).getInternalName(), mouseScrolled, mouseScrolledDesc.getDescriptor()));
-			// IRETURN return int on stack (booleans are int at runtime)
-			insns.add(new InsnNode(Opcodes.IRETURN));
-			classNode.methods.add(mouseScrolledNode);
-		}
-
-		insertTrueHandler(mouseScrolledNode, insns -> {
-			// ALOAD 0, load this
-			insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			// DLOAD 1-4, load the 4 argument doubles. Note that since doubles are two entries wide we skip 2 each time.
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 1));
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 3));
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 5));
-			insns.add(new VarInsnNode(Opcodes.DLOAD, 7));
-		}, insns -> {
-			// INVOKEVIRTUAL call custom handler
-			insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
-			                             getTypeForClassName(HandledScreen).getInternalName(),
-			                             "mouseScrolled_firmament",
-			                             mouseScrolledDesc.getDescriptor()));
-
-		});
+		addSuperInjector(
+			classNode, mouseScrolled, mouseScrolledDesc, "mouseScrolled_firmament",
+			insns -> {
+				// ALOAD 0, load this
+				insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				// DLOAD 1-4, load the 4 argument doubles. Note that since doubles are two entries wide we skip 2 each time.
+				insns.add(new VarInsnNode(Opcodes.DLOAD, 1));
+				insns.add(new VarInsnNode(Opcodes.DLOAD, 3));
+				insns.add(new VarInsnNode(Opcodes.DLOAD, 5));
+				insns.add(new VarInsnNode(Opcodes.DLOAD, 7));
+			});
 	}
 
 }

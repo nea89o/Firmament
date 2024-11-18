@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import moe.nea.firmament.events.HandledScreenKeyReleasedEvent;
 import moe.nea.firmament.util.customgui.CoordRememberingSlot;
 import moe.nea.firmament.util.customgui.CustomGui;
 import moe.nea.firmament.util.customgui.HasCustomGui;
@@ -71,6 +72,16 @@ public class PatchHandledScreen<T extends ScreenHandler> extends Screen implemen
 
 	public boolean mouseScrolled_firmament(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 		return override != null && override.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+	}
+
+	public boolean keyReleased_firmament(int keyCode, int scanCode, int modifiers) {
+		if (HandledScreenKeyReleasedEvent.Companion.publish(new HandledScreenKeyReleasedEvent((HandledScreen<?>) (Object) this, keyCode, scanCode, modifiers)).getCancelled())
+			return true;
+		return override != null && override.keyReleased(keyCode, scanCode, modifiers);
+	}
+
+	public boolean charTyped_firmament(char chr, int modifiers) {
+		return override != null && override.charTyped(chr, modifiers);
 	}
 
 	@Inject(method = "init", at = @At("TAIL"))
@@ -178,6 +189,16 @@ public class PatchHandledScreen<T extends ScreenHandler> extends Screen implemen
 				cir.setReturnValue(true);
 		}
 	}
+
+	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+	private void overrideKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+		if (override != null) {
+			if (override.keyPressed(keyCode, scanCode, modifiers)) {
+				cir.setReturnValue(true);
+			}
+		}
+	}
+
 
 	@Inject(
 		method = "mouseReleased",

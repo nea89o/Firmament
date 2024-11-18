@@ -10,4 +10,13 @@ object StringUtil {
 	}
 
 	fun Iterable<String>.unwords() = joinToString(" ")
+	fun nextLexicographicStringOfSameLength(string: String): String {
+		val next = StringBuilder(string)
+		while (next.lastOrNull() == Character.MAX_VALUE) next.setLength(next.length - 1)
+		if (next.isEmpty()) return "" // There is no upper bound. Fall back to the empty string
+		val lastIdx = next.indices.last
+		next[lastIdx] = (next[lastIdx] + 1)
+		return next.toString()
+	}
+
 }

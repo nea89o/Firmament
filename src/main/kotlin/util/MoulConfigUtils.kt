@@ -7,6 +7,7 @@ import io.github.notenoughupdates.moulconfig.gui.GuiComponent
 import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
 import io.github.notenoughupdates.moulconfig.gui.GuiContext
 import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
+import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
 import io.github.notenoughupdates.moulconfig.gui.MouseEvent
 import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import io.github.notenoughupdates.moulconfig.platform.ModernRenderContext
@@ -245,6 +246,18 @@ object MoulConfigUtils {
 				outer.set(toT(newValue))
 			}
 		}
+	}
+
+	fun typeMCComponentInPlace(
+		component: GuiComponent,
+		x: Int,
+		y: Int,
+		w: Int,
+		h: Int,
+		keyboardEvent: KeyboardEvent
+	): Boolean {
+		val immContext = createInPlaceFullContext(null, IMinecraft.instance.mouseX, IMinecraft.instance.mouseY)
+		return component.keyboardEvent(keyboardEvent, immContext.translated(x, y, w, h))
 	}
 
 	fun clickMCComponentInPlace(

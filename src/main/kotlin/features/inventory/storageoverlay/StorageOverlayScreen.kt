@@ -1,15 +1,22 @@
 package moe.nea.firmament.features.inventory.storageoverlay
 
+import io.github.notenoughupdates.moulconfig.common.IMinecraft
 import io.github.notenoughupdates.moulconfig.gui.GuiContext
+import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
 import io.github.notenoughupdates.moulconfig.gui.MouseEvent
 import io.github.notenoughupdates.moulconfig.gui.component.ColumnComponent
 import io.github.notenoughupdates.moulconfig.gui.component.PanelComponent
 import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
+import io.github.notenoughupdates.moulconfig.gui.component.TextFieldComponent
+import io.github.notenoughupdates.moulconfig.observer.GetSetter
+import io.github.notenoughupdates.moulconfig.observer.Property
+import java.util.TreeSet
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.item.ItemStack
 import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
@@ -20,10 +27,16 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils.adopt
 import moe.nea.firmament.util.MoulConfigUtils.clickMCComponentInPlace
 import moe.nea.firmament.util.MoulConfigUtils.drawMCComponentInPlace
+import moe.nea.firmament.util.MoulConfigUtils.typeMCComponentInPlace
+import moe.nea.firmament.util.StringUtil.words
 import moe.nea.firmament.util.assertTrueOr
 import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.mc.FakeSlot
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.render.drawGuiTexture
+import moe.nea.firmament.util.tr
+import moe.nea.firmament.util.unformattedString
 
 class StorageOverlayScreen : Screen(Text.literal("")) {
 
@@ -83,10 +96,13 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		horizontalAmount: Double,
 		verticalAmount: Double
 	): Boolean {
-		scroll = (scroll + StorageOverlay.adjustScrollSpeed(verticalAmount)).toFloat()
+		coerceScroll(StorageOverlay.adjustScrollSpeed(verticalAmount).toFloat())
+		return true
+	}
+	fun coerceScroll(offset: Float) {
+		scroll = (scroll + offset)
 			.coerceAtMost(getMaxScroll())
 			.coerceAtLeast(0F)
-		return true
 	}
 
 	fun getMaxScroll() = lastRenderedInnerHeight.toFloat() - getScrollPanelInner().height
@@ -142,12 +158,26 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 
 	val guiContext = GuiContext(EmptyComponent())
 	private val knobStub = EmptyComponent()
-	val editButton = PanelComponent(ColumnComponent(FirmButtonComponent(TextComponent("Edit"), action = ::editPages)),
-	                                8, PanelComponent.DefaultBackgroundRenderer.TRANSPARENT)
+	val editButton = FirmButtonComponent(TextComponent(tr("firmament.storage-overlay.edit-pages", "Edit Pages").string), action = ::editPages)
+	val searchText = Property.of("") // TODO: sync with REI
+	val searchField = TextFieldComponent(searchText, 100, GetSetter.constant(true),
+	                                     tr("firmament.storage-overlay.search.suggestion", "Search...").string,
+	                                     IMinecraft.instance.defaultFontRenderer)
+	val controlComponent = PanelComponent(
+		ColumnComponent(
+			searchField,
+			editButton,
+		),
+		8, PanelComponent.DefaultBackgroundRenderer.TRANSPARENT
+	)
 
 	init {
-		guiContext.adopt(editButton)
+		searchText.addObserver { _, _ ->
+			layoutedForEach(StorageOverlay.Data.data ?: StorageData(), { _, _, _ -> })
+			coerceScroll(0F)
+		}
 		guiContext.adopt(knobStub)
+		guiContext.adopt(controlComponent)
 	}
 
 	fun drawControls(context: DrawContext, mouseX: Int, mouseY: Int) {
@@ -157,7 +187,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			measurements.controlY,
 			CONTROL_BACKGROUND_WIDTH, CONTROL_HEIGHT)
 		context.drawMCComponentInPlace(
-			editButton,
+			controlComponent,
 			measurements.controlX, measurements.controlY,
 			CONTROL_WIDTH, CONTROL_HEIGHT,
 			mouseX, mouseY)
@@ -251,7 +281,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			knobGrabbed = false
 			return true
 		}
-		if (clickMCComponentInPlace(editButton,
+		if (clickMCComponentInPlace(controlComponent,
 		                            measurements.controlX, measurements.controlY,
 		                            CONTROL_WIDTH, CONTROL_HEIGHT,
 		                            mouseX.toInt(), mouseY.toInt(),
@@ -290,13 +320,85 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			knobGrabbed = true
 			return true
 		}
-		if (clickMCComponentInPlace(editButton,
+		if (clickMCComponentInPlace(controlComponent,
 		                            measurements.controlX, measurements.controlY,
 		                            CONTROL_WIDTH, CONTROL_HEIGHT,
 		                            mouseX.toInt(), mouseY.toInt(),
 		                            MouseEvent.Click(button, true))
 		) return true
 		return false
+	}
+
+	override fun charTyped(chr: Char, modifiers: Int): Boolean {
+		if (typeMCComponentInPlace(
+				controlComponent,
+				measurements.controlX, measurements.controlY,
+				CONTROL_WIDTH, CONTROL_HEIGHT,
+				KeyboardEvent.CharTyped(chr)
+			)
+		) {
+			return true
+		}
+		return super.charTyped(chr, modifiers)
+	}
+
+	override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		if (typeMCComponentInPlace(
+				controlComponent,
+				measurements.controlX, measurements.controlY,
+				CONTROL_WIDTH, CONTROL_HEIGHT,
+				KeyboardEvent.KeyPressed(keyCode, false)
+			)
+		) {
+			return true
+		}
+		return super.keyReleased(keyCode, scanCode, modifiers)
+	}
+
+	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		if (typeMCComponentInPlace(
+				controlComponent,
+				measurements.controlX, measurements.controlY,
+				CONTROL_WIDTH, CONTROL_HEIGHT,
+				KeyboardEvent.KeyPressed(keyCode, true)
+			)
+		) {
+			return true
+		}
+		return super.keyPressed(keyCode, scanCode, modifiers)
+	}
+
+
+	var searchCache: String? = null
+	var filteredPagesCache = setOf<StoragePageSlot>()
+
+	fun getFilteredPages(): Set<StoragePageSlot> {
+		val searchValue = searchText.get()
+		val data = StorageOverlay.Data.data ?: return filteredPagesCache // Do not update cache if data is missing
+		if (searchCache == searchValue) return filteredPagesCache
+		val result =
+			data.storageInventories
+				.entries.asSequence()
+				.filter { it.value.inventory?.stacks?.any { matchesSearch(it, searchValue) } ?: true }
+				.map { it.key }
+				.toSet()
+		searchCache = searchValue
+		filteredPagesCache = result
+		return result
+	}
+
+
+	fun matchesSearch(itemStack: ItemStack, search: String): Boolean {
+		val searchWords = search.words().toCollection(TreeSet())
+		fun removePrefixes(value: String) {
+			searchWords.removeIf { value.contains(it, ignoreCase = true) }
+		}
+		itemStack.displayNameAccordingToNbt.unformattedString.words().forEach(::removePrefixes)
+		if (searchWords.isEmpty()) return true
+		itemStack.loreAccordingToNbt.forEach {
+			it.unformattedString.words().forEach(::removePrefixes)
+		}
+		return searchWords.isEmpty()
 	}
 
 	private inline fun layoutedForEach(
@@ -309,7 +411,9 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		var yOffset = -scroll.toInt()
 		var xOffset = 0
 		var maxHeight = 0
+		val filter = getFilteredPages()
 		for ((page, inventory) in data.storageInventories.entries) {
+			if (page !in filter) continue
 			val currentHeight = inventory.inventory?.let { it.rows * SLOT_SIZE + 4 + textRenderer.fontHeight }
 				?: 18
 			maxHeight = maxOf(maxHeight, currentHeight)

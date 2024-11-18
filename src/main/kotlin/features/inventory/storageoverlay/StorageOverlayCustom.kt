@@ -66,6 +66,18 @@ class StorageOverlayCustom(
 		return overview.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)
 	}
 
+	override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		return overview.keyReleased(keyCode, scanCode, modifiers)
+	}
+
+	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		return overview.keyPressed(keyCode, scanCode, modifiers)
+	}
+
+	override fun charTyped(chr: Char, modifiers: Int): Boolean {
+		return overview.charTyped(chr, modifiers)
+	}
+
 	override fun mouseClick(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		return overview.mouseClicked(mouseX, mouseY, button, (handler as? StorageBackingHandle.Page)?.storagePageSlot)
 	}
