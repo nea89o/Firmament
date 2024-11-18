@@ -7,9 +7,12 @@ on:
     - push
     - pull_request
 
+permissions:
+    pull-requests: write
+
 jobs:
     build:
-        name: Test
+        name: Build
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v4
@@ -18,18 +21,10 @@ jobs:
                     fetch-tags: true
                     fetch-depth: 0
                     filter: 'tree:0'
-            -   name: Set up JDK 21
-                uses: actions/setup-java@v4
-                with:
-                    distribution: temurin
-                    java-version: 21
-            -   name: Set up gradle cache
-                uses: gradle/actions/setup-gradle@v3
+            -   uses: ./.github/composite/gradle
             -   name: Build with gradle
                 run: |
-                    ./gradlew clean
-                    ./gradlew unpackAllJars --stacktrace
-                    ./gradlew test remapJar --stacktrace
+                    ./gradlew remapJar --scan
             -   name: Move build artifact around and print check sum
                 run: |
                     rm -f build/libs/*sources*.jar
@@ -39,6 +34,22 @@ jobs:
                 with:
                     name: built-mod-jar
                     path: build/libs/Firmament-*.jar
+
+    test:
+        name: Test
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+                name: Checkout repository
+                with:
+                    fetch-tags: true
+                    fetch-depth: 0
+                    filter: 'tree:0'
+            -   uses: ./.github/composite/gradle
+            -   name: Build with gradle
+                run: |
+                    ./gradlew test --scan
 
     upload:
         name: Upload
