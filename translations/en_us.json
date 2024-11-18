@@ -162,7 +162,7 @@
 	"firmament.config.pristine-profit": "Pristine Profit Tracker",
 	"firmament.config.pristine-profit.fine-gemstones": "Use Fine Gemstones",
 	"firmament.config.pristine-profit.fine-gemstones.description": "Use the (more stable) price of fine gemstones, instead of flawed gemstones.",
-	"firmament.config.pristine-profit.position": "Position",
+	"firmament.config.pristine-profit.position": "Pristine Profit HUD",
 	"firmament.config.pristine-profit.position.description": "Edit the pristine profit hud location.",
 	"firmament.config.pristine-profit.timeout": "Timeout (0 = disabled)",
 	"firmament.config.pristine-profit.timeout.description": "Track the profit you make from pristine gemstones while mining. Set to 0 seconds to disable the HUD.",

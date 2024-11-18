@@ -2,12 +2,13 @@
 <Root xmlns="http://notenoughupdates.org/moulconfig" xmlns:firm="http://firmament.nea.moe/moulconfig">
     <Column>
         <Row>
-            <firm:Bar progress="@moneyCurrent" total="@moneyMax" fillColor="#bbbb00" emptyColor="#909000"/>
-            <Text text="@moneyText"/>
+<!--            <firm:Bar progress="@moneyCurrent" total="@moneyMax" fillColor="#bbbb00" emptyColor="#909000"/>-->
+            <Text text="@moneyText" width="300"/>
         </Row>
         <Row>
-            <firm:Bar progress="@collectionCurrent" total="@collectionMax" fillColor="#33ff33" emptyColor="#00a000"/>
-            <Text text="@collectionText"/>
+<!--            <firm:Bar progress="@collectionCurrent" total="@collectionMax" fillColor="#33ff33" emptyColor="#00a000"/>-->
+			<!-- TODO: add dynamically sized texts -->
+            <Text text="@collectionText" width="300"/>
         </Row>
     </Column>
 </Root>

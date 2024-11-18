@@ -14,9 +14,9 @@ import moe.nea.firmament.gui.hud.MoulConfigHud
 import moe.nea.firmament.util.BazaarPriceStrategy
 import moe.nea.firmament.util.FirmFormatters.formatCommas
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.StringUtil.parseIntWithComma
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.formattedString
-import moe.nea.firmament.util.StringUtil.parseIntWithComma
 import moe.nea.firmament.util.useMatch
 
 object PristineProfitTracker : FirmamentFeature {
@@ -34,6 +34,10 @@ object PristineProfitTracker : FirmamentFeature {
 		JADE("Jade"),
 		JASPER("Jasper"),
 		OPAL("Opal"),
+		PERIDOT("Peridot"),
+		ONXY("Onyx"),
+		AQUAMARINE("Aquamarine"),
+		CITRINE("Citrine"),
 		;
 
 		val flawedId: SkyblockId = SkyblockId("FLAWED_${name}_GEM")
@@ -53,7 +57,7 @@ object PristineProfitTracker : FirmamentFeature {
 
 	object TConfig : ManagedConfig(identifier, Category.MINING) {
 		val timeout by duration("timeout", 0.seconds, 120.seconds) { 30.seconds }
-		val gui by position("position", 80, 30) { Point(0.05, 0.2) }
+		val gui by position("position", 100, 30) { Point(0.05, 0.2) }
 		val useFineGemstones by toggle("fine-gemstones") { false }
 	}
 
