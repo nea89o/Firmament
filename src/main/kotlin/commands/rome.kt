@@ -3,14 +3,7 @@ package moe.nea.firmament.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import io.ktor.client.statement.bodyAsText
-import java.nio.file.Path
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import kotlin.io.path.exists
-import kotlin.io.path.fileSize
-import kotlin.io.path.isDirectory
-import kotlin.io.path.isReadable
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.listDirectoryEntries
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import net.minecraft.text.TextCodecs
@@ -41,11 +34,7 @@ import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.accessors.messages
 import moe.nea.firmament.util.collections.InstanceList
 import moe.nea.firmament.util.collections.WeakCache
-import moe.nea.firmament.util.darkGreen
-import moe.nea.firmament.util.lime
 import moe.nea.firmament.util.mc.SNbtFormatter
-import moe.nea.firmament.util.purple
-import moe.nea.firmament.util.red
 import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 
@@ -323,7 +312,10 @@ fun firmamentCommand() = literal("firmament") {
 				source.sendFeedback(tr("firmament.repo.info.location",
 				                       "Saved location: ${debugPath(RepoDownloadManager.repoSavedLocation)}"))
 				source.sendFeedback(tr("firmament.repo.info.reloadstatus",
-				                       "Incomplete: ${formatBool(RepoManager.neuRepo.isIncomplete, trueIsGood = false)}, Unstable ${formatBool(RepoManager.neuRepo.isUnstable, trueIsGood = false)}"))
+				                       "Incomplete: ${
+					                       formatBool(RepoManager.neuRepo.isIncomplete,
+					                                  trueIsGood = false)
+				                       }, Unstable ${formatBool(RepoManager.neuRepo.isUnstable, trueIsGood = false)}"))
 				source.sendFeedback(tr("firmament.repo.info.items",
 				                       "Loaded items: ${RepoManager.neuRepo.items?.items?.size}"))
 				source.sendFeedback(tr("firmament.repo.info.itemcache",
@@ -332,6 +324,9 @@ fun firmamentCommand() = literal("firmament") {
 				                       "Items on disk: ${debugPath(RepoDownloadManager.repoSavedLocation.resolve("items"))}"))
 			}
 		}
+	}
+	thenExecute {
+		AllConfigsGui.showAllGuis()
 	}
 	CommandEvent.SubCommand.publish(CommandEvent.SubCommand(this@literal))
 }
