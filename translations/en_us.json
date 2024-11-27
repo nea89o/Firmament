@@ -67,7 +67,7 @@
 	"firmament.config.configconfig.enable-moulconfig": "Use MoulConfig",
 	"firmament.config.configconfig.enable-moulconfig.description": "Uses the MoulConfig config UI. Turn off to fall back to the built in config.",
 	"firmament.config.configconfig.enable-yacl": "Use YACL Config",
-	"firmament.config.configconfig.enable-yacl.description": "Uses the YACL config UI. Turn off to fall back to the built in config.",
+	"firmament.config.configconfig.enable-yacl.description": "Uses the YACL config UI. Turn off to fall back to the built in config. Needs YACL to be installed separately.",
 	"firmament.config.custom-skyblock-textures": "Custom SkyBlock Item Textures",
 	"firmament.config.custom-skyblock-textures.armor-overrides": "Enable Armor re-texturing",
 	"firmament.config.custom-skyblock-textures.armor-overrides.description": "Allows texture pack authors to re-texture (but not re-model) SkyBlock armors.",
