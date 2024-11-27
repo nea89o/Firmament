@@ -26,7 +26,7 @@ plugins {
 	//	alias(libs.plugins.loom)
 	// TODO: use arch loom once they update to 1.8
 	id("fabric-loom") version "1.8.9"
-	id("com.github.johnrengelman.shadow") version "8.1.1"
+	alias(libs.plugins.shadow)
 	id("moe.nea.licenseextractificator")
 	id("moe.nea.mc-auto-translations") version "0.1.0"
 }
@@ -305,7 +305,7 @@ dependencies {
 	}
 
 
-	testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+	testImplementation("io.kotest:kotest-runner-junit5:6.0.0.M1")
 
 	implementation(project(":symbols"))
 	ksp(project(":symbols"))
@@ -368,14 +368,21 @@ val updateTestRepo by tasks.registering {
 
 
 tasks.test {
-	val wd =file("build/testWorkDir")
+	val wd = file("build/testWorkDir")
 	workingDir(wd)
 	dependsOn(downloadTestRepo)
 	doFirst {
 		wd.mkdirs()
 		wd.resolve("config").deleteRecursively()
-		systemProperty("firmament.testrepo", downloadTestRepo.flatMap { it.outputDirectory.asFile }.map { it.absolutePath }.get())
+		systemProperty("firmament.testrepo",
+		               downloadTestRepo.flatMap { it.outputDirectory.asFile }.map { it.absolutePath }.get())
 	}
+	systemProperty("jdk.attach.allowAttachSelf", "true")
+	jvmArgs("-XX:+EnableDynamicAgentLoading")
+	systemProperties(
+		"kotest.framework.classpath.scanning.config.disable" to true,
+		"kotest.framework.config.fqn" to "moe.nea.firmament.test.testutil.KotestPlugin",
+	)
 	useJUnitPlatform()
 }
 

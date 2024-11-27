@@ -1,0 +1,62 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			id: "PET",
+			petInfo: '{"type":"LION","active":false,"exp":0.0,"tier":"LEGENDARY","hideInfo":false,"candyUsed":0,"uuid":"c7f57149-458e-4fde-a9bc-fcc14932310a","uniqueId":"d668f085-26a6-48fe-b75b-c7b8227b5ac8","hideRightClick":false,"noMove":false}',
+			timestamp: 1732719293542L,
+			uuid: "c7f57149-458e-4fde-a9bc-fcc14932310a"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"gray","text":"[Lvl 1] "},{"color":"gold","text":"Lion"}],"italic":false,"text":""}',
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"dark_gray","text":"Foraging Pet"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Speed: "},{"color":"green","text":"+0.25"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Strength: "},{"color":"red","text":"+0.5"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Ferocity: "},{"color":"green","text":"+0.05"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Primal Force"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Adds "},{"color":"red","text":"+0.2 "},{"color":"red","text":"❁ Damage "},{"color":"gray","text":"and "},{"color":"red","text":"+0.2 "},{"color":"red","text":"❁"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"red","text":"Strength "},{"color":"gray","text":"to your weapons."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"First Pounce"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"First Strike"},{"color":"gray","text":", Triple-Strike"},{"color":"gray","text":", and"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"bold":true,"color":"light_purple","text":"Combo "},{"color":"gray","text":"are "},{"color":"green","text":"1% "},{"color":"gray","text":"more effective."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"King of the Jungle"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Deal "},{"color":"red","text":"+1.5% "},{"color":"red","text":"❁ Damage "},{"color":"gray","text":"against mobs"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"that have attacked you."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Progress to Level 2: "},{"color":"yellow","text":"0%"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"white","strikethrough":true,"text":"                         "},"",{"bold":false,"extra":[" "],"italic":false,"obfuscated":false,"strikethrough":false,"text":"","underlined":false},{"color":"yellow","text":"0"},{"color":"gold","text":"/"},{"color":"yellow","text":"660"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"yellow","text":"Right-click to add this pet to your"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"yellow","text":"pet menu!"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"gold","text":"LEGENDARY"}],"italic":false,"text":""}'
+		],
+		"minecraft:profile": {
+			id: [I;
+				100496274,
+				-783272221,
+				-1215808471,
+				-1437268588
+			],
+			properties: [
+				{
+					name: "textures",
+					signature: "",
+					value: "eyJ0aW1lc3RhbXAiOjE1MDMzMTY0Njg1ODAsInByb2ZpbGVJZCI6ImUzYjQ0NWM4NDdmNTQ4ZmI4YzhmYTNmMWY3ZWZiYThlIiwicHJvZmlsZU5hbWUiOiJNaW5pRGlnZ2VyVGVzdCIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzhmZjQ3M2JkNTJiNGRiMmMwNmYxYWM4N2ZlMTM2N2JjZTc1NzRmYWMzMzBmZmFjNzk1NjIyOWY4MmVmYmExIn19fQ=="
+				}
+			]
+		}
+	},
+	count: 1,
+	id: "minecraft:player_head"
+}

@@ -82,6 +82,9 @@ yacl = "3.6.1+1.21.2-fabric"
 # Update from https://maven.shedaniel.me/me/shedaniel/cloth/basic-math/0.6.1/
 basicMath = "0.6.1"
 
+# Update from https://mvnrepository.com/artifact/net.lenni0451.classtransform/core
+classtransform = "1.14.0"
+
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
@@ -118,19 +121,22 @@ femalegender = { module = "maven.modrinth:female-gender", version.ref = "femaleg
 yacl = { module = "dev.isxander:yet-another-config-lib", version.ref = "yacl" }
 basicMath = { module = "me.shedaniel.cloth:basic-math", version.ref = "basicMath" }
 
+classTransform-mixinsTranslator = { module = "net.lenni0451.classtransform:mixinstranslator", version.ref = "classtransform" }
+classTransform-core = { module = "net.lenni0451.classtransform:core", version.ref = "classtransform" }
+
 [bundles]
 runtime_required = [
 	"rei_fabric",
-#	"notenoughanimations",
+	#	"notenoughanimations",
 	"hypixelmodapi_fabric",
 ]
 runtime_optional = [
 	"devauth",
 	#	"freecammod",
-#	"sodium",
+	#	"sodium",
 	#    "qolify",
 	"ncr",
-#	"citresewn",
+	#	"citresewn",
 ]
 
 [plugins]
@@ -139,3 +145,4 @@ kotlin_plugin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization"
 kotlin_plugin_powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 kotlin_plugin_ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin_ksp" }
 loom = { id = "dev.architectury.loom", version.ref = "loom" }
+shadow = { id = "com.github.johnrengelman.shadow",version="8.1.1" }

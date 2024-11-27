@@ -1,0 +1,60 @@
+{
+	components: {
+		"minecraft:custom_data": {
+			id: "PET",
+			petInfo: '{"type":"RABBIT","active":true,"exp":3.429132435816353E7,"tier":"MYTHIC","hideInfo":false,"heldItem":"YELLOW_BANDANA","candyUsed":0,"uuid":"30a05aae-2ccd-41c0-a686-5bce0df15e2d","uniqueId":"71a8949b-7444-4ead-9464-999fe549e703","hideRightClick":false,"noMove":false}',
+			uuid: "30a05aae-2ccd-41c0-a686-5bce0df15e2d"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"gray","text":"[Lvl 100] "},{"color":"light_purple","text":"Rabbit"}],"italic":false,"text":""}',
+		"minecraft:lore": [
+			'{"extra":[{"color":"dark_gray","text":"Farming Pet"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Health: "},{"color":"green","text":"+100"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Speed: "},{"color":"green","text":"+20"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Farming Fortune: "},{"color":"green","text":"+30"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Happy Feet"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Jump potions also give "},{"color":"green","text":"+50 "},{"color":"gray","text":"speed"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Farming Wisdom Boost"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":""},{"color":"gray","text":"Grants "},{"color":"dark_aqua","text":"+30☯ Farming Wisdom"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Efficient Farming"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Farming minions work "},{"color":"green","text":"30% "},{"color":"gray","text":"faster"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"while on your island"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Chocolate Injections"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Increases "},{"color":"gold","text":"Chocolate Factory"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":""},{"color":"gray","text":"production by "},{"color":"green","text":"+0.05x"},{"color":"gray","text":". Duplicate"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"green","text":"Chocolate Rabbits "},{"color":"gray","text":"that you find"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"grant "},{"color":"gold","text":"+33% Chocolate"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Held Item: "},{"color":"blue","text":"Yellow Bandana"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Grants "},{"color":"gold","text":"+30☘ Farming Fortune"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"aqua","text":"MAX LEVEL"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_gray","text":"▸ 34,291,324 XP"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"red","text":"Click to despawn!"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"yellow","text":"Shift Left-click to toggle as favorite!"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"yellow","text":"Right-click to convert to an item!"}],"italic":false,"text":""}'
+		],
+		"minecraft:profile": {
+			id: [I;
+				-363097213,
+				-1822870885,
+				-1670199288,
+				-1615169037
+			],
+			properties: [
+				{
+					name: "textures",
+					signature: "",
+					value: "ewogICJ0aW1lc3RhbXAiIDogMTYwNDU4NjI3ODg1NywKICAicHJvZmlsZUlkIiA6ICI0ZTMwZjUwZTdiYWU0M2YzYWZkMmE3NDUyY2ViZTI5YyIsCiAgInByb2ZpbGVOYW1lIiA6ICJfdG9tYXRvel8iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM0Mzg1NTVlODk5YmQ5YTA1MWE5NWRiZWE0OWViMmVjZmE1MmE2OWRiYmE4OTk4ZjM2NzM4MTllMjc3ZmRmNSIKICAgIH0KICB9Cn0="
+				}
+			]
+		}
+	},
+	count: 1,
+	id: "minecraft:player_head"
+}

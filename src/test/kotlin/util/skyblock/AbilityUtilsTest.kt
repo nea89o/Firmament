@@ -1,5 +1,6 @@
 package moe.nea.firmament.test.util.skyblock
 
+import io.kotest.core.spec.style.AnnotationSpec
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import kotlin.time.Duration.Companion.minutes
@@ -9,7 +10,7 @@ import moe.nea.firmament.test.testutil.ItemResources
 import moe.nea.firmament.util.skyblock.AbilityUtils
 import moe.nea.firmament.util.unformattedString
 
-class AbilityUtilsTest {
+class AbilityUtilsTest : AnnotationSpec() {
 
 	fun List<AbilityUtils.ItemAbility>.stripDescriptions() = map {
 		it.copy(descriptionLines = it.descriptionLines.map { Text.literal(it.unformattedString) })

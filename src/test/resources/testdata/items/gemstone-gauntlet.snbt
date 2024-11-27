@@ -1,0 +1,103 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			compact_blocks: 287507,
+			donated_museum: 1b,
+			enchantments: {
+				compact: 8,
+				critical: 5,
+				efficiency: 5,
+				experience: 3,
+				first_strike: 4,
+				fortune: 4,
+				giant_killer: 5,
+				pristine: 3,
+				scavenger: 3,
+				sharpness: 5,
+				telekinesis: 1
+			},
+			gems: {
+				AMBER_0: "FINE",
+				AMETHYST_0: "FINE",
+				JADE_0: "FINE",
+				SAPPHIRE_0: "FINE",
+				TOPAZ_0: "FINE"
+			},
+			id: "GEMSTONE_GAUNTLET",
+			modifier: "auspicious",
+			originTag: "QUICK_CRAFTING",
+			timestamp: 1642718160000L,
+			uuid: "af56dd7b-c4b1-4e26-8d09-1854680a93c3"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"gold","text":"Auspicious Gemstone Gauntlet"}],"italic":false,"text":""}',
+		"minecraft:enchantments": {
+			levels: {
+				"minecraft:efficiency": 5
+			}
+		},
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"dark_gray","text":"Breaking Power 8"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Damage: "},{"color":"red","text":"+300"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Strength: "},{"color":"red","text":"+50"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Crit Damage: "},{"color":"red","text":"+50%"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Defense: "},{"color":"green","text":"+10 "},{"color":"light_purple","text":"(+10)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Intelligence: "},{"color":"green","text":"+11 "},{"color":"light_purple","text":"(+11)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Speed: "},{"color":"green","text":"+886 "},{"color":"blue","text":"(+50) "},{"color":"light_purple","text":"(+36)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Pristine: "},{"color":"green","text":"+2.7 "},{"color":"light_purple","text":"(+1.2)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Fortune: "},{"color":"green","text":"+81 "},{"color":"blue","text":"(+16) "},{"color":"light_purple","text":"(+20)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Wisdom: "},{"color":"green","text":"+8"}],"italic":false,"text":""}',
+			'{"extra":[" ",{"color":"blue","text":"["},{"color":"green","text":"☘"},{"color":"blue","text":"] "},{"color":"blue","text":"["},{"color":"gold","text":"⸕"},{"color":"blue","text":"] "},{"color":"blue","text":"["},{"color":"yellow","text":"✧"},{"color":"blue","text":"] "},{"color":"blue","text":"["},{"color":"aqua","text":"✎"},{"color":"blue","text":"] "},{"color":"blue","text":"["},{"color":"dark_purple","text":"❈"},{"color":"blue","text":"]"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Compact VIII"},{"color":"blue","text":", "},{"color":"blue","text":"Critical V"},{"color":"blue","text":", "},{"color":"blue","text":"Efficiency V"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Experience III"},{"color":"blue","text":", "},{"color":"blue","text":"First Strike IV"},{"color":"blue","text":", "},{"color":"blue","text":"Fortune IV"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Giant Killer V"},{"color":"blue","text":", "},{"color":"blue","text":"Prismatic III"},{"color":"blue","text":", "},{"color":"blue","text":"Scavenger III"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Sharpness V"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gold","text":"Ability: Reduced To Atoms"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mobs killed on "},{"color":"aqua","text":"Mining Islands "},{"color":"gray","text":"drop the same"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"light_purple","text":"Gemstones "},{"color":"gray","text":"as your filled Gemstone Slots."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"dark_gray","text":"(2s cooldown)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gold","text":"Ability: Kinetic"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Killing mobs on "},{"color":"aqua","text":"Mining Islands "},{"color":"gray","text":"reduces your"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gold","text":"Forge Timers "},{"color":"gray","text":"by "},{"color":"green","text":"0s"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"dark_gray","text":"(+0.5s per Perfect Gemstone)"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Ability: Mining Speed Boost  "},{"bold":true,"color":"yellow","text":"RIGHT CLICK"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Grants "},{"color":"gold","text":"+200% "},{"color":"gold","text":"⸕ Mining Speed "},{"color":"gray","text":"for"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"green","text":"10s"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_gray","text":"Cooldown: "},{"color":"green","text":"120s"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Auspicious Bonus"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Grants "},{"color":"gold","text":"+0.8% "},{"color":"gold","text":"☘ Mining Fortune"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"dark_gray","text":"* "},{"color":"dark_gray","text":"Co-op Soulbound "},{"bold":true,"color":"dark_gray","text":"*"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"gold","text":"LEGENDARY GAUNTLET"}],"italic":false,"text":""}'
+		],
+		"minecraft:profile": {
+			id: [I;
+				-861744046,
+				-959235637,
+				-1231724855,
+				724395817
+			],
+			properties: [
+				{
+					name: "textures",
+					signature: "",
+					value: "ewogICJ0aW1lc3RhbXAiIDogMTYxODUyMTY2MzY1NCwKICAicHJvZmlsZUlkIiA6ICIxZDUyMzNkMzg4NjI0YmFmYjAwZTMxNTBhN2FhM2E4OSIsCiAgInByb2ZpbGVOYW1lIiA6ICIwMDAwMDAwMDAwMDAwMDBKIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzdiZjAxYzE5OGY2ZTE2OTY1ZTIzMDIzNWNkMjJhNWE5ZjRhNDBlNDA5NDEyMzQ0Nzg5NDhmZjlhNTZlNTE3NzUiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ=="
+				}
+			]
+		}
+	},
+	count: 1,
+	id: "minecraft:player_head"
+}

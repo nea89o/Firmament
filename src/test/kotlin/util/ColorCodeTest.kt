@@ -1,25 +1,23 @@
 package moe.nea.firmament.test.util
 
+import io.kotest.core.spec.style.AnnotationSpec
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import net.minecraft.Bootstrap
-import net.minecraft.SharedConstants
 import moe.nea.firmament.util.removeColorCodes
 
 
-class ColorCodeTest {
+class ColorCodeTest : AnnotationSpec() {
     @Test
     fun testWhatever() {
-        Assertions.assertEquals("", "".removeColorCodes().toString())
-        Assertions.assertEquals("", "§".removeColorCodes().toString())
-        Assertions.assertEquals("", "§a".removeColorCodes().toString())
-        Assertions.assertEquals("ab", "a§ab".removeColorCodes().toString())
-        Assertions.assertEquals("ab", "a§ab§§".removeColorCodes().toString())
-        Assertions.assertEquals("abc", "a§ab§§c".removeColorCodes().toString())
-        Assertions.assertEquals("bc", "§ab§§c".removeColorCodes().toString())
-        Assertions.assertEquals("b§lc", "§ab§l§§c".removeColorCodes(true).toString())
-        Assertions.assertEquals("b§lc§l", "§ab§l§§c§l".removeColorCodes(true).toString())
-        Assertions.assertEquals("§lb§lc", "§l§ab§l§§c".removeColorCodes(true).toString())
+        Assertions.assertEquals("", "".removeColorCodes())
+        Assertions.assertEquals("", "§".removeColorCodes())
+        Assertions.assertEquals("", "§a".removeColorCodes())
+        Assertions.assertEquals("ab", "a§ab".removeColorCodes())
+        Assertions.assertEquals("ab", "a§ab§§".removeColorCodes())
+        Assertions.assertEquals("abc", "a§ab§§c".removeColorCodes())
+        Assertions.assertEquals("bc", "§ab§§c".removeColorCodes())
+        Assertions.assertEquals("b§lc", "§ab§l§§c".removeColorCodes(true))
+        Assertions.assertEquals("b§lc§l", "§ab§l§§c§l".removeColorCodes(true))
+        Assertions.assertEquals("§lb§lc", "§l§ab§l§§c".removeColorCodes(true))
     }
 
     @Test

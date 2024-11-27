@@ -1,0 +1,52 @@
+{
+	components: {
+		"minecraft:custom_data": {
+			id: "PET",
+			petInfo: '{"type":"MITHRIL_GOLEM","active":false,"exp":9232689.767527012,"tier":"LEGENDARY","hideInfo":false,"candyUsed":0,"uuid":"2ebbdaff-c9b6-4fe1-8b87-44905eb5867d","uniqueId":"26be73f1-2955-4003-9e6a-72848cea8e08","hideRightClick":false,"noMove":false}',
+			uuid: "2ebbdaff-c9b6-4fe1-8b87-44905eb5867d"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"gray","text":"[Lvl 86] "},{"color":"gold","text":"Mithril Golem"}],"italic":false,"text":""}',
+		"minecraft:lore": [
+			'{"extra":[{"color":"dark_gray","text":"Mining Pet"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"True Defense: "},{"color":"green","text":"+43"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Mining Fortune: "},{"color":"green","text":"+21.5"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Mithril Affinity"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Grants "},{"color":"gold","text":"+172⸕ Mining Speed "},{"color":"gray","text":"when"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"mining "},{"color":"dark_green","text":"Mithril"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Subterranean Battler"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Grants "},{"color":"green","text":"+17.2% "},{"color":"gray","text":"of most combat stats"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"while on "},{"color":"aqua","text":"Mining Islands"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"The Smell Of Powder"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Grants "},{"color":"dark_green","text":"+17.2% ᠅ Mithril Powder "},{"color":"gray","text":"from"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"all sources."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Progress to Level 87: "},{"color":"yellow","text":"89%"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"dark_green","strikethrough":true,"text":"                       "},{"bold":true,"color":"white","strikethrough":true,"text":"  "},"",{"bold":false,"extra":[" "],"italic":false,"obfuscated":false,"strikethrough":false,"text":"","underlined":false},{"color":"yellow","text":"593,259.8"},{"color":"gold","text":"/"},{"color":"yellow","text":"666.7k"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"yellow","text":"Left-click to summon!"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"yellow","text":"Shift Left-click to toggle as favorite!"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"yellow","text":"Right-click to convert to an item!"}],"italic":false,"text":""}'
+		],
+		"minecraft:profile": {
+			id: [I;
+				972784821,
+				1926443553,
+				-1284265423,
+				1586851459
+			],
+			properties: [
+				{
+					name: "textures",
+					signature: "",
+					value: "ewogICJ0aW1lc3RhbXAiIDogMTYxMDY0OTEwODI4NCwKICAicHJvZmlsZUlkIiA6ICI2ZmU4OTUxZDVhY2M0NDc3OWI2ZmYxMmU3YzFlOTQ2MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJlcGhlbXJhIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2MxYjJkZmU4ZWQ1ZGZmYzViMTY4N2JjMWMyNDljMzlkZTJkOGE2YzNkOTAzMDVjOTVmNmQxYTFhMzMwYTBiMSIKICAgIH0KICB9Cn0="
+				}
+			]
+		}
+	},
+	count: 1,
+	id: "minecraft:player_head"
+}
