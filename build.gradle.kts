@@ -214,6 +214,9 @@ val hotswap by configurations.creating {
 val nonModImplentation by configurations.creating {
 	configurations.implementation.get().extendsFrom(this)
 }
+val testAgent by configurations.creating {
+	isVisible = false
+}
 
 
 val configuredSourceSet = createIsolatedSourceSet("configured",
@@ -306,6 +309,7 @@ dependencies {
 
 
 	testImplementation("io.kotest:kotest-runner-junit5:6.0.0.M1")
+	testAgent(project(":testagent", configuration = "shadow"))
 
 	implementation(project(":symbols"))
 	ksp(project(":symbols"))
@@ -371,11 +375,13 @@ tasks.test {
 	val wd = file("build/testWorkDir")
 	workingDir(wd)
 	dependsOn(downloadTestRepo)
+	dependsOn(testAgent)
 	doFirst {
 		wd.mkdirs()
 		wd.resolve("config").deleteRecursively()
 		systemProperty("firmament.testrepo",
 		               downloadTestRepo.flatMap { it.outputDirectory.asFile }.map { it.absolutePath }.get())
+		jvmArgs("-javaagent:${testAgent.singleFile.absolutePath}")
 	}
 	systemProperty("jdk.attach.allowAttachSelf", "true")
 	jvmArgs("-XX:+EnableDynamicAgentLoading")

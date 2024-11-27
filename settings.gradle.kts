@@ -37,3 +37,4 @@ rootProject.name = "Firmament"
 
 include("symbols")
 include("javaplugin")
+include("testagent")

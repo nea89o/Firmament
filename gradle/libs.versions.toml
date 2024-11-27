@@ -85,6 +85,9 @@ basicMath = "0.6.1"
 # Update from https://mvnrepository.com/artifact/net.lenni0451.classtransform/core
 classtransform = "1.14.0"
 
+# Update from https://mvnrepository.com/artifact/org.ow2.asm/asm/
+asm = "9.7.1"
+
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
@@ -124,6 +127,8 @@ basicMath = { module = "me.shedaniel.cloth:basic-math", version.ref = "basicMath
 classTransform-mixinsTranslator = { module = "net.lenni0451.classtransform:mixinstranslator", version.ref = "classtransform" }
 classTransform-core = { module = "net.lenni0451.classtransform:core", version.ref = "classtransform" }
 
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+
 [bundles]
 runtime_required = [
 	"rei_fabric",
@@ -145,4 +150,4 @@ kotlin_plugin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization"
 kotlin_plugin_powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 kotlin_plugin_ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin_ksp" }
 loom = { id = "dev.architectury.loom", version.ref = "loom" }
-shadow = { id = "com.github.johnrengelman.shadow",version="8.1.1" }
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
