@@ -131,6 +131,7 @@ object AbilityUtils {
 		return abilities
 	}
 
+	// TODO: memoize
 	fun getAbilities(itemStack: ItemStack): List<ItemAbility> {
 		return getAbilities(itemStack.loreAccordingToNbt)
 	}

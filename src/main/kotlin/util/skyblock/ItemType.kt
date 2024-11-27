@@ -1,21 +1,41 @@
 package moe.nea.firmament.util.skyblock
 
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
+import net.minecraft.item.ItemStack
+import moe.nea.firmament.util.directLiteralStringContent
+import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.petData
 
 
-class ItemType(val name: String) {
+@JvmInline
+value class ItemType private constructor(val name: String) {
 	companion object {
-		private val generated = object : ReadOnlyProperty<Any?, ItemType> {
-			override fun getValue(thisRef: Any?, property: KProperty<*>): ItemType {
-				return ItemType.ofName(property.name)
-			}
-		}
-
 		fun ofName(name: String): ItemType {
 			return ItemType(name)
 		}
 
-		val SWORD by generated
+		fun fromItemStack(itemStack: ItemStack): ItemType? {
+			if (itemStack.petData != null)
+				return PET
+			val typeText =
+				itemStack.loreAccordingToNbt.lastOrNull()
+					?.siblings?.find {
+						!it.style.isObfuscated && !it.directLiteralStringContent.isNullOrBlank()
+					}?.directLiteralStringContent
+			if (typeText != null) {
+				val type = typeText.substringAfter(' ', missingDelimiterValue = "").trim()
+				if (type.isEmpty()) return null
+				return ofName(type)
+			}
+			return null
+		}
+
+		val SWORD = ofName("SWORD")
+		val DRILL = ofName("DRILL")
+		val PICKAXE = ofName("PICKAXE")
+
+		/**
+		 * This one is not really official (it never shows up in game).
+		 */
+		val PET = ofName("PET")
 	}
 }
