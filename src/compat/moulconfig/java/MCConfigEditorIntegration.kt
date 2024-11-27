@@ -20,6 +20,7 @@ import io.github.notenoughupdates.moulconfig.gui.editors.ComponentEditor
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorAccordion
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorBoolean
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorButton
+import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorDropdown
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorText
 import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import io.github.notenoughupdates.moulconfig.processor.ProcessedCategory
@@ -31,9 +32,11 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.Identifier
+import net.minecraft.util.StringIdentifiable
 import net.minecraft.util.Util
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.config.BooleanHandler
+import moe.nea.firmament.gui.config.ChoiceHandler
 import moe.nea.firmament.gui.config.ClickHandler
 import moe.nea.firmament.gui.config.DurationHandler
 import moe.nea.firmament.gui.config.FirmamentConfigScreenProvider
@@ -115,7 +118,33 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 		}
 	}
 
+	fun <T> helpRegisterChoice() where  T : Enum<T>, T : StringIdentifiable {
+		register(ChoiceHandler::class.java as Class<ChoiceHandler<T>>) { handler, option, categoryAccordionId, configObject ->
+			object : ProcessedEditableOptionFirm<T>(option, categoryAccordionId, configObject) {
+				override fun createEditor(): GuiOptionEditor {
+					return GuiOptionEditorDropdown(
+						this,
+						handler.universe.map { handler.renderer.getName(option, it).string }.toTypedArray()
+					)
+				}
+
+				override fun toT(any: Any?): T? {
+					return handler.universe[any as Int]
+				}
+
+				override fun getType(): Type {
+					return Int::class.java
+				}
+
+				override fun fromT(t: T): Any {
+					return t.ordinal
+				}
+			}
+		}
+	}
+
 	init {
+		helpRegisterChoice<Nothing>()
 		register(BooleanHandler::class.java) { handler, option, categoryAccordionId, configObject ->
 			object : ProcessedEditableOptionFirm<Boolean>(option, categoryAccordionId, configObject) {
 				override fun createEditor(): GuiOptionEditor {

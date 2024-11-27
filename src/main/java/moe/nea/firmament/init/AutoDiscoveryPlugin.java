@@ -16,160 +16,168 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class AutoDiscoveryPlugin {
-    private static final List<AutoDiscoveryPlugin> mixinPlugins = new ArrayList<>();
+	public static List<String> getDefaultAllMixinClassesFQNs() {
+		var defaultName = "moe.nea.firmament.mixins";
+		var plugin = new AutoDiscoveryPlugin();
+		plugin.setMixinPackage(defaultName);
+		var mixins = plugin.getMixins();
+		return mixins.stream().map(it -> defaultName + "." + it).toList();
+	}
 
-    public static List<AutoDiscoveryPlugin> getMixinPlugins() {
-        return mixinPlugins;
-    }
+	private static final List<AutoDiscoveryPlugin> mixinPlugins = new ArrayList<>();
 
-    private String mixinPackage;
+	public static List<AutoDiscoveryPlugin> getMixinPlugins() {
+		return mixinPlugins;
+	}
 
-    public void setMixinPackage(String mixinPackage) {
-        this.mixinPackage = mixinPackage;
-        mixinPlugins.add(this);
-    }
+	private String mixinPackage;
 
-    /**
-     * Resolves the base class root for a given class URL. This resolves either the JAR root, or the class file root.
-     * In either case the return value of this + the class name will resolve back to the original class url, or to other
-     * class urls for other classes.
-     */
-    public URL getBaseUrlForClassUrl(URL classUrl) {
-        String string = classUrl.toString();
-        if (classUrl.getProtocol().equals("jar")) {
-            try {
-                return new URL(string.substring(4).split("!")[0]);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (string.endsWith(".class")) {
-            try {
-                return new URL(string.replace("\\", "/")
-                                     .replace(getClass().getCanonicalName()
-                                                        .replace(".", "/") + ".class", ""));
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return classUrl;
-    }
+	public void setMixinPackage(String mixinPackage) {
+		this.mixinPackage = mixinPackage;
+		mixinPlugins.add(this);
+	}
 
-    /**
-     * Get the package that contains all the mixins. This value is set using {@link #setMixinPackage}.
-     */
-    public String getMixinPackage() {
-        return mixinPackage;
-    }
+	/**
+	 * Resolves the base class root for a given class URL. This resolves either the JAR root, or the class file root.
+	 * In either case the return value of this + the class name will resolve back to the original class url, or to other
+	 * class urls for other classes.
+	 */
+	public URL getBaseUrlForClassUrl(URL classUrl) {
+		String string = classUrl.toString();
+		if (classUrl.getProtocol().equals("jar")) {
+			try {
+				return new URL(string.substring(4).split("!")[0]);
+			} catch (MalformedURLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		if (string.endsWith(".class")) {
+			try {
+				return new URL(string.replace("\\", "/")
+				                     .replace(getClass().getCanonicalName()
+				                                        .replace(".", "/") + ".class", ""));
+			} catch (MalformedURLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return classUrl;
+	}
 
-    /**
-     * Get the path inside the class root to the mixin package
-     */
-    public String getMixinBaseDir() {
-        return mixinPackage.replace(".", "/");
-    }
+	/**
+	 * Get the package that contains all the mixins. This value is set using {@link #setMixinPackage}.
+	 */
+	public String getMixinPackage() {
+		return mixinPackage;
+	}
 
-    /**
-     * A list of all discovered mixins.
-     */
-    private List<String> mixins = null;
+	/**
+	 * Get the path inside the class root to the mixin package
+	 */
+	public String getMixinBaseDir() {
+		return mixinPackage.replace(".", "/");
+	}
 
-    /**
-     * Try to add mixin class ot the mixins based on the filepath inside of the class root.
-     * Removes the {@code .class} file suffix, as well as the base mixin package.
-     * <p><b>This method cannot be called after mixin initialization.</p>
-     *
-     * @param className the name or path of a class to be registered as a mixin.
-     */
-    public void tryAddMixinClass(String className) {
-        if (!className.endsWith(".class")) return;
-        String norm = (className.substring(0, className.length() - ".class".length()))
-            .replace("\\", "/")
-            .replace("/", ".");
-        if (norm.startsWith(getMixinPackage() + ".") && !norm.endsWith(".")) {
-            mixins.add(norm.substring(getMixinPackage().length() + 1));
-        }
-    }
+	/**
+	 * A list of all discovered mixins.
+	 */
+	private List<String> mixins = null;
 
-    private void tryDiscoverFromContentFile(URL url) {
-        Path file;
-        try {
-            file = Paths.get(getBaseUrlForClassUrl(url).toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("Base directory found at " + file);
-        if (!Files.exists(file)) {
-            System.out.println("Skipping non-existing mixin root: " + file);
-            return;
-        }
-        if (Files.isDirectory(file)) {
-            walkDir(file);
-        } else {
-            walkJar(file);
-        }
-        System.out.println("Found mixins: " + mixins);
+	/**
+	 * Try to add mixin class ot the mixins based on the filepath inside of the class root.
+	 * Removes the {@code .class} file suffix, as well as the base mixin package.
+	 * <p><b>This method cannot be called after mixin initialization.</p>
+	 *
+	 * @param className the name or path of a class to be registered as a mixin.
+	 */
+	public void tryAddMixinClass(String className) {
+		if (!className.endsWith(".class")) return;
+		String norm = (className.substring(0, className.length() - ".class".length()))
+			              .replace("\\", "/")
+			              .replace("/", ".");
+		if (norm.startsWith(getMixinPackage() + ".") && !norm.endsWith(".")) {
+			mixins.add(norm.substring(getMixinPackage().length() + 1));
+		}
+	}
 
-    }
+	private void tryDiscoverFromContentFile(URL url) {
+		Path file;
+		try {
+			file = Paths.get(getBaseUrlForClassUrl(url).toURI());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+		System.out.println("Base directory found at " + file);
+		if (!Files.exists(file)) {
+			System.out.println("Skipping non-existing mixin root: " + file);
+			return;
+		}
+		if (Files.isDirectory(file)) {
+			walkDir(file);
+		} else {
+			walkJar(file);
+		}
+		System.out.println("Found mixins: " + mixins);
 
-    /**
-     * Search through the JAR or class directory to find mixins contained in {@link #getMixinPackage()}
-     */
-    public List<String> getMixins() {
-        if (mixins != null) return mixins;
-        System.out.println("Trying to discover mixins");
-        mixins = new ArrayList<>();
-        URL classUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
-        System.out.println("Found classes at " + classUrl);
-        tryDiscoverFromContentFile(classUrl);
-        var classRoots = System.getProperty("firmament.classroots");
-        if (classRoots != null && !classRoots.isBlank()) {
-            System.out.println("Found firmament class roots: " + classRoots);
-            for (String s : classRoots.split(File.pathSeparator)) {
-                if (s.isBlank()) {
-                    continue;
-                }
-                try {
-                    tryDiscoverFromContentFile(new File(s).toURI().toURL());
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return mixins;
-    }
+	}
 
-    /**
-     * Search through directory for mixin classes based on {@link #getMixinBaseDir}.
-     *
-     * @param classRoot The root directory in which classes are stored for the default package.
-     */
-    private void walkDir(Path classRoot) {
-        System.out.println("Trying to find mixins from directory");
-        var path = classRoot.resolve(getMixinBaseDir());
-        if (!Files.exists(path)) return;
-        try (Stream<Path> classes = Files.walk(path)) {
-            classes.map(it -> classRoot.relativize(it).toString())
-                   .forEach(this::tryAddMixinClass);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	/**
+	 * Search through the JAR or class directory to find mixins contained in {@link #getMixinPackage()}
+	 */
+	public List<String> getMixins() {
+		if (mixins != null) return mixins;
+		System.out.println("Trying to discover mixins");
+		mixins = new ArrayList<>();
+		URL classUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
+		System.out.println("Found classes at " + classUrl);
+		tryDiscoverFromContentFile(classUrl);
+		var classRoots = System.getProperty("firmament.classroots");
+		if (classRoots != null && !classRoots.isBlank()) {
+			System.out.println("Found firmament class roots: " + classRoots);
+			for (String s : classRoots.split(File.pathSeparator)) {
+				if (s.isBlank()) {
+					continue;
+				}
+				try {
+					tryDiscoverFromContentFile(new File(s).toURI().toURL());
+				} catch (MalformedURLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		return mixins;
+	}
 
-    /**
-     * Read through a JAR file, trying to find all mixins inside.
-     */
-    private void walkJar(Path file) {
-        System.out.println("Trying to find mixins from jar file");
-        try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(file))) {
-            ZipEntry next;
-            while ((next = zis.getNextEntry()) != null) {
-                tryAddMixinClass(next.getName());
-                zis.closeEntry();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	/**
+	 * Search through directory for mixin classes based on {@link #getMixinBaseDir}.
+	 *
+	 * @param classRoot The root directory in which classes are stored for the default package.
+	 */
+	private void walkDir(Path classRoot) {
+		System.out.println("Trying to find mixins from directory");
+		var path = classRoot.resolve(getMixinBaseDir());
+		if (!Files.exists(path)) return;
+		try (Stream<Path> classes = Files.walk(path)) {
+			classes.map(it -> classRoot.relativize(it).toString())
+			       .forEach(this::tryAddMixinClass);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Read through a JAR file, trying to find all mixins inside.
+	 */
+	private void walkJar(Path file) {
+		System.out.println("Trying to find mixins from jar file");
+		try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(file))) {
+			ZipEntry next;
+			while ((next = zis.getNextEntry()) != null) {
+				tryAddMixinClass(next.getName());
+				zis.closeEntry();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }

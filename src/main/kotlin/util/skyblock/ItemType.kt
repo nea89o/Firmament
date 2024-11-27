@@ -32,10 +32,15 @@ value class ItemType private constructor(val name: String) {
 		val SWORD = ofName("SWORD")
 		val DRILL = ofName("DRILL")
 		val PICKAXE = ofName("PICKAXE")
+		val GAUNTLET = ofName("GAUNTLET")
 
 		/**
 		 * This one is not really official (it never shows up in game).
 		 */
 		val PET = ofName("PET")
+	}
+
+	override fun toString(): String {
+		return name
 	}
 }

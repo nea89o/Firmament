@@ -7,11 +7,13 @@ import net.minecraft.item.ItemStack
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
+import net.minecraft.util.StringIdentifiable
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.ProfileSwitchEvent
 import moe.nea.firmament.events.SlotClickEvent
+import moe.nea.firmament.events.UseItemEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -27,10 +29,13 @@ import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.parseTimePattern
+import moe.nea.firmament.util.red
 import moe.nea.firmament.util.render.RenderCircleProgress
 import moe.nea.firmament.util.render.lerp
 import moe.nea.firmament.util.skyblock.AbilityUtils
+import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.toShedaniel
+import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 
@@ -43,6 +48,22 @@ object PickaxeAbility : FirmamentFeature {
 		val cooldownEnabled by toggle("ability-cooldown") { false }
 		val cooldownScale by integer("ability-scale", 16, 64) { 16 }
 		val drillFuelBar by toggle("fuel-bar") { true }
+		val blockOnPrivateIsland by choice(
+			"block-on-dynamic",
+			BlockPickaxeAbility.entries,
+		) {
+			BlockPickaxeAbility.ONLY_DESTRUCTIVE
+		}
+	}
+
+	enum class BlockPickaxeAbility : StringIdentifiable {
+		NEVER,
+		ALWAYS,
+		ONLY_DESTRUCTIVE;
+
+		override fun asString(): String {
+			return name
+		}
 	}
 
 	var lobbyJoinTime = TimeMark.farPast()
@@ -56,6 +77,8 @@ object PickaxeAbility : FirmamentFeature {
 		"Maniac Miner" to 59.seconds,
 		"Vein Seeker" to 60.seconds
 	)
+	val destructiveAbilities = setOf("Pickobulus")
+	val pickaxeTypes = setOf(ItemType.PICKAXE, ItemType.DRILL, ItemType.GAUNTLET)
 
 	override val config: ManagedConfig
 		get() = TConfig
@@ -71,6 +94,26 @@ object PickaxeAbility : FirmamentFeature {
 		if (sinceLastUsage < cooldown)
 			return sinceLastUsage / cooldown
 		return 1.0
+	}
+
+	@Subscribe
+	fun onPickaxeRightClick(event: UseItemEvent) {
+		if (TConfig.blockOnPrivateIsland == BlockPickaxeAbility.NEVER) return
+		val itemType = ItemType.fromItemStack(event.item)
+		if (itemType !in pickaxeTypes) return
+		val ability = AbilityUtils.getAbilities(event.item)
+		val shouldBlock = when (TConfig.blockOnPrivateIsland) {
+			BlockPickaxeAbility.NEVER -> false
+			BlockPickaxeAbility.ALWAYS -> ability.any()
+			BlockPickaxeAbility.ONLY_DESTRUCTIVE -> ability.any { it.name in destructiveAbilities }
+		}
+		if (shouldBlock) {
+			MC.sendChat(tr("firmament.pickaxe.blocked",
+			               "Firmament blocked a pickaxe ability from being used on a private island.")
+				            .red() // TODO: .clickCommand("firm confignavigate ${TConfig.identifier} block-on-dynamic")
+			)
+			event.cancel()
+		}
 	}
 
 	@Subscribe

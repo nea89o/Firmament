@@ -92,12 +92,12 @@ object MC {
 	inline val inGameHud: InGameHud get() = instance.inGameHud
 	inline val font get() = instance.textRenderer
 	inline val soundManager get() = instance.soundManager
-	inline val player: ClientPlayerEntity? get() = instance.player
+	inline val player: ClientPlayerEntity? get() = TestUtil.unlessTesting { instance.player }
 	inline val camera: Entity? get() = instance.cameraEntity
 	inline val guiAtlasManager get() = instance.guiAtlasManager
-	inline val world: ClientWorld? get() = instance.world
+	inline val world: ClientWorld? get() = TestUtil.unlessTesting { instance.world }
 	inline var screen: Screen?
-		get() = instance.currentScreen
+		get() = TestUtil.unlessTesting{ instance.currentScreen }
 		set(value) = instance.setScreen(value)
 	val screenName get() = screen?.title?.unformattedString?.trim()
 	inline val handledScreen: HandledScreen<*>? get() = instance.currentScreen as? HandledScreen<*>

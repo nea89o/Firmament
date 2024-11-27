@@ -2,7 +2,6 @@ package moe.nea.firmament.test.util
 
 import io.kotest.core.spec.style.AnnotationSpec
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import moe.nea.firmament.test.testutil.ItemResources
 import moe.nea.firmament.util.getLegacyFormatString
 

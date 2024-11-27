@@ -34,3 +34,5 @@ accessible method net/minecraft/entity/passive/TameableEntity isInSameTeam (Lnet
 accessible method net/minecraft/entity/Entity isInSameTeam (Lnet/minecraft/entity/Entity;)Z
 accessible method net/minecraft/registry/entry/RegistryEntry$Reference setTags (Ljava/util/Collection;)V
 accessible method net/minecraft/registry/entry/RegistryEntryList$Named setEntries (Ljava/util/List;)V
+accessible method net/minecraft/world/biome/source/util/VanillaBiomeParameters writeOverworldBiomeParameters (Ljava/util/function/Consumer;)V
+accessible method net/minecraft/world/gen/densityfunction/DensityFunctions createSurfaceNoiseRouter (Lnet/minecraft/registry/RegistryEntryLookup;Lnet/minecraft/registry/RegistryEntryLookup;ZZ)Lnet/minecraft/world/gen/noise/NoiseRouter;

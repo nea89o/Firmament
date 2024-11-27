@@ -1,53 +1,26 @@
 package moe.nea.firmament.test.util.skyblock
 
-import io.kotest.core.spec.style.AnnotationSpec
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.ShouldSpec
+import io.kotest.matchers.shouldBe
 import moe.nea.firmament.test.testutil.ItemResources
 import moe.nea.firmament.util.skyblock.ItemType
 
-class ItemTypeTest : AnnotationSpec() {
-	@Test
-	fun testPetItem() {
-		Assertions.assertEquals(
-			ItemType.PET,
-			ItemType.fromItemStack(ItemResources.loadItem("pets/lion-item"))
-		)
-	}
-
-	@Test
-	fun testPetInUI() {
-		Assertions.assertEquals(
-			ItemType.PET,
-			ItemType.fromItemStack(ItemResources.loadItem("pets/rabbit-selected"))
-		)
-		Assertions.assertEquals(
-			ItemType.PET,
-			ItemType.fromItemStack(ItemResources.loadItem("pets/mithril-golem-not-selected"))
-		)
-	}
-
-	@Test
-	fun testAOTV() {
-		Assertions.assertEquals(
-			ItemType.SWORD,
-			ItemType.fromItemStack(ItemResources.loadItem("aspect-of-the-void"))
-		)
-	}
-
-	@Test
-	fun testDrill() {
-		Assertions.assertEquals(
-			ItemType.DRILL,
-			ItemType.fromItemStack(ItemResources.loadItem("titanium-drill"))
-		)
-	}
-
-	@Test
-	fun testPickaxe() {
-		Assertions.assertEquals(
-			ItemType.PICKAXE,
-			ItemType.fromItemStack(ItemResources.loadItem("diamond-pickaxe"))
-		)
-	}
-}
+class ItemTypeTest
+	: ShouldSpec(
+	{
+		context("ItemType.fromItemstack") {
+			listOf(
+				"pets/lion-item" to ItemType.PET,
+				"pets/rabbit-selected" to ItemType.PET,
+				"pets/mithril-golem-not-selected" to ItemType.PET,
+				"aspect-of-the-void" to ItemType.SWORD,
+				"titanium-drill" to ItemType.DRILL,
+				"diamond-pickaxe" to ItemType.PICKAXE,
+				"gemstone-gauntlet" to ItemType.GAUNTLET,
+			).forEach { (name, typ) ->
+				should("return $typ for $name") {
+					ItemType.fromItemStack(ItemResources.loadItem(name)) shouldBe typ
+				}
+			}
+		}
+	})

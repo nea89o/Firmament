@@ -2,7 +2,6 @@ package moe.nea.firmament.test.util.skyblock
 
 import io.kotest.core.spec.style.AnnotationSpec
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.text.Text

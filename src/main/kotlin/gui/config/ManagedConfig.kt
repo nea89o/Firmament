@@ -1,5 +1,6 @@
 package moe.nea.firmament.gui.config
 
+import com.mojang.serialization.Codec
 import io.github.notenoughupdates.moulconfig.gui.CloseEventListener
 import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
 import io.github.notenoughupdates.moulconfig.gui.GuiContext
@@ -20,6 +21,7 @@ import kotlin.io.path.writeText
 import kotlin.time.Duration
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
+import net.minecraft.util.StringIdentifiable
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.FirmButtonComponent
 import moe.nea.firmament.keybindings.SavedKeyBinding
@@ -112,6 +114,28 @@ abstract class ManagedConfig(
 	protected fun toggle(propertyName: String, default: () -> Boolean): ManagedOption<Boolean> {
 		return option(propertyName, default, BooleanHandler(this))
 	}
+
+	protected fun <E> choice(
+		propertyName: String,
+		universe: List<E>,
+		default: () -> E
+	): ManagedOption<E> where E : Enum<E>, E : StringIdentifiable {
+		return option(propertyName, default, ChoiceHandler(universe))
+	}
+
+// TODO: wait on https://youtrack.jetbrains.com/issue/KT-73434
+//	protected inline fun <reified E> choice(
+//		propertyName: String,
+//		noinline default: () -> E
+//	): ManagedOption<E>  where E : Enum<E>, E : StringIdentifiable {
+//		return choice(
+//			propertyName,
+//			enumEntries<E>().toList(),
+//			StringIdentifiable.createCodec { enumValues<E>() },
+//			EnumRenderer.default(),
+//			default
+//		)
+//	}
 
 	protected fun duration(
 		propertyName: String,
