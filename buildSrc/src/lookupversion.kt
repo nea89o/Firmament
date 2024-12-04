@@ -6,7 +6,7 @@ fun execString(vararg args: String): String {
 	return pb.inputStream.readAllBytes().decodeToString().trim()
 }
 
-private val tag = "([0-9.]+)(?:\\+.*)?".toRegex()
+private val tag = "([0-9.]+)(?:\\+[^-]*)?".toRegex()
 private val tagOffset = "([0-9.]+)(?:\\+.*)?-([0-9]+)-(.+)".toRegex()
 
 inline fun <T> Regex.useMatcher(string: String, block: (MatchResult) -> T): T? {
