@@ -414,6 +414,10 @@ The layer identifier will resolve to a texture file path according to vanilla ar
 
 `assets/{identifier.namespace}/textures/models/armor/{identifier.path}_layer_{isLegs ? 2 : 1}{suffix}.png`
 
+for 1.21.3+ the path has changed to the follow:
+
+`assets/{identifier.namespace}/textures/entity/equipment/{isLegs ? humanoid_leggings : humanoid}/{identifier.path}{suffix}.png`
+
 Note that there is no automatic underscore insertion for suffix, so you will need to manually specify it if you want.
 
 The leg armor piece uses a different texture, same as with vanilla.
