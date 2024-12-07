@@ -70,6 +70,12 @@ object ItemCache : IReloadable {
 
 	val ItemStack.isBroken
 		get() = get(FirmamentDataComponentTypes.IS_BROKEN) ?: false
+
+	fun ItemStack.withFallback(fallback: ItemStack?): ItemStack {
+		if (isBroken && fallback != null) return fallback
+		return this
+	}
+
 	fun brokenItemStack(neuItem: NEUItem?, idHint: SkyblockId? = null): ItemStack {
 		return ItemStack(Items.PAINTING).apply {
 			setCustomName(Text.literal(neuItem?.displayName ?: idHint?.neuItem ?: "null"))

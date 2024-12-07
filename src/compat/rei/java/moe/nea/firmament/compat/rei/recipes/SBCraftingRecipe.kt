@@ -16,6 +16,7 @@ import net.minecraft.block.Blocks
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.compat.rei.SBItemEntryDefinition
+import moe.nea.firmament.repo.SBItemStack
 
 class SBCraftingRecipe(override val neuRecipe: NEUCraftingRecipe) : SBRecipe() {
 	override fun getCategoryIdentifier(): CategoryIdentifier<*> = Category.catIdentifier
@@ -26,7 +27,7 @@ class SBCraftingRecipe(override val neuRecipe: NEUCraftingRecipe) : SBRecipe() {
 
 		override fun getTitle(): Text = Text.literal("SkyBlock Crafting")
 
-		override fun getIcon(): Renderer = EntryStacks.of(Blocks.CRAFTING_TABLE)
+		override fun getIcon(): Renderer = SBItemEntryDefinition.getPassthrough(Blocks.CRAFTING_TABLE)
 		override fun setupDisplay(display: SBCraftingRecipe, bounds: Rectangle): List<Widget> {
 			val point = Point(bounds.centerX - 58, bounds.centerY - 27)
 			return buildList {

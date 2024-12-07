@@ -29,7 +29,7 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
 			return 100
 		}
 
-		override fun getIcon(): Renderer = EntryStacks.of(Items.DIAMOND_SWORD)
+		override fun getIcon(): Renderer = SBItemEntryDefinition.getPassthrough(Items.DIAMOND_SWORD)
 		override fun setupDisplay(display: SBMobDropRecipe, bounds: Rectangle): List<Widget> {
 			return buildList {
 				add(Widgets.createRecipeBase(bounds))

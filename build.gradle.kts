@@ -223,7 +223,7 @@ val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false) // TODO: wait on their port
 val modmenuSourceSet = createIsolatedSourceSet("modmenu", isEnabled = false)
-val reiSourceSet = createIsolatedSourceSet("rei", isEnabled = false)
+val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig", isEnabled = false)
 val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
 

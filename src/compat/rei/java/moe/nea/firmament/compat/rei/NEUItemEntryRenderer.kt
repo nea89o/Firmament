@@ -9,11 +9,7 @@
 
 package moe.nea.firmament.compat.rei
 
-import com.mojang.blaze3d.platform.GlStateManager.DstFactor
-import com.mojang.blaze3d.platform.GlStateManager.SrcFactor
-import com.mojang.blaze3d.systems.RenderSystem
 import me.shedaniel.math.Rectangle
-import me.shedaniel.rei.api.client.entry.renderer.BatchedEntryRenderer
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext
@@ -21,23 +17,17 @@ import me.shedaniel.rei.api.common.entry.EntryStack
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.DiffuseLighting
-import net.minecraft.client.render.LightmapTextureManager
-import net.minecraft.client.render.OverlayTexture
-import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.model.BakedModel
-import net.minecraft.client.texture.SpriteAtlasTexture
-import net.minecraft.item.ModelTransformationMode
 import net.minecraft.item.tooltip.TooltipType
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.ErrorUtil
-import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 
-object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<SBItemStack, BakedModel> {
+// TODO: make this re implement BatchedEntryRenderer, if possible (likely not, due to no-alloc rendering)
+// Also it is probably not even that much faster now, with render layers.
+object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 	override fun render(
 		entry: EntryStack<SBItemStack>,
 		context: DrawContext,
@@ -46,7 +36,14 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
 		mouseY: Int,
 		delta: Float
 	) {
-		entry.asItemEntry().render(context, bounds, mouseX, mouseY, delta)
+		context.matrices.push()
+		context.matrices.translate(bounds.centerX.toFloat(), bounds.centerY.toFloat(), 0F)
+		context.matrices.scale(bounds.width.toFloat() / 16F, bounds.height.toFloat() / 16F, 1f)
+		context.drawItemWithoutEntity(
+			entry.asItemEntry().value,
+			-8, -8,
+		)
+		context.matrices.pop()
 	}
 
 	val minecraft = MinecraftClient.getInstance()
@@ -85,88 +82,5 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack>, BatchedEntryRenderer<S
 		return Tooltip.create(lore)
 	}
 
-	override fun getExtraData(entry: EntryStack<SBItemStack>): BakedModel {
-		return MC.itemRenderer.getModel(entry.asItemEntry().value,
-		                                MC.world,
-		                                MC.player, 0)
-
-	}
-
-	override fun getBatchIdentifier(entry: EntryStack<SBItemStack>, bounds: Rectangle?, extraData: BakedModel): Int {
-		return 1738923 + if (extraData.isSideLit) 1 else 0
-	}
-
-
-	override fun startBatch(entryStack: EntryStack<SBItemStack>, e: BakedModel, drawContext: DrawContext, v: Float) {
-		MC.textureManager.getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
-			.setFilter(false, false)
-		RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
-		RenderSystem.enableBlend()
-		RenderSystem.blendFunc(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA)
-		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-		if (!e.isSideLit) {
-			DiffuseLighting.disableGuiDepthLighting()
-		}
-	}
-
-	override fun renderBase(
-		entryStack: EntryStack<SBItemStack>,
-		model: BakedModel,
-		drawContext: DrawContext,
-		immediate: VertexConsumerProvider.Immediate,
-		bounds: Rectangle,
-		i: Int,
-		i1: Int,
-		v: Float
-	) {
-		if (entryStack.isEmpty) return
-		drawContext.matrices.push()
-		drawContext.matrices.translate(bounds.centerX.toDouble(), bounds.centerY.toDouble(), 0.0)
-		// TODO: check the scaling here again
-		drawContext.matrices.scale(
-			bounds.width.toFloat(),
-			(bounds.height + bounds.height) / -2F,
-			(bounds.width + bounds.height) / 2f)
-		MC.itemRenderer.renderItem(
-			entryStack.value.asImmutableItemStack(),
-			ModelTransformationMode.GUI,
-			false, drawContext.matrices,
-			immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE,
-			OverlayTexture.DEFAULT_UV,
-			model
-		)
-		drawContext.matrices.pop()
-	}
-
-	override fun afterBase(entryStack: EntryStack<SBItemStack>?, e: BakedModel, drawContext: DrawContext?, v: Float) {
-		RenderSystem.enableDepthTest()
-		if (!e.isSideLit)
-			DiffuseLighting.enableGuiDepthLighting()
-	}
-
-	override fun renderOverlay(
-		entryStack: EntryStack<SBItemStack>,
-		e: BakedModel,
-		drawContext: DrawContext,
-		immediate: VertexConsumerProvider.Immediate,
-		bounds: Rectangle,
-		i: Int,
-		i1: Int,
-		v: Float
-	) {
-		if (entryStack.isEmpty) return
-		val modelViewStack = RenderSystem.getModelViewStack()
-		modelViewStack.pushMatrix()
-		modelViewStack.mul(drawContext.matrices.peek().positionMatrix)
-		modelViewStack.translate(bounds.x.toFloat(), bounds.y.toFloat(), 0F)
-		modelViewStack.scale(bounds.width / 16.0f,
-		                     (bounds.width + bounds.height) / 2.0f / 16.0f,
-		                     1.0f) // TODO: weird scale again
-		drawContext.drawStackOverlay(MC.font, entryStack.value.asImmutableItemStack(), 0, 0, null)
-		modelViewStack.popMatrix()
-	}
-
-	override fun endBatch(entryStack: EntryStack<SBItemStack>?, e: BakedModel?, drawContext: DrawContext?, v: Float) {
-	}
 
 }

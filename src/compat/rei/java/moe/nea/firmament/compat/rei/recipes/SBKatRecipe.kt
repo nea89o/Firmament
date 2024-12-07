@@ -43,7 +43,7 @@ class SBKatRecipe(override val neuRecipe: NEUKatUpgradeRecipe) : SBRecipe() {
 			return 100
 		}
 
-		override fun getIcon(): Renderer = EntryStacks.of(Items.BONE)
+		override fun getIcon(): Renderer = SBItemEntryDefinition.getPassthrough(Items.BONE)
 		override fun setupDisplay(display: SBKatRecipe, bounds: Rectangle): List<Widget> {
 			return buildList {
 				val arrowWidth = 24

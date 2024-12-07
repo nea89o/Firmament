@@ -9,6 +9,7 @@ import me.shedaniel.rei.api.common.entry.comparison.ComparisonContext
 import me.shedaniel.rei.api.common.entry.type.EntryDefinition
 import me.shedaniel.rei.api.common.entry.type.EntryType
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes
+import net.minecraft.item.ItemConvertible
 import net.minecraft.item.ItemStack
 import net.minecraft.registry.tag.TagKey
 import net.minecraft.text.Text
@@ -81,6 +82,8 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 
 	fun getEntry(ingredient: NEUIngredient): EntryStack<SBItemStack> =
 		getEntry(SkyblockId(ingredient.itemId), count = ingredient.amount.toInt())
+
+	fun getPassthrough(item: ItemConvertible) = getEntry(SBItemStack.passthrough(ItemStack(item.asItem())))
 
 	fun getEntry(stack: ItemStack): EntryStack<SBItemStack> =
 		getEntry(

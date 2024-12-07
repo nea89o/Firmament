@@ -12,6 +12,7 @@ import net.minecraft.network.codec.PacketCodecs
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.ItemCache.asItemStack
+import moe.nea.firmament.repo.ItemCache.withFallback
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.SkyblockId
@@ -30,6 +31,7 @@ data class SBItemStack constructor(
 	val extraLore: List<Text> = emptyList(),
 	// TODO: grab this star data from nbt if possible
 	val stars: Int = 0,
+	val fallback: ItemStack? = null,
 ) {
 
 	fun getStackSize() = stackSize
@@ -76,6 +78,10 @@ data class SBItemStack constructor(
 				// TODO: specially handle coins to include the decimals
 			}
 			return SBItemStack(neuIngredient.skyblockId, neuIngredient.amount.toInt())
+		}
+
+		fun passthrough(itemStack: ItemStack): SBItemStack {
+			return SBItemStack(SkyblockId.NULL, null, itemStack.count, null, fallback = itemStack)
 		}
 	}
 
@@ -139,6 +145,7 @@ data class SBItemStack constructor(
 				val replacementData = mutableMapOf<String, String>()
 				injectReplacementDataForPets(replacementData)
 				return@run neuItem.asItemStack(idHint = skyblockId, replacementData)
+					.withFallback(fallback)
 					.copyWithCount(stackSize)
 					.also { it.appendLore(extraLore) }
 					.also { enhanceStatsByStars(it, stars) }

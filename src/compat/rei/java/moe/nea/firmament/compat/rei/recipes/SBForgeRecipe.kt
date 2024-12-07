@@ -30,7 +30,7 @@ class SBForgeRecipe(override val neuRecipe: NEUForgeRecipe) : SBRecipe() {
 			return 104
 		}
 
-		override fun getIcon(): Renderer = EntryStacks.of(Blocks.ANVIL)
+		override fun getIcon(): Renderer = SBItemEntryDefinition.getPassthrough(Blocks.ANVIL)
 		override fun setupDisplay(display: SBForgeRecipe, bounds: Rectangle): List<Widget> {
 			return buildList {
 				add(Widgets.createRecipeBase(bounds))
