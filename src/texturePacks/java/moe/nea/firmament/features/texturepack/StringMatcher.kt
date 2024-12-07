@@ -70,7 +70,7 @@ interface StringMatcher {
         }
 
         override fun serialize(encoder: Encoder, value: StringMatcher) {
-            encoder.encodeSerializableValue(delegateSerializer, Companion.serialize(value).intoKotlinJson())
+            encoder.encodeSerializableValue(delegateSerializer, serialize(value).intoKotlinJson())
         }
 
     }

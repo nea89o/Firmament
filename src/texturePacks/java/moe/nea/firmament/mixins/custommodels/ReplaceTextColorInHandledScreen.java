@@ -1,4 +1,4 @@
-package moe.nea.firmament.mixins;
+package moe.nea.firmament.mixins.custommodels;
 
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

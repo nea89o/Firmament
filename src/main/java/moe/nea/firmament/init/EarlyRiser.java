@@ -7,6 +7,6 @@ public class EarlyRiser implements Runnable {
         new ClientPlayerRiser().addTinkerers();
         new HandledScreenRiser().addTinkerers();
         new SectionBuilderRiser().addTinkerers();
-		new ItemColorsSodiumRiser().addTinkerers();
+//		TODO: new ItemColorsSodiumRiser().addTinkerers();
     }
 }

@@ -1,4 +1,3 @@
-
 package moe.nea.firmament.repo
 
 import java.io.InputStream
@@ -21,86 +20,86 @@ import net.minecraft.resource.ResourcePackInfo
 import net.minecraft.resource.ResourcePackSource
 import net.minecraft.resource.ResourceType
 import net.minecraft.resource.metadata.ResourceMetadata
-import net.minecraft.resource.metadata.ResourceMetadataReader
+import net.minecraft.resource.metadata.ResourceMetadataSerializer
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.PathUtil
 import moe.nea.firmament.Firmament
 
 class RepoModResourcePack(val basePath: Path) : ModResourcePack {
-    companion object {
-        fun append(packs: MutableList<in ModResourcePack>) {
-            Firmament.logger.info("Registering mod resource pack")
-            packs.add(RepoModResourcePack(RepoDownloadManager.repoSavedLocation))
-        }
+	companion object {
+		fun append(packs: MutableList<in ModResourcePack>) {
+			Firmament.logger.info("Registering mod resource pack")
+			packs.add(RepoModResourcePack(RepoDownloadManager.repoSavedLocation))
+		}
 
-        fun createResourceDirectly(identifier: Identifier): Optional<Resource> {
-            val pack = RepoModResourcePack(RepoDownloadManager.repoSavedLocation)
-            return Optional.of(
-                Resource(
-                    pack,
-                    pack.open(ResourceType.CLIENT_RESOURCES, identifier) ?: return Optional.empty()
-                ) {
-                    val base =
-                        pack.open(ResourceType.CLIENT_RESOURCES, identifier.withPath(identifier.path + ".mcmeta"))
-                    if (base == null)
-                        ResourceMetadata.NONE
-                    else
-                        NamespaceResourceManager.loadMetadata(base)
-                }
-            )
-        }
-    }
+		fun createResourceDirectly(identifier: Identifier): Optional<Resource> {
+			val pack = RepoModResourcePack(RepoDownloadManager.repoSavedLocation)
+			return Optional.of(
+				Resource(
+					pack,
+					pack.open(ResourceType.CLIENT_RESOURCES, identifier) ?: return Optional.empty()
+				) {
+					val base =
+						pack.open(ResourceType.CLIENT_RESOURCES, identifier.withPath(identifier.path + ".mcmeta"))
+					if (base == null)
+						ResourceMetadata.NONE
+					else
+						NamespaceResourceManager.loadMetadata(base)
+				}
+			)
+		}
+	}
 
-    override fun close() {
-    }
+	override fun close() {
+	}
 
-    override fun openRoot(vararg segments: String): InputSupplier<InputStream>? {
-        return getFile(segments)?.let { InputSupplier.create(it) }
-    }
+	override fun openRoot(vararg segments: String): InputSupplier<InputStream>? {
+		return getFile(segments)?.let { InputSupplier.create(it) }
+	}
 
-    fun getFile(segments: Array<out String>): Path? {
-        PathUtil.validatePath(*segments)
-        val path = segments.fold(basePath, Path::resolve)
-        if (!path.isRegularFile()) return null
-        return path
-    }
+	fun getFile(segments: Array<out String>): Path? {
+		PathUtil.validatePath(*segments)
+		val path = segments.fold(basePath, Path::resolve)
+		if (!path.isRegularFile()) return null
+		return path
+	}
 
-    override fun open(type: ResourceType?, id: Identifier): InputSupplier<InputStream>? {
-        if (type != ResourceType.CLIENT_RESOURCES) return null
-        if (id.namespace != "neurepo") return null
-        val file = getFile(id.path.split("/").toTypedArray())
-        return file?.let { InputSupplier.create(it) }
-    }
+	override fun open(type: ResourceType?, id: Identifier): InputSupplier<InputStream>? {
+		if (type != ResourceType.CLIENT_RESOURCES) return null
+		if (id.namespace != "neurepo") return null
+		val file = getFile(id.path.split("/").toTypedArray())
+		return file?.let { InputSupplier.create(it) }
+	}
 
-    override fun findResources(
-        type: ResourceType?,
-        namespace: String,
-        prefix: String,
-        consumer: ResourcePack.ResultConsumer
-    ) {
-        if (namespace != "neurepo") return
-        if (type != ResourceType.CLIENT_RESOURCES) return
+	override fun findResources(
+		type: ResourceType?,
+		namespace: String,
+		prefix: String,
+		consumer: ResourcePack.ResultConsumer
+	) {
+		if (namespace != "neurepo") return
+		if (type != ResourceType.CLIENT_RESOURCES) return
 
-        val prefixPath = basePath.resolve(prefix)
-        if (!prefixPath.exists())
-            return
-        Files.walk(prefixPath)
-            .asSequence()
-            .map { it.relativeTo(basePath) }
-            .forEach {
-                consumer.accept(Identifier.of("neurepo", it.toString()), InputSupplier.create(it))
-            }
-    }
+		val prefixPath = basePath.resolve(prefix)
+		if (!prefixPath.exists())
+			return
+		Files.walk(prefixPath)
+			.asSequence()
+			.map { it.relativeTo(basePath) }
+			.forEach {
+				consumer.accept(Identifier.of("neurepo", it.toString()), InputSupplier.create(it))
+			}
+	}
 
-    override fun getNamespaces(type: ResourceType?): Set<String> {
-        if (type != ResourceType.CLIENT_RESOURCES) return emptySet()
-        return setOf("neurepo")
-    }
+	override fun getNamespaces(type: ResourceType?): Set<String> {
+		if (type != ResourceType.CLIENT_RESOURCES) return emptySet()
+		return setOf("neurepo")
+	}
 
-    override fun <T> parseMetadata(metaReader: ResourceMetadataReader<T>): T? {
-        return AbstractFileResourcePack.parseMetadata(
-            metaReader, """
+	override fun <T : Any?> parseMetadata(metadataSerializer: ResourceMetadataSerializer<T>?): T? {
+		return AbstractFileResourcePack.parseMetadata(
+			metadataSerializer, """
 {
     "pack": {
         "pack_format": 12,
@@ -108,19 +107,20 @@ class RepoModResourcePack(val basePath: Path) : ModResourcePack {
     }
 }
 """.trimIndent().byteInputStream()
-        )
-    }
+		)
+	}
 
-    override fun getInfo(): ResourcePackInfo {
-        return ResourcePackInfo("neurepo", Text.literal("NEU Repo"), ResourcePackSource.BUILTIN, Optional.empty())
-    }
 
-    override fun getFabricModMetadata(): ModMetadata {
-        return FabricLoader.getInstance().getModContainer("firmament")
-            .get().metadata
-    }
+	override fun getInfo(): ResourcePackInfo {
+		return ResourcePackInfo("neurepo", Text.literal("NEU Repo"), ResourcePackSource.BUILTIN, Optional.empty())
+	}
 
-    override fun createOverlay(overlay: String): ModResourcePack {
-        return RepoModResourcePack(basePath.resolve(overlay))
-    }
+	override fun getFabricModMetadata(): ModMetadata {
+		return FabricLoader.getInstance().getModContainer("firmament")
+			.get().metadata
+	}
+
+	override fun createOverlay(overlay: String): ModResourcePack {
+		return RepoModResourcePack(basePath.resolve(overlay))
+	}
 }

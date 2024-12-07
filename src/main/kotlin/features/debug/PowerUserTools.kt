@@ -5,6 +5,7 @@ import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.ProfileComponent
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
@@ -12,6 +13,7 @@ import net.minecraft.item.Items
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import net.minecraft.text.TextCodecs
+import net.minecraft.util.Identifier
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
@@ -23,7 +25,6 @@ import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.features.FirmamentFeature
-import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ClipboardUtils
@@ -101,6 +102,8 @@ object PowerUserTools : FirmamentFeature {
 		}
 	}
 
+	// TODO: leak this through some other way, maybe.
+	lateinit var getSkullId: (profile: ProfileComponent) -> Identifier?
 
 	@Subscribe
 	fun copyInventoryInfo(it: HandledScreenKeyPressedEvent) {
@@ -116,7 +119,7 @@ object PowerUserTools : FirmamentFeature {
 			lastCopiedStack =
 				Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skyblockid", sbId.neuItem))
 		} else if (it.matches(TConfig.copyTexturePackId)) {
-			val model = CustomItemModelEvent.getModelIdentifier(item)
+			val model = CustomItemModelEvent.getModelIdentifier(item) // TODO: remove global texture overrides, maybe
 			if (model == null) {
 				lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.modelid.fail"))
 				return
@@ -146,7 +149,7 @@ object PowerUserTools : FirmamentFeature {
 				lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skull-id.fail.no-profile"))
 				return
 			}
-			val skullTexture = CustomSkyBlockTextures.getSkullTexture(profile)
+			val skullTexture = getSkullId(profile)
 			if (skullTexture == null) {
 				lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.skull-id.fail.no-texture"))
 				return
@@ -179,7 +182,7 @@ object PowerUserTools : FirmamentFeature {
 				MC.sendChat(Text.translatable("firmament.tooltip.copied.skull.fail"))
 				return
 			}
-			val id = CustomSkyBlockTextures.getSkullTexture(entity.owner!!)
+			val id = getSkullId(entity.owner!!)
 			if (id == null) {
 				MC.sendChat(Text.translatable("firmament.tooltip.copied.skull.fail"))
 			} else {

@@ -8,6 +8,7 @@ import net.minecraft.block.BlockState
 import net.minecraft.client.gui.screen.world.SelectWorldScreen
 import net.minecraft.component.type.MapIdComponent
 import net.minecraft.entity.Entity
+import net.minecraft.entity.boss.dragon.EnderDragonPart
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.Fluid
@@ -260,6 +261,10 @@ class FakeWorld(
 
 	override fun getEntityById(id: Int): Entity? {
 		return null
+	}
+
+	override fun getEnderDragonParts(): MutableCollection<EnderDragonPart> {
+		return mutableListOf()
 	}
 
 	override fun getTickManager(): TickManager {

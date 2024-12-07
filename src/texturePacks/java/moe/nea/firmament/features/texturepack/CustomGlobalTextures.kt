@@ -1,18 +1,14 @@
-@file:UseSerializers(IdentifierSerializer::class, CustomModelOverrideParser.FirmamentRootPredicateSerializer::class)
+@file:UseSerializers(IdentifierSerializer::class, FirmamentRootPredicateSerializer::class)
 
 package moe.nea.firmament.features.texturepack
 
 
-import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import org.slf4j.LoggerFactory
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.jvm.optionals.getOrNull
-import net.minecraft.client.render.item.ItemModels
-import net.minecraft.client.render.model.BakedModel
 import net.minecraft.client.util.ModelIdentifier
-import net.minecraft.item.ItemStack
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
 import net.minecraft.text.Text
@@ -21,15 +17,15 @@ import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.BakeExtraModelsEvent
+import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.EarlyResourceReloadEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.subscription.SubscriptionOwner
 import moe.nea.firmament.features.FirmamentFeature
+import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.IdentifierSerializer
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.collections.WeakCache
-import moe.nea.firmament.util.intoOptional
 import moe.nea.firmament.util.json.SingletonSerializableList
 import moe.nea.firmament.util.runNull
 
@@ -91,7 +87,7 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 	}
 
 	override fun apply(prepared: CustomGuiTextureOverride, manager: ResourceManager?, profiler: Profiler?) {
-		this.guiClassOverrides = prepared
+		guiClassOverrides = prepared
 	}
 
 	val logger = LoggerFactory.getLogger(CustomGlobalTextures::class.java)
@@ -100,7 +96,7 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 			manager.findResources("overrides/item") { it.namespace == "firmskyblock" && it.path.endsWith(".json") }
 				.mapNotNull {
 					Firmament.tryDecodeJsonFromStream<GlobalItemOverride>(it.value.inputStream).getOrElse { ex ->
-						logger.error("Failed to load global item override at ${it.key}", ex)
+						ErrorUtil.softError("Failed to load global item override at ${it.key}", ex)
 						null
 					}
 				}
@@ -114,12 +110,12 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 					manager.getResource(Identifier.of(key.namespace, "filters/screen/${key.path}.json"))
 						.getOrNull()
 						?: return@mapNotNull runNull {
-							logger.error("Failed to locate screen filter at $key")
+							ErrorUtil.softError("Failed to locate screen filter at $key")
 						}
 				val screenFilter =
 					Firmament.tryDecodeJsonFromStream<ScreenFilter>(guiClassResource.inputStream)
 						.getOrElse { ex ->
-							logger.error("Failed to load screen filter at $key", ex)
+							ErrorUtil.softError("Failed to load screen filter at $key", ex)
 							return@mapNotNull null
 						}
 				ItemOverrideCollection(screenFilter, it.value.map { it.second })
@@ -139,25 +135,19 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 			.filterTo(mutableSetOf()) { it.screenFilter.title.matches(newTitle) }
 	}
 
-	val overrideCache =
-		WeakCache.memoize<ItemStack, ItemModels, Optional<BakedModel>>("CustomGlobalTextureModelOverrides") { stack, models ->
-			matchingOverrides
-				.firstNotNullOfOrNull {
-					it.overrides
-						.asSequence()
-						.filter { it.predicate.test(stack) }
-						.map { models.getModel(it.model) }
-						.firstOrNull()
-				}
-				.intoOptional()
-		}
+	@Subscribe
+	fun replaceGlobalModel(event: CustomItemModelEvent) {
+		val override = matchingOverrides
+			.firstNotNullOfOrNull {
+				it.overrides
+					.asSequence()
+					.filter { it.predicate.test(event.itemStack) }
+					.map { it.model }
+					.firstOrNull()
+			}
 
-	@JvmStatic
-	fun replaceGlobalModel(
-		models: ItemModels,
-		stack: ItemStack,
-	): BakedModel? {
-		return overrideCache.invoke(stack, models).getOrNull()
+		if (override != null)
+			event.overrideIfExists(override)
 	}
 
 

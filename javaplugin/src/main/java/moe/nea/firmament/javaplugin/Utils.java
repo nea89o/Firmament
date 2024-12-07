@@ -111,7 +111,7 @@ public class Utils {
         var error = diagnostics.error(
             JCDiagnostic.DiagnosticFlag.API,
             log.currentSource(),
-            ((JCTree) node).pos(),
+            node == null ? null : ((JCTree) node).pos(),
             "firmament.generic",
             message
         );

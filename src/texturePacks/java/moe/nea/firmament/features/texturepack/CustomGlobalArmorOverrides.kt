@@ -8,8 +8,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
+import net.minecraft.client.render.entity.equipment.EquipmentModel
+import net.minecraft.component.type.EquippableComponent
+import net.minecraft.entity.EquipmentSlot
 import net.minecraft.item.ItemStack
-import net.minecraft.item.equipment.EquipmentModel
+import net.minecraft.item.equipment.EquipmentAssetKeys
+import net.minecraft.registry.RegistryKey
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
 import net.minecraft.util.Identifier
@@ -20,6 +24,7 @@ import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.features.texturepack.CustomGlobalTextures.logger
 import moe.nea.firmament.util.IdentifierSerializer
 import moe.nea.firmament.util.collections.WeakCache
+import moe.nea.firmament.util.intoOptional
 import moe.nea.firmament.util.skyBlockId
 
 object CustomGlobalArmorOverrides {
@@ -33,9 +38,9 @@ object CustomGlobalArmorOverrides {
 	) {
 		@Transient
 		lateinit var modelIdentifier: Identifier
-		fun bake() {
+		fun bake(manager: ResourceManager) {
 			modelIdentifier = bakeModel(model, layers)
-			overrides.forEach { it.bake() }
+			overrides.forEach { it.bake(manager) }
 		}
 
 		init {
@@ -64,22 +69,33 @@ object CustomGlobalArmorOverrides {
 
 		@Transient
 		lateinit var modelIdentifier: Identifier
-		fun bake() {
+		fun bake(manager: ResourceManager) {
 			modelIdentifier = bakeModel(model, layers)
 		}
 	}
 
 
-	val overrideCache = WeakCache.memoize<ItemStack, Optional<Identifier>>("ArmorOverrides") { stack ->
-		val id = stack.skyBlockId ?: return@memoize Optional.empty()
-		val override = overrides[id.neuItem] ?: return@memoize Optional.empty()
-		for (suboverride in override.overrides) {
-			if (suboverride.predicate.test(stack)) {
-				return@memoize Optional.of(suboverride.modelIdentifier)
-			}
-		}
-		return@memoize Optional.of(override.modelIdentifier)
+	private fun resolveComponent(slot: EquipmentSlot, model: Identifier): EquippableComponent {
+		return EquippableComponent(
+			slot,
+			null,
+			Optional.of(RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY, model)),
+			Optional.empty(),
+			Optional.empty(), false, false, false
+		)
 	}
+
+	val overrideCache =
+		WeakCache.memoize<ItemStack, EquipmentSlot, Optional<EquippableComponent>>("ArmorOverrides") { stack, slot ->
+			val id = stack.skyBlockId ?: return@memoize Optional.empty()
+			val override = overrides[id.neuItem] ?: return@memoize Optional.empty()
+			for (suboverride in override.overrides) {
+				if (suboverride.predicate.test(stack)) {
+					return@memoize resolveComponent(slot, suboverride.modelIdentifier).intoOptional()
+				}
+			}
+			return@memoize resolveComponent(slot, override.modelIdentifier).intoOptional()
+		}
 
 	var overrides: Map<String, ArmorOverride> = mapOf()
 	private var bakedOverrides: MutableMap<Identifier, EquipmentModel> = mutableMapOf()
@@ -131,20 +147,20 @@ object CustomGlobalArmorOverrides {
 				}
 				val associatedMap = overrides.flatMap { obj -> obj.itemIds.map { it to obj } }
 					.toMap()
+				associatedMap.forEach { it.value.bake(manager) }
 				return associatedMap
 			}
 
 			override fun apply(prepared: Map<String, ArmorOverride>, manager: ResourceManager, profiler: Profiler) {
 				bakedOverrides.clear()
-				prepared.forEach { it.value.bake() }
 				overrides = prepared
 			}
 		})
 	}
 
 	@JvmStatic
-	fun overrideArmor(itemStack: ItemStack): Optional<Identifier> {
-		return overrideCache.invoke(itemStack)
+	fun overrideArmor(itemStack: ItemStack, slot: EquipmentSlot): Optional<EquippableComponent> {
+		return overrideCache.invoke(itemStack, slot)
 	}
 
 	@JvmStatic

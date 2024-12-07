@@ -44,6 +44,7 @@ class SubscribeAnnotationProcessor(
             appendLine()
             appendLine("import moe.nea.firmament.events.subscription.*")
             appendLine()
+	        appendLine("@Suppress()")
             appendLine("class $generatedFileName : SubscriptionList {")
             appendLine("  override fun provideSubscriptions(addSubscription: (Subscription<*>) -> Unit) {")
             for (subscription in subscriptions) {

@@ -29,7 +29,6 @@ import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.mining.PickaxeAbility
 import moe.nea.firmament.features.mining.PristineProfitTracker
-import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.features.world.Waypoints
 import moe.nea.firmament.util.data.DataHolder
@@ -70,7 +69,6 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
             loadFeature(QuickCommands)
 	        loadFeature(PetFeatures)
             loadFeature(SaveCursorPosition)
-            loadFeature(CustomSkyBlockTextures)
             loadFeature(PriceData)
             loadFeature(Fixes)
             loadFeature(DianaWaypoints)

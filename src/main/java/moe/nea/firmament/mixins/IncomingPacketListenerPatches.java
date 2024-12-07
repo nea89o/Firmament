@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class IncomingPacketListenerPatches {
 
-
     @ModifyExpressionValue(method = "onCommandTree", at = @At(value = "NEW", target = "(Lcom/mojang/brigadier/tree/RootCommandNode;)Lcom/mojang/brigadier/CommandDispatcher;", remap = false))
     public CommandDispatcher onOnCommandTree(CommandDispatcher dispatcher) {
         MaskCommands.Companion.publish(new MaskCommands(dispatcher));
@@ -31,7 +30,7 @@ public abstract class IncomingPacketListenerPatches {
             packet.getParameters(),
             new Vec3d(packet.getX(), packet.getY(), packet.getZ()),
             new Vector3f(packet.getOffsetX(), packet.getOffsetY(), packet.getOffsetZ()),
-            packet.isLongDistance(),
+            packet.isImportant(),
             packet.getCount(),
             packet.getSpeed()
         );

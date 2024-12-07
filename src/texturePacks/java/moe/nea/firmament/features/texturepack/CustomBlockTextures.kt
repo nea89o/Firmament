@@ -46,9 +46,9 @@ import moe.nea.firmament.util.json.SingletonSerializableList
 object CustomBlockTextures {
     @Serializable
     data class CustomBlockOverride(
-        val modes: @Serializable(SingletonSerializableList::class) List<String>,
-        val area: List<Area>? = null,
-        val replacements: Map<Identifier, Replacement>,
+	    val modes: @Serializable(SingletonSerializableList::class) List<String>,
+	    val area: List<Area>? = null,
+	    val replacements: Map<Identifier, Replacement>,
     )
 
     @Serializable(with = Replacement.Serializer::class)
@@ -135,8 +135,8 @@ object CustomBlockTextures {
     )
 
     data class BlockReplacement(
-        val checks: List<Area>?,
-        val replacement: Replacement,
+	    val checks: List<Area>?,
+	    val replacement: Replacement,
     ) {
         val roughCheck by lazy(LazyThreadSafetyMode.NONE) {
             if (checks == null || checks.size < 3) return@lazy null

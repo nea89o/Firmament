@@ -1,29 +1,30 @@
 
 package moe.nea.firmament.mixins.custommodels;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import moe.nea.firmament.features.texturepack.CustomGlobalArmorOverrides;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.EquippableComponent;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.util.Optional;
-
 @Mixin(ArmorFeatureRenderer.class)
 public class PatchArmorTexture {
-	@WrapOperation(
+	@ModifyExpressionValue(
 		method = "renderArmor",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/component/type/EquippableComponent;model()Ljava/util/Optional;"))
-	private Optional<Identifier> overrideLayers(
-		EquippableComponent instance, Operation<Optional<Identifier>> original, @Local(argsOnly = true) ItemStack itemStack
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/item/ItemStack;get(Lnet/minecraft/component/ComponentType;)Ljava/lang/Object;"))
+	private Object overrideLayers(
+		Object original, @Local(argsOnly = true) ItemStack itemStack, @Local(argsOnly = true) EquipmentSlot slot
 	) {
-		// TODO: check that all armour items are naturally equippable and have the equppable component. otherwise our call here will not be reached.
-		var overrides = CustomGlobalArmorOverrides.overrideArmor(itemStack);
-		return overrides.or(() -> original.call(instance));
+		var overrides = CustomGlobalArmorOverrides.overrideArmor(itemStack, slot);
+		return overrides.orElse((EquippableComponent) original);
 	}
 }

@@ -3,7 +3,6 @@ package moe.nea.firmament.init;
 
 import me.shedaniel.mm.api.ClassTinkerers;
 import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.ParentElement;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;

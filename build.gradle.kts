@@ -25,7 +25,7 @@ plugins {
 	alias(libs.plugins.kotlin.plugin.ksp)
 	//	alias(libs.plugins.loom)
 	// TODO: use arch loom once they update to 1.8
-	id("fabric-loom") version "1.8.9"
+	id("fabric-loom") version "1.9.2"
 	alias(libs.plugins.shadow)
 	id("moe.nea.licenseextractificator")
 	id("moe.nea.mc-auto-translations") version "0.1.0"
@@ -129,13 +129,8 @@ val collectTranslations by tasks.registering(CollectTranslations::class) {
 val compatSourceSets: MutableSet<SourceSet> = mutableSetOf()
 fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabled: Boolean = true): SourceSet {
 	val ss = sourceSets.create(name) {
-		if (isEnabled) {
-			this.java.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
-			this.kotlin.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
-		} else {
-			this.java.setSrcDirs(listOf<File>())
-			this.kotlin.setSrcDirs(listOf<File>())
-		}
+		this.java.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
+		this.kotlin.setSrcDirs(listOf(layout.projectDirectory.dir("src/$path/java")))
 	}
 	val mainSS = sourceSets.main.get()
 	val upperName = ss.name.capitalizeN()
@@ -221,15 +216,16 @@ val testAgent by configurations.creating {
 
 val configuredSourceSet = createIsolatedSourceSet("configured",
                                                   isEnabled = false) // Wait for update (also low prio, because configured sucks)
-val sodiumSourceSet = createIsolatedSourceSet("sodium")
+val sodiumSourceSet = createIsolatedSourceSet("sodium", isEnabled = false)
 val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false) // TODO: Wait for update
-val yaclSourceSet = createIsolatedSourceSet("yacl")
+val yaclSourceSet = createIsolatedSourceSet("yacl", isEnabled = false)
 val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false) // TODO: wait on their port
-val modmenuSourceSet = createIsolatedSourceSet("modmenu")
-val reiSourceSet = createIsolatedSourceSet("rei")
-val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
+val modmenuSourceSet = createIsolatedSourceSet("modmenu", isEnabled = false)
+val reiSourceSet = createIsolatedSourceSet("rei", isEnabled = false)
+val moulconfigSourceSet = createIsolatedSourceSet("moulconfig", isEnabled = false)
+val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
 
 dependencies {
 	// Minecraft dependencies

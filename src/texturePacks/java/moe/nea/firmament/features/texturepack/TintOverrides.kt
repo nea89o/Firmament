@@ -43,7 +43,7 @@ data class TintOverrides(
 				val override = (value as? JsonPrimitive)
 					?.takeIf(JsonPrimitive::isNumber)
 					?.asInt
-					?.let(::Fixed)
+					?.let(TintOverrides::Fixed)
 				if (override == null) {
 					ErrorUtil.softError("Invalid tint override for a layer: $value")
 					continue

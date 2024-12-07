@@ -59,6 +59,14 @@ public class InitReplacer extends TreeScanner<Void, Void> {
         var target = plugin.utils.getAnnotationValue(jcAnnotation, "value");
         var targetClass = plugin.utils.resolveClassLiteralExpression(target).tsym.flatName().toString();
         var intermediaryClass = mappingTree.resolveClassToIntermediary(targetClass);
+		if (intermediaryClass == null){
+			plugin.utils.reportError(
+				compilationUnitTree.getSourceFile(),
+				jcNode.init,
+				"Unknown class name " + targetClass
+			);
+			return super.visitVariable(node, unused);
+		}
         var remapper = treeMaker.Select(treeMaker.This(classTree.type), names.fromString("remapper"));
         var remappingCall = treeMaker.Apply(
             List.nil(),

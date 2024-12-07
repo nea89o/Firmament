@@ -57,7 +57,12 @@ public class IntermediaryMethodReplacer extends TreeScanner<Void, Void> {
         }
         var head = node.typeargs.head;
         var resolved = plugin.utils.resolveClassName(head, compilationUnit);
-        var mappedName = mappings.resolveClassToIntermediary(resolved.tsym.flatName().toString());
+		var sourceName = resolved.tsym.flatName().toString();
+        var mappedName = mappings.resolveClassToIntermediary(sourceName);
+		if (mappedName == null) {
+			plugin.utils.reportError(sourceFile, node, "Unknown class name " + sourceName);
+			return;
+		}
         fieldAccess.name = plugin.names.fromString("id");
         node.typeargs = List.nil();
         node.args = List.of(plugin.treeMaker.Literal(mappedName));
