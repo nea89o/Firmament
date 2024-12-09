@@ -107,7 +107,7 @@ object CustomGlobalArmorOverrides {
 			return model
 		} else if (layers != null) {
 			val idNumber = sentinelFirmRunning.incrementAndGet()
-			val identifier = Identifier.of("firmament:sentinel/$idNumber")
+			val identifier = Identifier.of("firmament:sentinel/armor/$idNumber")
 			val equipmentLayers = layers.map {
 				EquipmentModel.Layer(
 					it.identifier, if (it.tint) {

@@ -18,6 +18,6 @@ data class CustomItemModelEvent(
 	}
 
 	fun overrideIfExists(overrideModel: Identifier) {
-		TODO()
+		this.overrideModel = overrideModel
 	}
 }
