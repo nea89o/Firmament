@@ -1,16 +1,16 @@
 plugins {
-    java
+	java
+	idea
 }
 dependencies {
-    implementation("net.fabricmc:stitch:0.6.2")
+	implementation("net.fabricmc:stitch:0.6.2")
 }
+val compilerModules = listOf("util", "comp", "tree", "api", "code")
+	.map { "jdk.compiler/com.sun.tools.javac.$it" }
+
 tasks.withType(JavaCompile::class) {
-    val module = "ALL-UNNAMED"
-    options.compilerArgs.addAll(listOf(
-        "--add-exports=jdk.compiler/com.sun.tools.javac.util=$module",
-        "--add-exports=jdk.compiler/com.sun.tools.javac.comp=$module",
-        "--add-exports=jdk.compiler/com.sun.tools.javac.tree=$module",
-        "--add-exports=jdk.compiler/com.sun.tools.javac.api=$module",
-        "--add-exports=jdk.compiler/com.sun.tools.javac.code=$module",
-    ))
+	val module = "ALL-UNNAMED"
+	options.compilerArgs.addAll(
+		compilerModules.map { "--add-exports=$it=$module" }
+	)
 }

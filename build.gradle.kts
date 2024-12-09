@@ -221,7 +221,7 @@ val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false)
 val yaclSourceSet = createIsolatedSourceSet("yacl", isEnabled = false)
 val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
-val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false) // TODO: wait on their port
+val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu", isEnabled = false)
 val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig", isEnabled = false)
@@ -268,6 +268,7 @@ dependencies {
 	include(libs.jarvis.fabric)
 
 	(wildfireGenderSourceSet.modImplementationConfigurationName)(libs.femalegender)
+	(wildfireGenderSourceSet.implementationConfigurationName)(customTexturesSourceSet.output)
 	(configuredSourceSet.modImplementationConfigurationName)(libs.configured)
 	(sodiumSourceSet.modImplementationConfigurationName)(libs.sodium)
 

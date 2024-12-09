@@ -1,14 +1,12 @@
 package moe.nea.firmament.mixins.compat.wildfiregender;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.wildfire.render.GenderArmorLayer;
 import moe.nea.firmament.features.texturepack.CustomGlobalArmorOverrides;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
+import net.minecraft.component.type.EquippableComponent;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,22 +14,10 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(GenderArmorLayer.class)
 @Pseudo
 public class PatchArmorTexturesInGenderMod {
-    @WrapOperation(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ArmorItem;getMaterial()Lnet/minecraft/registry/entry/RegistryEntry;"))
-    private RegistryEntry<ArmorMaterial> replaceArmorMaterial(ArmorItem instance, Operation<RegistryEntry<ArmorMaterial>> original, @Local ItemStack chestplate) {
-        var entry = original.call(instance);
-        var overrides = CustomGlobalArmorOverrides.overrideArmor(chestplate);
-        if (overrides == null)
-            return entry;
-        var material = entry.value();
-        return RegistryEntry.of(new ArmorMaterial(
-            material.defense(),
-            material.enchantability(),
-            material.equipSound(),
-            material.repairIngredient(),
-            overrides,
-            material.toughness(),
-            material.knockbackResistance()
-        ));
-    }
+	@ModifyExpressionValue(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/BipedEntityRenderState;FF)V",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;get(Lnet/minecraft/component/ComponentType;)Ljava/lang/Object;"))
+	private Object replaceArmorMaterial(Object original, @Local ItemStack chestplate) {
+		var overrides = CustomGlobalArmorOverrides.overrideArmor(chestplate, EquipmentSlot.CHEST);
+		return overrides.orElse((EquippableComponent) original);
+	}
 }
