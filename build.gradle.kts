@@ -224,7 +224,7 @@ val explosiveEnhancementSourceSet =
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu", isEnabled = false)
 val reiSourceSet = createIsolatedSourceSet("rei")
-val moulconfigSourceSet = createIsolatedSourceSet("moulconfig", isEnabled = false)
+val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
 val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
 
 dependencies {

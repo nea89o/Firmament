@@ -47,12 +47,14 @@ public class SupplyFakeModelPatch {
 			var resource = model.getValue();
 			var itemModelId = model.getKey().withPath(it -> it.substring("models/item/".length(), it.length() - ".json".length()));
 			// TODO: parse json file here and make use of it in order to generate predicate files.
+			// TODO: add a filter using the pack.mcmeta to opt out of this behaviour
 			var genericModelId = itemModelId.withPrefixedPath("item/");
 			if (resourceManager.getResource(itemModelId)
 			                   .map(Resource::getPack)
 			                   .map(it -> isResourcePackNewer(resourceManager, it, resource.getPack()))
 			                   .orElse(true)) {
 				newModels.put(itemModelId, new ItemAsset(
+					// TODO: inject tint indexes based on the json data here
 					new BasicItemModel.Unbaked(genericModelId, List.of()),
 					new ItemAsset.Properties(true)
 				));

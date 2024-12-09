@@ -40,7 +40,7 @@ class SBCraftingRecipe(override val neuRecipe: NEUCraftingRecipe) : SBRecipe() {
 						add(slot)
 						val item = display.neuRecipe.inputs[i + j * 3]
 						if (item == NEUIngredient.SENTINEL_EMPTY) continue
-						slot.entry(SBItemEntryDefinition.getEntry(item)) // TODO: make use of stackable item entries
+						slot.entry(SBItemEntryDefinition.getEntry(item))
 					}
 				}
 				add(

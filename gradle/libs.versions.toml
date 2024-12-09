@@ -67,7 +67,7 @@ jarvis = "1.1.4"
 nealisp = "1.1.0"
 
 # Update from https://github.com/NotEnoughUpdates/MoulConfig/tags
-moulconfig = "3.2.0"
+moulconfig = "3.3.0"
 
 # Update from https://www.curseforge.com/minecraft/mc-mods/configured/files/all?page=1&pageSize=20
 configured = "5441234"

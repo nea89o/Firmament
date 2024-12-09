@@ -32,7 +32,6 @@ public class ReplaceItemModelPatch {
 	}
 
 	@Unique
-	// TODO: Fix scissors
 	private boolean hasModel(Identifier identifier) {
 		return !(modelGetter.apply(identifier) instanceof MissingItemModel);
 	}
