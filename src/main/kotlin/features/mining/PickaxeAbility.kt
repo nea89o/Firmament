@@ -99,6 +99,7 @@ object PickaxeAbility : FirmamentFeature {
 	@Subscribe
 	fun onPickaxeRightClick(event: UseItemEvent) {
 		if (TConfig.blockOnPrivateIsland == BlockPickaxeAbility.NEVER) return
+		if (SBData.skyblockLocation != SkyBlockIsland.PRIVATE_ISLAND && SBData.skyblockLocation != SkyBlockIsland.GARDEN) return
 		val itemType = ItemType.fromItemStack(event.item)
 		if (itemType !in pickaxeTypes) return
 		val ability = AbilityUtils.getAbilities(event.item)
