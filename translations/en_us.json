@@ -112,6 +112,8 @@
 	"firmament.config.fixes.auto-sprint-keybinding": "Auto Sprint KeyBinding",
 	"firmament.config.fixes.auto-sprint-keybinding.description": "Toggle auto sprint via this keybinding.",
 	"firmament.config.fixes.auto-sprint.description": "This is different from vanilla sprint in the way that it only marks the keybinding pressed for the first tick of walking.",
+	"firmament.config.fixes.hide-mob-effects": "Hide Potion Effects",
+	"firmament.config.fixes.hide-mob-effects.description": "Hide Potion effects on the right side of your player inventory.",
 	"firmament.config.fixes.peek-chat": "Peek Chat",
 	"firmament.config.fixes.peek-chat.description": "Hold this keybinding to view the chat as if you have it opened, but while still being able to control your character.",
 	"firmament.config.fixes.player-skins": "Fix unsigned Player Skins",
