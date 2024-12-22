@@ -11,9 +11,11 @@ import dev.isxander.yacl3.api.OptionGroup
 import dev.isxander.yacl3.api.YetAnotherConfigLib
 import dev.isxander.yacl3.api.controller.ControllerBuilder
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder
+import dev.isxander.yacl3.api.controller.EnumControllerBuilder
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder
 import dev.isxander.yacl3.api.controller.StringControllerBuilder
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder
+import dev.isxander.yacl3.api.controller.ValueFormatter
 import dev.isxander.yacl3.gui.YACLScreen
 import dev.isxander.yacl3.gui.tab.ListHolderWidget
 import kotlin.time.Duration
@@ -23,8 +25,10 @@ import net.minecraft.client.gui.Element
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import moe.nea.firmament.gui.config.BooleanHandler
+import moe.nea.firmament.gui.config.ChoiceHandler
 import moe.nea.firmament.gui.config.ClickHandler
 import moe.nea.firmament.gui.config.DurationHandler
+import moe.nea.firmament.gui.config.EnumRenderer
 import moe.nea.firmament.gui.config.FirmamentConfigScreenProvider
 import moe.nea.firmament.gui.config.HudMeta
 import moe.nea.firmament.gui.config.HudMetaHandler
@@ -89,6 +93,10 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 				}
 				.build()
 
+			is ChoiceHandler<*> -> return createDefaultBinding {
+				createChoiceBinding(handler as ChoiceHandler<*>, managedOption as ManagedOption<*>, it as Option<*>)
+			}.build()
+
 			is BooleanHandler -> return createDefaultBinding(TickBoxControllerBuilder::create).build()
 			is StringHandler -> return createDefaultBinding(StringControllerBuilder::create).build()
 			is IntegerHandler -> return createDefaultBinding {
@@ -112,6 +120,27 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 
 			else -> return LabelOption.create(Text.literal("This option is currently unhandled for this config menu. Please report this as a bug."))
 		}
+	}
+
+	private enum class Sacrifice {}
+
+	private fun createChoiceBinding(
+		handler: ChoiceHandler<*>,
+		managedOption: ManagedOption<*>,
+		option: Option<*>
+	): ControllerBuilder<Any> {
+		val b = EnumControllerBuilder.create(option as Option<Sacrifice>)
+		b.enumClass(handler.enumClass as Class<Sacrifice>)
+		/**
+		 * This is a function with E to avoid realizing the Sacrifice outside of a `X<E>` wrapper.
+		 */
+		fun <E : Enum<*>> makeValueFormatter(): ValueFormatter<E> {
+			return ValueFormatter<E> {
+				(handler.renderer as EnumRenderer<E>).getName(managedOption as ManagedOption<E>, it)
+			}
+		}
+		b.formatValue(makeValueFormatter())
+		return b as ControllerBuilder<Any>
 	}
 
 

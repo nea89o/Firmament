@@ -50,7 +50,6 @@ object PickaxeAbility : FirmamentFeature {
 		val drillFuelBar by toggle("fuel-bar") { true }
 		val blockOnPrivateIsland by choice(
 			"block-on-dynamic",
-			BlockPickaxeAbility.entries,
 		) {
 			BlockPickaxeAbility.ONLY_DESTRUCTIVE
 		}

@@ -118,17 +118,17 @@ abstract class ManagedConfig(
 
 	protected fun <E> choice(
 		propertyName: String,
-		universe: List<E>,
+		enumClass: Class<E>,
 		default: () -> E
 	): ManagedOption<E> where E : Enum<E>, E : StringIdentifiable {
-		return option(propertyName, default, ChoiceHandler(universe))
+		return option(propertyName, default, ChoiceHandler(enumClass, enumClass.enumConstants.toList()))
 	}
 
 	protected inline fun <reified E> choice(
 		propertyName: String,
 		noinline default: () -> E
 	): ManagedOption<E> where E : Enum<E>, E : StringIdentifiable {
-		return choice(propertyName, enumEntries<E>(), default)
+		return choice(propertyName, E::class.java, default)
 	}
 
 	private fun <E> createStringIdentifiable(x: () -> Array<out E>): Codec<E> where E : Enum<E>, E : StringIdentifiable {
