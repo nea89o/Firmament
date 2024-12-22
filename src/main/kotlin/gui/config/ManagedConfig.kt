@@ -15,6 +15,7 @@ import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlin.enums.enumEntries
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -121,6 +122,17 @@ abstract class ManagedConfig(
 		default: () -> E
 	): ManagedOption<E> where E : Enum<E>, E : StringIdentifiable {
 		return option(propertyName, default, ChoiceHandler(universe))
+	}
+
+	protected inline fun <reified E> choice(
+		propertyName: String,
+		noinline default: () -> E
+	): ManagedOption<E> where E : Enum<E>, E : StringIdentifiable {
+		return choice(propertyName, enumEntries<E>(), default)
+	}
+
+	private fun <E> createStringIdentifiable(x: () -> Array<out E>): Codec<E> where E : Enum<E>, E : StringIdentifiable {
+		return StringIdentifiable.createCodec { x() }
 	}
 
 // TODO: wait on https://youtrack.jetbrains.com/issue/KT-73434

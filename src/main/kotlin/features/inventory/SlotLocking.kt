@@ -2,7 +2,6 @@
 
 package moe.nea.firmament.features.inventory
 
-import com.mojang.blaze3d.systems.RenderSystem
 import java.util.UUID
 import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.Serializable
@@ -14,6 +13,7 @@ import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Identifier
+import net.minecraft.util.StringIdentifiable
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HandledScreenForegroundEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
@@ -59,6 +59,17 @@ object SlotLocking : FirmamentFeature {
 		}
 		val slotBind by keyBinding("bind") { GLFW.GLFW_KEY_L }
 		val slotBindRequireShift by toggle("require-quick-move") { true }
+		val slotRenderLines by choice("bind-render") { SlotRenderLinesMode.ONLY_BOXES }
+	}
+
+	enum class SlotRenderLinesMode : StringIdentifiable {
+		EVERYTHING,
+		ONLY_BOXES,
+		NOTHING;
+
+		override fun asString(): String {
+			return name
+		}
 	}
 
 	override val config: TConfig
@@ -95,7 +106,7 @@ object SlotLocking : FirmamentFeature {
 		if (handler.inventory.size() < 9) return false
 		val sellItem = handler.inventory.getStack(handler.inventory.size() - 5)
 		if (sellItem == null) return false
-		if (sellItem.displayNameAccordingToNbt?.unformattedString == "Sell Item") return true
+		if (sellItem.displayNameAccordingToNbt.unformattedString == "Sell Item") return true
 		val lore = sellItem.loreAccordingToNbt
 		return (lore.lastOrNull() ?: return false).unformattedString == "Click to buyback!"
 	}
@@ -104,7 +115,7 @@ object SlotLocking : FirmamentFeature {
 	fun onSalvageProtect(event: IsSlotProtectedEvent) {
 		if (event.slot == null) return
 		if (!event.slot.hasStack()) return
-		if (event.slot.stack.displayNameAccordingToNbt?.unformattedString != "Salvage Items") return
+		if (event.slot.stack.displayNameAccordingToNbt.unformattedString != "Salvage Items") return
 		val inv = event.slot.inventory
 		var anyBlocked = false
 		for (i in 0 until event.slot.index) {
@@ -227,23 +238,32 @@ object SlotLocking : FirmamentFeature {
 		val accScreen = event.screen as AccessorHandledScreen
 		val sx = accScreen.x_Firmament
 		val sy = accScreen.y_Firmament
-		boundSlots.entries.forEach {
-			val hotbarSlot = findByIndex(it.key) ?: return@forEach
-			val inventorySlot = findByIndex(it.value) ?: return@forEach
+		for (it in boundSlots.entries) {
+			val hotbarSlot = findByIndex(it.key) ?: continue
+			val inventorySlot = findByIndex(it.value) ?: continue
 
 			val (hotX, hotY) = hotbarSlot.lineCenter()
 			val (invX, invY) = inventorySlot.lineCenter()
-			event.context.drawLine(
-				invX + sx, invY + sy,
-				hotX + sx, hotY + sy,
+			val anyHovered = accScreen.focusedSlot_Firmament === hotbarSlot
+					|| accScreen.focusedSlot_Firmament === inventorySlot
+			if (!anyHovered && TConfig.slotRenderLines == SlotRenderLinesMode.NOTHING)
+				continue
+			val color = if (anyHovered)
 				me.shedaniel.math.Color.ofOpaque(0x00FF00)
-			)
+			else
+				me.shedaniel.math.Color.ofTransparent(0xc0a0f000.toInt())
+			if (TConfig.slotRenderLines == SlotRenderLinesMode.EVERYTHING || anyHovered)
+				event.context.drawLine(
+					invX + sx, invY + sy,
+					hotX + sx, hotY + sy,
+					color
+				)
 			event.context.drawBorder(hotbarSlot.x + sx,
 			                         hotbarSlot.y + sy,
-			                         16, 16, 0xFF00FF00u.toInt())
+			                         16, 16, color.color)
 			event.context.drawBorder(inventorySlot.x + sx,
 			                         inventorySlot.y + sy,
-			                         16, 16, 0xFF00FF00u.toInt())
+			                         16, 16, color.color)
 		}
 	}
 
