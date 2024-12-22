@@ -64,6 +64,8 @@ object MC {
 	}
 
 	fun sendCommand(command: String) {
+		// TODO: add a queue to this and sendServerChat
+		ErrorUtil.softCheck("Server commands have an implied /", !command.startsWith("/"))
 		player?.networkHandler?.sendCommand(command)
 	}
 
@@ -96,8 +98,9 @@ object MC {
 	inline val camera: Entity? get() = instance.cameraEntity
 	inline val guiAtlasManager get() = instance.guiAtlasManager
 	inline val world: ClientWorld? get() = TestUtil.unlessTesting { instance.world }
+	inline val playerName: String? get() = player?.name?.unformattedString
 	inline var screen: Screen?
-		get() = TestUtil.unlessTesting{ instance.currentScreen }
+		get() = TestUtil.unlessTesting { instance.currentScreen }
 		set(value) = instance.setScreen(value)
 	val screenName get() = screen?.title?.unformattedString?.trim()
 	inline val handledScreen: HandledScreen<*>? get() = instance.currentScreen as? HandledScreen<*>
