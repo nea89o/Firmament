@@ -46,7 +46,7 @@ notenoughanimations = "BQ8qstAV"
 # Update from https://modrinth.com/mod/cit-resewn/versions?l=fabric
 citresewn = "1.2.0+1.21"
 
-devauth = "1.2.0"
+devauth = "1.2.1"
 
 # Update from https://ktor.io/
 ktor = "3.0.1"
