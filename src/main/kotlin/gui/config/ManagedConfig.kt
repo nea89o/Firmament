@@ -15,7 +15,6 @@ import org.lwjgl.glfw.GLFW
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import kotlin.enums.enumEntries
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -135,7 +134,7 @@ abstract class ManagedConfig(
 		return StringIdentifiable.createCodec { x() }
 	}
 
-// TODO: wait on https://youtrack.jetbrains.com/issue/KT-73434
+	// TODO: wait on https://youtrack.jetbrains.com/issue/KT-73434
 //	protected inline fun <reified E> choice(
 //		propertyName: String,
 //		noinline default: () -> E
@@ -148,6 +147,8 @@ abstract class ManagedConfig(
 //			default
 //		)
 //	}
+	open fun onChange(option: ManagedOption<*>) {
+	}
 
 	protected fun duration(
 		propertyName: String,
