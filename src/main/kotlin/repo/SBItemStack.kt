@@ -14,11 +14,16 @@ import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.LegacyFormattingCode
+import moe.nea.firmament.util.ReforgeId
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.getReforgeId
+import moe.nea.firmament.util.getUpgradeStars
 import moe.nea.firmament.util.mc.appendLore
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.skyBlockId
+import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.withColor
 
@@ -28,8 +33,8 @@ data class SBItemStack constructor(
 	private var stackSize: Int,
 	private var petData: PetData?,
 	val extraLore: List<Text> = emptyList(),
-	// TODO: grab this star data from nbt if possible
 	val stars: Int = 0,
+	val reforge: ReforgeId? = null,
 ) {
 
 	fun getStackSize() = stackSize
@@ -66,7 +71,9 @@ data class SBItemStack constructor(
 				skyblockId,
 				RepoManager.getNEUItem(skyblockId),
 				itemStack.count,
-				petData = itemStack.petData?.let { PetData.fromHypixel(it) }
+				petData = itemStack.petData?.let { PetData.fromHypixel(it) },
+				stars = itemStack.getUpgradeStars(),
+				reforge = itemStack.getReforgeId()
 			)
 		}
 
@@ -127,6 +134,15 @@ data class SBItemStack constructor(
 	}
 
 
+	private fun appendReforgeStatsToLore(
+		itemStack: ItemStack,
+	) {
+		val rarity = itemStack.rarity
+		val lore = itemStack.loreAccordingToNbt
+	}
+
+	// TODO: avoid instantiating the item stack here
+	val itemType: ItemType? get() = ItemType.fromItemStack(asImmutableItemStack())
 	private var itemStack_: ItemStack? = null
 
 	private val itemStack: ItemStack
@@ -141,6 +157,7 @@ data class SBItemStack constructor(
 				return@run neuItem.asItemStack(idHint = skyblockId, replacementData)
 					.copyWithCount(stackSize)
 					.also { it.appendLore(extraLore) }
+					.also { if (reforge != null) it.appendLore(listOf(Text.literal("Reforge: $reforge"))) } // TODO: use this for proper rendering
 					.also { enhanceStatsByStars(it, stars) }
 			}
 			if (itemStack_ == null)

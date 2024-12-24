@@ -1,0 +1,96 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			ability_scroll: [
+				"IMPLOSION_SCROLL",
+				"WITHER_SHIELD_SCROLL",
+				"SHADOW_WARP_SCROLL"
+			],
+			art_of_war_count: 1,
+			champion_combat_xp: 1.3556020889209766E7d,
+			donated_museum: 1b,
+			enchantments: {
+				champion: 10,
+				cleave: 5,
+				critical: 6,
+				cubism: 5,
+				ender_slayer: 6,
+				execute: 5,
+				experience: 3,
+				fire_aspect: 2,
+				first_strike: 4,
+				giant_killer: 6,
+				impaling: 3,
+				lethality: 5,
+				looting: 4,
+				luck: 6,
+				scavenger: 4,
+				smite: 7,
+				syphon: 4,
+				thunderlord: 6,
+				ultimate_wise: 5,
+				vampirism: 5,
+				venomous: 5
+			},
+			hot_potato_count: 15,
+			id: "HYPERION",
+			modifier: "heroic",
+			rarity_upgrades: 1,
+			stats_book: 65934,
+			timestamp: 1658091600000L,
+			upgrade_level: 5,
+			uuid: "a45337aa-9eaa-4e6f-aa27-26a42f8eca95"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"light_purple","text":"Heroic Hyperion "},{"color":"gold","text":"✪✪✪✪✪"}],"italic":false,"text":""}',
+		"minecraft:enchantment_glint_override": 1b,
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"gray","text":"Gear Score: "},{"color":"light_purple","text":"1145 "},{"color":"dark_gray","text":"(4271)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Damage: "},{"color":"red","text":"+355 "},{"color":"yellow","text":"(+30) "},{"color":"dark_gray","text":"(+1,490.37)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Strength: "},{"color":"red","text":"+250 "},{"color":"yellow","text":"(+30) "},{"color":"gold","text":"[+5] "},{"color":"blue","text":"(+50) "},{"color":"dark_gray","text":"(+1,064.55)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Crit Damage: "},{"color":"red","text":"+70% "},{"color":"dark_gray","text":"(+317.1%)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Bonus Attack Speed: "},{"color":"red","text":"+7% "},{"color":"blue","text":"(+7%) "},{"color":"dark_gray","text":"(+10.5%)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Intelligence: "},{"color":"green","text":"+588 "},{"color":"blue","text":"(+125) "},{"color":"dark_gray","text":"(+2,505.09)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Ferocity: "},{"color":"green","text":"+33 "},{"color":"dark_gray","text":"(+45)"}],"italic":false,"text":""}',
+			'{"extra":[" ",{"color":"dark_gray","text":"["},{"color":"dark_gray","text":"✎"},{"color":"dark_gray","text":"] "},{"color":"dark_gray","text":"["},{"color":"dark_gray","text":"⚔"},{"color":"dark_gray","text":"]"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"light_purple","text":""},{"bold":true,"color":"light_purple","text":"Ultimate Wise V"},{"color":"blue","text":", "},{"color":"blue","text":"Champion X"},{"color":"blue","text":", "},{"color":"blue","text":"Cleave V"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Critical VI"},{"color":"blue","text":", "},{"color":"blue","text":"Cubism V"},{"color":"blue","text":", "},{"color":"blue","text":"Ender Slayer VI"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Execute V"},{"color":"blue","text":", "},{"color":"blue","text":"Experience III"},{"color":"blue","text":", "},{"color":"blue","text":"Fire Aspect II"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"First Strike IV"},{"color":"blue","text":", "},{"color":"blue","text":"Giant Killer VI"},{"color":"blue","text":", "},{"color":"blue","text":"Impaling III"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Lethality V"},{"color":"blue","text":", "},{"color":"blue","text":"Looting IV"},{"color":"blue","text":", "},{"color":"blue","text":"Luck VI"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Scavenger IV"},{"color":"blue","text":", "},{"color":"blue","text":"Smite VII"},{"color":"blue","text":", "},{"color":"blue","text":"Syphon IV"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Thunderlord VI"},{"color":"blue","text":", "},{"color":"blue","text":"Vampirism V"},{"color":"blue","text":", "},{"color":"blue","text":"Venomous V"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Deals "},{"color":"red","text":"+50% "},{"color":"gray","text":"damage to Withers."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Grants "},{"color":"red","text":"+1 "},{"color":"red","text":"❁ Damage "},{"color":"gray","text":"and "},{"color":"green","text":"+2 "},{"color":"aqua","text":"✎"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"aqua","text":"Intelligence "},{"color":"gray","text":"per "},{"color":"red","text":"Catacombs "},{"color":"gray","text":"level."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"green","text":"Scroll Abilities:"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Ability: Wither Impact  "},{"bold":true,"color":"yellow","text":"RIGHT CLICK"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Teleport "},{"color":"green","text":"10 blocks"},{"color":"gray","text":" ahead of you."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Then implode dealing "},{"color":"red","text":"21,658 "},{"color":"gray","text":"damage"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"to nearby enemies. Also applies the"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"wither shield scroll ability reducing"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"damage taken and granting an"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"absorption shield for "},{"color":"yellow","text":"5 "},{"color":"gray","text":"seconds."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"dark_gray","text":"Mana Cost: "},{"color":"dark_aqua","text":"150"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"white","text":"Kills: "},{"color":"gold","text":"65,934"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"dark_gray","text":"* "},{"color":"dark_gray","text":"Co-op Soulbound "},{"bold":true,"color":"dark_gray","text":"*"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"light_purple","obfuscated":true,"text":"a"},"",{"bold":false,"extra":[" "],"italic":false,"obfuscated":false,"strikethrough":false,"text":"","underlined":false},{"bold":true,"color":"light_purple","text":"MYTHIC DUNGEON SWORD "},{"bold":true,"color":"light_purple","obfuscated":true,"text":"a"}],"italic":false,"text":""}'
+		],
+		"minecraft:unbreakable": {
+			show_in_tooltip: 0b
+		}
+	},
+	count: 1,
+	id: "minecraft:iron_sword"
+}

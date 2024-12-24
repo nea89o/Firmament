@@ -24,6 +24,7 @@ import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.compat.rei.recipes.SBReforgeRecipe
 import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
@@ -78,6 +79,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 		registry.add(SBForgeRecipe.Category)
 		registry.add(SBMobDropRecipe.Category)
 		registry.add(SBKatRecipe.Category)
+		registry.add(SBReforgeRecipe.Category)
 		registry.add(SBEssenceUpgradeRecipe.Category)
 	}
 
@@ -90,6 +92,10 @@ class FirmamentReiPlugin : REIClientPlugin {
 		registry.registerDisplayGenerator(
 			SBCraftingRecipe.Category.catIdentifier,
 			SkyblockCraftingRecipeDynamicGenerator)
+		registry.registerDisplayGenerator(
+			SBReforgeRecipe.catIdentifier,
+			SBReforgeRecipe.DynamicGenerator
+		)
 		registry.registerDisplayGenerator(
 			SBForgeRecipe.Category.categoryIdentifier,
 			SkyblockForgeRecipeDynamicGenerator)
