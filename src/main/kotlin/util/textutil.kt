@@ -142,8 +142,7 @@ fun MutableText.bold(): MutableText = styled { it.withBold(true) }
 fun MutableText.clickCommand(command: String): MutableText {
 	require(command.startsWith("/"))
 	return this.styled {
-		it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND,
-		                             "/firm disablereiwarning"))
+		it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
 	}
 }
 
