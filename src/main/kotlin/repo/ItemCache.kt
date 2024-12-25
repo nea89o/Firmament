@@ -39,6 +39,7 @@ import moe.nea.firmament.util.TestUtil
 import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
 import moe.nea.firmament.util.mc.appendLore
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.modifyLore
 import moe.nea.firmament.util.mc.setCustomName
@@ -131,6 +132,7 @@ object ItemCache : IReloadable {
 			val itemInstance =
 				ItemStack.fromNbt(MC.defaultRegistries, modernItemTag).getOrNull() ?: return brokenItemStack(this)
 			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
+			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)
 			val extraAttributes = oldItemTag.getCompound("tag").getCompound("ExtraAttributes")
 			if (extraAttributes != null)
 				itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))

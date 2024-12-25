@@ -111,8 +111,9 @@ object EntityRenderer {
 		renderContext: DrawContext,
 		posX: Int,
 		posY: Int,
-		mouseX: Float,
-		mouseY: Float
+		// TODO: Add width, height properties here
+		mouseX: Double,
+		mouseY: Double
 	) {
 		var bottomOffset = 0.0F
 		var currentEntity = entity
@@ -148,15 +149,15 @@ object EntityRenderer {
 		y2: Int,
 		size: Float,
 		bottomOffset: Float,
-		mouseX: Float,
-		mouseY: Float,
+		mouseX: Double,
+		mouseY: Double,
 		entity: LivingEntity
 	) {
 		context.enableScissorWithTranslation(x1.toFloat(), y1.toFloat(), x2.toFloat(), y2.toFloat())
 		val centerX = (x1 + x2) / 2f
 		val centerY = (y1 + y2) / 2f
-		val targetYaw = atan(((centerX - mouseX) / 40.0f).toDouble()).toFloat()
-		val targetPitch = atan(((centerY - mouseY) / 40.0f).toDouble()).toFloat()
+		val targetYaw = atan(((centerX - mouseX) / 40.0f)).toFloat()
+		val targetPitch = atan(((centerY - mouseY) / 40.0f)).toFloat()
 		val rotateToFaceTheFront = Quaternionf().rotateZ(Math.PI.toFloat())
 		val rotateToFaceTheCamera = Quaternionf().rotateX(targetPitch * 20.0f * (Math.PI.toFloat() / 180))
 		rotateToFaceTheFront.mul(rotateToFaceTheCamera)

@@ -106,7 +106,10 @@ data class HypixelPetInfo(
 
 private val jsonparser = Json { ignoreUnknownKeys = true }
 
-val ItemStack.extraAttributes: NbtCompound
+var ItemStack.extraAttributes: NbtCompound
+	set(value) {
+		set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(value))
+	}
 	get() {
 		val customData = get(DataComponentTypes.CUSTOM_DATA) ?: run {
 			val component = NbtComponent.of(NbtCompound())

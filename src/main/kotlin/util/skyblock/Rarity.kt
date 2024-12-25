@@ -8,7 +8,9 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import net.minecraft.item.ItemStack
+import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import moe.nea.firmament.util.StringUtil.words
 import moe.nea.firmament.util.collections.lastNotNullOfOrNull
 import moe.nea.firmament.util.mc.loreAccordingToNbt
@@ -46,10 +48,23 @@ enum class Rarity(vararg altNames: String) {
 	}
 
 	val names = setOf(name) + altNames
-
+	val text: Text get() = Text.literal(name).setStyle(Style.EMPTY.withColor(colourMap[this]))
 	val neuRepoRarity: RepoRarity? = RepoRarity.entries.find { it.name == name }
 
 	companion object {
+		// TODO: inline those formattings as fields
+		val colourMap = mapOf(
+			Rarity.COMMON to Formatting.WHITE,
+			Rarity.UNCOMMON to Formatting.GREEN,
+			Rarity.RARE to Formatting.BLUE,
+			Rarity.EPIC to Formatting.DARK_PURPLE,
+			Rarity.LEGENDARY to Formatting.GOLD,
+			Rarity.MYTHIC to Formatting.LIGHT_PURPLE,
+			Rarity.DIVINE to Formatting.AQUA,
+			Rarity.SPECIAL to Formatting.RED,
+			Rarity.VERY_SPECIAL to Formatting.RED,
+			Rarity.SUPREME to Formatting.DARK_RED,
+		)
 		val byName = entries.flatMap { en -> en.names.map { it to en } }.toMap()
 		val fromNeuRepo = entries.associateBy { it.neuRepoRarity }
 

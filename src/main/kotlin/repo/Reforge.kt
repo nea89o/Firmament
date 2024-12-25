@@ -108,6 +108,8 @@ data class Reforge(
 
 	@Serializable(with = RarityMapped.Serializer::class)
 	sealed interface RarityMapped<T> {
+		fun get(rarity: Rarity): T?
+
 		class Serializer<T>(
 			val values: KSerializer<T>
 		) : KSerializer<RarityMapped<T>> {
@@ -137,10 +139,18 @@ data class Reforge(
 		}
 
 		@Serializable
-		data class Direct<T>(val value: T) : RarityMapped<T>
+		data class Direct<T>(val value: T) : RarityMapped<T> {
+			override fun get(rarity: Rarity): T {
+				return value
+			}
+		}
 
 		@Serializable
-		data class PerRarity<T>(val values: Map<Rarity, T>) : RarityMapped<T>
+		data class PerRarity<T>(val values: Map<Rarity, T>) : RarityMapped<T> {
+			override fun get(rarity: Rarity): T? {
+				return values[rarity]
+			}
+		}
 	}
 
 }

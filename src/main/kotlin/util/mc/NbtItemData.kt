@@ -5,8 +5,8 @@ import net.minecraft.component.type.LoreComponent
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 
-var ItemStack.loreAccordingToNbt
-    get() = get(DataComponentTypes.LORE)?.lines ?: listOf()
+var ItemStack.loreAccordingToNbt: List<Text>
+	get() = get(DataComponentTypes.LORE)?.lines ?: listOf()
     set(value) {
         set(DataComponentTypes.LORE, LoreComponent(value))
     }

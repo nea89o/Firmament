@@ -1,6 +1,8 @@
 package moe.nea.firmament.compat.rei.recipes
 
 import java.util.Optional
+import me.shedaniel.math.Dimension
+import me.shedaniel.math.FloatingDimension
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.gui.Renderer
@@ -14,17 +16,27 @@ import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.display.DisplaySerializer
 import me.shedaniel.rei.api.common.entry.EntryIngredient
 import me.shedaniel.rei.api.common.entry.EntryStack
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnReason
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import net.minecraft.village.VillagerProfession
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.compat.rei.EntityWidget
 import moe.nea.firmament.compat.rei.SBItemEntryDefinition
+import moe.nea.firmament.gui.entity.EntityRenderer
 import moe.nea.firmament.repo.Reforge
 import moe.nea.firmament.repo.ReforgeStore
 import moe.nea.firmament.repo.RepoItemTypeCache
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.util.AprilFoolsUtil
+import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.gold
 import moe.nea.firmament.util.skyblock.ItemType
+import moe.nea.firmament.util.skyblock.Rarity
+import moe.nea.firmament.util.skyblock.SkyBlockItems
 import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.tr
 
@@ -46,21 +58,44 @@ class SBReforgeRecipe(
 		}
 
 		override fun getIcon(): Renderer {
-			return SBItemEntryDefinition.getEntry(SkyblockId("REFORGE_ANVIL"))
+			return SBItemEntryDefinition.getEntry(SkyBlockItems.REFORGE_ANVIL)
 		}
 
 		override fun setupDisplay(display: SBReforgeRecipe, bounds: Rectangle): MutableList<Widget> {
 			val list = mutableListOf<Widget>()
 			list.add(Widgets.createRecipeBase(bounds))
 			// TODO: actual layout after christmas, probably
-			list.add(Widgets.createSlot(Point(bounds.minX + 10, bounds.centerY))
+			list.add(Widgets.createSlot(Point(bounds.minX + 10, bounds.centerY - 9))
 				         .markInput().entries(display.inputItems))
-			val stoneSlot = Widgets.createSlot(Point(bounds.minX + 38, bounds.centerY))
-				.markInput()
-			if (display.reforgeStone != null)
-				stoneSlot.entry(display.reforgeStone)
-			list.add(stoneSlot)
-			list.add(Widgets.createSlot(Point(bounds.minX + 38 + 18, bounds.centerY))
+			if (display.reforgeStone != null) {
+				list.add(Widgets.createSlot(Point(bounds.minX + 10 + 24, bounds.centerY - 9 - 10))
+					         .markInput().entry(display.reforgeStone))
+				list.add(Widgets.withTooltip(
+					Widgets.withTranslate(Widgets.wrapRenderer(
+						Rectangle(Point(bounds.minX + 10 + 24, bounds.centerY - 9 + 10), Dimension(18, 18)),
+						SBItemEntryDefinition.getEntry(SkyBlockItems.REFORGE_ANVIL)), 0.0, 0.0, 150.0),
+					Rarity.entries.mapNotNull { rarity ->
+						display.reforge.reforgeCosts?.get(rarity)?.let { rarity to it }
+					}.map { (rarity, cost) ->
+						Text.literal("")
+							.append(rarity.text)
+							.append(": ")
+							.append(Text.literal("${FirmFormatters.formatCommas(cost, 0)} Coins").gold())
+					}
+				))
+			} else {
+				val size = if (AprilFoolsUtil.isAprilFoolsDay) 1.2 else 0.6
+				val dimension =
+					FloatingDimension(EntityWidget.defaultSize.width * size, EntityWidget.defaultSize.height * size)
+				list.add(EntityWidget(
+					EntityType.VILLAGER.create(EntityRenderer.fakeWorld, SpawnReason.COMMAND)
+						?.also { it.villagerData = it.villagerData.withProfession(VillagerProfession.WEAPONSMITH) },
+					Point(bounds.minX + 10 + 24 + 8 - dimension.width / 2, bounds.centerY - dimension.height / 2),
+					dimension
+				))
+// TODO: render a blacksmith entity or smth
+			}
+			list.add(Widgets.createSlot(Point(bounds.minX + 10 + 24 + 24, bounds.centerY - 9))
 				         .markInput().entries(display.outputItems))
 			return list
 		}
@@ -106,6 +141,7 @@ class SBReforgeRecipe(
 			when (it) {
 				is Reforge.ReforgeEligibilityFilter.AllowsInternalName ->
 					listOfNotNull(RepoManager.getNEUItem(it.internalName))
+
 				is Reforge.ReforgeEligibilityFilter.AllowsItemType ->
 					ReforgeStore.resolveItemType(it.itemType)
 						.flatMap {

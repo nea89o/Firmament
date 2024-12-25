@@ -29,18 +29,7 @@ object ItemRarityCosmetics : FirmamentFeature {
 	override val config: ManagedConfig
 		get() = TConfig
 
-	private val rarityToColor = mapOf(
-		Rarity.COMMON to Formatting.WHITE,
-		Rarity.UNCOMMON to Formatting.GREEN,
-		Rarity.RARE to Formatting.BLUE,
-		Rarity.EPIC to Formatting.DARK_PURPLE,
-		Rarity.LEGENDARY to Formatting.GOLD,
-		Rarity.MYTHIC to Formatting.LIGHT_PURPLE,
-		Rarity.DIVINE to Formatting.AQUA,
-		Rarity.SPECIAL to Formatting.RED,
-		Rarity.VERY_SPECIAL to Formatting.RED,
-		Rarity.SUPREME to Formatting.DARK_RED,
-	).mapValues {
+	private val rarityToColor = Rarity.colourMap.mapValues {
 		val c = Color(it.value.colorValue!!)
 		c.rgb
 	}

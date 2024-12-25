@@ -15,21 +15,25 @@ import net.minecraft.text.Text
 
 object FirmFormatters {
 	fun formatCommas(int: Int, segments: Int = 3): String = formatCommas(int.toLong(), segments)
-	fun formatCommas(long: Long, segments: Int = 3): String {
+	fun formatCommas(long: Long, segments: Int = 3, includeSign: Boolean = false): String {
+		if (long < 0 && long != Long.MIN_VALUE) {
+			return "-" + formatCommas(-long, segments, false)
+		}
+		val prefix = if (includeSign) "+" else ""
 		val α = long / 1000
 		if (α != 0L) {
-			return formatCommas(α, segments) + "," + (long - α * 1000).toString().padStart(3, '0')
+			return prefix + formatCommas(α, segments) + "," + (long - α * 1000).toString().padStart(3, '0')
 		}
-		return long.toString()
+		return prefix + long.toString()
 	}
 
 	fun formatCommas(float: Float, fractionalDigits: Int): String = formatCommas(float.toDouble(), fractionalDigits)
-	fun formatCommas(double: Double, fractionalDigits: Int): String {
+	fun formatCommas(double: Double, fractionalDigits: Int, includeSign: Boolean = false): String {
 		val long = double.toLong()
 		val δ = (double - long).absoluteValue
 		val μ = pow(10, fractionalDigits)
 		val digits = (μ * δ).toInt().toString().padStart(fractionalDigits, '0').trimEnd('0')
-		return formatCommas(long) + (if (digits.isEmpty()) "" else ".$digits")
+		return formatCommas(long, includeSign = includeSign) + (if (digits.isEmpty()) "" else ".$digits")
 	}
 
 	fun formatDistance(distance: Double): String {
