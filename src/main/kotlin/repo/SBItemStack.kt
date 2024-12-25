@@ -168,6 +168,7 @@ data class SBItemStack constructor(
 			"Mana Regen" to StatFormatting("%", Formatting.GREEN),
 			"Rift Damage" to StatFormatting("", Formatting.GREEN),
 			"Hearts" to StatFormatting("", Formatting.GREEN),
+			"Vitality" to StatFormatting("", Formatting.GREEN),
 			// TODO: make this a repo json
 		)
 
