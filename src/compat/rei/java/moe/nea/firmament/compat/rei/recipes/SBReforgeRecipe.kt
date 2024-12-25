@@ -6,6 +6,7 @@ import me.shedaniel.math.FloatingDimension
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.gui.Renderer
+import me.shedaniel.rei.api.client.gui.widgets.Label
 import me.shedaniel.rei.api.client.gui.widgets.Widget
 import me.shedaniel.rei.api.client.gui.widgets.Widgets
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory
@@ -34,6 +35,7 @@ import moe.nea.firmament.util.AprilFoolsUtil
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.gold
+import moe.nea.firmament.util.grey
 import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.skyblock.SkyBlockItems
@@ -64,15 +66,15 @@ class SBReforgeRecipe(
 		override fun setupDisplay(display: SBReforgeRecipe, bounds: Rectangle): MutableList<Widget> {
 			val list = mutableListOf<Widget>()
 			list.add(Widgets.createRecipeBase(bounds))
-			// TODO: actual layout after christmas, probably
-			list.add(Widgets.createSlot(Point(bounds.minX + 10, bounds.centerY - 9))
-				         .markInput().entries(display.inputItems))
+			val inputSlot = Widgets.createSlot(Point(bounds.minX + 10, bounds.centerY - 9))
+				.markInput().entries(display.inputItems)
+			list.add(inputSlot)
 			if (display.reforgeStone != null) {
 				list.add(Widgets.createSlot(Point(bounds.minX + 10 + 24, bounds.centerY - 9 - 10))
 					         .markInput().entry(display.reforgeStone))
 				list.add(Widgets.withTooltip(
 					Widgets.withTranslate(Widgets.wrapRenderer(
-						Rectangle(Point(bounds.minX + 10 + 24, bounds.centerY - 9 + 10), Dimension(18, 18)),
+						Rectangle(Point(bounds.minX + 10 + 24, bounds.centerY - 9 + 10), Dimension(16, 16)),
 						SBItemEntryDefinition.getEntry(SkyBlockItems.REFORGE_ANVIL)), 0.0, 0.0, 150.0),
 					Rarity.entries.mapNotNull { rarity ->
 						display.reforge.reforgeCosts?.get(rarity)?.let { rarity to it }
@@ -87,16 +89,41 @@ class SBReforgeRecipe(
 				val size = if (AprilFoolsUtil.isAprilFoolsDay) 1.2 else 0.6
 				val dimension =
 					FloatingDimension(EntityWidget.defaultSize.width * size, EntityWidget.defaultSize.height * size)
-				list.add(EntityWidget(
-					EntityType.VILLAGER.create(EntityRenderer.fakeWorld, SpawnReason.COMMAND)
-						?.also { it.villagerData = it.villagerData.withProfession(VillagerProfession.WEAPONSMITH) },
-					Point(bounds.minX + 10 + 24 + 8 - dimension.width / 2, bounds.centerY - dimension.height / 2),
-					dimension
+				list.add(Widgets.withTooltip(
+					EntityWidget(
+						EntityType.VILLAGER.create(EntityRenderer.fakeWorld, SpawnReason.COMMAND)
+							?.also { it.villagerData = it.villagerData.withProfession(VillagerProfession.WEAPONSMITH) },
+						Point(bounds.minX + 10 + 24 + 8 - dimension.width / 2, bounds.centerY - dimension.height / 2),
+						dimension
+					),
+					tr("firmament.recipecategory.reforge.basic",
+					   "This is a basic reforge, available at the Blacksmith.").grey()
 				))
-// TODO: render a blacksmith entity or smth
 			}
 			list.add(Widgets.createSlot(Point(bounds.minX + 10 + 24 + 24, bounds.centerY - 9))
 				         .markInput().entries(display.outputItems))
+			val statToLineMappings = mutableListOf<Pair<String, Label>>()
+			for ((i, statId) in display.reforge.statUniverse.withIndex()) {
+				val label = Widgets.createLabel(
+					Point(bounds.minX + 10 + 24 + 24 + 20, bounds.minY + 8 + i * 11),
+					SBItemStack.Companion.StatLine(SBItemStack.statIdToName(statId), null).reconstitute(7))
+					.horizontalAlignment(Label.LEFT_ALIGNED)
+				statToLineMappings.add(statId to label)
+				list.add(label)
+			}
+			fun updateStatLines() {
+				val entry = inputSlot.currentEntry?.castValue<SBItemStack>() ?: return
+				val stats = display.reforge.reforgeStats?.get(entry.rarity) ?: mapOf()
+				for ((stat, label) in statToLineMappings) {
+					label.message =
+						SBItemStack.Companion.StatLine(
+							SBItemStack.statIdToName(stat), null,
+							valueNum = stats[stat]
+						).reconstitute(7)
+				}
+			}
+			updateStatLines()
+			inputSlot.withEntriesListener { updateStatLines() }
 			return list
 		}
 	}

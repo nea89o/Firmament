@@ -331,6 +331,8 @@
 	"firmament.recipe.mobs.name": "§8[§7Lv %d§8] §c%s",
 	"firmament.recipe.mobs.name.nolevel": "§c%s",
 	"firmament.recipe.novanilla": "Hypixel cannot super craft vanilla recipes",
+	"firmament.recipecategory.reforge": "Reforge",
+	"firmament.recipecategory.reforge.basic": "This is a basic reforge, available at the Blacksmith.",
 	"firmament.reiwarning": "Firmament needs RoughlyEnoughItems to display its item list!",
 	"firmament.reiwarning.disable": "Click here to disable this warning",
 	"firmament.reiwarning.disabled": "Disabled the RoughlyEnoughItems warning. Keep in mind that you will not have an item list without REI.",

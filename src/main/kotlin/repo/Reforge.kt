@@ -36,6 +36,10 @@ data class Reforge(
 ) {
 	val eligibleItems get() = allowOn ?: itemTypes ?: listOf()
 
+	val statUniverse: Set<String> = Rarity.entries.flatMapTo(mutableSetOf()) {
+		reforgeStats?.get(it)?.keys ?: emptySet()
+	}
+
 	@Serializable(with = ReforgeEligibilityFilter.Serializer::class)
 	sealed interface ReforgeEligibilityFilter {
 		object ItemTypesSerializer : KSerializer<List<ReforgeEligibilityFilter>> {
@@ -108,7 +112,7 @@ data class Reforge(
 
 	@Serializable(with = RarityMapped.Serializer::class)
 	sealed interface RarityMapped<T> {
-		fun get(rarity: Rarity): T?
+		fun get(rarity: Rarity?): T?
 
 		class Serializer<T>(
 			val values: KSerializer<T>
@@ -140,14 +144,14 @@ data class Reforge(
 
 		@Serializable
 		data class Direct<T>(val value: T) : RarityMapped<T> {
-			override fun get(rarity: Rarity): T {
+			override fun get(rarity: Rarity?): T {
 				return value
 			}
 		}
 
 		@Serializable
 		data class PerRarity<T>(val values: Map<Rarity, T>) : RarityMapped<T> {
-			override fun get(rarity: Rarity): T? {
+			override fun get(rarity: Rarity?): T? {
 				return values[rarity]
 			}
 		}

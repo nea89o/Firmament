@@ -18,7 +18,6 @@ import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.ReforgeId
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.blue
 import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.getReforgeId
@@ -179,21 +178,30 @@ data class SBItemStack constructor(
 			}
 
 			fun formatValue() =
-				Text.literal(FirmFormatters.formatCommas(valueNum ?: 0.0, 1, includeSign = true) + statFormatting.postFix + " ")
+				Text.literal(FirmFormatters.formatCommas(valueNum ?: 0.0,
+				                                         1,
+				                                         includeSign = true) + statFormatting.postFix + " ")
 					.setStyle(Style.EMPTY.withColor(statFormatting.color))
 
 			val statFormatting = formattingOverrides[statName] ?: StatFormatting("", Formatting.GREEN)
-			fun reconstitute(): Text =
+			private fun abbreviate(abbreviateTo: Int): String {
+				if (abbreviateTo >= statName.length) return statName
+				val segments = statName.split(" ")
+				return segments.joinToString(" ") {
+					it.substring(0, maxOf(1, abbreviateTo / segments.size))
+				}
+			}
+
+			fun reconstitute(abbreviateTo: Int = Int.MAX_VALUE): Text =
 				Text.literal("").setStyle(Style.EMPTY.withItalic(false))
-					.append(Text.literal("$statName: ").grey())
+					.append(Text.literal("${abbreviate(abbreviateTo)}: ").grey())
 					.append(value ?: formatValue())
 					.also { rest.forEach(it::append) }
 		}
 
-		private fun statIdToName(statId: String): String {
-			return statId.split("_").joinToString(" ") {
-				it.replaceFirstChar { it.uppercaseChar() }
-			}
+		fun statIdToName(statId: String): String {
+			val segments = statId.split("_")
+			return segments.joinToString(" ") { it.replaceFirstChar { it.uppercaseChar() } }
 		}
 
 		private fun parseStatLine(line: Text): StatLine? {
@@ -271,6 +279,8 @@ data class SBItemStack constructor(
 
 	// TODO: avoid instantiating the item stack here
 	val itemType: ItemType? get() = ItemType.fromItemStack(asImmutableItemStack())
+	val rarity: Rarity? get() = Rarity.fromItem(asImmutableItemStack())
+
 	private var itemStack_: ItemStack? = null
 
 	private val itemStack: ItemStack

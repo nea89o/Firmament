@@ -182,6 +182,7 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 		classpath.from(configurations.getByName(ss.compileClasspathConfigurationName))
 	}
 	collectTranslations {
+		// TODO: this does not work, somehow
 		this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
 	}
 	return ss
