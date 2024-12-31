@@ -7,4 +7,5 @@ object SkyBlockItems {
 	val ENCHANTED_DIAMOND = SkyblockId("ENCHANTED_DIAMOND")
 	val DIAMOND = SkyblockId("DIAMOND")
 	val ANCESTRAL_SPADE = SkyblockId("ANCESTRAL_SPADE")
+	val REFORGE_ANVIL = SkyblockId("REFORGE_ANVIL")
 }

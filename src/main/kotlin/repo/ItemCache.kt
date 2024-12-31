@@ -24,21 +24,27 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtString
+import net.minecraft.text.Style
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.config.HudMeta
 import moe.nea.firmament.gui.config.HudPosition
 import moe.nea.firmament.gui.hud.MoulConfigHud
 import moe.nea.firmament.repo.RepoManager.initialize
+import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.TestUtil
+import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
 import moe.nea.firmament.util.mc.appendLore
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.modifyLore
 import moe.nea.firmament.util.mc.setCustomName
 import moe.nea.firmament.util.mc.setSkullOwner
+import moe.nea.firmament.util.transformEachRecursively
 
 object ItemCache : IReloadable {
 	private val cache: MutableMap<String, ItemStack> = ConcurrentHashMap()
@@ -94,6 +100,35 @@ object ItemCache : IReloadable {
 		}
 	}
 
+	fun un189Lore(lore: String): Text {
+		val base = Text.literal("")
+		base.setStyle(Style.EMPTY.withItalic(false))
+		var lastColorCode = Style.EMPTY
+		var readOffset = 0
+		while (readOffset < lore.length) {
+			var nextCode = lore.indexOf('§', readOffset)
+			if (nextCode < 0) {
+				nextCode = lore.length
+			}
+			val text = lore.substring(readOffset, nextCode)
+			if (text.isNotEmpty()) {
+				base.append(Text.literal(text).setStyle(lastColorCode))
+			}
+			readOffset = nextCode + 2
+			if (nextCode + 1 < lore.length) {
+				val colorCode = lore[nextCode + 1]
+				val formatting = LegacyFormattingCode.byCode[colorCode.lowercaseChar()] ?: LegacyFormattingCode.RESET
+				val modernFormatting = formatting.modern
+				if (modernFormatting.isColor) {
+					lastColorCode = Style.EMPTY.withColor(modernFormatting)
+				} else {
+					lastColorCode = lastColorCode.withFormatting(modernFormatting)
+				}
+			}
+		}
+		return base
+	}
+
 	private fun NEUItem.asItemStackNow(): ItemStack {
 		try {
 			val oldItemTag = get10809CompoundTag()
@@ -101,6 +136,8 @@ object ItemCache : IReloadable {
 				?: return brokenItemStack(this)
 			val itemInstance =
 				ItemStack.fromNbt(MC.defaultRegistries, modernItemTag).getOrNull() ?: return brokenItemStack(this)
+			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
+			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)
 			val extraAttributes = oldItemTag.getCompound("tag").getCompound("ExtraAttributes")
 			if (extraAttributes != null)
 				itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
@@ -135,12 +172,13 @@ object ItemCache : IReloadable {
 	}
 
 	fun Text.applyLoreReplacements(loreReplacements: Map<String, String>): Text {
-		assert(this.siblings.isEmpty())
-		var string = this.string
-		loreReplacements.forEach { (find, replace) ->
-			string = string.replace("{$find}", replace)
+		return this.transformEachRecursively {
+			var string = it.directLiteralStringContent ?: return@transformEachRecursively it
+			loreReplacements.forEach { (find, replace) ->
+				string = string.replace("{$find}", replace)
+			}
+			Text.literal(string).setStyle(it.style)
 		}
-		return Text.literal(string).styled { this.style }
 	}
 
 	var job: Job? = null

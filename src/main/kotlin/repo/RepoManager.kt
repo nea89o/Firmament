@@ -53,13 +53,16 @@ object RepoManager {
 	var recentlyFailedToUpdateItemList = false
 
 	val essenceRecipeProvider = EssenceRecipeProvider()
-	val recipeCache = BetterRepoRecipeCache(essenceRecipeProvider)
+	val recipeCache = BetterRepoRecipeCache(essenceRecipeProvider, ReforgeStore)
 
 	fun makeNEURepository(path: Path): NEURepository {
 		return NEURepository.of(path).apply {
 			registerReloadListener(ItemCache)
+			registerReloadListener(RepoItemTypeCache)
 			registerReloadListener(ExpLadders)
 			registerReloadListener(ItemNameLookup)
+			registerReloadListener(ReforgeStore)
+			registerReloadListener(essenceRecipeProvider)
 			ReloadRegistrationEvent.publish(ReloadRegistrationEvent(this))
 			registerReloadListener {
 				if (TestUtil.isInTest) return@registerReloadListener
@@ -70,7 +73,6 @@ object RepoManager {
 					}
 				}
 			}
-			registerReloadListener(essenceRecipeProvider)
 			registerReloadListener(recipeCache)
 		}
 	}

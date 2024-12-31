@@ -133,6 +133,7 @@ fun MutableText.darkGreen() = withColor(Formatting.DARK_GREEN)
 fun MutableText.purple() = withColor(Formatting.DARK_PURPLE)
 fun MutableText.pink() = withColor(Formatting.LIGHT_PURPLE)
 fun MutableText.yellow() = withColor(Formatting.YELLOW)
+fun MutableText.gold() = withColor(Formatting.GOLD)
 fun MutableText.grey() = withColor(Formatting.GRAY)
 fun MutableText.red() = withColor(Formatting.RED)
 fun MutableText.white() = withColor(Formatting.WHITE)
@@ -142,9 +143,13 @@ fun MutableText.bold(): MutableText = styled { it.withBold(true) }
 fun MutableText.clickCommand(command: String): MutableText {
 	require(command.startsWith("/"))
 	return this.styled {
-		it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND,
-		                             "/firm disablereiwarning"))
+		it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
 	}
+}
+
+fun MutableText.prepend(text: Text): MutableText {
+	siblings.addFirst(text)
+	return this
 }
 
 fun Text.transformEachRecursively(function: (Text) -> Text): Text {

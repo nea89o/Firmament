@@ -9,18 +9,31 @@ import net.minecraft.item.ItemStack
 import net.minecraft.network.RegistryByteBuf
 import net.minecraft.network.codec.PacketCodec
 import net.minecraft.network.codec.PacketCodecs
+import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.text.TextColor
 import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.ItemCache.withFallback
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.LegacyFormattingCode
+import moe.nea.firmament.util.ReforgeId
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.directLiteralStringContent
+import moe.nea.firmament.util.extraAttributes
+import moe.nea.firmament.util.getReforgeId
+import moe.nea.firmament.util.getUpgradeStars
+import moe.nea.firmament.util.grey
 import moe.nea.firmament.util.mc.appendLore
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
+import moe.nea.firmament.util.prepend
 import moe.nea.firmament.util.skyBlockId
+import moe.nea.firmament.util.skyblock.ItemType
+import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.skyblockId
+import moe.nea.firmament.util.useMatch
 import moe.nea.firmament.util.withColor
 
 data class SBItemStack constructor(
@@ -29,9 +42,9 @@ data class SBItemStack constructor(
 	private var stackSize: Int,
 	private var petData: PetData?,
 	val extraLore: List<Text> = emptyList(),
-	// TODO: grab this star data from nbt if possible
 	val stars: Int = 0,
 	val fallback: ItemStack? = null,
+	val reforge: ReforgeId? = null,
 ) {
 
 	fun getStackSize() = stackSize
@@ -68,7 +81,9 @@ data class SBItemStack constructor(
 				skyblockId,
 				RepoManager.getNEUItem(skyblockId),
 				itemStack.count,
-				petData = itemStack.petData?.let { PetData.fromHypixel(it) }
+				petData = itemStack.petData?.let { PetData.fromHypixel(it) },
+				stars = itemStack.getUpgradeStars(),
+				reforge = itemStack.getReforgeId()
 			)
 		}
 
@@ -82,6 +97,153 @@ data class SBItemStack constructor(
 
 		fun passthrough(itemStack: ItemStack): SBItemStack {
 			return SBItemStack(SkyblockId.NULL, null, itemStack.count, null, fallback = itemStack)
+		}
+
+		fun appendEnhancedStats(
+			itemStack: ItemStack,
+			reforgeStats: Map<String, Double>,
+			buffKind: BuffKind,
+		) {
+			val namedReforgeStats = reforgeStats
+				.mapKeysTo(mutableMapOf()) { statIdToName(it.key) }
+			val loreMut = itemStack.loreAccordingToNbt.toMutableList()
+			var statBlockLastIndex = -1
+			for (i in loreMut.indices) {
+				val statLine = parseStatLine(loreMut[i])
+				if (statLine == null && statBlockLastIndex >= 0) {
+					break
+				}
+				if (statLine == null) {
+					continue
+				}
+				statBlockLastIndex = i
+				val statBuff = namedReforgeStats.remove(statLine.statName) ?: continue
+				loreMut[i] = statLine.addStat(statBuff, buffKind).reconstitute()
+			}
+			if (namedReforgeStats.isNotEmpty() && statBlockLastIndex == -1) {
+				loreMut.add(0, Text.literal(""))
+			}
+			// If there is no stat block the statBlockLastIndex falls through to -1
+			// TODO: this is good enough for some items. some other items might have their stats at a different place.
+			for ((statName, statBuff) in namedReforgeStats) {
+				val statLine = StatLine(statName, null).addStat(statBuff, buffKind)
+				loreMut.add(statBlockLastIndex + 1, statLine.reconstitute())
+			}
+			itemStack.loreAccordingToNbt = loreMut
+		}
+
+		data class StatFormatting(
+			val postFix: String,
+			val color: Formatting,
+		)
+
+		val formattingOverrides = mapOf(
+			"Sea Creature Chance" to StatFormatting("%", Formatting.RED),
+			"Strength" to StatFormatting("", Formatting.RED),
+			"Damage" to StatFormatting("", Formatting.RED),
+			"Bonus Attack Speed" to StatFormatting("%", Formatting.RED),
+			"Shot Cooldown" to StatFormatting("s", Formatting.RED),
+			"Ability Damage" to StatFormatting("%", Formatting.RED),
+			"Crit Damage" to StatFormatting("%", Formatting.RED),
+			"Crit Chance" to StatFormatting("%", Formatting.RED),
+			"Ability Damage" to StatFormatting("%", Formatting.RED),
+			"Trophy Fish Chance" to StatFormatting("%", Formatting.GREEN),
+			"Health" to StatFormatting("", Formatting.GREEN),
+			"Defense" to StatFormatting("", Formatting.GREEN),
+			"Fishing Speed" to StatFormatting("", Formatting.GREEN),
+			"Double Hook Chance" to StatFormatting("%", Formatting.GREEN),
+			"Mining Speed" to StatFormatting("", Formatting.GREEN),
+			"Mining Fortune" to StatFormatting("", Formatting.GREEN),
+			"Heat Resistance" to StatFormatting("", Formatting.GREEN),
+			"Swing Range" to StatFormatting("", Formatting.GREEN),
+			"Rift Time" to StatFormatting("", Formatting.GREEN),
+			"Speed" to StatFormatting("", Formatting.GREEN),
+			"Farming Fortune" to StatFormatting("", Formatting.GREEN),
+			"True Defense" to StatFormatting("", Formatting.GREEN),
+			"Mending" to StatFormatting("", Formatting.GREEN),
+			"Foraging Wisdom" to StatFormatting("", Formatting.GREEN),
+			"Farming Wisdom" to StatFormatting("", Formatting.GREEN),
+			"Foraging Fortune" to StatFormatting("", Formatting.GREEN),
+			"Magic Find" to StatFormatting("", Formatting.GREEN),
+			"Ferocity" to StatFormatting("", Formatting.GREEN),
+			"Bonus Pest Chance" to StatFormatting("%", Formatting.GREEN),
+			"Cold Resistance" to StatFormatting("", Formatting.GREEN),
+			"Pet Luck" to StatFormatting("", Formatting.GREEN),
+			"Fear" to StatFormatting("", Formatting.GREEN),
+			"Mana Regen" to StatFormatting("%", Formatting.GREEN),
+			"Rift Damage" to StatFormatting("", Formatting.GREEN),
+			"Hearts" to StatFormatting("", Formatting.GREEN),
+			"Vitality" to StatFormatting("", Formatting.GREEN),
+			// TODO: make this a repo json
+		)
+
+
+		private val statLabelRegex = "(?<statName>.*): ".toPattern()
+
+		enum class BuffKind(
+			val color: Formatting,
+			val prefix: String,
+			val postFix: String,
+		) {
+			REFORGE(Formatting.BLUE, "(", ")"),
+
+			;
+		}
+
+		data class StatLine(
+			val statName: String,
+			val value: Text?,
+			val rest: List<Text> = listOf(),
+			val valueNum: Double? = value?.directLiteralStringContent?.trim(' ', '%', '+')?.toDoubleOrNull()
+		) {
+			fun addStat(amount: Double, buffKind: BuffKind): StatLine {
+				val formattedAmount = FirmFormatters.formatCommas(amount, 1, includeSign = true)
+				return copy(
+					valueNum = (valueNum ?: 0.0) + amount,
+					value = null,
+					rest = rest +
+						listOf(
+							Text.literal(
+								buffKind.prefix + formattedAmount +
+									statFormatting.postFix +
+									buffKind.postFix + " ")
+								.withColor(buffKind.color)))
+			}
+
+			fun formatValue() =
+				Text.literal(FirmFormatters.formatCommas(valueNum ?: 0.0,
+				                                         1,
+				                                         includeSign = true) + statFormatting.postFix + " ")
+					.setStyle(Style.EMPTY.withColor(statFormatting.color))
+
+			val statFormatting = formattingOverrides[statName] ?: StatFormatting("", Formatting.GREEN)
+			private fun abbreviate(abbreviateTo: Int): String {
+				if (abbreviateTo >= statName.length) return statName
+				val segments = statName.split(" ")
+				return segments.joinToString(" ") {
+					it.substring(0, maxOf(1, abbreviateTo / segments.size))
+				}
+			}
+
+			fun reconstitute(abbreviateTo: Int = Int.MAX_VALUE): Text =
+				Text.literal("").setStyle(Style.EMPTY.withItalic(false))
+					.append(Text.literal("${abbreviate(abbreviateTo)}: ").grey())
+					.append(value ?: formatValue())
+					.also { rest.forEach(it::append) }
+		}
+
+		fun statIdToName(statId: String): String {
+			val segments = statId.split("_")
+			return segments.joinToString(" ") { it.replaceFirstChar { it.uppercaseChar() } }
+		}
+
+		private fun parseStatLine(line: Text): StatLine? {
+			val sibs = line.siblings
+			val stat = sibs.firstOrNull() ?: return null
+			if (stat.style.color != TextColor.fromFormatting(Formatting.GRAY)) return null
+			val statLabel = stat.directLiteralStringContent ?: return null
+			val statName = statLabelRegex.useMatch(statLabel) { group("statName") } ?: return null
+			return StatLine(statName, sibs[1], sibs.subList(2, sibs.size))
 		}
 	}
 
@@ -133,6 +295,25 @@ data class SBItemStack constructor(
 	}
 
 
+	private fun appendReforgeInfo(
+		itemStack: ItemStack,
+	) {
+		val rarity = Rarity.fromItem(itemStack) ?: return
+		val reforgeId = this.reforge ?: return
+		val reforge = ReforgeStore.modifierLut[reforgeId] ?: return
+		val reforgeStats = reforge.reforgeStats?.get(rarity) ?: mapOf()
+		itemStack.displayNameAccordingToNbt = itemStack.displayNameAccordingToNbt.copy()
+			.prepend(Text.literal(reforge.reforgeName + " ").formatted(Rarity.colourMap[rarity] ?: Formatting.WHITE))
+		val data = itemStack.extraAttributes.copy()
+		data.putString("modifier", reforgeId.id)
+		itemStack.extraAttributes = data
+		appendEnhancedStats(itemStack, reforgeStats, BuffKind.REFORGE)
+	}
+
+	// TODO: avoid instantiating the item stack here
+	val itemType: ItemType? get() = ItemType.fromItemStack(asImmutableItemStack())
+	val rarity: Rarity? get() = Rarity.fromItem(asImmutableItemStack())
+
 	private var itemStack_: ItemStack? = null
 
 	private val itemStack: ItemStack
@@ -147,6 +328,7 @@ data class SBItemStack constructor(
 				return@run neuItem.asItemStack(idHint = skyblockId, replacementData)
 					.withFallback(fallback)
 					.copyWithCount(stackSize)
+					.also { appendReforgeInfo(it) }
 					.also { it.appendLore(extraLore) }
 					.also { enhanceStatsByStars(it, stars) }
 			}

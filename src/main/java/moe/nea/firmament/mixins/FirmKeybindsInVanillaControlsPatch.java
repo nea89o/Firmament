@@ -51,7 +51,7 @@ public class FirmKeybindsInVanillaControlsPatch {
         var config = FirmamentKeyBindings.INSTANCE.getKeyBindings().get(binding);
         if (config == null) return;
         resetButton.active = false;
-        editButton.setMessage(Text.translatable("firmament.keybinding.external", config.value.format()));
+        editButton.setMessage(Text.translatable("firmament.keybinding.external", config.getValue().format()));
         ci.cancel();
     }
 

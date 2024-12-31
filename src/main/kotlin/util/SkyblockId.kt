@@ -106,7 +106,10 @@ data class HypixelPetInfo(
 
 private val jsonparser = Json { ignoreUnknownKeys = true }
 
-val ItemStack.extraAttributes: NbtCompound
+var ItemStack.extraAttributes: NbtCompound
+	set(value) {
+		set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(value))
+	}
 	get() {
 		val customData = get(DataComponentTypes.CUSTOM_DATA) ?: run {
 			val component = NbtComponent.of(NbtCompound())
@@ -125,8 +128,24 @@ val ItemStack.skyblockUUID: UUID?
 private val petDataCache = WeakCache.memoize<ItemStack, Optional<HypixelPetInfo>>("PetInfo") {
 	val jsonString = it.extraAttributes.getString("petInfo")
 	if (jsonString.isNullOrBlank()) return@memoize Optional.empty()
-	ErrorUtil.catch<HypixelPetInfo?>("Could not decode hypixel pet info") { jsonparser.decodeFromString<HypixelPetInfo>(jsonString) }
+	ErrorUtil.catch<HypixelPetInfo?>("Could not decode hypixel pet info") {
+		jsonparser.decodeFromString<HypixelPetInfo>(jsonString)
+	}
 		.or { null }.intoOptional()
+}
+
+fun ItemStack.getUpgradeStars(): Int {
+	return extraAttributes.getInt("upgrade_level").takeIf { it > 0 }
+		?: extraAttributes.getInt("dungeon_item_level").takeIf { it > 0 }
+		?: 0
+}
+
+@Serializable
+@JvmInline
+value class ReforgeId(val id: String)
+
+fun ItemStack.getReforgeId(): ReforgeId? {
+	return extraAttributes.getString("modifier").takeIf { it.isNotBlank() }?.let(::ReforgeId)
 }
 
 val ItemStack.petData: HypixelPetInfo?

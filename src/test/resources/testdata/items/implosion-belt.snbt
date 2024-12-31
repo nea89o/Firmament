@@ -1,0 +1,105 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			attributes: {
+				dominance: 1,
+				experience: 1
+			},
+			id: "IMPLOSION_BELT",
+			timestamp: "12/5/22 5:17 PM",
+			uuid: "5c04f47e-7c6c-4ced-96b1-b8f83187b0a5"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"dark_purple","text":"Implosion Belt"}],"italic":false,"text":""}',
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"gray","text":"Defense: "},{"color":"green","text":"+70"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"red","text":"Dominance I ✖"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Gain "},{"color":"red","text":"+1.5% "},{"color":"gray","text":"damage when at full health."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"aqua","text":"Experience I"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Gain "},{"color":"green","text":"+10% "},{"color":"gray","text":"more experience orbs"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"from killing mobs."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Ability: Consolidated "}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Increases all explosion damage dealt by "},{"color":"green","text":"25%"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"dark_gray","text":"This item can be reforged!"}],"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"dark_purple","text":"EPIC BELT"}],"italic":false,"text":""}'
+		],
+		"minecraft:profile": {
+			id: [I;
+				-896440193,
+				-59755884,
+				-1280665573,
+				-1297214643
+			],
+			properties: [
+				{
+					name: "textures",
+					signature: "",
+					value: "ewogICJ0aW1lc3RhbXAiIDogMTY0MzYwMjI5OTA2MSwKICAicHJvZmlsZUlkIiA6ICI0ZTMwZjUwZTdiYWU0M2YzYWZkMmE3NDUyY2ViZTI5YyIsCiAgInByb2ZpbGVOYW1lIiA6ICJfdG9tYXRvel8iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjFkMmIwMzZkZDY2NGJiOTBjOWQ0NDNjMTk5OGZiNTI2Mzk4YWI0ZGRkZWI3OWI4NDAxYjE2YjlhNGQxMGJhMyIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9"
+				}
+			]
+		}
+	},
+	count: 1,
+	id: "minecraft:player_head"
+}{
+ 	components: {
+ 		"minecraft:attribute_modifiers": {
+ 			modifiers: [
+ 			],
+ 			show_in_tooltip: 0b
+ 		},
+ 		"minecraft:custom_data": {
+ 			attributes: {
+ 				dominance: 1,
+ 				experience: 1
+ 			},
+ 			id: "IMPLOSION_BELT",
+ 			timestamp: "12/5/22 5:17 PM",
+ 			uuid: "5c04f47e-7c6c-4ced-96b1-b8f83187b0a5"
+ 		},
+ 		"minecraft:custom_name": '{"extra":[{"color":"dark_purple","text":"Implosion Belt"}],"italic":false,"text":""}',
+ 		"minecraft:hide_additional_tooltip": {
+ 		},
+ 		"minecraft:lore": [
+ 			'{"extra":[{"color":"gray","text":"Defense: "},{"color":"green","text":"+70"}],"italic":false,"text":""}',
+ 			'{"italic":false,"text":""}',
+ 			'{"extra":[{"color":"red","text":"Dominance I ✖"}],"italic":false,"text":""}',
+ 			'{"extra":[{"color":"gray","text":"Gain "},{"color":"red","text":"+1.5% "},{"color":"gray","text":"damage when at full health."}],"italic":false,"text":""}',
+ 			'{"extra":[{"color":"aqua","text":"Experience I"}],"italic":false,"text":""}',
+ 			'{"extra":[{"color":"gray","text":"Gain "},{"color":"green","text":"+10% "},{"color":"gray","text":"more experience orbs"}],"italic":false,"text":""}',
+ 			'{"extra":[{"color":"gray","text":"from killing mobs."}],"italic":false,"text":""}',
+ 			'{"italic":false,"text":""}',
+ 			'{"extra":[{"color":"gold","text":"Ability: Consolidated "}],"italic":false,"text":""}',
+ 			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Increases all explosion damage dealt by "},{"color":"green","text":"25%"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+ 			'{"italic":false,"text":""}',
+ 			'{"extra":[{"color":"gray","text":""},{"color":"dark_gray","text":"This item can be reforged!"}],"italic":false,"text":""}',
+ 			'{"extra":[{"bold":true,"color":"dark_purple","text":"EPIC BELT"}],"italic":false,"text":""}'
+ 		],
+ 		"minecraft:profile": {
+ 			id: [I;
+ 				-896440193,
+ 				-59755884,
+ 				-1280665573,
+ 				-1297214643
+ 			],
+ 			properties: [
+ 				{
+ 					name: "textures",
+ 					signature: "",
+ 					value: "ewogICJ0aW1lc3RhbXAiIDogMTY0MzYwMjI5OTA2MSwKICAicHJvZmlsZUlkIiA6ICI0ZTMwZjUwZTdiYWU0M2YzYWZkMmE3NDUyY2ViZTI5YyIsCiAgInByb2ZpbGVOYW1lIiA6ICJfdG9tYXRvel8iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjFkMmIwMzZkZDY2NGJiOTBjOWQ0NDNjMTk5OGZiNTI2Mzk4YWI0ZGRkZWI3OWI4NDAxYjE2YjlhNGQxMGJhMyIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9"
+ 				}
+ 			]
+ 		}
+ 	},
+ 	count: 1,
+ 	id: "minecraft:player_head"
+ }

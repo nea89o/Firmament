@@ -6,7 +6,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import net.minecraft.text.Text
-import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.ErrorUtil
 
 class ManagedOption<T : Any>(
@@ -28,7 +27,13 @@ class ManagedOption<T : Any>(
 	val descriptionTranslationKey = "firmament.config.${element.name}.${propertyName}.description"
 	val labelDescription: Text = Text.translatable(descriptionTranslationKey)
 
-	lateinit var value: T
+	private var actualValue: T? = null
+	var value: T
+		get() = actualValue ?: error("Lateinit variable not initialized")
+		set(value) {
+			actualValue = value
+			element.onChange(this)
+		}
 
 	override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
 		this.value = value

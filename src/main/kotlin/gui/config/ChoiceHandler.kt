@@ -13,6 +13,7 @@ import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.json.KJsonOps
 
 class ChoiceHandler<E>(
+	val enumClass: Class<E>,
 	val universe: List<E>,
 ) : ManagedConfig.OptionHandler<E> where E : Enum<E>, E : StringIdentifiable {
 	val codec = StringIdentifiable.createCodec {

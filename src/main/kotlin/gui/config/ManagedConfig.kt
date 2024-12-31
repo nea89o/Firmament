@@ -117,13 +117,24 @@ abstract class ManagedConfig(
 
 	protected fun <E> choice(
 		propertyName: String,
-		universe: List<E>,
+		enumClass: Class<E>,
 		default: () -> E
 	): ManagedOption<E> where E : Enum<E>, E : StringIdentifiable {
-		return option(propertyName, default, ChoiceHandler(universe))
+		return option(propertyName, default, ChoiceHandler(enumClass, enumClass.enumConstants.toList()))
 	}
 
-// TODO: wait on https://youtrack.jetbrains.com/issue/KT-73434
+	protected inline fun <reified E> choice(
+		propertyName: String,
+		noinline default: () -> E
+	): ManagedOption<E> where E : Enum<E>, E : StringIdentifiable {
+		return choice(propertyName, E::class.java, default)
+	}
+
+	private fun <E> createStringIdentifiable(x: () -> Array<out E>): Codec<E> where E : Enum<E>, E : StringIdentifiable {
+		return StringIdentifiable.createCodec { x() }
+	}
+
+	// TODO: wait on https://youtrack.jetbrains.com/issue/KT-73434
 //	protected inline fun <reified E> choice(
 //		propertyName: String,
 //		noinline default: () -> E
@@ -136,6 +147,8 @@ abstract class ManagedConfig(
 //			default
 //		)
 //	}
+	open fun onChange(option: ManagedOption<*>) {
+	}
 
 	protected fun duration(
 		propertyName: String,
