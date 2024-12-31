@@ -1,10 +1,15 @@
 package moe.nea.firmament.mixins.custommodels;
 
+import com.google.gson.JsonObject;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import moe.nea.firmament.Firmament;
+import moe.nea.firmament.features.texturepack.PredicateModel;
+import moe.nea.firmament.util.ErrorUtil;
 import net.minecraft.client.item.ItemAsset;
 import net.minecraft.client.item.ItemAssetsLoader;
 import net.minecraft.client.render.item.model.BasicItemModel;
+import net.minecraft.client.render.item.model.ItemModel;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourcePack;
@@ -12,6 +17,10 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,16 +55,22 @@ public class SupplyFakeModelPatch {
 		for (Map.Entry<Identifier, Resource> model : resources.entrySet()) {
 			var resource = model.getValue();
 			var itemModelId = model.getKey().withPath(it -> it.substring("models/item/".length(), it.length() - ".json".length()));
-			// TODO: parse json file here and make use of it in order to generate predicate files.
-			// TODO: add a filter using the pack.mcmeta to opt out of this behaviour
 			var genericModelId = itemModelId.withPrefixedPath("item/");
+			// TODO: inject tint indexes based on the json data here
+			ItemModel.Unbaked unbakedModel = new BasicItemModel.Unbaked(genericModelId, List.of());
+			// TODO: add a filter using the pack.mcmeta to opt out of this behaviour
+			try (var is = resource.getInputStream()) {
+				var jsonObject = Firmament.INSTANCE.getGson().fromJson(new InputStreamReader(is), JsonObject.class);
+				unbakedModel = PredicateModel.Unbaked.fromLegacyJson(jsonObject, unbakedModel);
+			} catch (Exception e) {
+				ErrorUtil.INSTANCE.softError("Could not create resource for fake model supplication: " + model.getKey(), e);
+			}
 			if (resourceManager.getResource(itemModelId)
 			                   .map(Resource::getPack)
 			                   .map(it -> isResourcePackNewer(resourceManager, it, resource.getPack()))
 			                   .orElse(true)) {
 				newModels.put(itemModelId, new ItemAsset(
-					// TODO: inject tint indexes based on the json data here
-					new BasicItemModel.Unbaked(genericModelId, List.of()),
+					unbakedModel,
 					new ItemAsset.Properties(true)
 				));
 			}

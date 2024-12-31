@@ -14,6 +14,7 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.features.texturepack.predicates.AndPredicate
+import moe.nea.firmament.features.texturepack.predicates.CastPredicate
 import moe.nea.firmament.features.texturepack.predicates.DisplayNamePredicate
 import moe.nea.firmament.features.texturepack.predicates.ExtraAttributesPredicate
 import moe.nea.firmament.features.texturepack.predicates.ItemPredicate
@@ -71,9 +72,13 @@ object CustomModelOverrideParser {
 		}
 	)
 
-	fun parsePredicates(predicates: JsonObject): List<FirmamentModelPredicate> {
+	fun parsePredicates(predicates: JsonObject?): List<FirmamentModelPredicate> {
+		if (predicates == null) return neverPredicate
 		val parsedPredicates = mutableListOf<FirmamentModelPredicate>()
 		for (predicateName in predicates.keySet()) {
+			if (predicateName == "cast") { // 1.21.4
+				parsedPredicates.add(CastPredicate.Parser.parse(predicates[predicateName]) ?: return neverPredicate)
+			}
 			if (!predicateName.startsWith("firmament:")) continue
 			val identifier = Identifier.of(predicateName)
 			val parser = predicateParsers[identifier] ?: return neverPredicate

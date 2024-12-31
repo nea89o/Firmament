@@ -1,5 +1,6 @@
 package moe.nea.firmament
 
+import com.google.gson.Gson
 import com.mojang.brigadier.CommandDispatcher
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.UserAgent
@@ -70,6 +71,7 @@ object Firmament {
 		ignoreUnknownKeys = true
 		encodeDefaults = true
 	}
+	val gson = Gson()
 	val tightJson = Json(from = json) {
 		prettyPrint = false
 	}
