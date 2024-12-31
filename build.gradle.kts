@@ -219,11 +219,11 @@ val configuredSourceSet = createIsolatedSourceSet("configured",
                                                   isEnabled = false) // Wait for update (also low prio, because configured sucks)
 val sodiumSourceSet = createIsolatedSourceSet("sodium", isEnabled = false)
 val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false) // TODO: Wait for update
-val yaclSourceSet = createIsolatedSourceSet("yacl", isEnabled = false)
+val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
-val modmenuSourceSet = createIsolatedSourceSet("modmenu", isEnabled = false)
+val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
 val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")

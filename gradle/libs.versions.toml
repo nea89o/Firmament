@@ -12,38 +12,38 @@ kotlin_ksp = "2.1.0-1.0.29"
 
 # Update from https://linkie.shedaniel.me/dependencies?loader=fabric
 fabric_loader = "0.16.9"
-fabric_api = "0.110.5+1.21.4"
-yarn = "1.21.4+build.1"
+fabric_api = "0.114.0+1.21.4"
+yarn = "1.21.4+build.4"
 modmenu = "13.0.0-beta.1"
 architectury = "15.0.1"
-rei = "17.0.789"
+rei = "18.0.796"
 
 # Update from https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/
 fabric_kotlin = "1.13.0+kotlin.2.1.0"
 
 # Update from https://maven.architectury.dev/dev/architectury/loom/dev.architectury.loom.gradle.plugin/
-loom = "1.7.414"
+loom = "1.7.414" # TODO: port back to architectury (and) 1.9.424
 
 # Update from https://modrinth.com/mod/qolify/versions?l=fabric
 qolify = "1.6.0-1.21.1"
 
 # Update from https://modrinth.com/mod/sodium/versions?l=fabric
-sodium = "mc1.21.4-0.6.2-fabric"
+sodium = "mc1.21.4-0.6.6-fabric"
 
 # Update from https://modrinth.com/mod/freecam/versions?l=fabric
-freecammod = "1.3.1+mc1.21.3"
+freecammod = "1.3.2+mc1.21.4"
 
 # Update from https://modrinth.com/mod/no-chat-reports/versions?l=fabric
-ncr = "Fabric-1.21.3-v2.10.0"
+ncr = "Fabric-1.21.4-v2.11.0"
 
 # Update from https://modrinth.com/mod/female-gender/versions?l=fabric
-femalegender = "4.3.2+1.21.4"
+femalegender = "4.3.3+1.21.4"
 
 # Update from https://modrinth.com/mod/explosive-enhancement/versions?l=fabric
 explosiveenhancement = "1.2.3-1.21.0"
 
 # Update from https://modrinth.com/mod/not-enough-animations/versions?l=fabric
-notenoughanimations = "BQ8qstAV"
+notenoughanimations = "eZykTicT"
 
 # Update from https://modrinth.com/mod/cit-resewn/versions?l=fabric
 citresewn = "1.2.0+1.21"
@@ -51,7 +51,7 @@ citresewn = "1.2.0+1.21"
 devauth = "1.2.1"
 
 # Update from https://ktor.io/
-ktor = "3.0.2"
+ktor = "3.0.3"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/neurepoparser
 neurepoparser = "1.6.0"
@@ -70,7 +70,7 @@ nealisp = "1.1.0"
 moulconfig = "3.3.0"
 
 # Update from https://www.curseforge.com/minecraft/mc-mods/configured/files/all?page=1&pageSize=20
-configured = "5441234"
+configured = "6023970"
 
 # Update from https://modrinth.com/mod/hypixel-mod-api/versions
 hypixelmodapi = "1.0.1"
@@ -80,7 +80,8 @@ hypixelmodapi_fabric = "1.0.1+build.1+mc1.21"
 manninghamMills = "2.4.1"
 
 # Update from https://docs.isxander.dev/yet-another-config-lib/installing-yacl
-yacl = "3.6.1+1.21.2-fabric"
+# Nvm, they just don't update docs: https://modrinth.com/mod/yacl/versions?l=fabric
+yacl = "3.6.2+1.21.4-fabric"
 
 # Update from https://maven.shedaniel.me/me/shedaniel/cloth/basic-math/0.6.1/
 basicMath = "0.6.1"
