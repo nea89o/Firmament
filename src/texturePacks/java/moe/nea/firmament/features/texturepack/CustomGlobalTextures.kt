@@ -16,7 +16,6 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
-import moe.nea.firmament.events.BakeExtraModelsEvent
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.EarlyResourceReloadEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
@@ -67,15 +66,6 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 				{
 					prepare(event.resourceManager)
 				}, event.preparationExecutor)
-	}
-
-	@Subscribe
-	fun onBakeModels(event: BakeExtraModelsEvent) {
-		for (guiClassOverride in preparationFuture.join().classes) {
-			for (override in guiClassOverride.overrides) {
-				event.addItemModel(ModelIdentifier(override.model, "inventory"))
-			}
-		}
 	}
 
 	@Volatile

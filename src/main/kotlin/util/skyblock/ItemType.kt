@@ -65,6 +65,8 @@ value class ItemType private constructor(val name: String) {
 		val PET = ofName("PET")
 	}
 
+	val dungeonVariant get() = ofName("DUNGEON $name")
+
 	override fun toString(): String {
 		return name
 	}

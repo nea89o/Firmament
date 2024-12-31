@@ -171,9 +171,10 @@ class SBReforgeRecipe(
 
 				is Reforge.ReforgeEligibilityFilter.AllowsItemType ->
 					ReforgeStore.resolveItemType(it.itemType)
-						.flatMap {
-							RepoItemTypeCache.byItemType[it] ?: listOf()
-						}
+						.flatMapTo(mutableSetOf()) {
+							(RepoItemTypeCache.byItemType[it] ?: listOf()) +
+								(RepoItemTypeCache.byItemType[it.dungeonVariant] ?: listOf())
+						}.toList()
 
 				is Reforge.ReforgeEligibilityFilter.AllowsVanillaItemType -> {
 					listOf() // TODO: add filter support for this and potentially rework this to search for the declared item type in repo, instead of remapped item type

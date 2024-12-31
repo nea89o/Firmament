@@ -68,6 +68,7 @@ object ReforgeStore : ExtraRecipeProvider, IReloadable {
 						val actualItemTypes = resolveItemType(eligibleItem.itemType)
 						for (itemType in actualItemTypes) {
 							byType.getOrPut(itemType, ::mutableListOf).add(reforge)
+							byType.getOrPut(itemType.dungeonVariant, ::mutableListOf).add(reforge)
 						}
 					}
 

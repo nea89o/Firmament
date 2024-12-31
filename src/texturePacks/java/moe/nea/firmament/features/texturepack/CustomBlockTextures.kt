@@ -30,7 +30,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
-import moe.nea.firmament.events.BakeExtraModelsEvent
 import moe.nea.firmament.events.EarlyResourceReloadEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
@@ -236,15 +235,6 @@ object CustomBlockTextures {
         preparationFuture = CompletableFuture
             .supplyAsync(
                 { prepare(event.resourceManager) }, event.preparationExecutor)
-    }
-
-    @Subscribe
-    fun bakeExtraModels(event: BakeExtraModelsEvent) {
-        preparationFuture.join().data.values
-            .flatMap { it.lookup.values }
-            .flatten()
-            .mapTo(mutableSetOf()) { it.replacement.blockModelIdentifier }
-            .forEach { event.addNonItemModel(it, it.id) }
     }
 
     private fun prepare(manager: ResourceManager): BakedReplacements {
