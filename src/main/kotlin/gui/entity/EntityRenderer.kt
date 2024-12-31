@@ -112,10 +112,13 @@ object EntityRenderer {
 		posX: Int,
 		posY: Int,
 		// TODO: Add width, height properties here
+		width: Double,
+		height: Double,
 		mouseX: Double,
-		mouseY: Double
+		mouseY: Double,
+		entityScale: Double = (height - 10.0) / 2.0
 	) {
-		var bottomOffset = 0.0F
+		var bottomOffset = 0.0
 		var currentEntity = entity
 		val maxSize = entity.iterate { it.firstPassenger as? LivingEntity }
 			.map { it.height }
@@ -126,9 +129,9 @@ object EntityRenderer {
 				renderContext,
 				posX,
 				posY,
-				posX + 50,
-				posY + 80,
-				minOf(2F / maxSize, 1F) * 30,
+				(posX + width).toInt(),
+				(posY + height).toInt(),
+				minOf(2F / maxSize, 1F) * entityScale,
 				-bottomOffset,
 				mouseX,
 				mouseY,
@@ -147,8 +150,8 @@ object EntityRenderer {
 		y1: Int,
 		x2: Int,
 		y2: Int,
-		size: Float,
-		bottomOffset: Float,
+		size: Double,
+		bottomOffset: Double,
 		mouseX: Double,
 		mouseY: Double,
 		entity: LivingEntity
@@ -156,8 +159,10 @@ object EntityRenderer {
 		context.enableScissorWithTranslation(x1.toFloat(), y1.toFloat(), x2.toFloat(), y2.toFloat())
 		val centerX = (x1 + x2) / 2f
 		val centerY = (y1 + y2) / 2f
-		val targetYaw = atan(((centerX - mouseX) / 40.0f)).toFloat()
-		val targetPitch = atan(((centerY - mouseY) / 40.0f)).toFloat()
+		val hw = (x2 - x1) / 2
+		val hh = (y2 - y1) / 2
+		val targetYaw = atan(((centerX - mouseX) / hw)).toFloat()
+		val targetPitch = atan(((centerY - mouseY) / hh)).toFloat()
 		val rotateToFaceTheFront = Quaternionf().rotateZ(Math.PI.toFloat())
 		val rotateToFaceTheCamera = Quaternionf().rotateX(targetPitch * 20.0f * (Math.PI.toFloat() / 180))
 		rotateToFaceTheFront.mul(rotateToFaceTheCamera)
@@ -171,12 +176,12 @@ object EntityRenderer {
 		entity.pitch = -targetPitch * 20.0f
 		entity.headYaw = entity.yaw
 		entity.prevHeadYaw = entity.yaw
-		val vector3f = Vector3f(0.0f, entity.height / 2.0f + bottomOffset, 0.0f)
+		val vector3f = Vector3f(0.0f, (entity.height / 2.0f + bottomOffset).toFloat(), 0.0f)
 		InventoryScreen.drawEntity(
 			context,
 			centerX,
 			centerY,
-			size,
+			size.toFloat(),
 			vector3f,
 			rotateToFaceTheFront,
 			rotateToFaceTheCamera,

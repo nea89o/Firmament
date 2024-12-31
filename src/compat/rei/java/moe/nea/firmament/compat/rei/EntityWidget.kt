@@ -25,24 +25,19 @@ class EntityWidget(
 
 	override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
 		try {
-			context.matrices.push()
 			if (!hasErrored) {
-				context.matrices.translate(point.x.toDouble(), point.y.toDouble(), 0.0)
-				val xScale = size.width / defaultSize.width.toDouble()
-				val yScale = size.height / defaultSize.height.toDouble()
-				context.matrices.scale(xScale.toFloat(), yScale.toFloat(), 1.0F)
 				EntityRenderer.renderEntity(
 					entity!!,
 					context,
-					0, 0,
-					(mouseX - point.x) * xScale,
-					(mouseY - point.y) * yScale)
+					point.x, point.y,
+					size.width, size.height,
+					mouseX.toDouble(),
+					mouseY.toDouble())
 			}
 		} catch (ex: Exception) {
 			ErrorUtil.softError("Failed to render constructed entity: $entity", ex)
 			hasErrored = true
 		} finally {
-			context.matrices.pop()
 		}
 		if (hasErrored) {
 			context.fill(point.x, point.y, point.x + size.width.toInt(), point.y + size.height.toInt(), 0xFFAA2222.toInt())
