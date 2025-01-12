@@ -19,6 +19,11 @@ object SBData {
 		"CLICK THIS TO SUGGEST IT IN CHAT [NO DASHES]",
 	)
 	var profileId: UUID? = null
+		get() {
+			// TODO: allow unfiltered access to this somehow
+			if (!isOnSkyblock) return null
+			return field
+		}
 
 	/**
 	 * Source: https://hypixel-skyblock.fandom.com/wiki/Time_Systems
@@ -37,11 +42,15 @@ object SBData {
 		HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket::class.java) {
 			MC.onMainThread {
 				val lastLocraw = locraw
+				val oldProfileId = profileId
 				locraw = Locraw(it.serverName,
 				                it.serverType.getOrNull()?.name?.uppercase(),
 				                it.mode.getOrNull(),
 				                it.map.getOrNull())
 				SkyblockServerUpdateEvent.publish(SkyblockServerUpdateEvent(lastLocraw, locraw))
+				if(oldProfileId != profileId) {
+					ProfileSwitchEvent.publish(ProfileSwitchEvent(oldProfileId, profileId))
+				}
 				profileIdCommandDebounce = TimeMark.now()
 			}
 		}
