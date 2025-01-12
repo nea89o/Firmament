@@ -100,12 +100,12 @@ object CustomGlobalTextures : SinglePreparationResourceReloader<CustomGlobalText
 					manager.getResource(Identifier.of(key.namespace, "filters/screen/${key.path}.json"))
 						.getOrNull()
 						?: return@mapNotNull runNull {
-							ErrorUtil.softError("Failed to locate screen filter at $key")
+							ErrorUtil.softError("Failed to locate screen filter at $key used by ${it.value.map { it.first }}")
 						}
 				val screenFilter =
 					Firmament.tryDecodeJsonFromStream<ScreenFilter>(guiClassResource.inputStream)
 						.getOrElse { ex ->
-							ErrorUtil.softError("Failed to load screen filter at $key", ex)
+							ErrorUtil.softError("Failed to load screen filter at $key used by ${it.value.map { it.first }}", ex)
 							return@mapNotNull null
 						}
 				ItemOverrideCollection(screenFilter, it.value.map { it.second })
