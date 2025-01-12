@@ -25,6 +25,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.util.InputUtil
 import moe.nea.firmament.gui.BarComponent
 import moe.nea.firmament.gui.FirmButtonComponent
 import moe.nea.firmament.gui.FirmHoverComponent
@@ -257,7 +258,17 @@ object MoulConfigUtils {
 		keyboardEvent: KeyboardEvent
 	): Boolean {
 		val immContext = createInPlaceFullContext(null, IMinecraft.instance.mouseX, IMinecraft.instance.mouseY)
-		return component.keyboardEvent(keyboardEvent, immContext.translated(x, y, w, h))
+		if (component.keyboardEvent(keyboardEvent, immContext.translated(x, y, w, h)))
+			return true
+		if (component.context.getFocusedElement() != null) {
+			if (keyboardEvent is KeyboardEvent.KeyPressed
+				&& keyboardEvent.pressed && keyboardEvent.keycode == InputUtil.GLFW_KEY_ESCAPE
+			) {
+				component.context.setFocusedElement(null)
+			}
+			return true
+		}
+		return false
 	}
 
 	fun clickMCComponentInPlace(

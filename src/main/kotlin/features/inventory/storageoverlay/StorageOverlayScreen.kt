@@ -302,6 +302,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 	}
 
 	fun mouseClicked(mouseX: Double, mouseY: Double, button: Int, activePage: StoragePageSlot?): Boolean {
+		guiContext.setFocusedElement(null) // Blur all elements. They will be refocused by clickMCComponentInPlace if in doubt, and we don't have any double click components.
 		if (getScrollPanelInner().contains(mouseX, mouseY)) {
 			val data = StorageOverlay.Data.data ?: StorageData()
 			layoutedForEach(data) { rect, page, _ ->
