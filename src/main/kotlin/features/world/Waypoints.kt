@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import me.shedaniel.math.Color
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -32,6 +33,7 @@ import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.render.RenderInWorldContext
+import moe.nea.firmament.util.tr
 
 object Waypoints : FirmamentFeature {
 	override val identifier: String
@@ -198,11 +200,22 @@ object Waypoints : FirmamentFeature {
 					}
 				}
 			}
+			thenLiteral("export") {
+				thenExecute {
+					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
+						ColeWeightWaypoint(it.x,
+						                   it.y,
+						                   it.z)
+					})
+					ClipboardUtils.setTextContent(data)
+					source.sendFeedback(tr("firmament.command.waypoint.export", "Copied ${waypoints.size} waypoints to clipboard"))
+				}
+			}
 			thenLiteral("import") {
 				thenExecute {
 					val contents = ClipboardUtils.getTextContents()
 					val data = try {
-						Firmament.json.decodeFromString<List<ColeWeightWaypoint>>(contents)
+						Firmament.tightJson.decodeFromString<List<ColeWeightWaypoint>>(contents)
 					} catch (ex: Exception) {
 						Firmament.logger.error("Could not load waypoints from clipboard", ex)
 						source.sendError(Text.translatable("firmament.command.waypoint.import.error"))
