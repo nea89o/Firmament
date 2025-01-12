@@ -3,6 +3,7 @@ package moe.nea.firmament.events
 import java.util.concurrent.CopyOnWriteArrayList
 import org.apache.commons.lang3.reflect.TypeUtils
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
 
 /**
@@ -48,7 +49,7 @@ open class FirmamentEventBus<T : FirmamentEvent> {
                     val klass = e.javaClass
                     if (!function.knownErrors.contains(klass) || Firmament.DEBUG) {
                         function.knownErrors.add(klass)
-                        Firmament.logger.error("Caught exception during processing event $event by $function", e)
+                        ErrorUtil.softError("Caught exception during processing event $event by $function", e)
                     }
                 }
             }

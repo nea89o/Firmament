@@ -47,7 +47,7 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 	}
 
 	val minecraft = MinecraftClient.getInstance()
-	var canUseVanillaTooltipEvents = false
+	var canUseVanillaTooltipEvents = true
 
 	override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
 		val stack = entry.value.asImmutableItemStack()
@@ -60,6 +60,7 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 					stack, tooltipContext.vanillaContext(), TooltipType.BASIC, lore
 				)
 			} catch (ex: Exception) {
+				canUseVanillaTooltipEvents = false
 				ErrorUtil.softError("Failed to use vanilla tooltips", ex)
 			}
 		} else {
