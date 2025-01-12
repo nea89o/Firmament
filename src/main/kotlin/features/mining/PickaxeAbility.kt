@@ -156,9 +156,20 @@ object PickaxeAbility : FirmamentFeature {
 	fun onChatMessage(it: ProcessChatEvent) {
 		abilityUsePattern.useMatch(it.unformattedString) {
 			lastUsage[group("name")] = TimeMark.now()
+			abilityOverride = group("name")
 		}
 		abilitySwitchPattern.useMatch(it.unformattedString) {
 			abilityOverride = group("ability")
+		}
+		pickaxeAbilityCooldownPattern.useMatch(it.unformattedString) {
+			val ability = abilityOverride ?: return@useMatch
+			val remainingCooldown = parseTimePattern(group("remainingCooldown"))
+			val length = defaultAbilityDurations[ability] ?: return@useMatch
+			lastUsage[ability] = TimeMark.ago(length - remainingCooldown)
+		}
+		nowAvailable.useMatch(it.unformattedString) {
+			val ability = group("name")
+			lastUsage[ability] = TimeMark.farPast()
 		}
 	}
 
@@ -179,6 +190,7 @@ object PickaxeAbility : FirmamentFeature {
 	val fuelPattern = Pattern.compile("Fuel: .*/(?<maxFuel>$SHORT_NUMBER_FORMAT)")
 	val pickaxeAbilityCooldownPattern =
 		Pattern.compile("Your pickaxe ability is on cooldown for (?<remainingCooldown>$TIME_PATTERN)\\.")
+	val nowAvailable = Pattern.compile("(?<name>[a-zA-Z0-9 ]+) is now available!")
 
 	data class PickaxeAbilityData(
 		val name: String,
