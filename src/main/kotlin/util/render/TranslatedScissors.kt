@@ -1,11 +1,15 @@
 
 package moe.nea.firmament.util.render
 
+import org.joml.Matrix4f
 import org.joml.Vector4f
 import net.minecraft.client.gui.DrawContext
 
 fun DrawContext.enableScissorWithTranslation(x1: Float, y1: Float, x2: Float, y2: Float) {
-    val pMat = matrices.peek().positionMatrix
+    enableScissor(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
+}
+fun DrawContext.enableScissorWithoutTranslation(x1: Float, y1: Float, x2: Float, y2: Float) {
+    val pMat = matrices.peek().positionMatrix.invert(Matrix4f())
     val target = Vector4f()
 
     target.set(x1, y1, 0f, 1f)

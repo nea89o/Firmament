@@ -35,6 +35,7 @@ import moe.nea.firmament.util.mc.FakeSlot
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.render.drawGuiTexture
+import moe.nea.firmament.util.render.enableScissorWithoutTranslation
 import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 
@@ -241,9 +242,9 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 
 	fun createScissors(context: DrawContext) {
 		val rect = getScrollPanelInner()
-		context.enableScissor(
-			rect.minX, rect.minY,
-			rect.maxX, rect.maxY
+		context.enableScissorWithoutTranslation(
+			rect.minX.toFloat(), rect.minY.toFloat(),
+			rect.maxX.toFloat(), rect.maxY.toFloat(),
 		)
 	}
 
