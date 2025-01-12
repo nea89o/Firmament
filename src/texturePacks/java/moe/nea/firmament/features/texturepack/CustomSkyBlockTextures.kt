@@ -44,6 +44,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
 	val allItemCaches by lazy {
 		listOf(
 			skullTextureCache.cache,
+			CustomItemModelEvent.cache.cache,
 			CustomGlobalArmorOverrides.overrideCache.cache
 		)
 	}

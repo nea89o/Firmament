@@ -27,10 +27,6 @@ public class ReplaceItemModelPatch {
 	@Final
 	private Function<Identifier, ItemModel> modelGetter;
 
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void saveMissingModel(BakedModelManager bakedModelManager, CallbackInfo ci) {
-	}
-
 	@Unique
 	private boolean hasModel(Identifier identifier) {
 		return !(modelGetter.apply(identifier) instanceof MissingItemModel);
