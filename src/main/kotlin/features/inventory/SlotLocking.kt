@@ -15,6 +15,7 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.util.Identifier
 import net.minecraft.util.StringIdentifiable
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.events.FeaturesInitializedEvent
 import moe.nea.firmament.events.HandledScreenForegroundEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.events.HandledScreenKeyReleasedEvent
@@ -37,6 +38,7 @@ import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.render.GuiRenderLayers
 import moe.nea.firmament.util.render.drawLine
+import moe.nea.firmament.util.skyblock.DungeonUtil
 import moe.nea.firmament.util.skyblockUUID
 import moe.nea.firmament.util.unformattedString
 
@@ -60,6 +62,7 @@ object SlotLocking : FirmamentFeature {
 		val slotBind by keyBinding("bind") { GLFW.GLFW_KEY_L }
 		val slotBindRequireShift by toggle("require-quick-move") { true }
 		val slotRenderLines by choice("bind-render") { SlotRenderLinesMode.ONLY_BOXES }
+		val allowDroppingInDungeons by toggle("drop-in-dungeons") { true }
 	}
 
 	enum class SlotRenderLinesMode : StringIdentifiable {
@@ -120,7 +123,11 @@ object SlotLocking : FirmamentFeature {
 		var anyBlocked = false
 		for (i in 0 until event.slot.index) {
 			val stack = inv.getStack(i)
-			if (IsSlotProtectedEvent.shouldBlockInteraction(null, SlotActionType.THROW, stack))
+			if (IsSlotProtectedEvent.shouldBlockInteraction(null,
+			                                                SlotActionType.THROW,
+			                                                IsSlotProtectedEvent.MoveOrigin.SALVAGE,
+			                                                stack)
+			)
 				anyBlocked = true
 		}
 		if (anyBlocked) {
@@ -152,6 +159,19 @@ object SlotLocking : FirmamentFeature {
 	fun onProtectSlot(it: IsSlotProtectedEvent) {
 		if (it.slot != null && it.slot.inventory is PlayerInventory && it.slot.index in (lockedSlots ?: setOf())) {
 			it.protect()
+		}
+	}
+
+	@Subscribe
+	fun onEvent(event: FeaturesInitializedEvent) {
+		IsSlotProtectedEvent.subscribe(receivesCancelled = true, "SlotLocking:unlockInDungeons") {
+			if (it.isProtected
+				&& it.origin == IsSlotProtectedEvent.MoveOrigin.DROP_FROM_HOTBAR
+				&& DungeonUtil.isInActiveDungeon
+				&& TConfig.allowDroppingInDungeons
+			) {
+				it.isProtected = false
+			}
 		}
 	}
 
@@ -245,7 +265,7 @@ object SlotLocking : FirmamentFeature {
 			val (hotX, hotY) = hotbarSlot.lineCenter()
 			val (invX, invY) = inventorySlot.lineCenter()
 			val anyHovered = accScreen.focusedSlot_Firmament === hotbarSlot
-					|| accScreen.focusedSlot_Firmament === inventorySlot
+				|| accScreen.focusedSlot_Firmament === inventorySlot
 			if (!anyHovered && TConfig.slotRenderLines == SlotRenderLinesMode.NOTHING)
 				continue
 			val color = if (anyHovered)

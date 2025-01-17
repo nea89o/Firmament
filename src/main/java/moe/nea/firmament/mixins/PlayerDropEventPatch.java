@@ -14,15 +14,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class PlayerDropEventPatch extends PlayerEntity {
-    public PlayerDropEventPatch() {
-        super(null, null, 0, null);
-    }
+	public PlayerDropEventPatch() {
+		super(null, null, 0, null);
+	}
 
-    @Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
-    public void onDropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
-        Slot fakeSlot = new Slot(getInventory(), getInventory().selectedSlot, 0, 0);
-        if (IsSlotProtectedEvent.shouldBlockInteraction(fakeSlot, SlotActionType.THROW)) {
-            cir.setReturnValue(false);
-        }
-    }
+	@Inject(method = "dropSelectedItem", at = @At("HEAD"), cancellable = true)
+	public void onDropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
+		Slot fakeSlot = new Slot(getInventory(), getInventory().selectedSlot, 0, 0);
+		if (IsSlotProtectedEvent.shouldBlockInteraction(fakeSlot, SlotActionType.THROW, IsSlotProtectedEvent.MoveOrigin.DROP_FROM_HOTBAR)) {
+			cir.setReturnValue(false);
+		}
+	}
 }

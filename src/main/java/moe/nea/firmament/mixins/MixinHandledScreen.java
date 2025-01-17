@@ -4,8 +4,11 @@ package moe.nea.firmament.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
-import moe.nea.firmament.events.*;
+import moe.nea.firmament.events.HandledScreenClickEvent;
+import moe.nea.firmament.events.HandledScreenForegroundEvent;
+import moe.nea.firmament.events.HandledScreenKeyPressedEvent;
+import moe.nea.firmament.events.IsSlotProtectedEvent;
+import moe.nea.firmament.events.SlotRenderEvents;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,9 +25,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
-import java.util.Iterator;
 
 @Mixin(value = HandledScreen.class, priority = 990)
 public abstract class MixinHandledScreen<T extends ScreenHandler> {
@@ -74,17 +74,17 @@ public abstract class MixinHandledScreen<T extends ScreenHandler> {
 	public void onMouseClickedSlot(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo ci) {
 		if (slotId == -999 && getScreenHandler() != null && actionType == SlotActionType.PICKUP) { // -999 is code for "clicked outside the main window"
 			ItemStack cursorStack = getScreenHandler().getCursorStack();
-			if (cursorStack != null && IsSlotProtectedEvent.shouldBlockInteraction(slot, SlotActionType.THROW, cursorStack)) {
+			if (cursorStack != null && IsSlotProtectedEvent.shouldBlockInteraction(slot, SlotActionType.THROW, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE, cursorStack)) {
 				ci.cancel();
 				return;
 			}
 		}
-		if (IsSlotProtectedEvent.shouldBlockInteraction(slot, actionType)) {
+		if (IsSlotProtectedEvent.shouldBlockInteraction(slot, actionType, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE)) {
 			ci.cancel();
 			return;
 		}
 		if (actionType == SlotActionType.SWAP && 0 <= button && button < 9) {
-			if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0), actionType)) {
+			if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0), actionType, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE)) {
 				ci.cancel();
 			}
 		}

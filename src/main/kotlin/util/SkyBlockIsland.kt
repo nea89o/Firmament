@@ -36,6 +36,7 @@ private constructor(
         val RIFT = forMode("rift")
         val MINESHAFT = forMode("mineshaft")
 	    val GARDEN = forMode("garden")
+	    val DUNGEON = forMode("dungeon")
     }
 
     val userFriendlyName

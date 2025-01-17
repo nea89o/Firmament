@@ -45,10 +45,6 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 
     private var hasAutoloaded = false
 
-    init {
-        autoload()
-    }
-
     fun autoload() {
         synchronized(this) {
             if (hasAutoloaded) return
