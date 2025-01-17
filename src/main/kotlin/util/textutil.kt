@@ -1,71 +1,17 @@
 package moe.nea.firmament.util
 
+import java.util.Optional
 import net.minecraft.text.ClickEvent
 import net.minecraft.text.MutableText
+import net.minecraft.text.OrderedText
 import net.minecraft.text.PlainTextContent
+import net.minecraft.text.StringVisitable
+import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TextColor
 import net.minecraft.text.TranslatableTextContent
 import net.minecraft.util.Formatting
-import moe.nea.firmament.Firmament
 
-
-class TextMatcher(text: Text) {
-	data class State(
-		var iterator: MutableList<Text>,
-		var currentText: Text?,
-		var offset: Int,
-		var textContent: String,
-	)
-
-	var state = State(
-		mutableListOf(text),
-		null,
-		0,
-		""
-	)
-
-	fun pollChunk(): Boolean {
-		val firstOrNull = state.iterator.removeFirstOrNull() ?: return false
-		state.offset = 0
-		state.currentText = firstOrNull
-		state.textContent = when (val content = firstOrNull.content) {
-			is PlainTextContent.Literal -> content.string
-			else -> {
-				Firmament.logger.warn("TextContent of type ${content.javaClass} not understood.")
-				return false
-			}
-		}
-		state.iterator.addAll(0, firstOrNull.siblings)
-		return true
-	}
-
-	fun pollChunks(): Boolean {
-		while (state.offset !in state.textContent.indices) {
-			if (!pollChunk()) {
-				return false
-			}
-		}
-		return true
-	}
-
-	fun pollChar(): Char? {
-		if (!pollChunks()) return null
-		return state.textContent[state.offset++]
-	}
-
-
-	fun expectString(string: String): Boolean {
-		var found = ""
-		while (found.length < string.length) {
-			if (!pollChunks()) return false
-			val takeable = state.textContent.drop(state.offset).take(string.length - found.length)
-			state.offset += takeable.length
-			found += takeable
-		}
-		return found == string
-	}
-}
 
 val formattingChars = "kmolnrKMOLNR".toSet()
 fun CharSequence.removeColorCodes(keepNonColorCodes: Boolean = false): String {
@@ -87,6 +33,47 @@ fun CharSequence.removeColorCodes(keepNonColorCodes: Boolean = false): String {
 	}
 	stringBuffer.append(this, readIndex, this.length)
 	return stringBuffer.toString()
+}
+
+fun OrderedText.reconstitute(): MutableText {
+	val base = Text.literal("")
+	base.setStyle(Style.EMPTY.withItalic(false))
+	var lastColorCode = Style.EMPTY
+	val text = StringBuilder()
+	this.accept { index, style, codePoint ->
+		if (style != lastColorCode) {
+			if (text.isNotEmpty())
+				base.append(Text.literal(text.toString()).setStyle(lastColorCode))
+			lastColorCode = style
+			text.clear()
+		}
+		text.append(codePoint.toChar())
+		true
+	}
+	if (text.isNotEmpty())
+		base.append(Text.literal(text.toString()).setStyle(lastColorCode))
+	return base
+
+}
+fun StringVisitable.reconstitute(): MutableText {
+	val base = Text.literal("")
+	base.setStyle(Style.EMPTY.withItalic(false))
+	var lastColorCode = Style.EMPTY
+	val text = StringBuilder()
+	this.visit({ style, string ->
+		if (style != lastColorCode) {
+			if (text.isNotEmpty())
+				base.append(Text.literal(text.toString()).setStyle(lastColorCode))
+			lastColorCode = style
+			text.clear()
+		}
+		text.append(string)
+		Optional.empty<Unit>()
+	}, Style.EMPTY)
+	if (text.isNotEmpty())
+		base.append(Text.literal(text.toString()).setStyle(lastColorCode))
+	return base
+
 }
 
 val Text.unformattedString: String

@@ -24,6 +24,7 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtString
+import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
@@ -100,7 +101,7 @@ object ItemCache : IReloadable {
 		}
 	}
 
-	fun un189Lore(lore: String): Text {
+	fun un189Lore(lore: String): MutableText {
 		val base = Text.literal("")
 		base.setStyle(Style.EMPTY.withItalic(false))
 		var lastColorCode = Style.EMPTY

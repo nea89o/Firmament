@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.github.moulberry.repo.constants.PetNumbers
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
+import net.minecraft.client.util.ChatMessages
 import net.minecraft.item.ItemStack
 import net.minecraft.network.RegistryByteBuf
 import net.minecraft.network.codec.PacketCodec
@@ -17,8 +18,10 @@ import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.ItemCache.withFallback
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.LegacyFormattingCode
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ReforgeId
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.blue
 import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.getReforgeId
@@ -27,12 +30,15 @@ import moe.nea.firmament.util.grey
 import moe.nea.firmament.util.mc.appendLore
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.mc.modifyLore
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.prepend
+import moe.nea.firmament.util.reconstitute
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.skyblockId
+import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 import moe.nea.firmament.util.withColor
 
@@ -308,6 +314,22 @@ data class SBItemStack constructor(
 		data.putString("modifier", reforgeId.id)
 		itemStack.extraAttributes = data
 		appendEnhancedStats(itemStack, reforgeStats, BuffKind.REFORGE)
+		reforge.reforgeAbility?.get(rarity)?.let { reforgeAbility ->
+			val formattedReforgeAbility = ItemCache.un189Lore(reforgeAbility)
+				.grey()
+			itemStack.modifyLore {
+				val lastBlank = it.indexOfLast { it.unformattedString.isBlank() }
+				val newList = mutableListOf<Text>()
+				newList.addAll(it.subList(0, lastBlank))
+				newList.add(Text.literal(""))
+				newList.add(Text.literal("${reforge.reforgeName} Bonus").blue())
+				MC.font.textHandler.wrapLines(formattedReforgeAbility, 180, Style.EMPTY).mapTo(newList) {
+					it.reconstitute()
+				}
+				newList.addAll(it.subList(lastBlank, it.size))
+				return@modifyLore newList
+			}
+		}
 	}
 
 	// TODO: avoid instantiating the item stack here
