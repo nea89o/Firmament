@@ -67,6 +67,8 @@ value class ItemType private constructor(val name: String) {
 
 	val dungeonVariant get() = ofName("DUNGEON $name")
 
+	val isDungeon get() = name.startsWith("DUNGEON ")
+
 	override fun toString(): String {
 		return name
 	}

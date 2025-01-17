@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.github.moulberry.repo.constants.PetNumbers
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
-import net.minecraft.client.util.ChatMessages
 import net.minecraft.item.ItemStack
 import net.minecraft.network.RegistryByteBuf
 import net.minecraft.network.codec.PacketCodec
@@ -31,6 +30,7 @@ import moe.nea.firmament.util.mc.appendLore
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.modifyLore
+import moe.nea.firmament.util.modifyExtraAttributes
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.prepend
 import moe.nea.firmament.util.reconstitute
@@ -105,6 +105,13 @@ data class SBItemStack constructor(
 			return SBItemStack(SkyblockId.NULL, null, itemStack.count, null, fallback = itemStack)
 		}
 
+		fun parseStatBlock(itemStack: ItemStack): List<StatLine> {
+			return itemStack.loreAccordingToNbt
+				.map { parseStatLine(it) }
+				.takeWhile { it != null }
+				.filterNotNull()
+		}
+
 		fun appendEnhancedStats(
 			itemStack: ItemStack,
 			reforgeStats: Map<String, Double>,
@@ -141,6 +148,7 @@ data class SBItemStack constructor(
 		data class StatFormatting(
 			val postFix: String,
 			val color: Formatting,
+			val isStarAffected: Boolean = true,
 		)
 
 		val formattingOverrides = mapOf(
@@ -148,7 +156,7 @@ data class SBItemStack constructor(
 			"Strength" to StatFormatting("", Formatting.RED),
 			"Damage" to StatFormatting("", Formatting.RED),
 			"Bonus Attack Speed" to StatFormatting("%", Formatting.RED),
-			"Shot Cooldown" to StatFormatting("s", Formatting.RED),
+			"Shot Cooldown" to StatFormatting("s", Formatting.GREEN, false),
 			"Ability Damage" to StatFormatting("%", Formatting.RED),
 			"Crit Damage" to StatFormatting("%", Formatting.RED),
 			"Crit Chance" to StatFormatting("%", Formatting.RED),
@@ -190,9 +198,11 @@ data class SBItemStack constructor(
 			val color: Formatting,
 			val prefix: String,
 			val postFix: String,
+			val isHidden: Boolean,
 		) {
-			REFORGE(Formatting.BLUE, "(", ")"),
-
+			REFORGE(Formatting.BLUE, "(", ")", false),
+			STAR_BUFF(Formatting.RESET, "", "", true),
+			CATA_STAR_BUFF(Formatting.DARK_GRAY, "(", ")", false),
 			;
 		}
 
@@ -200,7 +210,7 @@ data class SBItemStack constructor(
 			val statName: String,
 			val value: Text?,
 			val rest: List<Text> = listOf(),
-			val valueNum: Double? = value?.directLiteralStringContent?.trim(' ', '%', '+')?.toDoubleOrNull()
+			val valueNum: Double? = value?.directLiteralStringContent?.trim(' ', 's', '%', '+')?.toDoubleOrNull()
 		) {
 			fun addStat(amount: Double, buffKind: BuffKind): StatLine {
 				val formattedAmount = FirmFormatters.formatCommas(amount, 1, includeSign = true)
@@ -208,7 +218,8 @@ data class SBItemStack constructor(
 					valueNum = (valueNum ?: 0.0) + amount,
 					value = null,
 					rest = rest +
-						listOf(
+						if (buffKind.isHidden) emptyList()
+						else listOf(
 							Text.literal(
 								buffKind.prefix + formattedAmount +
 									statFormatting.postFix +
@@ -347,12 +358,14 @@ data class SBItemStack constructor(
 					return@run ItemStack.EMPTY
 				val replacementData = mutableMapOf<String, String>()
 				injectReplacementDataForPets(replacementData)
-				return@run neuItem.asItemStack(idHint = skyblockId, replacementData)
+				val baseItem = neuItem.asItemStack(idHint = skyblockId, replacementData)
 					.withFallback(fallback)
 					.copyWithCount(stackSize)
-					.also { appendReforgeInfo(it) }
-					.also { it.appendLore(extraLore) }
-					.also { enhanceStatsByStars(it, stars) }
+				val baseStats = parseStatBlock(baseItem)
+				appendReforgeInfo(baseItem)
+				baseItem.appendLore(extraLore)
+				enhanceStatsByStars(baseItem, stars, baseStats)
+				return@run baseItem
 			}
 			if (itemStack_ == null)
 				itemStack_ = itemStack
@@ -362,6 +375,7 @@ data class SBItemStack constructor(
 
 	private fun starString(stars: Int): Text {
 		if (stars <= 0) return Text.empty()
+		// TODO: idk master stars
 		val tiers = listOf(
 			LegacyFormattingCode.GOLD,
 			LegacyFormattingCode.LIGHT_PURPLE,
@@ -381,11 +395,23 @@ data class SBItemStack constructor(
 		return starString
 	}
 
-	private fun enhanceStatsByStars(itemStack: ItemStack, stars: Int) {
+	private fun enhanceStatsByStars(itemStack: ItemStack, stars: Int, baseStats: List<StatLine>) {
 		if (stars == 0) return
 		// TODO: increase stats and add the star level into the nbt data so star displays work
+		itemStack.modifyExtraAttributes {
+			it.putInt("upgrade_level", stars)
+		}
 		itemStack.displayNameAccordingToNbt = itemStack.displayNameAccordingToNbt.copy()
 			.append(starString(stars))
+		val isDungeon = ItemType.fromItemStack(itemStack)?.isDungeon ?: true
+		val truncatedStarCount = if (isDungeon) minOf(5, stars) else stars
+		appendEnhancedStats(itemStack,
+		                    baseStats
+			                    .filter { it.statFormatting.isStarAffected }
+			                    .associate {
+				                    it.statName to ((it.valueNum ?: 0.0) * (truncatedStarCount * 0.02))
+			                    },
+		                    BuffKind.STAR_BUFF)
 	}
 
 	fun asImmutableItemStack(): ItemStack {

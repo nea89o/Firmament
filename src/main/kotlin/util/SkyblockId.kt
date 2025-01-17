@@ -119,6 +119,12 @@ var ItemStack.extraAttributes: NbtCompound
 		return customData.nbt
 	}
 
+fun ItemStack.modifyExtraAttributes(block: (NbtCompound) -> Unit) {
+	val baseNbt = get(DataComponentTypes.CUSTOM_DATA)?.copyNbt() ?: NbtCompound()
+	block(baseNbt)
+	set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(baseNbt))
+}
+
 val ItemStack.skyblockUUIDString: String?
 	get() = extraAttributes.getString("uuid")?.takeIf { it.isNotBlank() }
 
