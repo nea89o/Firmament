@@ -14,7 +14,8 @@ import moe.nea.firmament.repo.EssenceRecipeProvider
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
 
-class SBEssenceUpgradeRecipe(override val neuRecipe: EssenceRecipeProvider.EssenceUpgradeRecipe) : SBRecipe() {
+class SBEssenceUpgradeRecipe(override val neuRecipe: EssenceRecipeProvider.EssenceUpgradeRecipe,
+							 val sourceItem: SBItemStack) : SBRecipe() {
 	object Category : DisplayCategory<SBEssenceUpgradeRecipe> {
 		override fun getCategoryIdentifier(): CategoryIdentifier<SBEssenceUpgradeRecipe> =
 			CategoryIdentifier.of(Firmament.MOD_ID, "essence_upgrade")
@@ -33,13 +34,13 @@ class SBEssenceUpgradeRecipe(override val neuRecipe: EssenceRecipeProvider.Essen
 			list.add(Widgets.createRecipeBase(bounds))
 			list.add(Widgets.createSlot(Point(bounds.minX + 12, bounds.centerY - 8 - 18 / 2))
 				         .markInput()
-				         .entry(SBItemEntryDefinition.getEntry(SBItemStack(recipe.itemId).copy(stars = recipe.starCountAfter - 1))))
+				         .entry(SBItemEntryDefinition.getEntry(display.sourceItem.copy(stars = recipe.starCountAfter - 1))))
 			list.add(Widgets.createSlot(Point(bounds.minX + 12, bounds.centerY - 8 + 18 / 2))
 				         .markInput()
 				         .entry(SBItemEntryDefinition.getEntry(recipe.essenceIngredient)))
 			list.add(Widgets.createSlot(Point(bounds.maxX - 12 - 16, bounds.centerY - 8))
 				         .markOutput()
-				         .entry(SBItemEntryDefinition.getEntry(SBItemStack(recipe.itemId).copy(stars = recipe.starCountAfter))))
+				         .entry(SBItemEntryDefinition.getEntry(display.sourceItem.copy(stars = recipe.starCountAfter))))
 			val extraItems = recipe.extraItems
 			list.add(Widgets.createArrow(Point(bounds.centerX - 24 / 2,
 			                                   if (extraItems.isEmpty()) bounds.centerY - 17 / 2

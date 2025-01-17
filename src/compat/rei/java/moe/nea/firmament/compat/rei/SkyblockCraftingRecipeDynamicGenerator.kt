@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.compat.rei
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
@@ -23,43 +21,43 @@ import moe.nea.firmament.repo.SBItemStack
 
 
 val SkyblockCraftingRecipeDynamicGenerator =
-    neuDisplayGenerator<SBCraftingRecipe, NEUCraftingRecipe> { SBCraftingRecipe(it) }
+	neuDisplayGenerator<SBCraftingRecipe, NEUCraftingRecipe> { SBCraftingRecipe(it) }
 
 val SkyblockForgeRecipeDynamicGenerator =
-    neuDisplayGenerator<SBForgeRecipe, NEUForgeRecipe> { SBForgeRecipe(it) }
+	neuDisplayGenerator<SBForgeRecipe, NEUForgeRecipe> { SBForgeRecipe(it) }
 
 val SkyblockMobDropRecipeDynamicGenerator =
-    neuDisplayGenerator<SBMobDropRecipe, NEUMobDropRecipe> { SBMobDropRecipe(it) }
+	neuDisplayGenerator<SBMobDropRecipe, NEUMobDropRecipe> { SBMobDropRecipe(it) }
 
 val SkyblockKatRecipeDynamicGenerator =
-    neuDisplayGenerator<SBKatRecipe, NEUKatUpgradeRecipe> { SBKatRecipe(it) }
+	neuDisplayGenerator<SBKatRecipe, NEUKatUpgradeRecipe> { SBKatRecipe(it) }
 val SkyblockEssenceRecipeDynamicGenerator =
-    neuDisplayGenerator<SBEssenceUpgradeRecipe, EssenceRecipeProvider.EssenceUpgradeRecipe> { SBEssenceUpgradeRecipe(it) }
+	neuDisplayGeneratorWithItem<SBEssenceUpgradeRecipe, EssenceRecipeProvider.EssenceUpgradeRecipe> { item, recipe ->
+		SBEssenceUpgradeRecipe(recipe, item)
+	}
 
 inline fun <D : Display, reified T : NEURecipe> neuDisplayGenerator(crossinline mapper: (T) -> D) =
-    object : DynamicDisplayGenerator<D> {
-        override fun getRecipeFor(entry: EntryStack<*>): Optional<List<D>> {
-            if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
-            val item = entry.castValue<SBItemStack>()
-            val recipes = RepoManager.getRecipesFor(item.skyblockId)
-            val craftingRecipes = recipes.filterIsInstance<T>()
-            return Optional.of(craftingRecipes.map(mapper))
-        }
+	neuDisplayGeneratorWithItem<D, T> { _, it -> mapper(it) }
 
-        override fun generate(builder: ViewSearchBuilder): Optional<List<D>> {
-            if (SBCraftingRecipe.Category.catIdentifier !in builder.categories) return Optional.empty()
-            return Optional.of(
-                RepoManager.getAllRecipes().filterIsInstance<T>().map { mapper(it) }
-                    .toList()
-            )
-        }
+inline fun <D : Display, reified T : NEURecipe> neuDisplayGeneratorWithItem(crossinline mapper: (SBItemStack, T) -> D) =
+	object : DynamicDisplayGenerator<D> {
+		override fun getRecipeFor(entry: EntryStack<*>): Optional<List<D>> {
+			if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
+			val item = entry.castValue<SBItemStack>()
+			val recipes = RepoManager.getRecipesFor(item.skyblockId)
+			val craftingRecipes = recipes.filterIsInstance<T>()
+			return Optional.of(craftingRecipes.map { mapper(item, it) })
+		}
 
-        override fun getUsageFor(entry: EntryStack<*>): Optional<List<D>> {
-            if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
-            val item = entry.castValue<SBItemStack>()
-            val recipes = RepoManager.getUsagesFor(item.skyblockId)
-            val craftingRecipes = recipes.filterIsInstance<T>()
-            return Optional.of(craftingRecipes.map(mapper))
+		override fun generate(builder: ViewSearchBuilder): Optional<List<D>> {
+			return Optional.empty() // TODO: allows searching without blocking getRecipeFor
+		}
 
-        }
-    }
+		override fun getUsageFor(entry: EntryStack<*>): Optional<List<D>> {
+			if (entry.type != SBItemEntryDefinition.type) return Optional.empty()
+			val item = entry.castValue<SBItemStack>()
+			val recipes = RepoManager.getUsagesFor(item.skyblockId)
+			val craftingRecipes = recipes.filterIsInstance<T>()
+			return Optional.of(craftingRecipes.map { mapper(item, it) })
+		}
+	}
