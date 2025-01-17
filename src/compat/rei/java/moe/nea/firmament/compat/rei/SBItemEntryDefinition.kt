@@ -15,12 +15,9 @@ import net.minecraft.registry.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
-import moe.nea.firmament.repo.PetData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.petData
-import moe.nea.firmament.util.skyBlockId
 
 object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	override fun equals(o1: SBItemStack, o2: SBItemStack, context: ComparisonContext): Boolean {
@@ -55,7 +52,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 
 	override fun wildcard(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
 		return value.copy(stackSize = 1, petData = RepoManager.getPotentialStubPetData(value.skyblockId),
-		                  stars = 0, extraLore = listOf())
+		                  stars = 0, extraLore = listOf(), reforge = null)
 	}
 
 	override fun normalize(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
@@ -86,12 +83,5 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	fun getPassthrough(item: ItemConvertible) = getEntry(SBItemStack.passthrough(ItemStack(item.asItem())))
 
 	fun getEntry(stack: ItemStack): EntryStack<SBItemStack> =
-		getEntry(
-			SBItemStack(
-				stack.skyBlockId ?: SkyblockId.NULL,
-				RepoManager.getNEUItem(stack.skyBlockId ?: SkyblockId.NULL),
-				stack.count,
-				petData = stack.petData?.let { PetData.fromHypixel(it) }
-			)
-		)
+		getEntry(SBItemStack(stack))
 }

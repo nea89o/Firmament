@@ -17,8 +17,7 @@ object SkyblockItemIdFocusedStackProvider : FocusedStackProvider {
         screen as AccessorHandledScreen
         val focusedSlot = screen.focusedSlot_Firmament ?: return CompoundEventResult.pass()
         val item = focusedSlot.stack ?: return CompoundEventResult.pass()
-        val skyblockId = item.skyBlockId ?: return CompoundEventResult.pass()
-        return CompoundEventResult.interruptTrue(SBItemEntryDefinition.getEntry(skyblockId))
+        return CompoundEventResult.interruptTrue(SBItemEntryDefinition.getEntry(item))
     }
 
     override fun getPriority(): Double = 1_000_000.0

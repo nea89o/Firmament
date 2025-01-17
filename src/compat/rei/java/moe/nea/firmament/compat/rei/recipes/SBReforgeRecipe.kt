@@ -44,7 +44,7 @@ import moe.nea.firmament.util.tr
 
 class SBReforgeRecipe(
 	val reforge: Reforge,
-	val limitToItem: SkyblockId?,
+	val limitToItem: SBItemStack?,
 ) : Display {
 	companion object {
 		val catIdentifier = CategoryIdentifier.of<SBReforgeRecipe>(Firmament.MOD_ID, "reforge_recipe")
@@ -132,10 +132,10 @@ class SBReforgeRecipe(
 		fun getRecipesForSBItemStack(item: SBItemStack): Optional<List<SBReforgeRecipe>> {
 			val reforgeRecipes = mutableListOf<SBReforgeRecipe>()
 			for (reforge in ReforgeStore.findEligibleForInternalName(item.skyblockId)) {
-				reforgeRecipes.add(SBReforgeRecipe(reforge, item.skyblockId))
+				reforgeRecipes.add(SBReforgeRecipe(reforge, item))
 			}
 			for (reforge in ReforgeStore.findEligibleForItem(item.itemType ?: ItemType.NIL)) {
-				reforgeRecipes.add(SBReforgeRecipe(reforge, item.skyblockId))
+				reforgeRecipes.add(SBReforgeRecipe(reforge, item))
 			}
 			if (reforgeRecipes.isEmpty()) return Optional.empty()
 			return Optional.of(reforgeRecipes)
@@ -162,26 +162,27 @@ class SBReforgeRecipe(
 		}
 	}
 
-	private val eligibleItems =
-		if (limitToItem != null) listOfNotNull(RepoManager.getNEUItem(limitToItem))
-		else reforge.eligibleItems.flatMap {
+	private val inputItems = run {
+		if (limitToItem != null) return@run listOf(SBItemEntryDefinition.getEntry(limitToItem))
+		val eligibleItems = reforge.eligibleItems.flatMap {
 			when (it) {
-				is Reforge.ReforgeEligibilityFilter.AllowsInternalName ->
-					listOfNotNull(RepoManager.getNEUItem(it.internalName))
+					is Reforge.ReforgeEligibilityFilter.AllowsInternalName ->
+						listOfNotNull(RepoManager.getNEUItem(it.internalName))
 
-				is Reforge.ReforgeEligibilityFilter.AllowsItemType ->
-					ReforgeStore.resolveItemType(it.itemType)
-						.flatMapTo(mutableSetOf()) {
-							(RepoItemTypeCache.byItemType[it] ?: listOf()) +
-								(RepoItemTypeCache.byItemType[it.dungeonVariant] ?: listOf())
-						}.toList()
+					is Reforge.ReforgeEligibilityFilter.AllowsItemType ->
+						ReforgeStore.resolveItemType(it.itemType)
+							.flatMapTo(mutableSetOf()) {
+								(RepoItemTypeCache.byItemType[it] ?: listOf()) +
+									(RepoItemTypeCache.byItemType[it.dungeonVariant] ?: listOf())
+							}.toList()
 
-				is Reforge.ReforgeEligibilityFilter.AllowsVanillaItemType -> {
-					listOf() // TODO: add filter support for this and potentially rework this to search for the declared item type in repo, instead of remapped item type
+					is Reforge.ReforgeEligibilityFilter.AllowsVanillaItemType -> {
+						listOf() // TODO: add filter support for this and potentially rework this to search for the declared item type in repo, instead of remapped item type
+					}
 				}
-			}
 		}
-	private val inputItems = eligibleItems.map { SBItemEntryDefinition.getEntry(it.skyblockId) }
+		eligibleItems.map { SBItemEntryDefinition.getEntry(it.skyblockId) }
+	}
 	private val outputItems =
 		inputItems.map { SBItemEntryDefinition.getEntry(it.value.copy(reforge = reforge.reforgeId)) }
 	private val reforgeStone = reforge.reforgeStone?.let(SBItemEntryDefinition::getEntry)
