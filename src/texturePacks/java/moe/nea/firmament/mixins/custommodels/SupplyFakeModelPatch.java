@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import moe.nea.firmament.Firmament;
+import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures;
 import moe.nea.firmament.features.texturepack.PredicateModel;
 import moe.nea.firmament.util.ErrorUtil;
 import net.minecraft.client.item.ItemAsset;
@@ -17,10 +18,7 @@ import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +44,7 @@ public class SupplyFakeModelPatch {
 	}
 
 	private static ItemAssetsLoader.Result supplyExtraModels(ResourceManager resourceManager, ItemAssetsLoader.Result oldModels) {
+		if (!CustomSkyBlockTextures.TConfig.INSTANCE.getEnableLegacyMinecraftCompat()) return oldModels;
 		Map<Identifier, ItemAsset> newModels = new HashMap<>(oldModels.contents());
 		var resources = resourceManager.findResources(
 			"models/item",

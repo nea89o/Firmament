@@ -145,6 +145,7 @@ object CustomGlobalArmorOverrides {
 						null
 					}
 				}
+				bakedOverrides.clear()
 				val associatedMap = overrides.flatMap { obj -> obj.itemIds.map { it to obj } }
 					.toMap()
 				associatedMap.forEach { it.value.bake(manager) }
@@ -152,7 +153,6 @@ object CustomGlobalArmorOverrides {
 			}
 
 			override fun apply(prepared: Map<String, ArmorOverride>, manager: ResourceManager, profiler: Profiler) {
-				bakedOverrides.clear()
 				overrides = prepared
 			}
 		})
@@ -160,11 +160,13 @@ object CustomGlobalArmorOverrides {
 
 	@JvmStatic
 	fun overrideArmor(itemStack: ItemStack, slot: EquipmentSlot): Optional<EquippableComponent> {
+		if (!CustomSkyBlockTextures.TConfig.enableArmorOverrides) return Optional.empty()
 		return overrideCache.invoke(itemStack, slot)
 	}
 
 	@JvmStatic
 	fun overrideArmorLayer(id: Identifier): EquipmentModel? {
+		if (!CustomSkyBlockTextures.TConfig.enableArmorOverrides) return null
 		return bakedOverrides[id]
 	}
 

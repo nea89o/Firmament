@@ -81,6 +81,8 @@
 	"firmament.config.custom-skyblock-textures.enabled.description": "Allow replacing items for texture packs. Turning this off does not disable custom predicates",
 	"firmament.config.custom-skyblock-textures.legacy-cit": "Enable legacy CIT Resewn compat",
 	"firmament.config.custom-skyblock-textures.legacy-cit.description": "Allow CIT resewn texture packs written for 1.20.4 to be loaded on newer versions.",
+	"firmament.config.custom-skyblock-textures.legacy-minecraft-path-support": "Enable Legacy Paths",
+	"firmament.config.custom-skyblock-textures.legacy-minecraft-path-support.description": "Allow texture packs to load textures from some legacy paths. I.e.: Allows loading 1.21.0 armor textures on 1.21.4.",
 	"firmament.config.custom-skyblock-textures.model-overrides": "Enable model overrides/predicates",
 	"firmament.config.custom-skyblock-textures.model-overrides.description": "Enable Firmament's model predicates. This will apply to vanilla models as well, if that vanilla model has Firmament predicates.",
 	"firmament.config.custom-skyblock-textures.recolor-text": "Allow packs to recolor text",

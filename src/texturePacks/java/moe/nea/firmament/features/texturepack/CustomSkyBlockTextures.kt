@@ -3,7 +3,6 @@ package moe.nea.firmament.features.texturepack
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
 import java.util.Optional
-import org.jetbrains.annotations.Nullable
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.SkullBlock
@@ -34,6 +33,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
 		val enableModelOverrides by toggle("model-overrides") { true }
 		val enableArmorOverrides by toggle("armor-overrides") { true }
 		val enableBlockOverrides by toggle("block-overrides") { true }
+		val enableLegacyMinecraftCompat by toggle("legacy-minecraft-path-support") { true }
 		val enableLegacyCIT by toggle("legacy-cit") { true }
 		val allowRecoloringUiText by toggle("recolor-text") { true }
 	}
