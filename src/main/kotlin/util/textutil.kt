@@ -122,6 +122,7 @@ fun MutableText.pink() = withColor(Formatting.LIGHT_PURPLE)
 fun MutableText.yellow() = withColor(Formatting.YELLOW)
 fun MutableText.gold() = withColor(Formatting.GOLD)
 fun MutableText.grey() = withColor(Formatting.GRAY)
+fun MutableText.darkGrey() = withColor(Formatting.DARK_GRAY)
 fun MutableText.red() = withColor(Formatting.RED)
 fun MutableText.white() = withColor(Formatting.WHITE)
 fun MutableText.bold(): MutableText = styled { it.withBold(true) }

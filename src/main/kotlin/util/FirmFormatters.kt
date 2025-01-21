@@ -9,11 +9,39 @@ import kotlin.io.path.isReadable
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.listDirectoryEntries
 import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.text.Text
 
 object FirmFormatters {
+
+	private inline fun shortIf(
+		value: Double, breakpoint: Double, char: String,
+		return_: (String) -> Nothing
+	) {
+		if (value >= breakpoint) {
+			val broken = (value / breakpoint * 10).roundToInt()
+			if (broken > 99)
+				return_((broken / 10).toString() + char)
+			val decimals = broken.toString()
+			decimals.singleOrNull()?.let {
+				return_("0.$it$char")
+			}
+			return_("${decimals[0]}.${decimals[1]}$char")
+		}
+	}
+
+	fun shortFormat(double: Double): String {
+		if (double < 0) return "-" + shortFormat(-double)
+		shortIf(double, 1_000_000_000_000.0, "t") { return it }
+		shortIf(double, 1_000_000_000.0, "b") { return it }
+		shortIf(double, 1_000_000.0, "m") { return it }
+		shortIf(double, 1_000.0, "k") { return it }
+		shortIf(double, 1.0, "") { return it }
+		return double.toString()
+	}
+
 	fun formatCommas(int: Int, segments: Int = 3): String = formatCommas(int.toLong(), segments)
 	fun formatCommas(long: Long, segments: Int = 3, includeSign: Boolean = false): String {
 		if (long < 0 && long != Long.MIN_VALUE) {

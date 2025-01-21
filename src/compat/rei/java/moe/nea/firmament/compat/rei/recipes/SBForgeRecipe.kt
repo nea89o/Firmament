@@ -8,7 +8,6 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget
 import me.shedaniel.rei.api.client.gui.widgets.Widgets
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
-import me.shedaniel.rei.api.common.util.EntryStacks
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.time.Duration.Companion.seconds
@@ -41,6 +40,7 @@ class SBForgeRecipe(override val neuRecipe: NEUForgeRecipe) : SBRecipe() {
 				                          Text.stringifiedTranslatable("firmament.recipe.forge.time",
 				                                                       display.neuRecipe.duration.seconds)))
 				val ingredientsCenter = Point(bounds.minX + 49 - 8, bounds.minY + 54 - 8)
+				add(Widgets.createBurningFire(ingredientsCenter).animationDurationTicks(25.0))
 				val count = display.neuRecipe.inputs.size
 				if (count == 1) {
 					add(

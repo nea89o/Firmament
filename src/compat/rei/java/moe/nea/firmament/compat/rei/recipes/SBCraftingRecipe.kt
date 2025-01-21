@@ -22,7 +22,7 @@ class SBCraftingRecipe(override val neuRecipe: NEUCraftingRecipe) : SBRecipe() {
 	override fun getCategoryIdentifier(): CategoryIdentifier<*> = Category.catIdentifier
 
 	object Category : DisplayCategory<SBCraftingRecipe> {
-		val catIdentifier = CategoryIdentifier.of<SBCraftingRecipe>(Firmament.MOD_ID, "crafing_recipe")
+		val catIdentifier = CategoryIdentifier.of<SBCraftingRecipe>(Firmament.MOD_ID, "crafting_recipe")
 		override fun getCategoryIdentifier(): CategoryIdentifier<out SBCraftingRecipe> = catIdentifier
 
 		override fun getTitle(): Text = Text.literal("SkyBlock Crafting")

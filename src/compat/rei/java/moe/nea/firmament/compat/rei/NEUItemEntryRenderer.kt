@@ -18,10 +18,13 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.item.tooltip.TooltipType
+import net.minecraft.text.Text
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.ErrorUtil
+import moe.nea.firmament.util.FirmFormatters
+import moe.nea.firmament.util.darkGrey
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 
@@ -40,8 +43,12 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 		context.matrices.translate(bounds.centerX.toFloat(), bounds.centerY.toFloat(), 0F)
 		context.matrices.scale(bounds.width.toFloat() / 16F, bounds.height.toFloat() / 16F, 1f)
 		val item = entry.asItemEntry().value
-		context.drawItemWithoutEntity(item, -8, -8, )
-		context.drawStackOverlay(minecraft.textRenderer, item, -8, -8)
+		context.drawItemWithoutEntity(item, -8, -8)
+		context.drawStackOverlay(minecraft.textRenderer, item, -8, -8,
+		                         if (entry.value.getStackSize() > 1000) FirmFormatters.shortFormat(entry.value.getStackSize()
+			                                                                                           .toDouble())
+		                         else null
+		)
 		context.matrices.pop()
 	}
 
@@ -70,6 +77,8 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 				lore
 			))
 		}
+		if (entry.value.getStackSize() > 1000 && lore.isNotEmpty())
+			lore.add(1, Text.literal("${entry.value.getStackSize()}x").darkGrey())
 		// TODO: tags aren't sent as early now so some tooltip components that use tags will crash the game
 //		stack.getTooltip(
 //			Item.TooltipContext.create(

@@ -4,6 +4,7 @@ import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUForgeRecipe
 import io.github.moulberry.repo.data.NEUKatUpgradeRecipe
 import io.github.moulberry.repo.data.NEUMobDropRecipe
+import io.github.moulberry.repo.data.NEUNpcShopRecipe
 import io.github.moulberry.repo.data.NEURecipe
 import java.util.Optional
 import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator
@@ -15,6 +16,7 @@ import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.compat.rei.recipes.SBShopRecipe
 import moe.nea.firmament.repo.EssenceRecipeProvider
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
@@ -28,7 +30,8 @@ val SkyblockForgeRecipeDynamicGenerator =
 
 val SkyblockMobDropRecipeDynamicGenerator =
 	neuDisplayGenerator<SBMobDropRecipe, NEUMobDropRecipe> { SBMobDropRecipe(it) }
-
+val SkyblockShopRecipeDynamicGenerator =
+	neuDisplayGenerator<SBShopRecipe, NEUNpcShopRecipe> { SBShopRecipe(it) }
 val SkyblockKatRecipeDynamicGenerator =
 	neuDisplayGenerator<SBKatRecipe, NEUKatUpgradeRecipe> { SBKatRecipe(it) }
 val SkyblockEssenceRecipeDynamicGenerator =
