@@ -76,7 +76,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
 	fun onCustomModelId(it: CustomItemModelEvent) {
 		if (!TConfig.enabled) return
 		val id = it.itemStack.skyBlockId ?: return
-		it.overrideIfExists(Identifier.of("firmskyblock", id.identifier.path))
+		it.overrideIfEmpty(Identifier.of("firmskyblock", id.identifier.path))
 	}
 
 	private val skullTextureCache =

@@ -17,7 +17,7 @@ class ItemPredicate(
     val item: Item
 ) : FirmamentModelPredicate {
     override fun test(stack: ItemStack): Boolean {
-        return stack.item == item
+        return stack.isOf(item)
     }
 
     object Parser : FirmamentModelPredicateParser {

@@ -48,9 +48,8 @@ public class SupplyFakeModelPatch {
 		Map<Identifier, ItemAsset> newModels = new HashMap<>(oldModels.contents());
 		var resources = resourceManager.findResources(
 			"models/item",
-			id -> id.getNamespace().equals("firmskyblock")
-				      && id.getPath().endsWith(".json")
-				      && !id.getPath().substring("models/item/".length()).contains("/"));
+			id -> (id.getNamespace().equals("firmskyblock") || id.getNamespace().equals("cittofirmgenerated"))
+				      && id.getPath().endsWith(".json"));
 		for (Map.Entry<Identifier, Resource> model : resources.entrySet()) {
 			var resource = model.getValue();
 			var itemModelId = model.getKey().withPath(it -> it.substring("models/item/".length(), it.length() - ".json".length()));

@@ -30,6 +30,7 @@ import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.focusedItemStack
+import moe.nea.firmament.util.mc.IntrospectableItemModelManager
 import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
@@ -119,7 +120,11 @@ object PowerUserTools : FirmamentFeature {
 			lastCopiedStack =
 				Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skyblockid", sbId.neuItem))
 		} else if (it.matches(TConfig.copyTexturePackId)) {
-			val model = CustomItemModelEvent.getModelIdentifier(item) // TODO: remove global texture overrides, maybe
+			val model = CustomItemModelEvent.getModelIdentifier0(item, object : IntrospectableItemModelManager {
+				override fun hasModel_firmament(identifier: Identifier): Boolean {
+					return true
+				}
+			}).getOrNull() // TODO: remove global texture overrides, maybe
 			if (model == null) {
 				lastCopiedStack = Pair(item, Text.translatable("firmament.tooltip.copied.modelid.fail"))
 				return

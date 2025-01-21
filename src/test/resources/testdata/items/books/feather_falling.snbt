@@ -1,0 +1,36 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			enchantments: {
+				feather_falling: 6
+			},
+			id: "ENCHANTED_BOOK",
+			timestamp: 1737123521091L,
+			uuid: "b8128489-9ed0-4a1a-94c0-d3279ffe45ac"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"blue","text":"Enchanted Book"}],"italic":false,"text":""}',
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"blue","text":"Feather Falling VI"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Increases how high you can fall"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"before taking fall damage by "},{"color":"green","text":"6"},{"color":"gray","text":" and"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"reduces fall damage by "},{"color":"green","text":"30%"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Applicable on: "},{"color":"blue","text":"Boots"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"gray","text":"Apply Cost: "},{"color":"dark_aqua","text":"60 Exp Levels"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Use this on an item in an Anvil to"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"apply it!"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"blue","text":"RARE"}],"italic":false,"text":""}'
+		]
+	},
+	count: 1,
+	id: "minecraft:enchanted_book"
+}
