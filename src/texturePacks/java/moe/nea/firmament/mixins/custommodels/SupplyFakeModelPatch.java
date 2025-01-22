@@ -54,6 +54,7 @@ public class SupplyFakeModelPatch {
 			var resource = model.getValue();
 			var itemModelId = model.getKey().withPath(it -> it.substring("models/item/".length(), it.length() - ".json".length()));
 			var genericModelId = itemModelId.withPrefixedPath("item/");
+			var itemAssetId = itemModelId.withPrefixedPath("items/");
 			// TODO: inject tint indexes based on the json data here
 			ItemModel.Unbaked unbakedModel = new BasicItemModel.Unbaked(genericModelId, List.of());
 			// TODO: add a filter using the pack.mcmeta to opt out of this behaviour
@@ -63,7 +64,7 @@ public class SupplyFakeModelPatch {
 			} catch (Exception e) {
 				ErrorUtil.INSTANCE.softError("Could not create resource for fake model supplication: " + model.getKey(), e);
 			}
-			if (resourceManager.getResource(itemModelId)
+			if (resourceManager.getResource(itemAssetId.withSuffixedPath(".json"))
 			                   .map(Resource::getPack)
 			                   .map(it -> isResourcePackNewer(resourceManager, it, resource.getPack()))
 			                   .orElse(true)) {
@@ -82,7 +83,7 @@ public class SupplyFakeModelPatch {
 		var pack = manager.streamResourcePacks()
 		                  .filter(it -> it == null_ || it == proposal)
 		                  .collect(findLast());
-		return pack.orElse(null) == proposal;
+		return pack.orElse(null_) != null_;
 	}
 
 	private static <T> Collector<T, ?, Optional<T>> findLast() {
