@@ -39,7 +39,7 @@ class PredicateModel {
 		) {
 			val model =
 				overrides
-					.find { it.predicate.test(stack) }
+					.findLast { it.predicate.test(stack, user) }
 					?.model
 					?: fallback
 			model.update(state, stack, resolver, transformationMode, world, user, seed)

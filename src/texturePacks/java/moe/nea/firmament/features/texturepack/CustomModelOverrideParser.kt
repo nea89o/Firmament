@@ -22,6 +22,7 @@ import moe.nea.firmament.features.texturepack.predicates.LorePredicate
 import moe.nea.firmament.features.texturepack.predicates.NotPredicate
 import moe.nea.firmament.features.texturepack.predicates.OrPredicate
 import moe.nea.firmament.features.texturepack.predicates.PetPredicate
+import moe.nea.firmament.features.texturepack.predicates.PullingPredicate
 import moe.nea.firmament.util.json.KJsonOps
 
 object CustomModelOverrideParser {
@@ -78,6 +79,12 @@ object CustomModelOverrideParser {
 		for (predicateName in predicates.keySet()) {
 			if (predicateName == "cast") { // 1.21.4
 				parsedPredicates.add(CastPredicate.Parser.parse(predicates[predicateName]) ?: return neverPredicate)
+			}
+			if (predicateName == "pull") {
+				parsedPredicates.add(PullingPredicate.Parser.parse(predicates[predicateName]) ?: return neverPredicate)
+			}
+			if (predicateName == "pulling") {
+				parsedPredicates.add(PullingPredicate.AnyPulling)
 			}
 			if (!predicateName.startsWith("firmament:")) continue
 			val identifier = Identifier.of(predicateName)
