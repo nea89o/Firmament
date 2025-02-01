@@ -7,11 +7,13 @@ import net.minecraft.client.gui.hud.InGameHud
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.network.ClientPlayerEntity
+import net.minecraft.client.render.GameRenderer
 import net.minecraft.client.render.WorldRenderer
 import net.minecraft.client.render.item.ItemRenderer
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import net.minecraft.registry.BuiltinRegistries
 import net.minecraft.registry.RegistryKeys
@@ -85,6 +87,7 @@ object MC {
 	inline val resourceManager get() = (instance.resourceManager as ReloadableResourceManagerImpl)
 	inline val itemRenderer: ItemRenderer get() = instance.itemRenderer
 	inline val worldRenderer: WorldRenderer get() = instance.worldRenderer
+	inline val gameRenderer: GameRenderer get() = instance.gameRenderer
 	inline val networkHandler get() = player?.networkHandler
 	inline val instance get() = MinecraftClient.getInstance()
 	inline val keyboard get() = instance.keyboard
@@ -96,6 +99,7 @@ object MC {
 	inline val soundManager get() = instance.soundManager
 	inline val player: ClientPlayerEntity? get() = TestUtil.unlessTesting { instance.player }
 	inline val camera: Entity? get() = instance.cameraEntity
+	inline val stackInHand: ItemStack? get() = player?.inventory?.mainHandStack
 	inline val guiAtlasManager get() = instance.guiAtlasManager
 	inline val world: ClientWorld? get() = TestUtil.unlessTesting { instance.world }
 	inline val playerName: String? get() = player?.name?.unformattedString

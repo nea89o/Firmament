@@ -6,15 +6,21 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import com.google.common.hash.Hashing
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.platform.OperatingSystem
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.charset.StandardCharsets
+import java.util.Base64
 
 plugins {
 	java
@@ -337,9 +343,9 @@ loom {
 		named("client") {
 			property("devauth.enabled", "true")
 			vmArg("-ea")
-			vmArg("-XX:+AllowEnhancedClassRedefinition")
-			vmArg("-XX:HotswapAgent=external")
-			vmArg("-javaagent:${hotswap.resolve().single().absolutePath}")
+//			vmArg("-XX:+AllowEnhancedClassRedefinition")
+//			vmArg("-XX:HotswapAgent=external")
+//			vmArg("-javaagent:${hotswap.resolve().single().absolutePath}")
 		}
 	}
 }
@@ -463,6 +469,70 @@ tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).ap
 	}
 	outputs.upToDateWhen { false }
 }
+fun patchRenderDoc(
+	javaLauncher: JavaLauncher,
+): JavaLauncher {
+	val wrappedJavaExecutable = javaLauncher.executablePath.asFile.absolutePath
+	require("\"" !in wrappedJavaExecutable)
+	val hashBytes = Hashing.sha256().hashString(wrappedJavaExecutable, StandardCharsets.UTF_8)
+	val hash = Base64.getUrlEncoder().encodeToString(hashBytes.asBytes())
+		.replace("=", "")
+	val wrapperJavaRoot = rootProject.layout.buildDirectory
+		.dir("binaries/renderdoc-wrapped-java/$hash/")
+		.get()
+	val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
+	val wrapperJavaExe =
+		if (isWindows) wrapperJavaRoot.file("java.cmd")
+		else wrapperJavaRoot.file("java")
+	return object : JavaLauncher {
+		override fun getMetadata(): JavaInstallationMetadata {
+			return object : JavaInstallationMetadata by javaLauncher.metadata {
+				override fun isCurrentJvm(): Boolean {
+					return false
+				}
+			}
+		}
+
+		override fun getExecutablePath(): RegularFile {
+			val fileF = wrapperJavaExe.asFile
+			if (!fileF.exists()) {
+				fileF.parentFile.mkdirs()
+				if (isWindows) {
+					fileF.writeText("""
+					setlocal enableextensions
+					start "" renderdoccmd.exe capture --opt-hook-children --wait-for-exit --working-dir . "$wrappedJavaExecutable" %*
+					endlocal
+					""".trimIndent())
+				} else {
+					fileF.writeText("""
+					#!/usr/bin/env bash
+					exec renderdoccmd capture --opt-hook-children --wait-for-exit --working-dir . "$wrappedJavaExecutable" "$@"
+					""".trimIndent())
+					fileF.setExecutable(true)
+				}
+			}
+			return wrapperJavaExe
+		}
+	}
+}
+tasks.runClient {
+	javaLauncher.set(javaToolchains.launcherFor(java.toolchain).map { patchRenderDoc(it) })
+}
+//tasks.register<Exec>("runRenderDoc") {
+//	val runClient = tasks.runClient.get()
+//	commandLine(
+//		"renderdoc",
+//		"capture",
+//		"--opt-hook-children",
+//		"--wait-for-exit",
+//		"--working-dir",
+//		runClient.workingDir,
+//		runClient.javaLauncher.get().executablePath.asFile.absoluteFile,
+//	)
+//	args(runClient.allJvmArgs)
+//	args()
+//
+//}
 
 tasks.withType<AbstractArchiveTask>().configureEach {
 	isPreserveFileTimestamps = false

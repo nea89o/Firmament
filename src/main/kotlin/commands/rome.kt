@@ -254,6 +254,7 @@ fun firmamentCommand() = literal("firmament") {
 				val player = MC.player ?: return@thenExecute
 				player.world.getOtherEntities(player, player.boundingBox.expand(12.0))
 					.forEach(PowerUserTools::showEntity)
+				PowerUserTools.showEntity(player)
 			}
 		}
 		thenLiteral("callUrsa") {

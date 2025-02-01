@@ -1,22 +1,31 @@
 package moe.nea.firmament.features.debug
 
+import com.mojang.serialization.Codec
+import com.mojang.serialization.DynamicOps
 import com.mojang.serialization.JsonOps
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtOps
+import net.minecraft.nbt.NbtString
+import net.minecraft.predicate.NbtPredicate
 import net.minecraft.text.Text
 import net.minecraft.text.TextCodecs
 import net.minecraft.util.Identifier
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
+import net.minecraft.util.math.Position
+import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
@@ -31,6 +40,7 @@ import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.focusedItemStack
 import moe.nea.firmament.util.mc.IntrospectableItemModelManager
+import moe.nea.firmament.util.mc.SNbtFormatter
 import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
@@ -88,6 +98,11 @@ object PowerUserTools : FirmamentFeature {
 	}
 
 	fun showEntity(target: Entity) {
+		val nbt = NbtPredicate.entityToNbt(target)
+		nbt.remove("Inventory")
+		nbt.put("StyledName", TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, target.styledDisplayName).orThrow)
+		println(SNbtFormatter.prettify(nbt))
+		ClipboardUtils.setTextContent(SNbtFormatter.prettify(nbt))
 		MC.sendChat(Text.translatable("firmament.poweruser.entity.type", target.type))
 		MC.sendChat(Text.translatable("firmament.poweruser.entity.name", target.name))
 		MC.sendChat(Text.stringifiedTranslatable("firmament.poweruser.entity.position", target.pos))
