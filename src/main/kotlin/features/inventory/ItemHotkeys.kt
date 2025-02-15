@@ -29,7 +29,7 @@ object ItemHotkeys {
 		if (HypixelStaticData.hasBazaarStock(skyblockId)) {
 			MC.sendCommand("bz ${item.getSearchName()}")
 		} else if (HypixelStaticData.hasAuctionHouseOffers(skyblockId)) {
-			MC.sendCommand("ahs ${item.getSearchName()}")
+			MC.sendCommand("ahsearch ${item.getSearchName()}")
 		} else {
 			return
 		}
