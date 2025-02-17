@@ -48,7 +48,7 @@
         "firmament.mixins.json"
     ],
     "depends": {
-        "fabric": "*",
+        "fabric": ">=${fabric_api_version}",
         "fabric-language-kotlin": ">=${fabric_kotlin_version}",
         "minecraft": ">=${minecraft_version}"
     },

@@ -6,20 +6,20 @@
 minecraft = "1.21.4"
 
 # Update from https://kotlinlang.org/
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 # Update from https://github.com/google/ksp/releases
-kotlin_ksp = "2.1.0-1.0.29"
+kotlin_ksp = "2.1.10-1.0.30"
 
 # Update from https://linkie.shedaniel.me/dependencies?loader=fabric
-fabric_loader = "0.16.9"
-fabric_api = "0.114.0+1.21.4"
-yarn = "1.21.4+build.4"
-modmenu = "13.0.0-beta.1"
+fabric_loader = "0.16.10"
+fabric_api = "0.117.0+1.21.4"
+yarn = "1.21.4+build.8"
+modmenu = "13.0.2"
 architectury = "15.0.1"
 rei = "18.0.796"
 
 # Update from https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/
-fabric_kotlin = "1.13.0+kotlin.2.1.0"
+fabric_kotlin = "1.13.1+kotlin.2.1.10"
 
 # Update from https://maven.architectury.dev/dev/architectury/loom/dev.architectury.loom.gradle.plugin/
 loom = "1.7.414" # TODO: port back to architectury (and) 1.9.424

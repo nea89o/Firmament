@@ -5,6 +5,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import net.fabricmc.fabric.api.resource.ModResourcePack
+import net.fabricmc.fabric.impl.resource.loader.ModResourcePackSorter
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.metadata.ModMetadata
 import kotlin.io.path.exists
@@ -28,9 +29,9 @@ import moe.nea.firmament.Firmament
 
 class RepoModResourcePack(val basePath: Path) : ModResourcePack {
 	companion object {
-		fun append(packs: MutableList<in ModResourcePack>) {
+		fun append(packs: ModResourcePackSorter) {
 			Firmament.logger.info("Registering mod resource pack")
-			packs.add(RepoModResourcePack(RepoDownloadManager.repoSavedLocation))
+			packs.addPack(RepoModResourcePack(RepoDownloadManager.repoSavedLocation))
 		}
 
 		fun createResourceDirectly(identifier: Identifier): Optional<Resource> {

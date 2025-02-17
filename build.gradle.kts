@@ -440,6 +440,7 @@ tasks.processResources {
 		"version" to project.version.toString(),
 		"minecraft_version" to libs.versions.minecraft.get(),
 		"fabric_kotlin_version" to libs.versions.fabric.kotlin.get(),
+		"fabric_api_version" to libs.versions.fabric.api.get(),
 		"rei_version" to libs.versions.rei.get()
 	)
 	replacements.forEach { (key, value) -> inputs.property(key, value) }
