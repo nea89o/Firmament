@@ -28,8 +28,8 @@ class CheckboxComponent<T>(
 		val ctx = (context.renderContext as ModernRenderContext).drawContext
 		ctx.drawGuiTexture(
 			RenderLayer::getGuiTextured,
-			if (isEnabled()) Firmament.identifier("firmament:widget/checkbox_checked")
-			else Firmament.identifier("firmament:widget/checkbox_unchecked"),
+			if (isEnabled()) Firmament.identifier("widget/checkbox_checked")
+			else Firmament.identifier("widget/checkbox_unchecked"),
 			0, 0,
 			16, 16
 		)
@@ -43,6 +43,7 @@ class CheckboxComponent<T>(
 				isClicking = false
 				if (context.isHovered)
 					state.set(value)
+				blur()
 				return true
 			}
 			if (mouseEvent.mouseState && mouseEvent.mouseButton == 0 && context.isHovered) {
