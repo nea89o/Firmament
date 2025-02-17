@@ -102,14 +102,7 @@ object RepoManager {
 
 	fun launchAsyncUpdate(force: Boolean = false) {
 		Firmament.coroutineScope.launch {
-			ItemCache.ReloadProgressHud.reportProgress("Downloading", 0, -1) // TODO: replace with a proper bouncy bar
-			ItemCache.ReloadProgressHud.isEnabled = true
-			try {
-				RepoDownloadManager.downloadUpdate(force)
-				ItemCache.ReloadProgressHud.reportProgress("Download complete", 1, 1)
-			} finally {
-				ItemCache.ReloadProgressHud.isEnabled = false
-			}
+			RepoDownloadManager.downloadUpdate(force)
 			reload()
 		}
 	}
@@ -127,10 +120,6 @@ object RepoManager {
 			return
 		}
 		try {
-			ItemCache.ReloadProgressHud.reportProgress("Reloading from Disk",
-			                                           0,
-			                                           -1) // TODO: replace with a proper bouncy bar
-			ItemCache.ReloadProgressHud.isEnabled = true
 			logger.info("Repo reload started.")
 			neuRepo.reload()
 			logger.info("Repo reload completed.")
@@ -140,7 +129,6 @@ object RepoManager {
 				tr("firmament.repo.reloadfail",
 				   "Failed to reload repository. This will result in some mod features not working.")
 			)
-			ItemCache.ReloadProgressHud.isEnabled = false
 		}
 	}
 

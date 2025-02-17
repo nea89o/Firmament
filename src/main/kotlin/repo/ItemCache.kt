@@ -184,31 +184,6 @@ object ItemCache : IReloadable {
 
 	var job: Job? = null
 
-	object ReloadProgressHud : MoulConfigHud(
-		"repo_reload", HudMeta(HudPosition(0.0, 0.0, 1F), Text.literal("Repo Reload"), 180, 18)) {
-
-
-		var isEnabled = false
-		override fun shouldRender(): Boolean {
-			return isEnabled
-		}
-
-		@get:Bind("current")
-		var current: Double = 0.0
-
-		@get:Bind("label")
-		var label: String = ""
-
-		@get:Bind("max")
-		var max: Double = 0.0
-
-		fun reportProgress(label: String, current: Int, max: Int) {
-			this.label = label
-			this.current = current.toDouble()
-			this.max = max.toDouble()
-		}
-	}
-
 	override fun reload(repository: NEURepository) {
 		val j = job
 		if (j != null && j.isActive) {
@@ -218,20 +193,10 @@ object ItemCache : IReloadable {
 		isFlawless = true
 		if (TestUtil.isInTest) return
 		job = Firmament.coroutineScope.launch {
-			val items = repository.items?.items
-			if (items == null) {
-				ReloadProgressHud.isEnabled = false
-				return@launch
-			}
-			val recacheItems = I18n.translate("firmament.repo.cache")
-			ReloadProgressHud.reportProgress(recacheItems, 0, items.size)
-			ReloadProgressHud.isEnabled = true
-			var i = 0
+			val items = repository.items?.items ?: return@launch
 			items.values.forEach {
 				it.asItemStack() // Rebuild cache
-				ReloadProgressHud.reportProgress(recacheItems, i++, items.size)
 			}
-			ReloadProgressHud.isEnabled = false
 		}
 	}
 
