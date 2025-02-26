@@ -40,6 +40,9 @@
         "modmenu": [
             "moe.nea.firmament.compat.modmenu.FirmamentModMenuPlugin"
         ],
+		"jade": [
+			"moe.nea.firmament.compat.jade.FirmamentJadePlugin"
+		],
         "jarvis": [
             "moe.nea.firmament.jarvis.JarvisIntegration"
         ]

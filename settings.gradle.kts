@@ -35,6 +35,7 @@ pluginManagement {
 
 rootProject.name = "Firmament"
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include("symbols")
 include("javaplugin")
 include("testagent")
