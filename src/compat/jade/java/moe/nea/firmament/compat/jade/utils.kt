@@ -1,5 +1,6 @@
 package moe.nea.firmament.compat.jade
 
+import snownee.jade.api.IWailaClientRegistration
 import snownee.jade.api.ui.IElement
 import snownee.jade.api.ui.IElementHelper
 import net.minecraft.item.ItemStack
@@ -14,3 +15,6 @@ fun String.jadeId(): Identifier = Identifier.of("firmament", this)
 // This drill icon should work for CIT resource packs
 val drillItem: ItemStack = Items.PRISMARINE_SHARD.defaultStack.setSkyBlockId(SkyblockId("TITANIUM_DRILL_1"))
 val drillIcon: IElement = IElementHelper.get().item(drillItem, 0.5f).message(null)
+fun IWailaClientRegistration.registerGemstone(type: String) {
+
+}
