@@ -12,7 +12,10 @@ import net.minecraft.util.Identifier
 class SkyblockProgressProvider : IClientExtensionProvider<ProgressView.Data, ProgressView> {
 	// wtf does this do i think its for the little progress bar which breaks in mining fatigue mining system
 	// but like this is just copied from the example plugin soo
-	// TODO :3
+	// this is different from the toolhandler/toolprovider, this one adjusts the mining progress bar to
+	// adjust with skyblock's nms packet fuckery (see pr for references on how those packets probably work)
+	// so yeah we need to fix that.
+	// TODO :3 lol
 	override fun getClientGroups(accessor: Accessor<*>, groups: List<ViewGroup<ProgressView.Data>>): List<ClientViewGroup<ProgressView>> {
 		return ClientViewGroup.map(groups, ProgressView::read,
 			BiConsumer { group: ViewGroup<ProgressView.Data>, clientGroup: ClientViewGroup<ProgressView> ->
