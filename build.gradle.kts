@@ -229,6 +229,7 @@ val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
+val jadeSourceSet = createIsolatedSourceSet("jade")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
@@ -253,8 +254,8 @@ dependencies {
 	(explosiveEnhancementSourceSet.modImplementationConfigurationName)(libs.explosiveenhancement)
 	modImplementation(libs.hypixelmodapi)
 	include(libs.hypixelmodapi.fabric)
-	compileOnly(project(":javaplugin"))
-	annotationProcessor(project(":javaplugin"))
+	compileOnly(projects.javaplugin)
+	annotationProcessor(projects.javaplugin)
 	implementation("com.google.auto.service:auto-service-annotations:1.1.1")
 	ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
 	include(libs.manninghamMills)
@@ -278,6 +279,7 @@ dependencies {
 	(wildfireGenderSourceSet.implementationConfigurationName)(customTexturesSourceSet.output)
 	(configuredSourceSet.modImplementationConfigurationName)(libs.configured)
 	(sodiumSourceSet.modImplementationConfigurationName)(libs.sodium)
+	(jadeSourceSet.modImplementationConfigurationName)(libs.jade)
 
 	(citResewnSourceSet.modImplementationConfigurationName)(
 		innerJarsOf("citresewn", dependencies.create(libs.citresewn.get()))
@@ -315,8 +317,8 @@ dependencies {
 	testImplementation("io.kotest:kotest-runner-junit5:6.0.0.M1")
 	testAgent(project(":testagent", configuration = "shadow"))
 
-	implementation(project(":symbols"))
-	ksp(project(":symbols"))
+	implementation(projects.symbols)
+	ksp(projects.symbols)
 }
 
 loom {
