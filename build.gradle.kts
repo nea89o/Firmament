@@ -519,21 +519,6 @@ fun patchRenderDoc(
 tasks.runClient {
 	javaLauncher.set(javaToolchains.launcherFor(java.toolchain).map { patchRenderDoc(it) })
 }
-//tasks.register<Exec>("runRenderDoc") {
-//	val runClient = tasks.runClient.get()
-//	commandLine(
-//		"renderdoc",
-//		"capture",
-//		"--opt-hook-children",
-//		"--wait-for-exit",
-//		"--working-dir",
-//		runClient.workingDir,
-//		runClient.javaLauncher.get().executablePath.asFile.absoluteFile,
-//	)
-//	args(runClient.allJvmArgs)
-//	args()
-//
-//}
 
 tasks.withType<AbstractArchiveTask>().configureEach {
 	isPreserveFileTimestamps = false
