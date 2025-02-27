@@ -4,8 +4,17 @@ package moe.nea.firmament.features.inventory
 
 import java.util.UUID
 import org.lwjgl.glfw.GLFW
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.int
 import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
@@ -51,8 +60,65 @@ object SlotLocking : FirmamentFeature {
 		val lockedSlots: MutableSet<Int> = mutableSetOf(),
 		val lockedSlotsRift: MutableSet<Int> = mutableSetOf(),
 		val lockedUUIDs: MutableSet<UUID> = mutableSetOf(),
-		val boundSlots: MutableMap<Int, Int> = mutableMapOf()
+		val boundSlots: BoundSlots = BoundSlots()
 	)
+
+	@Serializable
+	data class BoundSlot(
+		val hotbar: Int,
+		val inventory: Int,
+	)
+
+	@Serializable(with = BoundSlots.Serializer::class)
+	data class BoundSlots(
+		val pairs: MutableSet<BoundSlot> = mutableSetOf()
+	) {
+		fun findMatchingSlots(index: Int): List<BoundSlot> {
+			return pairs.filter { it.hotbar == index || it.inventory == index }
+		}
+
+		fun removeDuplicateForInventory(index: Int) {
+			pairs.removeIf { it.inventory == index }
+		}
+
+		fun removeAllInvolving(index: Int): Boolean {
+			return pairs.removeIf { it.inventory == index || it.hotbar == index }
+		}
+
+		fun insert(hotbar: Int, inventory: Int) {
+			if (!TConfig.allowMultiBinding) {
+				removeAllInvolving(hotbar)
+				removeAllInvolving(inventory)
+			}
+			pairs.add(BoundSlot(hotbar, inventory))
+		}
+
+		object Serializer : KSerializer<BoundSlots> {
+			override val descriptor: SerialDescriptor
+				get() = serializer<JsonElement>().descriptor
+
+			override fun serialize(
+				encoder: Encoder,
+				value: BoundSlots
+			) {
+				serializer<MutableSet<BoundSlot>>()
+					.serialize(encoder, value.pairs)
+			}
+
+			override fun deserialize(decoder: Decoder): BoundSlots {
+				decoder as JsonDecoder
+				val json = decoder.decodeJsonElement()
+				if (json is JsonObject) {
+					return BoundSlots(json.entries.map {
+						BoundSlot(it.key.toInt(), (it.value as JsonPrimitive).int)
+					}.toMutableSet())
+				}
+				return BoundSlots(decoder.json.decodeFromJsonElement(serializer<MutableSet<BoundSlot>>(), json))
+
+			}
+		}
+	}
+
 
 	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
 		val lockSlot by keyBinding("lock") { GLFW.GLFW_KEY_L }
@@ -62,6 +128,7 @@ object SlotLocking : FirmamentFeature {
 		val slotBind by keyBinding("bind") { GLFW.GLFW_KEY_L }
 		val slotBindRequireShift by toggle("require-quick-move") { true }
 		val slotRenderLines by choice("bind-render") { SlotRenderLinesMode.ONLY_BOXES }
+		val allowMultiBinding by toggle("multi-bind") { true } // TODO: filter based on this option
 		val allowDroppingInDungeons by toggle("drop-in-dungeons") { true }
 	}
 
@@ -177,19 +244,19 @@ object SlotLocking : FirmamentFeature {
 
 	@Subscribe
 	fun onQuickMoveBoundSlot(it: IsSlotProtectedEvent) {
-		val boundSlots = DConfig.data?.boundSlots ?: mapOf()
+		val boundSlots = DConfig.data?.boundSlots ?: BoundSlots()
 		val isValidAction =
 			it.actionType == SlotActionType.QUICK_MOVE || (it.actionType == SlotActionType.PICKUP && !TConfig.slotBindRequireShift)
 		if (!isValidAction) return
 		val handler = MC.handledScreen?.screenHandler ?: return
 		val slot = it.slot
 		if (slot != null && it.slot.inventory is PlayerInventory) {
-			val boundSlot = boundSlots.entries.find {
-				it.value == slot.index || it.key == slot.index
-			} ?: return
+			val matchingSlots = boundSlots.findMatchingSlots(slot.index)
+			if (matchingSlots.isEmpty()) return
 			it.protectSilent()
-			val inventorySlot = MC.handledScreen?.getSlotByIndex(boundSlot.value, true)
-			inventorySlot?.swapWithHotBar(handler, boundSlot.key)
+			val boundSlot = matchingSlots.singleOrNull() ?: return
+			val inventorySlot = MC.handledScreen?.getSlotByIndex(boundSlot.inventory, true)
+			inventorySlot?.swapWithHotBar(handler, boundSlot.hotbar)
 		}
 	}
 
@@ -228,10 +295,8 @@ object SlotLocking : FirmamentFeature {
 			val boundSlots = DConfig.data?.boundSlots ?: return
 			lockedSlots?.remove(hotBarSlot.index)
 			lockedSlots?.remove(invSlot.index)
-			boundSlots.entries.removeIf {
-				it.value == invSlot.index
-			}
-			boundSlots[hotBarSlot.index] = invSlot.index
+			boundSlots.removeDuplicateForInventory(invSlot.index)
+			boundSlots.insert(hotBarSlot.index, invSlot.index)
 			DConfig.markDirty()
 			CommonSoundEffects.playSuccess()
 			return
@@ -245,9 +310,7 @@ object SlotLocking : FirmamentFeature {
 			storedLockingSlot = null
 			val boundSlots = DConfig.data?.boundSlots ?: return
 			if (slot != null)
-				boundSlots.entries.removeIf {
-					it.value == slot.index || it.key == slot.index
-				}
+				boundSlots.removeAllInvolving(slot.index)
 		}
 	}
 
@@ -258,9 +321,10 @@ object SlotLocking : FirmamentFeature {
 		val accScreen = event.screen as AccessorHandledScreen
 		val sx = accScreen.x_Firmament
 		val sy = accScreen.y_Firmament
-		for (it in boundSlots.entries) {
-			val hotbarSlot = findByIndex(it.key) ?: continue
-			val inventorySlot = findByIndex(it.value) ?: continue
+		val highlitSlots = mutableSetOf<Slot>()
+		for (it in boundSlots.pairs) {
+			val hotbarSlot = findByIndex(it.hotbar) ?: continue
+			val inventorySlot = findByIndex(it.inventory) ?: continue
 
 			val (hotX, hotY) = hotbarSlot.lineCenter()
 			val (invX, invY) = inventorySlot.lineCenter()
@@ -268,22 +332,27 @@ object SlotLocking : FirmamentFeature {
 				|| accScreen.focusedSlot_Firmament === inventorySlot
 			if (!anyHovered && TConfig.slotRenderLines == SlotRenderLinesMode.NOTHING)
 				continue
-			val color = if (anyHovered)
-				me.shedaniel.math.Color.ofOpaque(0x00FF00)
-			else
-				me.shedaniel.math.Color.ofTransparent(0xc0a0f000.toInt())
+			if (anyHovered) {
+				highlitSlots.add(hotbarSlot)
+				highlitSlots.add(inventorySlot)
+			}
+			fun color(highlit: Boolean) =
+				if (highlit)
+					me.shedaniel.math.Color.ofOpaque(0x00FF00)
+				else
+					me.shedaniel.math.Color.ofTransparent(0xc0a0f000.toInt())
 			if (TConfig.slotRenderLines == SlotRenderLinesMode.EVERYTHING || anyHovered)
 				event.context.drawLine(
 					invX + sx, invY + sy,
 					hotX + sx, hotY + sy,
-					color
+					color(anyHovered)
 				)
 			event.context.drawBorder(hotbarSlot.x + sx,
 			                         hotbarSlot.y + sy,
-			                         16, 16, color.color)
+			                         16, 16, color(hotbarSlot in highlitSlots).color)
 			event.context.drawBorder(inventorySlot.x + sx,
 			                         inventorySlot.y + sy,
-			                         16, 16, color.color)
+			                         16, 16, color(inventorySlot in highlitSlots).color)
 		}
 	}
 
@@ -339,11 +408,9 @@ object SlotLocking : FirmamentFeature {
 
 	fun toggleSlotLock(slot: Slot) {
 		val lockedSlots = lockedSlots ?: return
-		val boundSlots = DConfig.data?.boundSlots ?: mutableMapOf()
+		val boundSlots = DConfig.data?.boundSlots ?: BoundSlots()
 		if (slot.inventory is PlayerInventory) {
-			if (boundSlots.entries.removeIf {
-					it.value == slot.index || it.key == slot.index
-				}) {
+			if (boundSlots.removeAllInvolving(slot.index)) {
 				// intentionally do nothing
 			} else if (slot.index in lockedSlots) {
 				lockedSlots.remove(slot.index)

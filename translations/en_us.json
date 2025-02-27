@@ -242,6 +242,8 @@
 	"firmament.config.slot-locking.lock-uuid": "Lock UUID (Lock Item)",
 	"firmament.config.slot-locking.lock-uuid.description": "Lock a SkyBlock item by it's UUID. This blocks a specific item from being dropped/sold, but still allows moving it around.",
 	"firmament.config.slot-locking.lock.description": "Lock a slot, preventing any item from being moved from, dropped from, or placed into this slot.",
+	"firmament.config.slot-locking.multi-bind": "Allow Multi Binding",
+	"firmament.config.slot-locking.multi-bind.description": "Allow binding the same hotbar slot to multiple inventory slots.",
 	"firmament.config.slot-locking.require-quick-move": "Require Shift-Click for Bound Slots",
 	"firmament.config.slot-locking.require-quick-move.description": "If turned off, allows to switch between bound slots without holding shift.",
 	"firmament.config.storage-overlay": "Storage Overlay",
