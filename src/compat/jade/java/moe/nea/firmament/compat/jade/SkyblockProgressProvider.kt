@@ -28,7 +28,7 @@ class SkyblockProgressProvider : IClientExtensionProvider<ProgressView.Data, Pro
 			})
 	}
 
-	override fun getUid(): Identifier? {
+	override fun getUid(): Identifier {
 		return "progress".jadeId()
 	}
 }
