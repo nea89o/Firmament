@@ -1,22 +1,29 @@
 package moe.nea.firmament.compat.jade
 
 import com.google.common.collect.Lists
+import snownee.jade.addon.harvest.SimpleToolHandler
 import snownee.jade.addon.harvest.ToolHandler
 import net.minecraft.block.BlockState
+import net.minecraft.client.MinecraftClient
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
+import moe.nea.firmament.util.SBData
 
-class SimpleToolHandler(
+class DrillToolHandler(
 	private val uid: Identifier,
 	private val tools: MutableList<ItemStack>
 ) : ToolHandler {
-	constructor(uid: Identifier, tools: MutableList<Item>) : this(uid, Lists.transform(tools, Item::getDefaultStack))
-
 	override fun test(state: BlockState, world: World, pos: BlockPos): ItemStack {
-		TODO("We need to override the existing tool handler tests because they use state.getHardness(world, pos) instead of using Breaking Power")
+		if (isOnMiningIsland()) {
+		}
+
+		// TODO: figure out how this work
+		return SimpleToolHandler.create(uid, tools.map {
+			return@map it.item
+		}).test(state, world, pos)
 	}
 
 	override fun getTools(): List<ItemStack> {
