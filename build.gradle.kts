@@ -14,10 +14,8 @@ import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.platform.OperatingSystem
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.charset.StandardCharsets
 import java.util.Base64
@@ -233,7 +231,7 @@ val jadeSourceSet = createIsolatedSourceSet("jade")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
-val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
+val customTexturesSourceSet = createIsolatedSourceSet("texturePacks")
 
 dependencies {
 	// Minecraft dependencies
