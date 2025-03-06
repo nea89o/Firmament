@@ -11,11 +11,14 @@ import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.text.Text
 import moe.nea.firmament.repo.ReforgeStore.kJson
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 
 class MiningRepoData : IReloadable {
 	var customMiningAreas: Map<SkyBlockIsland, CustomMiningArea> = mapOf()
@@ -41,7 +44,23 @@ class MiningRepoData : IReloadable {
 		val name: String? = null,
 		val baseDrop: SkyblockId? = null,
 		val blocks189: List<Block189> = emptyList()
-	)
+	) {
+		@Transient
+		val dropItem = baseDrop?.let(::SBItemStack)
+		private val labeledStack by lazy {
+			dropItem?.asCopiedItemStack()?.also(::markItemStack)
+		}
+
+		private fun markItemStack(itemStack: ItemStack) {
+			itemStack.set(FirmamentDataComponentTypes.CUSTOM_MINING_BLOCK_DATA, this)
+			if (name != null)
+				itemStack.displayNameAccordingToNbt = Text.literal(name)
+		}
+
+		fun getDisplayItem(block: Block): ItemStack {
+			return labeledStack ?: ItemStack(block).also(::markItemStack)
+		}
+	}
 
 	@Serializable
 	data class Block189(
@@ -54,6 +73,7 @@ class MiningRepoData : IReloadable {
 
 		val isCurrentlyActive: Boolean
 			get() = isActiveIn(SBData.skyblockLocation ?: SkyBlockIsland.NIL)
+
 		fun isActiveIn(location: SkyBlockIsland) = onlyIn == null || location in onlyIn
 
 		private fun convertToModernBlock(): Block? {
