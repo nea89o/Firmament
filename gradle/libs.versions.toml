@@ -57,7 +57,7 @@ devauth = "1.2.1"
 ktor = "3.0.3"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/neurepoparser
-neurepoparser = "1.6.0"
+neurepoparser = "1.7.0"
 
 # Update from https://github.com/HotswapProjects/HotswapAgent/releases
 # TODO: bump to 2.0.1

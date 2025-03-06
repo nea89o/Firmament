@@ -1,47 +1,79 @@
 package moe.nea.firmament.compat.jade
 
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.Maps
-import java.util.concurrent.TimeUnit
-import snownee.jade.addon.harvest.ToolHandler
+import java.util.Optional
+import java.util.function.UnaryOperator
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
+import snownee.jade.api.JadeIds
 import snownee.jade.api.config.IPluginConfig
-import net.minecraft.block.Block
-import net.minecraft.block.BlockState
+import snownee.jade.api.theme.IThemeHelper
+import snownee.jade.api.ui.IElement
+import snownee.jade.api.ui.IElementHelper
+import snownee.jade.impl.ui.ItemStackElement
+import snownee.jade.impl.ui.TextElement
+import kotlin.jvm.optionals.getOrDefault
 import net.minecraft.item.ItemStack
-import net.minecraft.resource.ResourceManager
-import net.minecraft.resource.SynchronousResourceReloader
+import net.minecraft.item.Items
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec2f
+import moe.nea.firmament.Firmament
+import moe.nea.firmament.repo.ItemCache.asItemStack
+import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.util.MC
 
-
-class DrillToolProvider : IBlockComponentProvider, SynchronousResourceReloader {
-	val resultCache: Cache<BlockState, ImmutableList<ItemStack>> = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build()
-	val toolHandlers: MutableMap<Identifier, ToolHandler> = Maps.newLinkedHashMap()
-	private val shearableBlocks: MutableList<Block> = mutableListOf()
-	private val checkIcon: Text = Text.literal("✔")
-	private val xIcon: Text = Text.literal("✕")
-	private val itemSize = Vec2f(10f, 0f)
-
-	@Synchronized
-	fun registerHandler(handler: ToolHandler) {
-		toolHandlers.put(handler.uid, handler)
+class DrillToolProvider : IBlockComponentProvider {
+	override fun appendTooltip(
+		tooltip: ITooltip,
+		accessor: BlockAccessor,
+		p2: IPluginConfig?
+	) {
+		val customBlock = CustomFakeBlockProvider.getCustomBlock(accessor) ?: return
+		if (customBlock.breakingPower <= 0) return
+		val tool = RepoManager.miningData.getToolsThatCanBreak(customBlock.breakingPower).firstOrNull()
+			?.asItemStack() ?: return
+		tooltip.replace(JadeIds.MC_HARVEST_TOOL, UnaryOperator { elements ->
+			elements.map { inner ->
+				val lastItemIndex = inner.indexOfLast { it is ItemStackElement }
+				if (lastItemIndex < 0) return@map inner
+				val innerMut = inner.toMutableList()
+				val harvestIndicator = innerMut.indexOfLast {
+					it is TextElement && it.cachedSize == Vec2f.ZERO && it.text.visit {
+						if (it.isEmpty()) Optional.empty() else Optional.of(true)
+					}.getOrDefault(false)
+				}
+				val canHarvest = (SBItemStack(MC.stackInHand).neuItem?.breakingPower ?: 0) >= customBlock.breakingPower
+				val lastItem = innerMut[lastItemIndex] as ItemStackElement
+				if (harvestIndicator < 0) {
+					innerMut.add(lastItemIndex + 1, canHarvestIndicator(canHarvest, lastItem.alignment))
+				} else {
+					innerMut.set(harvestIndicator, canHarvestIndicator(canHarvest, lastItem.alignment))
+				}
+				innerMut.set(lastItemIndex, IElementHelper.get()
+					.item(tool, 0.75f)
+					.translate(lastItem.translation)
+					.size(lastItem.size)
+					.message(null)
+					.align(lastItem.alignment))
+				innerMut.subList(0, lastItemIndex - 1).removeIf { it is ItemStackElement }
+				innerMut
+			}
+		})
 	}
 
-	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
-		TODO("Not yet implemented")
+	fun canHarvestIndicator(canHarvest: Boolean, align: IElement.Align): IElement {
+		val t = IThemeHelper.get()
+		val text = if (canHarvest) t.success(CHECK) else t.danger(X)
+		return IElementHelper.get().text(text)
+			.scale(0.75F).zOffset(800).size(Vec2f.ZERO).translate(Vec2f(-3F, 3.25F)).align(align)
 	}
+
+	private val CHECK: Text = Text.literal("✔")
+	private val X: Text = Text.literal("✕")
 
 	override fun getUid(): Identifier {
-		TODO("Not yet implemented")
-	}
-
-	override fun reload(manager: ResourceManager) {
-		TODO("Not yet implemented")
+		return Firmament.identifier("toolprovider")
 	}
 }
