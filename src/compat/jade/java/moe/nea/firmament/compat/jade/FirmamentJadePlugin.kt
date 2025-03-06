@@ -1,5 +1,6 @@
 package moe.nea.firmament.compat.jade
 
+import snownee.jade.addon.harvest.HarvestToolProvider
 import snownee.jade.api.IWailaClientRegistration
 import snownee.jade.api.IWailaCommonRegistration
 import snownee.jade.api.IWailaPlugin
@@ -18,6 +19,7 @@ class FirmamentJadePlugin : IWailaPlugin {
 	override fun registerClient(registration: IWailaClientRegistration) {
 		registration.registerBlockComponent(CustomMiningHardnessProvider, Block::class.java)
 		registration.registerProgressClient(SkyblockProgressProvider())
+		registration.registerBlockComponent(DrillToolProvider(), Block::class.java)
 		registration.addRayTraceCallback(CustomFakeBlockProvider(registration))
 	}
 }

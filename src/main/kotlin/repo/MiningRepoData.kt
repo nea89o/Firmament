@@ -2,6 +2,10 @@ package moe.nea.firmament.repo
 
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
+import io.github.moulberry.repo.data.NEUItem
+import java.util.Collections
+import java.util.NavigableMap
+import java.util.TreeMap
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.serializer
@@ -19,13 +23,30 @@ import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.skyblockId
 
 class MiningRepoData : IReloadable {
 	var customMiningAreas: Map<SkyBlockIsland, CustomMiningArea> = mapOf()
 		private set
 	var customMiningBlocks: List<CustomMiningBlock> = listOf()
 		private set
+	var toolsByBreakingPower: NavigableMap<BreakingPowerKey, NEUItem> = Collections.emptyNavigableMap()
+		private set
 
+
+	data class BreakingPowerKey(
+		val breakingPower: Int,
+		val itemId: SkyblockId? = null
+	) {
+		companion object {
+			val COMPARATOR: Comparator<BreakingPowerKey> =
+				Comparator
+					.comparingInt<BreakingPowerKey> { it.breakingPower }
+					.thenComparing(Comparator.comparing(
+						{ it.itemId },
+						nullsFirst(Comparator.naturalOrder<SkyblockId>())))
+		}
+	}
 
 	override fun reload(repo: NEURepository) {
 		customMiningAreas = repo.file("mining/custom_mining_areas.json")
@@ -35,6 +56,18 @@ class MiningRepoData : IReloadable {
 			.filter { it.path.endsWith(".json") }
 			.map { it.kJson(serializer<CustomMiningBlock>()) }
 			.toList()
+		toolsByBreakingPower = Collections.unmodifiableNavigableMap(
+			repo.items.items
+				.values
+				.asSequence()
+				.filter { it.breakingPower > 0 }
+				.associateTo(TreeMap<BreakingPowerKey, NEUItem>(BreakingPowerKey.COMPARATOR)) {
+					BreakingPowerKey(it.breakingPower, it.skyblockId) to it
+				})
+	}
+
+	fun getToolsThatCanBreak(breakingPower: Int): Collection<NEUItem> {
+		return toolsByBreakingPower.tailMap(BreakingPowerKey(breakingPower, null), true).values
 	}
 
 	@Serializable

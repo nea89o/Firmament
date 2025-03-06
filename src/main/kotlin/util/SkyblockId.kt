@@ -34,7 +34,7 @@ import moe.nea.firmament.util.json.DashlessUUIDSerializer
  */
 @JvmInline
 @Serializable
-value class SkyblockId(val neuItem: String) {
+value class SkyblockId(val neuItem: String) : Comparable<SkyblockId> {
 	val identifier
 		get() = Identifier.of("skyblockitem",
 		                      neuItem.lowercase().replace(";", "__")
@@ -46,6 +46,10 @@ value class SkyblockId(val neuItem: String) {
 
 	override fun toString(): String {
 		return neuItem
+	}
+
+	override fun compareTo(other: SkyblockId): Int {
+		return neuItem.compareTo(other.neuItem)
 	}
 
 	/**
