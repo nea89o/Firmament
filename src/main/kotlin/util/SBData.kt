@@ -31,6 +31,10 @@ object SBData {
 	val hypixelTimeZone = ZoneId.of("US/Eastern")
 	private var hasReceivedProfile = false
 	var locraw: Locraw? = null
+
+	/**
+	 * The current server location the player is in. This will be null outside of SkyBlock.
+	 */
 	val skyblockLocation: SkyBlockIsland? get() = locraw?.skyblockLocation
 	val hasValidLocraw get() = locraw?.server !in listOf("limbo", null)
 	val isOnSkyblock get() = locraw?.gametype == "SKYBLOCK"

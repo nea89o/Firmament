@@ -61,11 +61,12 @@ object ItemCache : IReloadable {
 		putShort("Damage", damage.toShort())
 	}
 
-	private fun NbtCompound.transformFrom10809ToModern(): NbtCompound? =
+	private fun NbtCompound.transformFrom10809ToModern() = convert189ToModern(this@transformFrom10809ToModern)
+	fun convert189ToModern(nbtComponent: NbtCompound): NbtCompound? =
 		try {
 			df.update(
 				TypeReferences.ITEM_STACK,
-				Dynamic(NbtOps.INSTANCE, this),
+				Dynamic(NbtOps.INSTANCE, nbtComponent),
 				-1,
 				SharedConstants.getGameVersion().saveVersion.id
 			).value as NbtCompound

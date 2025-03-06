@@ -246,6 +246,7 @@ fun firmamentCommand() = literal("firmament") {
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.gametype", locrawInfo.gametype))
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.mode", locrawInfo.mode))
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.map", locrawInfo.map))
+					source.sendFeedback(tr("firmament.sbinfo.custommining", "Custom Mining: ${formatBool(locrawInfo.skyblockLocation?.hasCustomMining ?: false)}"))
 				}
 			}
 		}
