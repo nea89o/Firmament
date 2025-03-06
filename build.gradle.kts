@@ -231,7 +231,7 @@ val jadeSourceSet = createIsolatedSourceSet("jade")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
-val customTexturesSourceSet = createIsolatedSourceSet("texturePacks")
+val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
 
 dependencies {
 	// Minecraft dependencies
