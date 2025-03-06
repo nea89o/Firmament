@@ -285,6 +285,7 @@
 	"firmament.inventory-buttons.import-failed": "One of your buttons could only be imported partially",
 	"firmament.inventory-buttons.load-preset": "Load Preset",
 	"firmament.inventory-buttons.save-preset": "Save Preset",
+	"firmament.jade.breaking_power": "Required Breaking Power: %s",
 	"firmament.key.category": "Firmament",
 	"firmament.keybinding.external": "%s",
 	"firmament.mixins.start": "Applied firmament mixins:",
