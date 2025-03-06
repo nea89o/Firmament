@@ -16,12 +16,13 @@ import kotlin.time.Duration.Companion.seconds
 inline fun <T> String.ifMatches(regex: Regex, block: (MatchResult) -> T): T? =
 	regex.matchEntire(this)?.let(block)
 
-inline fun <T> Pattern.useMatch(string: String, block: Matcher.() -> T): T? {
+inline fun <T> Pattern.useMatch(string: String?, block: Matcher.() -> T): T? {
 	contract {
 		callsInPlace(block, InvocationKind.AT_MOST_ONCE)
 	}
-	return matcher(string)
-		.takeIf(Matcher::matches)
+	return string
+		?.let(this::matcher)
+		?.takeIf(Matcher::matches)
 		?.let(block)
 }
 

@@ -81,6 +81,7 @@ data class SBItemStack constructor(
 		}
 		val EMPTY = SBItemStack(SkyblockId.NULL, 0)
 
+		private val BREAKING_POWER_REGEX = "Breaking Power (?<power>[0-9]+)".toPattern()
 		operator fun invoke(itemStack: ItemStack): SBItemStack {
 			val skyblockId = itemStack.skyBlockId ?: SkyblockId.NULL
 			return SBItemStack(
@@ -348,6 +349,12 @@ data class SBItemStack constructor(
 	val rarity: Rarity? get() = Rarity.fromItem(asImmutableItemStack())
 
 	private var itemStack_: ItemStack? = null
+
+	val breakingPower: Int
+		get() =
+			BREAKING_POWER_REGEX.useMatch(asImmutableItemStack().loreAccordingToNbt.firstOrNull()?.string) {
+				group("power").toInt()
+			} ?: 0
 
 	private val itemStack: ItemStack
 		get() {
