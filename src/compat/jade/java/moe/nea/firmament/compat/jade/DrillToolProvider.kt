@@ -44,7 +44,7 @@ class DrillToolProvider : IBlockComponentProvider {
 						if (it.isEmpty()) Optional.empty() else Optional.of(true)
 					}.getOrDefault(false)
 				}
-				val canHarvest = (SBItemStack(MC.stackInHand).neuItem?.breakingPower ?: 0) >= customBlock.breakingPower
+				val canHarvest = SBItemStack(MC.stackInHand).breakingPower >= customBlock.breakingPower
 				val lastItem = innerMut[lastItemIndex] as ItemStackElement
 				if (harvestIndicator < 0) {
 					innerMut.add(lastItemIndex + 1, canHarvestIndicator(canHarvest, lastItem.alignment))
