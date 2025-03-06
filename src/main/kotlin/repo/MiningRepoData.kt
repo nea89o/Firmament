@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import moe.nea.firmament.repo.ReforgeStore.kJson
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.SkyblockId
 
@@ -50,6 +51,10 @@ class MiningRepoData : IReloadable {
 	) {
 		@Transient
 		val block = convertToModernBlock()
+
+		val isCurrentlyActive: Boolean
+			get() = isActiveIn(SBData.skyblockLocation ?: SkyBlockIsland.NIL)
+		fun isActiveIn(location: SkyBlockIsland) = onlyIn == null || location in onlyIn
 
 		private fun convertToModernBlock(): Block? {
 			// TODO: this should be in a shared util, really

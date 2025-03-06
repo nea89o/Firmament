@@ -40,6 +40,7 @@ private constructor(
 		val MINESHAFT = forMode("mineshaft")
 		val GARDEN = forMode("garden")
 		val DUNGEON = forMode("dungeon")
+		val NIL = forMode("_")
 	}
 
 	val hasCustomMining
