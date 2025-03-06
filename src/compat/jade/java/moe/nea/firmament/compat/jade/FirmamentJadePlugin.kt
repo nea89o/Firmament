@@ -18,5 +18,6 @@ class FirmamentJadePlugin : IWailaPlugin {
 	override fun registerClient(registration: IWailaClientRegistration) {
 		registration.registerBlockComponent(CustomMiningHardnessProvider, Block::class.java)
 		registration.registerProgressClient(SkyblockProgressProvider())
+		registration.addRayTraceCallback(CustomFakeBlockProvider(registration))
 	}
 }
