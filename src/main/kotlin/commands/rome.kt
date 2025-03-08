@@ -15,6 +15,7 @@ import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverviewScreen
+import moe.nea.firmament.features.mining.MiningBlockInfoUi
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -215,6 +216,11 @@ fun firmamentCommand() = literal("firmament") {
 						}
 					}
 				}
+			}
+		}
+		thenLiteral("blocks") {
+			thenExecute {
+				ScreenUtil.setScreenLater(MiningBlockInfoUi.makeScreen())
 			}
 		}
 		thenLiteral("dumpchat") {
