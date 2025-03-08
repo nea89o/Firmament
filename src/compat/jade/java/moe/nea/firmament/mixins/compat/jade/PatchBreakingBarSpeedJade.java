@@ -16,5 +16,10 @@ public class PatchBreakingBarSpeedJade {
 	private static float replaceBlockBreakingProgress(float original) {
 		return CustomMiningHardnessProvider.replaceBreakProgress(original);
 	}
-	// TODO: given the inherent roughness of the server provided stages, i don't feel the need to also patch the accesses to the delta provided by the block state. if i ever get around to adding the linear extrapolation, i should also patch that extrapolation to use the better one provided by the server stages.
+
+	@ModifyExpressionValue(method = "drawBreakingProgress",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;calcBlockBreakingDelta(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F"))
+	private static float replacePlayerSpecificBreakingProgress(float original) {
+		return CustomMiningHardnessProvider.replaceBlockBreakSpeed(original);
+	}
 }
