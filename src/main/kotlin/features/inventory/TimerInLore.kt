@@ -80,7 +80,8 @@ object TimerInLore {
 		COMMUNITYPROJECTS("Contribute again", "Come back at"),
 		CHOCOLATEFACTORY("Next Charge", "Available at"),
 		STONKSAUCTION("Auction ends in", "Ends at"),
-		LIZSTONKREDEMPTION("Resets in:", "Resets at");
+		LIZSTONKREDEMPTION("Resets in:", "Resets at"),
+		EVENTENDING("Event ends in:", "Ends at");
 	}
 
 	val regex =
