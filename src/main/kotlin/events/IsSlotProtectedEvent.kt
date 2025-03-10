@@ -6,6 +6,10 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import moe.nea.firmament.util.CommonSoundEffects
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.grey
+import moe.nea.firmament.util.hover
+import moe.nea.firmament.util.red
+import moe.nea.firmament.util.tr
 
 data class IsSlotProtectedEvent(
 	val slot: Slot?,
@@ -35,6 +39,7 @@ data class IsSlotProtectedEvent(
 		INVENTORY_MOVE
 		;
 	}
+
 	companion object : FirmamentEventBus<IsSlotProtectedEvent>() {
 		@JvmStatic
 		@JvmOverloads
@@ -47,7 +52,11 @@ data class IsSlotProtectedEvent(
 			val event = IsSlotProtectedEvent(slot, action, false, itemStackOverride, origin)
 			publish(event)
 			if (event.isProtected && !event.silent) {
-				MC.sendChat(Text.translatable("firmament.protectitem").append(event.itemStack.name))
+				MC.sendChat(tr("firmament.protectitem", "Firmament protected your item: ${event.itemStack.name}.\n")
+					            .red()
+					            .append(tr("firmament.protectitem.hoverhint", "Hover for more info.").grey())
+					            .hover(tr("firmament.protectitem.hint",
+					                      "To unlock this item use the Lock Slot or Lock Item keybind from Firmament while hovering over this item.")))
 				CommonSoundEffects.playFailure()
 			}
 			return event.isProtected

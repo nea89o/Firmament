@@ -2,6 +2,7 @@ package moe.nea.firmament.util
 
 import java.util.Optional
 import net.minecraft.text.ClickEvent
+import net.minecraft.text.HoverEvent
 import net.minecraft.text.MutableText
 import net.minecraft.text.OrderedText
 import net.minecraft.text.PlainTextContent
@@ -126,6 +127,7 @@ fun MutableText.darkGrey() = withColor(Formatting.DARK_GRAY)
 fun MutableText.red() = withColor(Formatting.RED)
 fun MutableText.white() = withColor(Formatting.WHITE)
 fun MutableText.bold(): MutableText = styled { it.withBold(true) }
+fun MutableText.hover(text: Text): MutableText = styled {it.withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, text))}
 
 
 fun MutableText.clickCommand(command: String): MutableText {
