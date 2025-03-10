@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Mod Bug Report
+description: Report a bug or crash in Firmament
+labels:
+    - bug
+body:
+    -   type: input
+        id: version
+        attributes:
+            label: Firmament Version
+            description: Which version of Firmament are you using. Please provide the full version name (found in the file name, or the mod list). Please **don't** say latest.
+        validations:
+            required: true
+    -   type: textarea
+        id: description
+        attributes:
+            label: Bug Description
+            description: Please describe the bug you encountered and what you did before you encountered it.
+        validations:
+            required: true
+    -   type: textarea
+        attributes:
+            label: Minecraft Log
+            description: Please provide the complete Minecraft Log. Please do not truncate your log, or extract only parts. Earlier parts of the log can contain important information.
+            render: plain text
+            placeholder: If you are worried about your log containing private information, you can use an external uploader like https://mclo.gs/ to strip all personal information, and paste the link in here instead.

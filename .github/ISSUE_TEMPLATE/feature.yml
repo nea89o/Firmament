@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: Feature Request
+description: Request a new feature or for a feature to be expanded.
+labels:
+    - enhancement
+body:
+    -   type: markdown
+        attributes:
+            value: |
+                Thank you for expressing your interest in a new Firmament feature.
+                Please keep in mind that not every feature is a good fit for Firmament,
+                *especially* if there is already another mod for Firmaments versions
+                which covers that feature very well. It doesn't hurt to ask, but please
+                understand that even features I want to implement, might take some time
+                to be fully realized.
+                
+                Before creating a feature request, please check if the feature complies
+                with [HyPixel rules](https://hypixel.net/skyblock-rules).
+    -   type: textarea
+        attributes:
+            label: Describe the feature
+            description: Please describe the feature you are looking for.
+        validations:
+            required: true
+    -   type: input
+        attributes:
+            label: Other mods
+            description: Do you know of other mods that have this feature already? If so, please list them here.

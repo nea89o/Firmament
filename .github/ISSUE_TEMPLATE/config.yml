@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2024 Linnea Gräf <nea@nea.moe>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+blank_issues_enabled: true
+contact_links:
+    - name: Discord Server
+      url: https://discord.gg/64pFP94AWA
+      about: For non bug support, check out the Discord.
