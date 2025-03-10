@@ -31,9 +31,8 @@ class DrillToolProvider : IBlockComponentProvider {
 		p2: IPluginConfig?
 	) {
 		val customBlock = CustomFakeBlockProvider.getCustomBlock(accessor) ?: return
-		if (customBlock.breakingPower <= 0) return
 		val tool = RepoManager.miningData.getToolsThatCanBreak(customBlock.breakingPower).firstOrNull()
-			?.asItemStack() ?: return
+			?.asImmutableItemStack() ?: return
 		tooltip.replace(JadeIds.MC_HARVEST_TOOL, UnaryOperator { elements ->
 			elements.map { inner ->
 				val lastItemIndex = inner.indexOfLast { it is ItemStackElement }

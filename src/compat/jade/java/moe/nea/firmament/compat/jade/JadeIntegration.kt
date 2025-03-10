@@ -6,8 +6,15 @@ import moe.nea.firmament.repo.MiningRepoData
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.ErrorUtil
 import net.minecraft.block.Block
+import moe.nea.firmament.events.ReloadRegistrationEvent
+import moe.nea.firmament.gui.config.ManagedConfig
 
-object CurrentCustomBlockHolder {
+object JadeIntegration {
+	object TConfig : ManagedConfig("jade-integration", Category.INTEGRATIONS) {
+		val miningProgress by toggle("progress") { true }
+		val blockDetection by toggle("blocks") { true }
+	}
+
 	var customBlocks: Map<Block, MiningRepoData.CustomMiningBlock> = mapOf()
 
 	fun refreshBlockInfo() {
@@ -29,6 +36,11 @@ object CurrentCustomBlockHolder {
 				                    "Two custom blocks both want to supply custom mining behaviour for $block.") { return@mapNotNull null }
 			block to singleMatch
 		}.toMap()
+	}
+
+	@Subscribe
+	fun onRepoReload(event: ReloadRegistrationEvent) {
+		event.repo.registerReloadListener { refreshBlockInfo() }
 	}
 
 	@Subscribe

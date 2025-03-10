@@ -30,7 +30,7 @@ class MiningRepoData : IReloadable {
 		private set
 	var customMiningBlocks: List<CustomMiningBlock> = listOf()
 		private set
-	var toolsByBreakingPower: NavigableMap<BreakingPowerKey, NEUItem> = Collections.emptyNavigableMap()
+	var toolsByBreakingPower: NavigableMap<BreakingPowerKey, SBItemStack> = Collections.emptyNavigableMap()
 		private set
 
 
@@ -44,7 +44,7 @@ class MiningRepoData : IReloadable {
 					.comparingInt<BreakingPowerKey> { it.breakingPower }
 					.thenComparing(Comparator.comparing(
 						{ it.itemId },
-						nullsFirst(Comparator.naturalOrder<SkyblockId>())))
+						nullsFirst(Comparator.comparing<SkyblockId, Boolean> { "PICK" in it.neuItem || "BING" in it.neuItem }.thenComparing(Comparator.naturalOrder<SkyblockId>()))))
 		}
 	}
 
@@ -60,13 +60,14 @@ class MiningRepoData : IReloadable {
 			repo.items.items
 				.values
 				.asSequence()
+				.map { SBItemStack(it.skyblockId) }
 				.filter { it.breakingPower > 0 }
-				.associateTo(TreeMap<BreakingPowerKey, NEUItem>(BreakingPowerKey.COMPARATOR)) {
+				.associateTo(TreeMap<BreakingPowerKey, SBItemStack>(BreakingPowerKey.COMPARATOR)) {
 					BreakingPowerKey(it.breakingPower, it.skyblockId) to it
 				})
 	}
 
-	fun getToolsThatCanBreak(breakingPower: Int): Collection<NEUItem> {
+	fun getToolsThatCanBreak(breakingPower: Int): Collection<SBItemStack> {
 		return toolsByBreakingPower.tailMap(BreakingPowerKey(breakingPower, null), true).values
 	}
 

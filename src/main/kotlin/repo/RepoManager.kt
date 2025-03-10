@@ -64,6 +64,7 @@ object RepoManager {
 			registerReloadListener(ItemNameLookup)
 			registerReloadListener(ReforgeStore)
 			registerReloadListener(essenceRecipeProvider)
+			registerReloadListener(recipeCache)
 			registerReloadListener(miningData)
 			ReloadRegistrationEvent.publish(ReloadRegistrationEvent(this))
 			registerReloadListener {
@@ -75,7 +76,6 @@ object RepoManager {
 					}
 				}
 			}
-			registerReloadListener(recipeCache)
 		}
 	}
 

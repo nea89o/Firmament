@@ -34,6 +34,7 @@ import moe.nea.firmament.util.modifyExtraAttributes
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.prepend
 import moe.nea.firmament.util.reconstitute
+import moe.nea.firmament.util.removeColorCodes
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.skyblock.Rarity
@@ -352,7 +353,7 @@ data class SBItemStack constructor(
 
 	val breakingPower: Int
 		get() =
-			BREAKING_POWER_REGEX.useMatch(asImmutableItemStack().loreAccordingToNbt.firstOrNull()?.string) {
+			BREAKING_POWER_REGEX.useMatch(neuItem?.lore?.firstOrNull()?.removeColorCodes()) {
 				group("power").toInt()
 			} ?: 0
 

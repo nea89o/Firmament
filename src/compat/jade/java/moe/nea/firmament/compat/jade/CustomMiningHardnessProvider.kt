@@ -66,6 +66,7 @@ object CustomMiningHardnessProvider : IBlockComponentProvider {
 
 	@JvmStatic
 	fun replaceBreakProgress(original: Float): Float {
+		if (!JadeIntegration.TConfig.miningProgress) return original
 		if (!isOnMiningIsland()) return original
 		val pos = MC.interactionManager?.currentBreakingPos ?: return original
 		val info = currentBreakingInfo
