@@ -56,21 +56,22 @@ fun OrderedText.reconstitute(): MutableText {
 	return base
 
 }
+
 fun StringVisitable.reconstitute(): MutableText {
 	val base = Text.literal("")
 	base.setStyle(Style.EMPTY.withItalic(false))
 	var lastColorCode = Style.EMPTY
 	val text = StringBuilder()
 	this.visit({ style, string ->
-		if (style != lastColorCode) {
-			if (text.isNotEmpty())
-				base.append(Text.literal(text.toString()).setStyle(lastColorCode))
-			lastColorCode = style
-			text.clear()
-		}
-		text.append(string)
-		Optional.empty<Unit>()
-	}, Style.EMPTY)
+		           if (style != lastColorCode) {
+			           if (text.isNotEmpty())
+				           base.append(Text.literal(text.toString()).setStyle(lastColorCode))
+			           lastColorCode = style
+			           text.clear()
+		           }
+		           text.append(string)
+		           Optional.empty<Unit>()
+	           }, Style.EMPTY)
 	if (text.isNotEmpty())
 		base.append(Text.literal(text.toString()).setStyle(lastColorCode))
 	return base
@@ -127,7 +128,8 @@ fun MutableText.darkGrey() = withColor(Formatting.DARK_GRAY)
 fun MutableText.red() = withColor(Formatting.RED)
 fun MutableText.white() = withColor(Formatting.WHITE)
 fun MutableText.bold(): MutableText = styled { it.withBold(true) }
-fun MutableText.hover(text: Text): MutableText = styled {it.withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, text))}
+fun MutableText.hover(text: Text): MutableText =
+	styled { it.withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, text)) }
 
 
 fun MutableText.clickCommand(command: String): MutableText {
@@ -135,6 +137,12 @@ fun MutableText.clickCommand(command: String): MutableText {
 	return this.styled {
 		it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
 	}
+}
+
+fun MutableText.prependHypixelified(text: Text): MutableText {
+	if (directLiteralStringContent == "")
+		return prepend(text)
+	return Text.literal("").styled { it.withItalic(false) }.append(this).prepend(text)
 }
 
 fun MutableText.prepend(text: Text): MutableText {

@@ -13,10 +13,14 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import moe.nea.firmament.util.StringUtil.words
 import moe.nea.firmament.util.collections.lastNotNullOfOrNull
+import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
+import moe.nea.firmament.util.prepend
+import moe.nea.firmament.util.prependHypixelified
 import moe.nea.firmament.util.removeColorCodes
 import moe.nea.firmament.util.unformattedString
+import moe.nea.firmament.util.withColor
 
 typealias RepoRarity = io.github.moulberry.repo.data.Rarity
 
@@ -51,6 +55,10 @@ enum class Rarity(vararg altNames: String) {
 	val names = setOf(name) + altNames
 	val text: Text get() = Text.literal(name).setStyle(Style.EMPTY.withColor(colourMap[this]))
 	val neuRepoRarity: RepoRarity? = RepoRarity.entries.find { it.name == name }
+
+	fun recombobulate(): Rarity = Rarity.entries.getOrElse(ordinal + 1) { this }
+
+	fun colour() = colourMap[this] ?: Formatting.WHITE
 
 	companion object {
 		// TODO: inline those formattings as fields
@@ -94,11 +102,46 @@ enum class Rarity(vararg altNames: String) {
 			}
 		}
 
+		fun findLoreIndex(lore: List<Text>): Int {
+			return lore.indexOfLast {
+				it.unformattedString.words().any { fromString(it) != null }
+			}
+		}
+
 		fun fromLore(lore: List<Text>): Rarity? =
 			lore.lastNotNullOfOrNull {
 				it.unformattedString.words()
 					.firstNotNullOfOrNull(::fromString)
 			}
+
+		fun recombobulateLore(lore: List<Text>): List<Text> {
+			val before = fromLore(lore) ?: return lore
+			val rarityIndex = findLoreIndex(lore)
+			if (rarityIndex < 0) return lore
+			val after = before.recombobulate()
+			val col = after.colour()
+			val loreMut = lore.toMutableList()
+			val obfuscatedTag = Text.literal("a")
+				.withColor(col)
+				.styled { it.withObfuscated(true) }
+			val rarityLine = loreMut[rarityIndex].copy()
+				.prependHypixelified(Text.literal(" "))
+				.prepend(obfuscatedTag)
+				.append(Text.literal(" "))
+				.append(obfuscatedTag)
+			(rarityLine.siblings as MutableList<Text>)
+				.replaceAll {
+					var content = it.directLiteralStringContent
+					before.names.forEach {
+						content = content?.replace(it, after.name)
+					}
+					val editedText = (if (content != it.directLiteralStringContent)
+						Text.literal(content) else it.copy())
+					editedText.withColor(col)
+				}
+			loreMut[rarityIndex] = rarityLine
+			return loreMut
+		}
 
 	}
 }

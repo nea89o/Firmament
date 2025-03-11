@@ -8,7 +8,7 @@ import moe.nea.firmament.util.compatloader.CompatLoader
 /**
  * A property of a skyblock item. Not every skyblock item must have this property, but some should.
  *
- * Access to this class should be limited to [State.bindWith] and [SBItemData.getData].
+ * Access to this class should be limited to [State.bind] and [SBItemData.getData].
  * @see State
  */
 abstract class SBItemProperty<T> {
@@ -36,8 +36,12 @@ abstract class SBItemProperty<T> {
 	 * to change the state of an item, including its rendering as a vanilla [ItemStack].
 	 */
 	abstract class State<T> : SBItemProperty<T>() {
+		/**
+		 * Apply the stored info back to the item stack. If possible [stack] should be modified and returned directly,
+		 * instead of creating a new [ItemStack] instance. Information stored here should be recovered using [fromStack].
+		 */
 		abstract fun applyToStack(stack: ItemStack, store: SBItemData, value: T?): ItemStack
-		fun bindWith(data: T) = BoundState(this, data)
+		fun bind(data: T) = BoundState(this, data)
 	}
 
 	/**

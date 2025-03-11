@@ -16,7 +16,7 @@ object SBItemId : SBItemProperty.State<SkyblockId>() {
 
 	override fun applyToStack(stack: ItemStack, store: SBItemData, value: SkyblockId?): ItemStack {
 		val id = value ?: SkyblockId.NULL
-		return RepoManager.getNEUItem(id).asItemStack(idHint = id)
+		return RepoManager.getNEUItem(id).asItemStack(idHint = id).copy()
 	}
 
 	override val order: Int
