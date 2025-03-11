@@ -181,7 +181,7 @@ object PowerUserTools : FirmamentFeature {
 		} else if (it.matches(TConfig.copyItemStack)) {
 			ClipboardUtils.setTextContent(
 				ItemStack.CODEC
-					.encodeStart(MC.currentOrDefaultRegistries.getOps(NbtOps.INSTANCE), item)
+					.encodeStart(MC.currentOrDefaultNbtOps, item)
 					.orThrow.toPrettyString())
 			lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.stack"))
 		}

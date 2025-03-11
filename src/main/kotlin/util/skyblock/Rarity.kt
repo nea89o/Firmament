@@ -15,6 +15,7 @@ import moe.nea.firmament.util.StringUtil.words
 import moe.nea.firmament.util.collections.lastNotNullOfOrNull
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
+import moe.nea.firmament.util.removeColorCodes
 import moe.nea.firmament.util.unformattedString
 
 typealias RepoRarity = io.github.moulberry.repo.data.Rarity
@@ -86,6 +87,12 @@ enum class Rarity(vararg altNames: String) {
 
 		fun fromPetItem(itemStack: ItemStack): Rarity? =
 			itemStack.petData?.tier?.let(::fromNeuRepo)
+
+		fun fromStringLore(lore: List<String>): Rarity? {
+			return lore.lastNotNullOfOrNull {
+				it.removeColorCodes().words().firstNotNullOfOrNull(::fromString)
+			}
+		}
 
 		fun fromLore(lore: List<Text>): Rarity? =
 			lore.lastNotNullOfOrNull {

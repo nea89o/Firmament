@@ -36,3 +36,18 @@ class OverlayHoveredItemStackProvider : HoveredItemStackProvider {
 		}
 	}
 }
+interface CheckedMyServiceProvider {
+	abstract fun provideService(): MyService
+	abstract fun shouldProvideService(): Boolean
+}
+
+interface MyService : CheckedMyServiceProvider {
+	abstract fun someServiceFunc()
+	override fun provideService(): MyService {
+		return this
+	}
+
+	override fun shouldProvideService(): Boolean {
+		return true
+	}
+}

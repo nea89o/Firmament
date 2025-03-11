@@ -14,6 +14,7 @@ import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtOps
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import net.minecraft.registry.BuiltinRegistries
 import net.minecraft.registry.RegistryKeys
@@ -112,6 +113,7 @@ object MC {
 	inline val currentRegistries: RegistryWrapper.WrapperLookup? get() = world?.registryManager
 	val defaultRegistries: RegistryWrapper.WrapperLookup by lazy { BuiltinRegistries.createWrapperLookup() }
 	inline val currentOrDefaultRegistries get() = currentRegistries ?: defaultRegistries
+	inline val currentOrDefaultNbtOps get() = currentOrDefaultRegistries.getOps(NbtOps.INSTANCE)
 	val defaultItems: RegistryWrapper.Impl<Item> by lazy { defaultRegistries.getOrThrow(RegistryKeys.ITEM) }
 	var currentTick = 0
 	var lastWorld: World? = null

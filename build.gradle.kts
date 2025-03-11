@@ -10,6 +10,8 @@ import com.google.common.hash.Hashing
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import dev.whyoleg.sweetspi.gradle.sweetSpiProcessor
+import dev.whyoleg.sweetspi.gradle.sweetSpiRuntime
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
 import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
@@ -27,6 +29,7 @@ plugins {
 	alias(libs.plugins.kotlin.plugin.serialization)
 	alias(libs.plugins.kotlin.plugin.powerassert)
 	alias(libs.plugins.kotlin.plugin.ksp)
+	id("dev.whyoleg.sweetspi") version "0.1.2"
 	//	alias(libs.plugins.loom)
 	// TODO: use arch loom once they update to 1.8
 	id("fabric-loom") version "1.9.2"
@@ -256,6 +259,8 @@ dependencies {
 	annotationProcessor(projects.javaplugin)
 	implementation("com.google.auto.service:auto-service-annotations:1.1.1")
 	ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
+	ksp(sweetSpiProcessor())
+	include(implementation(sweetSpiRuntime())!!)
 	include(libs.manninghamMills)
 	include(libs.moulconfig)
 

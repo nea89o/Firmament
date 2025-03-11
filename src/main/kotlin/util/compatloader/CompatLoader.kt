@@ -5,29 +5,44 @@ import net.fabricmc.loader.api.FabricLoader
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.util.ErrorUtil
 
-abstract class CompatLoader<T : Any>(val kClass: Class<T>) {
+open class CompatLoader<T : Any>(val kClass: Class<T>) {
 	constructor(kClass: KClass<T>) : this(kClass.java)
 
 	val loader: ServiceLoader<T> = ServiceLoader.load(kClass)
 	val allValidInstances by lazy {
-		loader.reload()
-		loader.stream()
+		val resources = kClass.classLoader.getResources("META-INF/services/${kClass.name}")
+		val classes = resources
 			.asSequence()
-			.filter { provider ->
+			.map { ErrorUtil.catch("Could not read service loader resource at $it") { it.readText() }.or { "" } }
+			.flatMap { it.lineSequence() }
+			.map { it.substringBefore('#').trim() }
+			.filter { it.isNotBlank() }
+			.mapNotNull {
+				ErrorUtil.catch("Could not load class named $it for $kClass") {
+					Class.forName(it,
+					              false,
+					              kClass.classLoader).asSubclass(kClass)
+				}.or { null }
+			}
+			.toList()
+
+		classes.asSequence()
+			.filter { clazz ->
 				runCatching {
-					shouldLoad(provider.type())
+					shouldLoad(clazz)
 				}.getOrElse {
 					Firmament.logger.error("Could not determine whether to load a ${kClass.name} subclass", it)
 					false
 				}
 			}
-			.mapNotNull { provider ->
+			.mapNotNull { clazz ->
 				runCatching {
-					provider.get()
+					clazz.kotlin.objectInstance ?: clazz.getConstructor().newInstance()
 				}.getOrElse {
 					Firmament.logger.error(
-						"Could not load desired instance ${provider.type().name} for ${kClass.name}",
+						"Could not load desired instance ${clazz.name} for ${kClass.name}",
 						it)
 					null
 				}

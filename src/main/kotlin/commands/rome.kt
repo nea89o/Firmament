@@ -3,7 +3,9 @@ package moe.nea.firmament.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import io.ktor.client.statement.bodyAsText
+import java.util.ServiceLoader
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtOps
 import net.minecraft.text.Text
 import net.minecraft.text.TextCodecs
@@ -25,6 +27,10 @@ import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.RepoDownloadManager
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.repo.item.SBItemId
+import moe.nea.firmament.repo.item.SBItemData
+import moe.nea.firmament.repo.item.SBItemProperty
+import moe.nea.firmament.repo.item.SBStackSize
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.FirmFormatters.debugPath
 import moe.nea.firmament.util.FirmFormatters.formatBool
@@ -33,9 +39,15 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.accessors.messages
+import moe.nea.firmament.util.blue
 import moe.nea.firmament.util.collections.InstanceList
 import moe.nea.firmament.util.collections.WeakCache
+import moe.nea.firmament.util.gold
+import moe.nea.firmament.util.grey
+import moe.nea.firmament.util.lime
 import moe.nea.firmament.util.mc.SNbtFormatter
+import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
+import moe.nea.firmament.util.red
 import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 
@@ -223,6 +235,41 @@ fun firmamentCommand() = literal("firmament") {
 				ScreenUtil.setScreenLater(MiningBlockInfoUi.makeScreen())
 			}
 		}
+		thenLiteral("scratch") {
+			thenExecute {
+				val original = SBItemData.fromStack(MC.stackInHand)
+				original.debugStackCreation().forEach {
+					println("============== Applied modifier: ${it.lastAppliedModifier} (${it.data}) ==============")
+					if (it.stack.isEmpty)
+						println("<empty>")
+					else
+						println(ItemStack.CODEC
+							        .encodeStart(MC.currentOrDefaultNbtOps, it.stack)
+							        .orThrow.toPrettyString())
+				}
+				println("============== FINISHED ==============")
+				val roundtripped = original.roundtrip()
+				fun <T> printProp(prop: SBItemProperty<T>) {
+					val data = roundtripped.getData(prop)
+					val oldData = original.getData(prop)
+					val dataT = Text.literal("${data}")
+					if (oldData == null)
+						dataT.gold()
+					else if (oldData == data)
+						dataT.lime()
+					else
+						dataT.red()
+					source.sendFeedback(Text.literal("${prop.javaClass.simpleName}")
+						                    .blue()
+						                    .append(Text.literal(": ").grey())
+						                    .append(dataT))
+				}
+				SBItemProperty.allProperties.forEach { prop ->
+					printProp(prop)
+				}
+				source.sendFeedback(tr("firmament.itemdebug.done", "Item reconstruction finished, check your console."))
+			}
+		}
 		thenLiteral("dumpchat") {
 			thenExecute {
 				MC.inGameHud.chatHud.messages.forEach {
@@ -252,7 +299,8 @@ fun firmamentCommand() = literal("firmament") {
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.gametype", locrawInfo.gametype))
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.mode", locrawInfo.mode))
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.map", locrawInfo.map))
-					source.sendFeedback(tr("firmament.sbinfo.custommining", "Custom Mining: ${formatBool(locrawInfo.skyblockLocation?.hasCustomMining ?: false)}"))
+					source.sendFeedback(tr("firmament.sbinfo.custommining",
+					                       "Custom Mining: ${formatBool(locrawInfo.skyblockLocation?.hasCustomMining ?: false)}"))
 				}
 			}
 		}
