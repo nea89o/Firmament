@@ -108,12 +108,12 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 
 	fun getMaxScroll() = lastRenderedInnerHeight.toFloat() - getScrollPanelInner().height
 
-	val playerInventorySprite = Identifier.of("firmament:storageoverlay/player_inventory")
-	val upperBackgroundSprite = Identifier.of("firmament:storageoverlay/upper_background")
-	val slotRowSprite = Identifier.of("firmament:storageoverlay/storage_row")
-	val scrollbarBackground = Identifier.of("firmament:storageoverlay/scroll_bar_background")
+	val playerInventorySprite = Identifier.of("firmament:storageoverlay/player_inventory_${StorageOverlay.TConfig.texture.asString()}")
+	val upperBackgroundSprite = Identifier.of("firmament:storageoverlay/upper_background_${StorageOverlay.TConfig.texture.asString()}")
+	val slotRowSprite = Identifier.of("firmament:storageoverlay/storage_row_${StorageOverlay.TConfig.texture.asString()}")
+	val scrollbarBackground = Identifier.of("firmament:storageoverlay/scroll_bar_background_${StorageOverlay.TConfig.texture.asString()}")
 	val scrollbarKnob = Identifier.of("firmament:storageoverlay/scroll_bar_knob")
-	val controllerBackground = Identifier.of("firmament:storageoverlay/storage_controls")
+	val controllerBackground = Identifier.of("firmament:storageoverlay/storage_controls_${StorageOverlay.TConfig.texture.asString()}")
 
 	override fun close() {
 		isExiting = true

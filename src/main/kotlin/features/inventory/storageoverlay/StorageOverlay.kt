@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.Items
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
+import net.minecraft.util.StringIdentifiable
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.SlotClickEvent
@@ -33,6 +34,16 @@ object StorageOverlay : FirmamentFeature {
 		val inverseScroll by toggle("inverse-scroll") { false }
 		val padding by integer("padding", 1, 20) { 5 }
 		val margin by integer("margin", 1, 60) { 20 }
+		val texture by choice("texture") { StorageTexture.DEFAULT }
+	}
+
+	enum class StorageTexture(val id: Int) : StringIdentifiable {
+		DEFAULT(0),
+		CLEAR(1);
+
+		override fun asString(): String? {
+			return id.toString()
+		}
 	}
 
 	fun adjustScrollSpeed(amount: Double): Double {
@@ -151,4 +162,5 @@ object StorageOverlay : FirmamentFeature {
 			}
 		}
 	}
+
 }
