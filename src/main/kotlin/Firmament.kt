@@ -19,6 +19,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.ModMetadata
@@ -49,6 +51,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
+import moe.nea.firmament.util.tr
 
 object Firmament {
 	val modContainer by lazy { FabricLoader.getInstance().getModContainer(MOD_ID).get() }
@@ -145,6 +148,12 @@ object Firmament {
 				})
 		})
 		ClientInitEvent.publish(ClientInitEvent())
+		ResourceManagerHelper.registerBuiltinResourcePack(
+			identifier("transparent_storage"),
+			modContainer,
+			tr("firmament.resourcepack.transparentstorage", "Transparent Firmament Storage Overlay"),
+			ResourcePackActivationType.NORMAL
+		)
 	}
 
 
