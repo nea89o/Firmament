@@ -113,6 +113,7 @@ object MC {
 	val defaultRegistries: RegistryWrapper.WrapperLookup by lazy { BuiltinRegistries.createWrapperLookup() }
 	inline val currentOrDefaultRegistries get() = currentRegistries ?: defaultRegistries
 	val defaultItems: RegistryWrapper.Impl<Item> by lazy { defaultRegistries.getOrThrow(RegistryKeys.ITEM) }
+	var currentTick = 0
 	var lastWorld: World? = null
 		get() {
 			field = world ?: field

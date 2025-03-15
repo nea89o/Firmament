@@ -120,9 +120,8 @@ object Firmament {
 	@JvmStatic
 	fun onClientInitialize() {
 		FeatureManager.subscribeEvents()
-		var tick = 0
 		ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
-			TickEvent.publish(TickEvent(tick++))
+			TickEvent.publish(TickEvent(MC.currentTick++))
 		})
 		IDataHolder.registerEvents()
 		RepoManager.initialize()
