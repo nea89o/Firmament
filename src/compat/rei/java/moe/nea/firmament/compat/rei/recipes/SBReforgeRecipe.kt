@@ -31,6 +31,7 @@ import moe.nea.firmament.repo.ReforgeStore
 import moe.nea.firmament.repo.RepoItemTypeCache
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.repo.item.StatBlock
 import moe.nea.firmament.util.AprilFoolsUtil
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.SkyblockId
@@ -106,7 +107,10 @@ class SBReforgeRecipe(
 			for ((i, statId) in display.reforge.statUniverse.withIndex()) {
 				val label = Widgets.createLabel(
 					Point(bounds.minX + 10 + 24 + 24 + 20, bounds.minY + 8 + i * 11),
-					SBItemStack.Companion.StatLine(SBItemStack.statIdToName(statId), null).reconstitute(7))
+					StatBlock.StatLine( // TODO: add helper methods for constructing stat lines
+						StatBlock.findStatFormatting(SBItemStack.statIdToName(statId)),
+						0.0
+					).reconstitute(7))
 					.horizontalAlignment(Label.LEFT_ALIGNED)
 				statToLineMappings.add(statId to label)
 				list.add(label)
@@ -116,9 +120,9 @@ class SBReforgeRecipe(
 				val stats = display.reforge.reforgeStats?.get(entry.rarity) ?: mapOf()
 				for ((stat, label) in statToLineMappings) {
 					label.message =
-						SBItemStack.Companion.StatLine(
-							SBItemStack.statIdToName(stat), null,
-							valueNum = stats[stat]
+						StatBlock.StatLine(
+							StatBlock.findStatFormatting(SBItemStack.statIdToName(stat)),
+							stats[stat] ?: 0.0
 						).reconstitute(7)
 				}
 			}
