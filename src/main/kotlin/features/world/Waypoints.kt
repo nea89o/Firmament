@@ -208,30 +208,58 @@ object Waypoints : FirmamentFeature {
 						                   it.z)
 					})
 					ClipboardUtils.setTextContent(data)
-					source.sendFeedback(tr("firmament.command.waypoint.export", "Copied ${waypoints.size} waypoints to clipboard"))
+					source.sendFeedback(tr("firmament.command.waypoint.export",
+					                       "Copied ${waypoints.size} waypoints to clipboard"))
+				}
+			}
+			thenLiteral("exportrelative") {
+				thenExecute {
+					val playerPos = MC.player!!.blockPos
+					val x = playerPos.x
+					val y = playerPos.y
+					val z = playerPos.z
+					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
+						ColeWeightWaypoint(it.x - x,
+						                   it.y - y,
+						                   it.z - z)
+					})
+					ClipboardUtils.setTextContent(data)
+					source.sendFeedback(tr("firmament.command.waypoint.export.relative",
+					                       "Copied ${waypoints.size} relative waypoints to clipboard. Make sure to stand in the same position when importing."))
+
 				}
 			}
 			thenLiteral("import") {
 				thenExecute {
-					val contents = ClipboardUtils.getTextContents()
-					val data = try {
-						Firmament.tightJson.decodeFromString<List<ColeWeightWaypoint>>(contents)
-					} catch (ex: Exception) {
-						Firmament.logger.error("Could not load waypoints from clipboard", ex)
-						source.sendError(Text.translatable("firmament.command.waypoint.import.error"))
-						return@thenExecute
-					}
-					waypoints.clear()
-					data.mapTo(waypoints) { BlockPos(it.x, it.y, it.z) }
 					source.sendFeedback(
-						Text.stringifiedTranslatable(
-							"firmament.command.waypoint.import",
-							data.size
-						)
+						importRelative(BlockPos.ORIGIN)
+							?: Text.stringifiedTranslatable("firmament.command.waypoint.import", waypoints.size),
+					)
+				}
+			}
+			thenLiteral("importrelative") {
+				thenExecute {
+					source.sendFeedback(
+						importRelative(MC.player!!.blockPos)
+							?: tr("firmament.command.waypoint.import.relative",
+								  "Imported ${waypoints.size} relative waypoints from clipboard. Make sure you stand in the same position as when you exported these waypoints for them to line up correctly."),
 					)
 				}
 			}
 		}
+	}
+
+	fun importRelative(pos: BlockPos): Text? {
+		val contents = ClipboardUtils.getTextContents()
+		val data = try {
+			Firmament.tightJson.decodeFromString<List<ColeWeightWaypoint>>(contents)
+		} catch (ex: Exception) {
+			Firmament.logger.error("Could not load waypoints from clipboard", ex)
+			return (Text.translatable("firmament.command.waypoint.import.error"))
+		}
+		waypoints.clear()
+		data.mapTo(waypoints) { BlockPos(it.x + pos.x, it.y + pos.y, it.z + pos.z) }
+		return null
 	}
 
 	@Subscribe

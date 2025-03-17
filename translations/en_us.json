@@ -8,6 +8,8 @@
 	"firmament.command.waypoint.clear": "Cleared waypoints.",
 	"firmament.command.waypoint.import": "Imported %s waypoints from clipboard.",
 	"firmament.command.waypoint.import.error": "Could not import waypoints from clipboard. Make sure they are on ColeWeight format:\n[{\"x\": 69, \"y\":420, \"z\": 36}]",
+	"firmament.command.waypoint.ordered.toggle.false": "Disabled ordered waypoints",
+	"firmament.command.waypoint.ordered.toggle.true": "Enabled ordered waypoints",
 	"firmament.command.waypoint.remove": "Removed waypoint %s. Other waypoints may have different indexes now.",
 	"firmament.command.waypoint.remove.error": "Could not find waypoint with that index to delete.",
 	"firmament.command.waypoint.skip": "Skipped 1 waypoint",

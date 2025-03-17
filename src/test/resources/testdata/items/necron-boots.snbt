@@ -1,0 +1,68 @@
+{
+	components: {
+		"minecraft:attribute_modifiers": {
+			modifiers: [
+			],
+			show_in_tooltip: 0b
+		},
+		"minecraft:custom_data": {
+			enchantments: {
+				depth_strider: 3,
+				feather_falling: 10,
+				growth: 5,
+				protection: 5
+			},
+			id: "POWER_WITHER_BOOTS",
+			modifier: "ancient",
+			rarity_upgrades: 1,
+			timestamp: 1704550620000L,
+			upgrade_level: 5,
+			uuid: "8b6c7485-cb59-44d3-ac8f-9e52a611cc64"
+		},
+		"minecraft:custom_name": '{"extra":[{"color":"light_purple","text":"Ancient Necron\'s Boots "},{"color":"gold","text":"✪✪✪✪✪"}],"italic":false,"text":""}',
+		"minecraft:dyed_color": {
+			rgb: 15167036,
+			show_in_tooltip: 0b
+		},
+		"minecraft:enchantments": {
+			levels: {
+				"minecraft:depth_strider": 3
+			}
+		},
+		"minecraft:hide_additional_tooltip": {
+		},
+		"minecraft:lore": [
+			'{"extra":[{"color":"gray","text":"Gear Score: "},{"color":"light_purple","text":"713 "},{"color":"dark_gray","text":"(2753)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Strength: "},{"color":"red","text":"+79 "},{"color":"blue","text":"(+35) "},{"color":"dark_gray","text":"(+333.75)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Crit Chance: "},{"color":"red","text":"+15% "},{"color":"blue","text":"(+15%) "},{"color":"dark_gray","text":"(+23.1%)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Crit Damage: "},{"color":"red","text":"+71% "},{"color":"blue","text":"(+38%) "},{"color":"dark_gray","text":"(+302.6%)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Health: "},{"color":"green","text":"+241.5 "},{"color":"blue","text":"(+7) "},{"color":"dark_gray","text":"(+1,010.15)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Defense: "},{"color":"green","text":"+120.5 "},{"color":"blue","text":"(+7) "},{"color":"dark_gray","text":"(+498.4)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Intelligence: "},{"color":"green","text":"+36 "},{"color":"blue","text":"(+25) "},{"color":"dark_gray","text":"(+155.75)"}],"italic":false,"text":""}',
+			'{"extra":[" ",{"color":"dark_gray","text":"["},{"color":"dark_gray","text":"❁"},{"color":"dark_gray","text":"] "},{"color":"dark_gray","text":"["},{"color":"dark_gray","text":"⚔"},{"color":"dark_gray","text":"]"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Depth Strider III"},{"color":"blue","text":", "},{"color":"blue","text":"Feather Falling X"},{"color":"blue","text":", "},{"color":"blue","text":"Growth V"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Protection V"}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Reduces the damage you take from"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"withers by "},{"color":"red","text":"10%"},{"color":"gray","text":"."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"gold","text":"Full Set Bonus: Witherborn "},{"color":"gray","text":"(3/4)"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Spawns a wither minion every "},{"color":"yellow","text":"30"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"yellow","text":""},{"color":"gray","text":"seconds up to a maximum "},{"color":"green","text":"1 "},{"color":"gray","text":"wither."}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Your withers will travel to and"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"explode on nearby enemies."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"color":"blue","text":"Ancient Bonus"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":"Grants "},{"color":"green","text":"+1 "},{"color":"blue","text":"☠ Crit Damage "},{"color":"gray","text":"per"}],"italic":false,"text":""}',
+			'{"extra":[{"color":"gray","text":""},{"color":"red","text":"Catacombs "},{"color":"gray","text":"level."}],"italic":false,"text":""}',
+			'{"italic":false,"text":""}',
+			'{"extra":[{"bold":true,"color":"light_purple","obfuscated":true,"text":"a"},"",{"bold":false,"extra":[" "],"italic":false,"obfuscated":false,"strikethrough":false,"text":"","underlined":false},{"bold":true,"color":"light_purple","text":"MYTHIC DUNGEON BOOTS "},{"bold":true,"color":"light_purple","obfuscated":true,"text":"a"}],"italic":false,"text":""}'
+		],
+		"minecraft:unbreakable": {
+			show_in_tooltip: 0b
+		}
+	},
+	count: 1,
+	id: "minecraft:leather_boots"
+}
