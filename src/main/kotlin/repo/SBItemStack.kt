@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.github.moulberry.repo.constants.PetNumbers
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
+import util.skyblock.stats.StatFormatting
 import net.minecraft.item.ItemStack
 import net.minecraft.network.RegistryByteBuf
 import net.minecraft.network.codec.PacketCodec
@@ -14,7 +15,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.ItemCache.withFallback
-import moe.nea.firmament.repo.item.StatBlock
+import moe.nea.firmament.util.skyblock.stats.StatBlock
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.MC
@@ -37,6 +38,7 @@ import moe.nea.firmament.util.removeColorCodes
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.skyblock.Rarity
+import moe.nea.firmament.util.skyblock.stats.BuffKind
 import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
@@ -112,7 +114,7 @@ data class SBItemStack constructor(
 			buffKind: BuffKind,
 		) {
 			val namedReforgeStats = reforgeStats
-				.mapKeysTo(mutableMapOf()) { statIdToName(it.key) }
+				.mapKeysTo(mutableMapOf()) { StatFormatting.statIdToName(it.key) }
 
 			val loreMut = itemStack.loreAccordingToNbt.toMutableList()
 			val statBlock = StatBlock.fromLore(loreMut)
@@ -121,30 +123,6 @@ data class SBItemStack constructor(
 			}
 			statBlock.applyModifications(loreMut)
 			itemStack.loreAccordingToNbt = loreMut
-		}
-
-		data class StatFormatting(
-			val name: String,
-			val postFix: String,
-			val color: Formatting,
-			val isStarAffected: Boolean = true,
-		)
-
-		enum class BuffKind(
-			val color: Formatting,
-			val prefix: String,
-			val postFix: String,
-			val isHidden: Boolean,
-		) {
-			REFORGE(Formatting.BLUE, "(", ")", false),
-			STAR_BUFF(Formatting.RESET, "", "", true),
-			CATA_STAR_BUFF(Formatting.DARK_GRAY, "(", ")", false),
-			;
-		}
-
-		fun statIdToName(statId: String): String {
-			val segments = statId.split("_")
-			return segments.joinToString(" ") { it.replaceFirstChar { it.uppercaseChar() } }
 		}
 	}
 

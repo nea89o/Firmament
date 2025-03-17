@@ -257,8 +257,10 @@ fun firmamentCommand() = literal("firmament") {
 						dataT.gold()
 					else if (oldData == data)
 						dataT.lime()
-					else
+					else {
+						println("Mismatched prop ${prop}:\nExpected: ${oldData}\nActual  : ${data}")
 						dataT.red()
+					}
 					source.sendFeedback(Text.literal("${prop.javaClass.simpleName}")
 						                    .blue()
 						                    .append(Text.literal(": ").grey())

@@ -17,6 +17,7 @@ import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.display.DisplaySerializer
 import me.shedaniel.rei.api.common.entry.EntryIngredient
 import me.shedaniel.rei.api.common.entry.EntryStack
+import util.skyblock.stats.StatFormatting
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnReason
 import net.minecraft.text.Text
@@ -31,7 +32,7 @@ import moe.nea.firmament.repo.ReforgeStore
 import moe.nea.firmament.repo.RepoItemTypeCache
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
-import moe.nea.firmament.repo.item.StatBlock
+import moe.nea.firmament.util.skyblock.stats.StatBlock
 import moe.nea.firmament.util.AprilFoolsUtil
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.SkyblockId
@@ -40,6 +41,7 @@ import moe.nea.firmament.util.grey
 import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.skyblock.SkyBlockItems
+import moe.nea.firmament.util.skyblock.stats.StatLine
 import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.tr
 
@@ -107,8 +109,8 @@ class SBReforgeRecipe(
 			for ((i, statId) in display.reforge.statUniverse.withIndex()) {
 				val label = Widgets.createLabel(
 					Point(bounds.minX + 10 + 24 + 24 + 20, bounds.minY + 8 + i * 11),
-					StatBlock.StatLine( // TODO: add helper methods for constructing stat lines
-						StatBlock.findStatFormatting(SBItemStack.statIdToName(statId)),
+					StatLine(
+						StatFormatting.findForId(statId),
 						0.0
 					).reconstitute(7))
 					.horizontalAlignment(Label.LEFT_ALIGNED)
@@ -120,8 +122,8 @@ class SBReforgeRecipe(
 				val stats = display.reforge.reforgeStats?.get(entry.rarity) ?: mapOf()
 				for ((stat, label) in statToLineMappings) {
 					label.message =
-						StatBlock.StatLine(
-							StatBlock.findStatFormatting(SBItemStack.statIdToName(stat)),
+						StatLine(
+							StatFormatting.findForId(stat),
 							stats[stat] ?: 0.0
 						).reconstitute(7)
 				}
