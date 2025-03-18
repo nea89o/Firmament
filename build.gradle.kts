@@ -32,7 +32,7 @@ plugins {
 	id("fabric-loom") version "1.9.2"
 	alias(libs.plugins.shadow)
 	id("moe.nea.licenseextractificator")
-	id("moe.nea.mc-auto-translations") version "0.1.0"
+	id("moe.nea.mc-auto-translations") version "0.2.0"
 }
 
 version = getGitTagInfo(libs.versions.minecraft.get())
@@ -163,7 +163,7 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 			extendsFrom(getByName(mainSS.annotationProcessorConfigurationName))
 		}
 		(mainSS.runtimeOnlyConfigurationName) {
-//			extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
+			extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
 		}
 		("ksp$upperName") {
 			extendsFrom(ksp.get())
@@ -171,7 +171,8 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 	}
 	dependencies {
 		runtimeOnly(ss.output)
-		(ss.implementationConfigurationName)(sourceSets.main.get().output)
+		(ss.implementationConfigurationName)(project.files(tasks.compileKotlin))
+		(ss.implementationConfigurationName)(project.files(tasks.compileJava))
 	}
 	tasks.shadowJar {
 		from(ss.output)
@@ -181,8 +182,7 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 		classpath.from(configurations.getByName(ss.compileClasspathConfigurationName))
 	}
 	collectTranslations {
-		// TODO: this does not work, somehow
-		this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
+		this.classes.from(ss.kotlin.classesDirectory)
 	}
 	return ss
 }
