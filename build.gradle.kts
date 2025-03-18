@@ -171,8 +171,8 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 	}
 	dependencies {
 		runtimeOnly(ss.output)
-		(ss.implementationConfigurationName)(project.files(tasks.compileKotlin))
-		(ss.implementationConfigurationName)(project.files(tasks.compileJava))
+		(ss.implementationConfigurationName)(project.files(tasks.compileKotlin.map { it.destinationDirectory }))
+		(ss.implementationConfigurationName)(project.files(tasks.compileJava.map { it.destinationDirectory }))
 	}
 	tasks.shadowJar {
 		from(ss.output)
