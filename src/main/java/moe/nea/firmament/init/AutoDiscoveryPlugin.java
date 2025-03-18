@@ -1,6 +1,9 @@
 package moe.nea.firmament.init;
 
 
+import moe.nea.firmament.util.ErrorUtil;
+import moe.nea.firmament.util.compatloader.ICompatMeta;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -94,7 +97,7 @@ public class AutoDiscoveryPlugin {
 		String norm = (className.substring(0, className.length() - ".class".length()))
 			              .replace("\\", "/")
 			              .replace("/", ".");
-		if (norm.startsWith(getMixinPackage() + ".") && !norm.endsWith(".")) {
+		if (norm.startsWith(getMixinPackage() + ".") && !norm.endsWith(".") && ICompatMeta.Companion.shouldLoad(norm)) {
 			mixins.add(norm.substring(getMixinPackage().length() + 1));
 		}
 	}
@@ -125,24 +128,25 @@ public class AutoDiscoveryPlugin {
 	 */
 	public List<String> getMixins() {
 		if (mixins != null) return mixins;
-		System.out.println("Trying to discover mixins");
-		mixins = new ArrayList<>();
-		URL classUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
-		System.out.println("Found classes at " + classUrl);
-		tryDiscoverFromContentFile(classUrl);
-		var classRoots = System.getProperty("firmament.classroots");
-		if (classRoots != null && !classRoots.isBlank()) {
-			System.out.println("Found firmament class roots: " + classRoots);
-			for (String s : classRoots.split(File.pathSeparator)) {
-				if (s.isBlank()) {
-					continue;
-				}
-				try {
+		try {
+			System.out.println("Trying to discover mixins");
+			mixins = new ArrayList<>();
+			URL classUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
+			System.out.println("Found classes at " + classUrl);
+			tryDiscoverFromContentFile(classUrl);
+			var classRoots = System.getProperty("firmament.classroots");
+			if (classRoots != null && !classRoots.isBlank()) {
+				System.out.println("Found firmament class roots: " + classRoots);
+				for (String s : classRoots.split(File.pathSeparator)) {
+					if (s.isBlank()) {
+						continue;
+					}
 					tryDiscoverFromContentFile(new File(s).toURI().toURL());
-				} catch (MalformedURLException e) {
-					throw new RuntimeException(e);
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 		return mixins;
 	}

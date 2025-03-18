@@ -31,6 +31,7 @@ import moe.nea.firmament.features.mining.PickaxeAbility
 import moe.nea.firmament.features.mining.PristineProfitTracker
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.features.world.Waypoints
+import moe.nea.firmament.util.compatloader.ICompatMeta
 import moe.nea.firmament.util.data.DataHolder
 
 object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "features", ::Config) {
@@ -83,17 +84,18 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 
 	fun subscribeEvents() {
 		SubscriptionList.allLists.forEach { list ->
-			runCatching {
-				list.provideSubscriptions {
-					it.owner.javaClass.classes.forEach {
-						runCatching { it.getDeclaredField("INSTANCE").get(null) }
+			if (ICompatMeta.shouldLoad(list.javaClass.name))
+				runCatching {
+					list.provideSubscriptions {
+						it.owner.javaClass.classes.forEach {
+							runCatching { it.getDeclaredField("INSTANCE").get(null) }
+						}
+						subscribeSingleEvent(it)
 					}
-					subscribeSingleEvent(it)
+				}.getOrElse {
+					// TODO: allow annotating source sets to specifically opt out of loading for mods, maybe automatically
+					Firmament.logger.info("Ignoring events from $list, likely due to a missing compat mod.", it)
 				}
-			}.getOrElse {
-				// TODO: allow annotating source sets to specifically opt out of loading for mods, maybe automatically
-				Firmament.logger.info("Ignoring events from $list, likely due to a missing compat mod.", it)
-			}
 		}
 	}
 
