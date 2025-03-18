@@ -102,6 +102,13 @@ object RepoManager {
 
 	fun getNEUItem(skyblockId: SkyblockId): NEUItem? = neuRepo.items.getItemBySkyblockId(skyblockId.neuItem)
 
+	fun downloadOverridenBranch(branch: String) {
+		Firmament.coroutineScope.launch {
+			RepoDownloadManager.downloadUpdate(true, branch)
+			reload()
+		}
+	}
+
 	fun launchAsyncUpdate(force: Boolean = false) {
 		Firmament.coroutineScope.launch {
 			RepoDownloadManager.downloadUpdate(force)

@@ -1,6 +1,7 @@
 package moe.nea.firmament.commands
 
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import io.ktor.client.statement.bodyAsText
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
@@ -130,6 +131,15 @@ fun firmamentCommand() = literal("firmament") {
 		}
 	}
 	thenLiteral("repo") {
+		thenLiteral("checkpr") {
+			thenArgument("prnum", IntegerArgumentType.integer(1)) { prnum ->
+				thenExecute {
+					val prnum = this[prnum]
+					source.sendFeedback(tr("firmament.repo.reload.pr", "Temporarily reloading repo from PR #${prnum}."))
+					RepoManager.downloadOverridenBranch("refs/pull/$prnum/head")
+				}
+			}
+		}
 		thenLiteral("reload") {
 			thenLiteral("fetch") {
 				thenExecute {
