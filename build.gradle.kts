@@ -163,7 +163,7 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 			extendsFrom(getByName(mainSS.annotationProcessorConfigurationName))
 		}
 		(mainSS.runtimeOnlyConfigurationName) {
-			extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
+//			extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
 		}
 		("ksp$upperName") {
 			extendsFrom(ksp.get())

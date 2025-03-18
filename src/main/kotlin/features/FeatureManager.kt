@@ -34,86 +34,91 @@ import moe.nea.firmament.features.world.Waypoints
 import moe.nea.firmament.util.data.DataHolder
 
 object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "features", ::Config) {
-    @Serializable
-    data class Config(
-        val enabledFeatures: MutableMap<String, Boolean> = mutableMapOf()
-    )
+	@Serializable
+	data class Config(
+		val enabledFeatures: MutableMap<String, Boolean> = mutableMapOf()
+	)
 
-    private val features = mutableMapOf<String, FirmamentFeature>()
+	private val features = mutableMapOf<String, FirmamentFeature>()
 
-    val allFeatures: Collection<FirmamentFeature> get() = features.values
+	val allFeatures: Collection<FirmamentFeature> get() = features.values
 
-    private var hasAutoloaded = false
+	private var hasAutoloaded = false
 
-    fun autoload() {
-        synchronized(this) {
-            if (hasAutoloaded) return
-            loadFeature(MinorTrolling)
-            loadFeature(FairySouls)
-            loadFeature(AutoCompletions)
-            // TODO: loadFeature(FishingWarning)
-            loadFeature(SlotLocking)
-            loadFeature(StorageOverlay)
-            loadFeature(PristineProfitTracker)
-            loadFeature(CraftingOverlay)
-            loadFeature(PowerUserTools)
-            loadFeature(Waypoints)
-            loadFeature(ChatLinks)
-            loadFeature(InventoryButtons)
-            loadFeature(CompatibliltyFeatures)
-            loadFeature(AnniversaryFeatures)
-            loadFeature(QuickCommands)
-	        loadFeature(PetFeatures)
-            loadFeature(SaveCursorPosition)
-            loadFeature(PriceData)
-            loadFeature(Fixes)
-            loadFeature(DianaWaypoints)
-            loadFeature(ItemRarityCosmetics)
-            loadFeature(PickaxeAbility)
-            loadFeature(CarnivalFeatures)
-            if (Firmament.DEBUG) {
-                loadFeature(DeveloperFeatures)
-                loadFeature(DebugView)
-            }
-            allFeatures.forEach { it.config }
-            FeaturesInitializedEvent.publish(FeaturesInitializedEvent(allFeatures.toList()))
-            hasAutoloaded = true
-        }
-    }
+	fun autoload() {
+		synchronized(this) {
+			if (hasAutoloaded) return
+			loadFeature(MinorTrolling)
+			loadFeature(FairySouls)
+			loadFeature(AutoCompletions)
+			// TODO: loadFeature(FishingWarning)
+			loadFeature(SlotLocking)
+			loadFeature(StorageOverlay)
+			loadFeature(PristineProfitTracker)
+			loadFeature(CraftingOverlay)
+			loadFeature(PowerUserTools)
+			loadFeature(Waypoints)
+			loadFeature(ChatLinks)
+			loadFeature(InventoryButtons)
+			loadFeature(CompatibliltyFeatures)
+			loadFeature(AnniversaryFeatures)
+			loadFeature(QuickCommands)
+			loadFeature(PetFeatures)
+			loadFeature(SaveCursorPosition)
+			loadFeature(PriceData)
+			loadFeature(Fixes)
+			loadFeature(DianaWaypoints)
+			loadFeature(ItemRarityCosmetics)
+			loadFeature(PickaxeAbility)
+			loadFeature(CarnivalFeatures)
+			if (Firmament.DEBUG) {
+				loadFeature(DeveloperFeatures)
+				loadFeature(DebugView)
+			}
+			allFeatures.forEach { it.config }
+			FeaturesInitializedEvent.publish(FeaturesInitializedEvent(allFeatures.toList()))
+			hasAutoloaded = true
+		}
+	}
 
-    fun subscribeEvents() {
-        SubscriptionList.allLists.forEach {
-            it.provideSubscriptions {
-				it.owner.javaClass.classes.forEach {
-					runCatching { it.getDeclaredField("INSTANCE").get(null) }
+	fun subscribeEvents() {
+		SubscriptionList.allLists.forEach { list ->
+			runCatching {
+				list.provideSubscriptions {
+					it.owner.javaClass.classes.forEach {
+						runCatching { it.getDeclaredField("INSTANCE").get(null) }
+					}
+					subscribeSingleEvent(it)
 				}
-                subscribeSingleEvent(it)
-            }
-        }
-    }
+			}.getOrElse {
+				// TODO: allow annotating source sets to specifically opt out of loading for mods, maybe automatically
+				Firmament.logger.info("Ignoring events from $list, likely due to a missing compat mod.", it)
+			}
+		}
+	}
 
-    private fun <T : FirmamentEvent> subscribeSingleEvent(it: Subscription<T>) {
-        it.eventBus.subscribe(false, "${it.owner.javaClass.simpleName}:${it.methodName}", it.invoke)
-    }
+	private fun <T : FirmamentEvent> subscribeSingleEvent(it: Subscription<T>) {
+		it.eventBus.subscribe(false, "${it.owner.javaClass.simpleName}:${it.methodName}", it.invoke)
+	}
 
-    fun loadFeature(feature: FirmamentFeature) {
-        synchronized(features) {
-            if (feature.identifier in features) {
-                Firmament.logger.error("Double registering feature ${feature.identifier}. Ignoring second instance $feature")
-                return
-            }
-            features[feature.identifier] = feature
-            feature.onLoad()
-        }
-    }
+	fun loadFeature(feature: FirmamentFeature) {
+		synchronized(features) {
+			if (feature.identifier in features) {
+				Firmament.logger.error("Double registering feature ${feature.identifier}. Ignoring second instance $feature")
+				return
+			}
+			features[feature.identifier] = feature
+			feature.onLoad()
+		}
+	}
 
-    fun isEnabled(identifier: String): Boolean? =
-        data.enabledFeatures[identifier]
+	fun isEnabled(identifier: String): Boolean? =
+		data.enabledFeatures[identifier]
 
 
-    fun setEnabled(identifier: String, value: Boolean) {
-        data.enabledFeatures[identifier] = value
-        markDirty()
-    }
+	fun setEnabled(identifier: String, value: Boolean) {
+		data.enabledFeatures[identifier] = value
+		markDirty()
+	}
 
 }
