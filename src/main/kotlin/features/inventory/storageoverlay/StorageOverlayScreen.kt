@@ -357,6 +357,10 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		return super.keyReleased(keyCode, scanCode, modifiers)
 	}
 
+	override fun shouldCloseOnEsc(): Boolean {
+		return this === MC.screen // Fixes this UI closing the handled screen on Escape press.
+	}
+
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
 		if (typeMCComponentInPlace(
 				controlComponent,
