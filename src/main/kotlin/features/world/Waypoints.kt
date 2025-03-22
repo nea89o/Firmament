@@ -14,6 +14,7 @@ import moe.nea.firmament.commands.thenExecute
 import moe.nea.firmament.commands.thenLiteral
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.TickEvent
+import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -30,6 +31,7 @@ object Waypoints : FirmamentFeature {
 		val tempWaypointDuration by duration("temp-waypoint-duration", 0.seconds, 1.hours) { 30.seconds }
 		val showIndex by toggle("show-index") { true }
 		val skipToNearest by toggle("skip-to-nearest") { false }
+		val resetWaypointOrderOnWorldSwap by toggle("reset-order-on-swap") { true }
 		// TODO: look ahead size
 	}
 
@@ -105,6 +107,13 @@ object Waypoints : FirmamentFeature {
 	val WAYPOINTS_SUBCOMMAND = "waypoints"
 
 	@Subscribe
+	fun onWorldSwap(event: WorldReadyEvent) {
+		if (TConfig.resetWaypointOrderOnWorldSwap) {
+			orderedIndex = 0
+		}
+	}
+
+	@Subscribe
 	fun onCommand(event: CommandEvent.SubCommand) {
 		event.subcommand("waypoint") {
 			thenArgument("pos", BlockPosArgumentType.blockPos()) { pos ->
@@ -121,6 +130,14 @@ object Waypoints : FirmamentFeature {
 			}
 		}
 		event.subcommand(WAYPOINTS_SUBCOMMAND) {
+			thenLiteral("reset") {
+				thenExecute {
+					orderedIndex = 0
+					source.sendFeedback(tr(
+						"firmament.command.waypoint.reset",
+						"Reset your ordered waypoint index back to 0. If you want to delete all waypoints use /firm waypoints clear instead."))
+				}
+			}
 			thenLiteral("changeindex") {
 				thenArgument("from", IntegerArgumentType.integer(0)) { fromIndex ->
 					thenArgument("to", IntegerArgumentType.integer(0)) { toIndex ->
