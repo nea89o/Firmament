@@ -1,11 +1,13 @@
 package moe.nea.firmament.features.world
 
+import com.mojang.brigadier.arguments.StringArgumentType
 import kotlinx.serialization.serializer
 import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.DefaultSource
 import moe.nea.firmament.commands.RestArgumentType
 import moe.nea.firmament.commands.get
+import moe.nea.firmament.commands.suggestsList
 import moe.nea.firmament.commands.thenArgument
 import moe.nea.firmament.commands.thenExecute
 import moe.nea.firmament.commands.thenLiteral
@@ -45,23 +47,24 @@ object FirmWaypointManager {
 	}
 
 	fun loadWaypoints(waypoints: FirmWaypoints, sendFeedback: (Text) -> Unit) {
-		if (waypoints.isRelativeTo != null) {
+		val copy = waypoints.deepCopy()
+		if (copy.isRelativeTo != null) {
 			val origin = MC.player!!.blockPos
-			waypoints.waypoints.replaceAll {
+			copy.waypoints.replaceAll {
 				it.copy(
 					x = it.x + origin.x,
 					y = it.y + origin.y,
 					z = it.z + origin.z,
 				)
 			}
-			waypoints.lastRelativeImport = origin.toImmutable()
+			copy.lastRelativeImport = origin.toImmutable()
 			sendFeedback(tr("firmament.command.waypoint.import.ordered.success",
-			                "Imported ${waypoints.size} relative waypoints. Make sure you stand in the correct spot while loading the waypoints: ${waypoints.isRelativeTo}."))
+			                "Imported ${copy.size} relative waypoints. Make sure you stand in the correct spot while loading the waypoints: ${copy.isRelativeTo}."))
 		} else {
 			sendFeedback(tr("firmament.command.waypoint.import.success",
-			                "Imported ${waypoints.size} waypoints."))
+			                "Imported ${copy.size} waypoints."))
 		}
-		Waypoints.waypoints = waypoints
+		Waypoints.waypoints = copy
 	}
 
 	fun setOrigin(source: DefaultSource, text: String?) {
@@ -93,6 +96,40 @@ object FirmWaypointManager {
 					waypoints.isRelativeTo = null
 					source.sendFeedback(tr("firmament.command.waypoint.originunset",
 					                       "Unset the origin of the waypoints. Run /firm waypoints export to save the waypoints with absolute coordinates."))
+				}
+			}
+			thenLiteral("save") {
+				thenArgument("name", StringArgumentType.string()) { name ->
+					suggestsList { DataHolder.list().keys }
+					thenExecute {
+						val waypoints = Waypoints.useNonEmptyWaypoints()
+						if (waypoints == null) {
+							source.sendError(Waypoints.textNothingToExport())
+							return@thenExecute
+						}
+						waypoints.id = get(name)
+						val exportableWaypoints = createExportableCopy(waypoints)
+						DataHolder.insert(get(name), exportableWaypoints)
+						DataHolder.save()
+						source.sendFeedback(tr("firmament.command.waypoint.saved",
+						                       "Saved waypoints locally as ${get(name)}. Use /firm waypoints load to load them again."))
+					}
+				}
+			}
+			thenLiteral("load") {
+				thenArgument("name", StringArgumentType.string()) { name ->
+					suggestsList { DataHolder.list().keys }
+					thenExecute {
+						val name = get(name)
+						val waypoints = DataHolder.list()[name]
+						if (waypoints == null) {
+							source.sendError(
+								tr("firmament.command.waypoint.nosaved",
+								   "No saved waypoint for ${name}. Use tab completion to see available names."))
+							return@thenExecute
+						}
+						loadWaypoints(waypoints, source::sendFeedback)
+					}
 				}
 			}
 			thenLiteral("export") {

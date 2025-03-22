@@ -16,6 +16,8 @@ data class FirmWaypoints(
 	var isOrdered: Boolean,
 	// TODO: val resetOnSwap: Boolean,
 ) {
+
+	fun deepCopy() = copy(waypoints = waypoints.toMutableList())
 	@Transient
 	var lastRelativeImport: BlockPos? = null
 
