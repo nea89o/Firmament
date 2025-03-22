@@ -6,7 +6,6 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.command.argument.BlockPosArgumentType
 import net.minecraft.text.Text
-import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.get
@@ -18,7 +17,6 @@ import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
-import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.mc.asFakeServer
 import moe.nea.firmament.util.render.RenderInWorldContext
@@ -123,6 +121,34 @@ object Waypoints : FirmamentFeature {
 			}
 		}
 		event.subcommand(WAYPOINTS_SUBCOMMAND) {
+			thenLiteral("changeindex") {
+				thenArgument("from", IntegerArgumentType.integer(0)) { fromIndex ->
+					thenArgument("to", IntegerArgumentType.integer(0)) { toIndex ->
+						thenExecute {
+							val w = useEditableWaypoints()
+							val toIndex = toIndex.get(this)
+							val fromIndex = fromIndex.get(this)
+							if (fromIndex !in w.waypoints.indices) {
+								source.sendError(textInvalidIndex(fromIndex))
+								return@thenExecute
+							}
+							if (toIndex !in w.waypoints.indices) {
+								source.sendError(textInvalidIndex(toIndex))
+								return@thenExecute
+							}
+							val waypoint = w.waypoints.removeAt(fromIndex)
+							w.waypoints.add(
+								if (toIndex > fromIndex) toIndex - 1
+								else toIndex,
+								waypoint)
+							source.sendFeedback(
+								tr("firmament.command.waypoint.indexchange",
+								   "Moved waypoint from index $fromIndex to $toIndex. Note that this only matters for ordered waypoints.")
+							)
+						}
+					}
+				}
+			}
 			thenLiteral("clear") {
 				thenExecute {
 					waypoints = null
@@ -169,6 +195,10 @@ object Waypoints : FirmamentFeature {
 			}
 		}
 	}
+
+	fun textInvalidIndex(index: Int) =
+		tr("firmament.command.waypoint.invalid-index",
+		   "Invalid index $index provided.")
 
 	fun textNothingToExport(): Text =
 		tr("firmament.command.waypoint.export.nowaypoints",
