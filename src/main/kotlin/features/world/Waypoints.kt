@@ -2,21 +2,12 @@ package moe.nea.firmament.features.world
 
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import me.shedaniel.math.Color
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.command.argument.BlockPosArgumentType
-import net.minecraft.server.command.CommandOutput
-import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
-import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.get
 import moe.nea.firmament.commands.thenArgument
@@ -32,6 +23,7 @@ import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
+import moe.nea.firmament.util.mc.asFakeServer
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.tr
 
@@ -56,54 +48,35 @@ object Waypoints : FirmamentFeature {
 	val temporaryPlayerWaypointList = mutableMapOf<String, TemporaryWaypoint>()
 	val temporaryPlayerWaypointMatcher = "(?i)x: (-?[0-9]+),? y: (-?[0-9]+),? z: (-?[0-9]+)".toPattern()
 
-	val waypoints = mutableListOf<BlockPos>()
-	var ordered = false
+	var waypoints: FirmWaypoints? = null
 	var orderedIndex = 0
-
-	@Serializable
-	data class ColeWeightWaypoint(
-		val x: Int,
-		val y: Int,
-		val z: Int,
-		val r: Int = 0,
-		val g: Int = 0,
-		val b: Int = 0,
-	)
 
 	@Subscribe
 	fun onRenderOrderedWaypoints(event: WorldRenderLastEvent) {
-		if (waypoints.isEmpty()) return
+		val w = useNonEmptyWaypoints() ?: return
 		RenderInWorldContext.renderInWorld(event) {
-			if (!ordered) {
-				waypoints.withIndex().forEach {
-					block(it.value, 0x800050A0.toInt())
-					if (TConfig.showIndex)
-						withFacingThePlayer(it.value.toCenterPos()) {
-							text(Text.literal(it.index.toString()))
-						}
+			if (!w.isOrdered) {
+				w.waypoints.withIndex().forEach {
+					block(it.value.blockPos, 0x800050A0.toInt())
+					if (TConfig.showIndex) withFacingThePlayer(it.value.blockPos.toCenterPos()) {
+						text(Text.literal(it.index.toString()))
+					}
 				}
 			} else {
-				orderedIndex %= waypoints.size
+				orderedIndex %= w.waypoints.size
 				val firstColor = Color.ofRGBA(0, 200, 40, 180)
 				color(firstColor)
-				tracer(waypoints[orderedIndex].toCenterPos(), lineWidth = 3f)
-				waypoints.withIndex().toList()
-					.wrappingWindow(orderedIndex, 3)
-					.zip(
-						listOf(
-							firstColor,
-							Color.ofRGBA(180, 200, 40, 150),
-							Color.ofRGBA(180, 80, 20, 140),
-						)
-					)
-					.reversed()
-					.forEach { (waypoint, col) ->
+				tracer(w.waypoints[orderedIndex].blockPos.toCenterPos(), lineWidth = 3f)
+				w.waypoints.withIndex().toList().wrappingWindow(orderedIndex, 3).zip(listOf(
+						firstColor,
+						Color.ofRGBA(180, 200, 40, 150),
+						Color.ofRGBA(180, 80, 20, 140),
+					)).reversed().forEach { (waypoint, col) ->
 						val (index, pos) = waypoint
-						block(pos, col.color)
-						if (TConfig.showIndex)
-							withFacingThePlayer(pos.toCenterPos()) {
-								text(Text.literal(index.toString()))
-							}
+						block(pos.blockPos, col.color)
+						if (TConfig.showIndex) withFacingThePlayer(pos.blockPos.toCenterPos()) {
+							text(Text.literal(index.toString()))
+						}
 					}
 			}
 		}
@@ -111,15 +84,17 @@ object Waypoints : FirmamentFeature {
 
 	@Subscribe
 	fun onTick(event: TickEvent) {
-		if (waypoints.isEmpty() || !ordered) return
-		orderedIndex %= waypoints.size
+		val w = useNonEmptyWaypoints() ?: return
+		if (!w.isOrdered) return
+		orderedIndex %= w.waypoints.size
 		val p = MC.player?.pos ?: return
 		if (TConfig.skipToNearest) {
 			orderedIndex =
-				(waypoints.withIndex().minBy { it.value.getSquaredDistance(p) }.index + 1) % waypoints.size
+				(w.waypoints.withIndex().minBy { it.value.blockPos.getSquaredDistance(p) }.index + 1) % w.waypoints.size
+
 		} else {
-			if (waypoints[orderedIndex].isWithinDistance(p, 3.0)) {
-				orderedIndex = (orderedIndex + 1) % waypoints.size
+			if (w.waypoints[orderedIndex].blockPos.isWithinDistance(p, 3.0)) {
+				orderedIndex = (orderedIndex + 1) % w.waypoints.size
 			}
 		}
 	}
@@ -128,15 +103,28 @@ object Waypoints : FirmamentFeature {
 	fun onProcessChat(it: ProcessChatEvent) {
 		val matcher = temporaryPlayerWaypointMatcher.matcher(it.unformattedString)
 		if (it.nameHeuristic != null && TConfig.tempWaypointDuration > 0.seconds && matcher.find()) {
-			temporaryPlayerWaypointList[it.nameHeuristic] = TemporaryWaypoint(
-				BlockPos(
-					matcher.group(1).toInt(),
-					matcher.group(2).toInt(),
-					matcher.group(3).toInt(),
-				),
-				TimeMark.now()
-			)
+			temporaryPlayerWaypointList[it.nameHeuristic] = TemporaryWaypoint(BlockPos(
+				matcher.group(1).toInt(),
+				matcher.group(2).toInt(),
+				matcher.group(3).toInt(),
+			), TimeMark.now())
 		}
+	}
+
+	fun useEditableWaypoints(): FirmWaypoints {
+		var w = waypoints
+		if (w == null) {
+			w = FirmWaypoints("Unlabeled", "unlabeled", null, mutableListOf(), false)
+			waypoints = w
+		}
+		return w
+	}
+
+	fun useNonEmptyWaypoints(): FirmWaypoints? {
+		val w = waypoints
+		if (w == null) return null
+		if (w.waypoints.isEmpty()) return null
+		return w
 	}
 
 	@Subscribe
@@ -144,41 +132,41 @@ object Waypoints : FirmamentFeature {
 		event.subcommand("waypoint") {
 			thenArgument("pos", BlockPosArgumentType.blockPos()) { pos ->
 				thenExecute {
+					source
 					val position = pos.get(this).toAbsoluteBlockPos(source.asFakeServer())
-					waypoints.add(position)
-					source.sendFeedback(
-						Text.stringifiedTranslatable(
-							"firmament.command.waypoint.added",
-							position.x,
-							position.y,
-							position.z
-						)
-					)
+					val w = useEditableWaypoints()
+					w.waypoints.add(FirmWaypoints.Waypoint.from(position))
+					source.sendFeedback(Text.stringifiedTranslatable("firmament.command.waypoint.added",
+					                                                 position.x,
+					                                                 position.y,
+					                                                 position.z))
 				}
 			}
 		}
 		event.subcommand("waypoints") {
 			thenLiteral("clear") {
 				thenExecute {
-					waypoints.clear()
+					waypoints?.waypoints?.clear()
 					source.sendFeedback(Text.translatable("firmament.command.waypoint.clear"))
 				}
 			}
 			thenLiteral("toggleordered") {
 				thenExecute {
-					ordered = !ordered
-					if (ordered) {
+					val w = useEditableWaypoints()
+					w.isOrdered = !w.isOrdered
+					if (w.isOrdered) {
 						val p = MC.player?.pos ?: Vec3d.ZERO
-						orderedIndex =
-							waypoints.withIndex().minByOrNull { it.value.getSquaredDistance(p) }?.index ?: 0
+						orderedIndex = // TODO: this should be extracted to a utility method
+							w.waypoints.withIndex().minByOrNull { it.value.blockPos.getSquaredDistance(p) }?.index ?: 0
 					}
-					source.sendFeedback(Text.translatable("firmament.command.waypoint.ordered.toggle.$ordered"))
+					source.sendFeedback(Text.translatable("firmament.command.waypoint.ordered.toggle.${w.isOrdered}"))
 				}
 			}
 			thenLiteral("skip") {
 				thenExecute {
-					if (ordered && waypoints.isNotEmpty()) {
-						orderedIndex = (orderedIndex + 1) % waypoints.size
+					val w = useNonEmptyWaypoints()
+					if (w != null && w.isOrdered) {
+						orderedIndex = (orderedIndex + 1) % w.size
 						source.sendFeedback(Text.translatable("firmament.command.waypoint.skip"))
 					} else {
 						source.sendError(Text.translatable("firmament.command.waypoint.skip.error"))
@@ -189,11 +177,11 @@ object Waypoints : FirmamentFeature {
 				thenArgument("index", IntegerArgumentType.integer(0)) { indexArg ->
 					thenExecute {
 						val index = get(indexArg)
-						if (index in waypoints.indices) {
-							waypoints.removeAt(index)
-							source.sendFeedback(Text.stringifiedTranslatable(
-								"firmament.command.waypoint.remove",
-								index))
+						val w = useNonEmptyWaypoints()
+						if (w != null && index in w.waypoints.indices) {
+							w.waypoints.removeAt(index)
+							source.sendFeedback(Text.stringifiedTranslatable("firmament.command.waypoint.remove",
+							                                                 index))
 						} else {
 							source.sendError(Text.stringifiedTranslatable("firmament.command.waypoint.remove.error"))
 						}
@@ -202,47 +190,48 @@ object Waypoints : FirmamentFeature {
 			}
 			thenLiteral("export") {
 				thenExecute {
-					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
-						ColeWeightWaypoint(it.x,
-						                   it.y,
-						                   it.z)
-					})
-					ClipboardUtils.setTextContent(data)
-					source.sendFeedback(tr("firmament.command.waypoint.export",
-					                       "Copied ${waypoints.size} waypoints to clipboard"))
+					TODO()
+//					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
+//						ColeWeightWaypoint(it.x,
+//						                   it.y,
+//						                   it.z)
+//					})
+//					ClipboardUtils.setTextContent(data)
+//					source.sendFeedback(tr("firmament.command.waypoint.export",
+//					                       "Copied ${waypoints.size} waypoints to clipboard"))
 				}
 			}
 			thenLiteral("exportrelative") {
 				thenExecute {
-					val playerPos = MC.player!!.blockPos
-					val x = playerPos.x
-					val y = playerPos.y
-					val z = playerPos.z
-					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
-						ColeWeightWaypoint(it.x - x,
-						                   it.y - y,
-						                   it.z - z)
-					})
-					ClipboardUtils.setTextContent(data)
-					source.sendFeedback(tr("firmament.command.waypoint.export.relative",
-					                       "Copied ${waypoints.size} relative waypoints to clipboard. Make sure to stand in the same position when importing."))
-
+					TODO()
+//					val playerPos = MC.player!!.blockPos
+//					val x = playerPos.x
+//					val y = playerPos.y
+//					val z = playerPos.z
+//					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
+//						ColeWeightWaypoint(it.x - x,
+//						                   it.y - y,
+//						                   it.z - z)
+//					})
+//					ClipboardUtils.setTextContent(data)
+//					source.sendFeedback(tr("firmament.command.waypoint.export.relative",
+//					                       "Copied ${waypoints.size} relative waypoints to clipboard. Make sure to stand in the same position when importing."))
+//
 				}
 			}
 			thenLiteral("import") {
 				thenExecute {
 					source.sendFeedback(
-						importRelative(BlockPos.ORIGIN)
-							?: Text.stringifiedTranslatable("firmament.command.waypoint.import", waypoints.size),
+						importRelative(BlockPos.ORIGIN)// TODO: rework imports
+							?: Text.stringifiedTranslatable("firmament.command.waypoint.import", useNonEmptyWaypoints()?.waypoints?.size),
 					)
 				}
 			}
 			thenLiteral("importrelative") {
 				thenExecute {
 					source.sendFeedback(
-						importRelative(MC.player!!.blockPos)
-							?: tr("firmament.command.waypoint.import.relative",
-								  "Imported ${waypoints.size} relative waypoints from clipboard. Make sure you stand in the same position as when you exported these waypoints for them to line up correctly."),
+						importRelative(MC.player!!.blockPos) ?: tr("firmament.command.waypoint.import.relative",
+						                                           "Imported ${useNonEmptyWaypoints()?.waypoints?.size} relative waypoints from clipboard. Make sure you stand in the same position as when you exported these waypoints for them to line up correctly."),
 					)
 				}
 			}
@@ -251,15 +240,10 @@ object Waypoints : FirmamentFeature {
 
 	fun importRelative(pos: BlockPos): Text? {
 		val contents = ClipboardUtils.getTextContents()
-		val data = try {
-			Firmament.tightJson.decodeFromString<List<ColeWeightWaypoint>>(contents)
-		} catch (ex: Exception) {
-			Firmament.logger.error("Could not load waypoints from clipboard", ex)
-			return (Text.translatable("firmament.command.waypoint.import.error"))
-		}
-		waypoints.clear()
-		data.mapTo(waypoints) { BlockPos(it.x + pos.x, it.y + pos.y, it.z + pos.z) }
-		return null
+		val cw = ColeWeightCompat.tryParse(contents).map { ColeWeightCompat.intoFirm(it) }
+		waypoints = cw.getOrNull() // TODO: directly parse firm waypoints
+		return null // TODO: show error if this does not work
+		// TODO: make relative imports work again
 	}
 
 	@Subscribe
@@ -267,14 +251,12 @@ object Waypoints : FirmamentFeature {
 		temporaryPlayerWaypointList.entries.removeIf { it.value.postedAt.passedTime() > TConfig.tempWaypointDuration }
 		if (temporaryPlayerWaypointList.isEmpty()) return
 		RenderInWorldContext.renderInWorld(event) {
-			temporaryPlayerWaypointList.forEach { (player, waypoint) ->
+			temporaryPlayerWaypointList.forEach { (_, waypoint) ->
 				block(waypoint.pos, 0xFFFFFF00.toInt())
 			}
 			temporaryPlayerWaypointList.forEach { (player, waypoint) ->
 				val skin =
-					MC.networkHandler?.listedPlayerListEntries?.find { it.profile.name == player }
-						?.skinTextures
-						?.texture
+					MC.networkHandler?.listedPlayerListEntries?.find { it.profile.name == player }?.skinTextures?.texture
 				withFacingThePlayer(waypoint.pos.toCenterPos()) {
 					waypoint(waypoint.pos, Text.stringifiedTranslatable("firmament.waypoint.temporary", player))
 					if (skin != null) {
@@ -312,36 +294,4 @@ fun <E> List<E>.wrappingWindow(startIndex: Int, windowSize: Int): List<E> {
 		result.addAll(subList(0, minOf(windowSize - (size - startIndex), startIndex)))
 	}
 	return result
-}
-
-
-fun FabricClientCommandSource.asFakeServer(): ServerCommandSource {
-	val source = this
-	return ServerCommandSource(
-		object : CommandOutput {
-			override fun sendMessage(message: Text?) {
-				source.player.sendMessage(message, false)
-			}
-
-			override fun shouldReceiveFeedback(): Boolean {
-				return true
-			}
-
-			override fun shouldTrackOutput(): Boolean {
-				return true
-			}
-
-			override fun shouldBroadcastConsoleToOps(): Boolean {
-				return true
-			}
-		},
-		source.position,
-		source.rotation,
-		null,
-		0,
-		"FakeServerCommandSource",
-		Text.literal("FakeServerCommandSource"),
-		null,
-		source.player
-	)
 }
