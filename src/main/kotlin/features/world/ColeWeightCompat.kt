@@ -2,8 +2,16 @@ package moe.nea.firmament.features.world
 
 import kotlinx.serialization.Serializable
 import net.minecraft.text.Text
+import net.minecraft.util.math.BlockPos
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.util.ErrorUtil
+import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.commands.DefaultSource
+import moe.nea.firmament.commands.thenExecute
+import moe.nea.firmament.commands.thenLiteral
+import moe.nea.firmament.events.CommandEvent
+import moe.nea.firmament.util.ClipboardUtils
+import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.tr
 
 object ColeWeightCompat {
 	@Serializable
@@ -16,9 +24,15 @@ object ColeWeightCompat {
 		val b: Int = 0,
 	)
 
-	fun intoFirm(waypoints: List<ColeWeightWaypoint>): FirmWaypoints {
+	fun fromFirm(waypoints: FirmWaypoints, relativeTo: BlockPos): List<ColeWeightWaypoint> {
+		return waypoints.waypoints.map {
+			ColeWeightWaypoint(it.x - relativeTo.x, it.y - relativeTo.y, it.z - relativeTo.z)
+		}
+	}
+
+	fun intoFirm(waypoints: List<ColeWeightWaypoint>, relativeTo: BlockPos): FirmWaypoints {
 		val w = waypoints.map {
-			FirmWaypoints.Waypoint(it.x, it.y, it.z)
+			FirmWaypoints.Waypoint(it.x + relativeTo.x, it.y + relativeTo.y, it.z + relativeTo.z)
 		}
 		return FirmWaypoints(
 			"Imported Waypoints",
@@ -27,6 +41,80 @@ object ColeWeightCompat {
 			w.toMutableList(),
 			false
 		)
+	}
+
+	fun copyAndInform(
+		source: DefaultSource,
+		origin: BlockPos,
+		positiveFeedback: (Int) -> Text,
+	) {
+		val waypoints = Waypoints.useNonEmptyWaypoints()
+			?.let { fromFirm(it, origin) }
+		if (waypoints == null) {
+			source.sendError(tr("firmament.command.waypoint.export.nowaypoints",
+			                    "No waypoints to export found."))
+			return
+		}
+		val data =
+			Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints)
+		ClipboardUtils.setTextContent(data)
+		source.sendFeedback(positiveFeedback(waypoints.size))
+	}
+
+	fun importAndInform(
+		source: DefaultSource,
+		pos: BlockPos,
+		positiveFeedback: (Int) -> Text
+	) {
+		val text = ClipboardUtils.getTextContents()
+		val wr = tryParse(text).map { intoFirm(it, pos) }
+		val waypoints = wr.getOrElse {
+			source.sendError(
+				tr("firmament.command.waypoint.import.cw.error",
+				   "Could not import ColeWeight waypoints."))
+			Firmament.logger.error(it)
+			return
+		}
+		Waypoints.waypoints = waypoints
+		source.sendFeedback(positiveFeedback(waypoints.size))
+	}
+
+	@Subscribe
+	fun onEvent(event: CommandEvent.SubCommand) {
+		event.subcommand(Waypoints.WAYPOINTS_SUBCOMMAND) {
+			thenLiteral("exportcw") {
+				thenExecute {
+					copyAndInform(source, BlockPos.ORIGIN) {
+						tr("firmament.command.waypoint.export.cw",
+						   "Copied $it waypoints to clipboard in ColeWeight format.")
+					}
+				}
+			}
+			thenLiteral("exportrelativecw") {
+				thenExecute {
+					copyAndInform(source, MC.player?.blockPos ?: BlockPos.ORIGIN) {
+						tr("firmament.command.waypoint.export.relative",
+						   "Copied $it relative waypoints to clipboard in ColeWeight format. Make sure to stand in the same position when importing.")
+					}
+				}
+			}
+			thenLiteral("import") {
+				thenExecute {
+					importAndInform(source, BlockPos.ORIGIN) { it: Int ->
+						Text.stringifiedTranslatable("firmament.command.waypoint.import",
+						                             it)
+					}
+				}
+			}
+			thenLiteral("importrelative") {
+				thenExecute {
+					importAndInform(source, MC.player!!.blockPos) {
+						tr("firmament.command.waypoint.import.relative",
+						   "Imported $it relative waypoints from clipboard. Make sure you stand in the same position as when you exported these waypoints for them to line up correctly.")
+					}
+				}
+			}
+		}
 	}
 
 	fun tryParse(string: String): Result<List<ColeWeightWaypoint>> {

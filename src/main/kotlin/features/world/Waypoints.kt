@@ -91,7 +91,7 @@ object Waypoints : FirmamentFeature {
 	fun useEditableWaypoints(): FirmWaypoints {
 		var w = waypoints
 		if (w == null) {
-			w = FirmWaypoints("Unlabeled", "unlabeled", null, mutableListOf(), false)
+			w = FirmWaypoints("Unlabeled", "unknown", null, mutableListOf(), false)
 			waypoints = w
 		}
 		return w
@@ -103,6 +103,8 @@ object Waypoints : FirmamentFeature {
 		if (w.waypoints.isEmpty()) return null
 		return w
 	}
+
+	val WAYPOINTS_SUBCOMMAND = "waypoints"
 
 	@Subscribe
 	fun onCommand(event: CommandEvent.SubCommand) {
@@ -120,10 +122,10 @@ object Waypoints : FirmamentFeature {
 				}
 			}
 		}
-		event.subcommand("waypoints") {
+		event.subcommand(WAYPOINTS_SUBCOMMAND) {
 			thenLiteral("clear") {
 				thenExecute {
-					waypoints?.waypoints?.clear()
+					waypoints = null
 					source.sendFeedback(Text.translatable("firmament.command.waypoint.clear"))
 				}
 			}
@@ -165,65 +167,8 @@ object Waypoints : FirmamentFeature {
 					}
 				}
 			}
-			thenLiteral("export") {
-				thenExecute {
-					TODO()
-//					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
-//						ColeWeightWaypoint(it.x,
-//						                   it.y,
-//						                   it.z)
-//					})
-//					ClipboardUtils.setTextContent(data)
-//					source.sendFeedback(tr("firmament.command.waypoint.export",
-//					                       "Copied ${waypoints.size} waypoints to clipboard"))
-				}
-			}
-			thenLiteral("exportrelative") {
-				thenExecute {
-					TODO()
-//					val playerPos = MC.player!!.blockPos
-//					val x = playerPos.x
-//					val y = playerPos.y
-//					val z = playerPos.z
-//					val data = Firmament.tightJson.encodeToString<List<ColeWeightWaypoint>>(waypoints.map {
-//						ColeWeightWaypoint(it.x - x,
-//						                   it.y - y,
-//						                   it.z - z)
-//					})
-//					ClipboardUtils.setTextContent(data)
-//					source.sendFeedback(tr("firmament.command.waypoint.export.relative",
-//					                       "Copied ${waypoints.size} relative waypoints to clipboard. Make sure to stand in the same position when importing."))
-//
-				}
-			}
-			thenLiteral("import") {
-				thenExecute {
-					source.sendFeedback(
-						importRelative(BlockPos.ORIGIN)// TODO: rework imports
-							?: Text.stringifiedTranslatable("firmament.command.waypoint.import",
-							                                useNonEmptyWaypoints()?.waypoints?.size),
-					)
-				}
-			}
-			thenLiteral("importrelative") {
-				thenExecute {
-					source.sendFeedback(
-						importRelative(MC.player!!.blockPos) ?: tr("firmament.command.waypoint.import.relative",
-						                                           "Imported ${useNonEmptyWaypoints()?.waypoints?.size} relative waypoints from clipboard. Make sure you stand in the same position as when you exported these waypoints for them to line up correctly."),
-					)
-				}
-			}
 		}
 	}
-
-	fun importRelative(pos: BlockPos): Text? {
-		val contents = ClipboardUtils.getTextContents()
-		val cw = ColeWeightCompat.tryParse(contents).map { ColeWeightCompat.intoFirm(it) }
-		waypoints = cw.getOrNull() // TODO: directly parse firm waypoints
-		return null // TODO: show error if this does not work
-		// TODO: make relative imports work again
-	}
-
 }
 
 fun <E> List<E>.wrappingWindow(startIndex: Int, windowSize: Int): List<E> {
