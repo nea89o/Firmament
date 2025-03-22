@@ -14,15 +14,12 @@ import moe.nea.firmament.commands.thenArgument
 import moe.nea.firmament.commands.thenExecute
 import moe.nea.firmament.commands.thenLiteral
 import moe.nea.firmament.events.CommandEvent
-import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.TickEvent
-import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.mc.asFakeServer
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.tr
@@ -38,16 +35,7 @@ object Waypoints : FirmamentFeature {
 		// TODO: look ahead size
 	}
 
-	data class TemporaryWaypoint(
-		val pos: BlockPos,
-		val postedAt: TimeMark,
-	)
-
 	override val config get() = TConfig
-
-	val temporaryPlayerWaypointList = mutableMapOf<String, TemporaryWaypoint>()
-	val temporaryPlayerWaypointMatcher = "(?i)x: (-?[0-9]+),? y: (-?[0-9]+),? z: (-?[0-9]+)".toPattern()
-
 	var waypoints: FirmWaypoints? = null
 	var orderedIndex = 0
 
@@ -68,16 +56,16 @@ object Waypoints : FirmamentFeature {
 				color(firstColor)
 				tracer(w.waypoints[orderedIndex].blockPos.toCenterPos(), lineWidth = 3f)
 				w.waypoints.withIndex().toList().wrappingWindow(orderedIndex, 3).zip(listOf(
-						firstColor,
-						Color.ofRGBA(180, 200, 40, 150),
-						Color.ofRGBA(180, 80, 20, 140),
-					)).reversed().forEach { (waypoint, col) ->
-						val (index, pos) = waypoint
-						block(pos.blockPos, col.color)
-						if (TConfig.showIndex) withFacingThePlayer(pos.blockPos.toCenterPos()) {
-							text(Text.literal(index.toString()))
-						}
+					firstColor,
+					Color.ofRGBA(180, 200, 40, 150),
+					Color.ofRGBA(180, 80, 20, 140),
+				)).reversed().forEach { (waypoint, col) ->
+					val (index, pos) = waypoint
+					block(pos.blockPos, col.color)
+					if (TConfig.showIndex) withFacingThePlayer(pos.blockPos.toCenterPos()) {
+						text(Text.literal(index.toString()))
 					}
+				}
 			}
 		}
 	}
@@ -99,17 +87,6 @@ object Waypoints : FirmamentFeature {
 		}
 	}
 
-	@Subscribe
-	fun onProcessChat(it: ProcessChatEvent) {
-		val matcher = temporaryPlayerWaypointMatcher.matcher(it.unformattedString)
-		if (it.nameHeuristic != null && TConfig.tempWaypointDuration > 0.seconds && matcher.find()) {
-			temporaryPlayerWaypointList[it.nameHeuristic] = TemporaryWaypoint(BlockPos(
-				matcher.group(1).toInt(),
-				matcher.group(2).toInt(),
-				matcher.group(3).toInt(),
-			), TimeMark.now())
-		}
-	}
 
 	fun useEditableWaypoints(): FirmWaypoints {
 		var w = waypoints
@@ -223,7 +200,8 @@ object Waypoints : FirmamentFeature {
 				thenExecute {
 					source.sendFeedback(
 						importRelative(BlockPos.ORIGIN)// TODO: rework imports
-							?: Text.stringifiedTranslatable("firmament.command.waypoint.import", useNonEmptyWaypoints()?.waypoints?.size),
+							?: Text.stringifiedTranslatable("firmament.command.waypoint.import",
+							                                useNonEmptyWaypoints()?.waypoints?.size),
 					)
 				}
 			}
@@ -246,43 +224,6 @@ object Waypoints : FirmamentFeature {
 		// TODO: make relative imports work again
 	}
 
-	@Subscribe
-	fun onRenderTemporaryWaypoints(event: WorldRenderLastEvent) {
-		temporaryPlayerWaypointList.entries.removeIf { it.value.postedAt.passedTime() > TConfig.tempWaypointDuration }
-		if (temporaryPlayerWaypointList.isEmpty()) return
-		RenderInWorldContext.renderInWorld(event) {
-			temporaryPlayerWaypointList.forEach { (_, waypoint) ->
-				block(waypoint.pos, 0xFFFFFF00.toInt())
-			}
-			temporaryPlayerWaypointList.forEach { (player, waypoint) ->
-				val skin =
-					MC.networkHandler?.listedPlayerListEntries?.find { it.profile.name == player }?.skinTextures?.texture
-				withFacingThePlayer(waypoint.pos.toCenterPos()) {
-					waypoint(waypoint.pos, Text.stringifiedTranslatable("firmament.waypoint.temporary", player))
-					if (skin != null) {
-						matrixStack.translate(0F, -20F, 0F)
-						// Head front
-						texture(
-							skin, 16, 16,
-							1 / 8f, 1 / 8f,
-							2 / 8f, 2 / 8f,
-						)
-						// Head overlay
-						texture(
-							skin, 16, 16,
-							5 / 8f, 1 / 8f,
-							6 / 8f, 2 / 8f,
-						)
-					}
-				}
-			}
-		}
-	}
-
-	@Subscribe
-	fun onWorldReady(event: WorldReadyEvent) {
-		temporaryPlayerWaypointList.clear()
-	}
 }
 
 fun <E> List<E>.wrappingWindow(startIndex: Int, windowSize: Int): List<E> {
