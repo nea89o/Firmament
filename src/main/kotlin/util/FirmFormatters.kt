@@ -13,6 +13,7 @@ import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.text.Text
+import net.minecraft.util.math.BlockPos
 
 object FirmFormatters {
 
@@ -131,4 +132,7 @@ object FirmFormatters {
 		return if (boolean == trueIsGood) text.lime() else text.red()
 	}
 
+	fun formatPosition(position: BlockPos): Text {
+		return Text.literal("x: ${position.x}, y: ${position.y}, z: ${position.z}")
+	}
 }

@@ -169,6 +169,10 @@ object Waypoints : FirmamentFeature {
 			}
 		}
 	}
+
+	fun textNothingToExport(): Text =
+		tr("firmament.command.waypoint.export.nowaypoints",
+		   "No waypoints to export found. Add some with /firm waypoint ~ ~ ~.")
 }
 
 fun <E> List<E>.wrappingWindow(startIndex: Int, windowSize: Int): List<E> {

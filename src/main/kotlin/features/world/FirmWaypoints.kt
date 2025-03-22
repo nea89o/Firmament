@@ -1,7 +1,10 @@
 package moe.nea.firmament.features.world
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minecraft.util.math.BlockPos
 
+@Serializable
 data class FirmWaypoints(
 	var label: String,
 	var id: String,
@@ -13,7 +16,11 @@ data class FirmWaypoints(
 	var isOrdered: Boolean,
 	// TODO: val resetOnSwap: Boolean,
 ) {
+	@Transient
+	var lastRelativeImport: BlockPos? = null
+
 	val size get() = waypoints.size
+	@Serializable
 	data class Waypoint(
 		val x: Int,
 		val y: Int,

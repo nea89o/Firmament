@@ -51,8 +51,7 @@ object ColeWeightCompat {
 		val waypoints = Waypoints.useNonEmptyWaypoints()
 			?.let { fromFirm(it, origin) }
 		if (waypoints == null) {
-			source.sendError(tr("firmament.command.waypoint.export.nowaypoints",
-			                    "No waypoints to export found."))
+			source.sendError(Waypoints.textNothingToExport())
 			return
 		}
 		val data =
@@ -63,11 +62,11 @@ object ColeWeightCompat {
 
 	fun importAndInform(
 		source: DefaultSource,
-		pos: BlockPos,
+		pos: BlockPos?,
 		positiveFeedback: (Int) -> Text
 	) {
 		val text = ClipboardUtils.getTextContents()
-		val wr = tryParse(text).map { intoFirm(it, pos) }
+		val wr = tryParse(text).map { intoFirm(it, pos ?: BlockPos.ORIGIN) }
 		val waypoints = wr.getOrElse {
 			source.sendError(
 				tr("firmament.command.waypoint.import.cw.error",
@@ -75,6 +74,7 @@ object ColeWeightCompat {
 			Firmament.logger.error(it)
 			return
 		}
+		waypoints.lastRelativeImport = pos
 		Waypoints.waypoints = waypoints
 		source.sendFeedback(positiveFeedback(waypoints.size))
 	}
@@ -93,23 +93,23 @@ object ColeWeightCompat {
 			thenLiteral("exportrelativecw") {
 				thenExecute {
 					copyAndInform(source, MC.player?.blockPos ?: BlockPos.ORIGIN) {
-						tr("firmament.command.waypoint.export.relative",
+						tr("firmament.command.waypoint.export.cw.relative",
 						   "Copied $it relative waypoints to clipboard in ColeWeight format. Make sure to stand in the same position when importing.")
 					}
 				}
 			}
-			thenLiteral("import") {
+			thenLiteral("importcw") {
 				thenExecute {
-					importAndInform(source, BlockPos.ORIGIN) { it: Int ->
-						Text.stringifiedTranslatable("firmament.command.waypoint.import",
+					importAndInform(source, null) {
+						Text.stringifiedTranslatable("firmament.command.waypoint.import.cw",
 						                             it)
 					}
 				}
 			}
-			thenLiteral("importrelative") {
+			thenLiteral("importrelativecw") {
 				thenExecute {
 					importAndInform(source, MC.player!!.blockPos) {
-						tr("firmament.command.waypoint.import.relative",
+						tr("firmament.command.waypoint.import.cw.relative",
 						   "Imported $it relative waypoints from clipboard. Make sure you stand in the same position as when you exported these waypoints for them to line up correctly.")
 					}
 				}
