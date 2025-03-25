@@ -29,7 +29,7 @@ plugins {
 	alias(libs.plugins.kotlin.plugin.ksp)
 	//	alias(libs.plugins.loom)
 	// TODO: use arch loom once they update to 1.8
-	id("fabric-loom") version "1.9.2"
+	id("fabric-loom") version "1.10.1"
 	alias(libs.plugins.shadow)
 	id("moe.nea.licenseextractificator")
 	id("moe.nea.mc-auto-translations") version "0.2.0"
