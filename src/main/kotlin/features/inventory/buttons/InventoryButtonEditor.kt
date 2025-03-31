@@ -120,6 +120,13 @@ class InventoryButtonEditor(
 		return newButtons
 	}
 
+	override fun renderBackground(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+		context.matrices.push()
+		context.matrices.translate(0F, 0F, -15F)
+		super.renderBackground(context, mouseX, mouseY, delta)
+		context.matrices.pop()
+	}
+
 	override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
 		super.render(context, mouseX, mouseY, delta)
 		context.matrices.push()
