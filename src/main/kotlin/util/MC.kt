@@ -99,7 +99,7 @@ object MC {
 	inline val soundManager get() = instance.soundManager
 	inline val player: ClientPlayerEntity? get() = TestUtil.unlessTesting { instance.player }
 	inline val camera: Entity? get() = instance.cameraEntity
-	inline val stackInHand: ItemStack get() = player?.inventory?.mainHandStack ?: ItemStack.EMPTY
+	inline val stackInHand: ItemStack get() = player?.mainHandStack ?: ItemStack.EMPTY
 	inline val guiAtlasManager get() = instance.guiAtlasManager
 	inline val world: ClientWorld? get() = TestUtil.unlessTesting { instance.world }
 	inline val playerName: String? get() = player?.name?.unformattedString

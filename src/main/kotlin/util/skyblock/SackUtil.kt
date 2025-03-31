@@ -93,7 +93,7 @@ object SackUtil {
 
 		fun updateFromHoverText(text: Text) {
 			text.siblings.forEach(::updateFromHoverText)
-			val hoverText = text.style.hoverEvent?.getValue(HoverEvent.Action.SHOW_TEXT) ?: return
+			val hoverText = (text.style.hoverEvent as? HoverEvent.ShowText)?.value ?: return
 			val cleanedText = hoverText.unformattedString
 			if (cleanedText.startsWith("Added items:\n")) {
 				if (!foundAdded) {

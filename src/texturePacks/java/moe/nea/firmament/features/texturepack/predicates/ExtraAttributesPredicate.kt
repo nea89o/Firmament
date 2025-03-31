@@ -5,6 +5,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import moe.nea.firmament.features.texturepack.StringMatcher
@@ -193,7 +195,7 @@ fun interface NbtMatcher {
 
     class MatchStringExact(val string: String) : NbtMatcher {
         override fun matches(nbt: NbtElement): Boolean {
-            return nbt is NbtString && nbt.asString() == string
+            return nbt.asString().getOrNull() == string
         }
 
         override fun toString(): String {
@@ -203,7 +205,7 @@ fun interface NbtMatcher {
 
     class MatchString(val string: StringMatcher) : NbtMatcher {
         override fun matches(nbt: NbtElement): Boolean {
-            return nbt is NbtString && string.matches(nbt.asString())
+            return nbt.asString().map(string::matches).getOrDefault(false)
         }
 
         override fun toString(): String {

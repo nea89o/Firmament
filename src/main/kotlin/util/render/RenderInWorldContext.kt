@@ -5,15 +5,12 @@ import io.github.notenoughupdates.moulconfig.platform.next
 import java.lang.Math.pow
 import org.joml.Matrix4f
 import org.joml.Vector3f
-import net.minecraft.client.gl.VertexBuffer
+import util.render.CustomRenderLayers
 import net.minecraft.client.render.Camera
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderPhase
 import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.texture.Sprite
 import net.minecraft.client.util.math.MatrixStack
@@ -27,47 +24,12 @@ import moe.nea.firmament.util.MC
 
 @RenderContextDSL
 class RenderInWorldContext private constructor(
-	private val tesselator: Tessellator,
 	val matrixStack: MatrixStack,
 	private val camera: Camera,
 	private val tickCounter: RenderTickCounter,
 	val vertexConsumers: VertexConsumerProvider.Immediate,
 ) {
 
-	object RenderLayers {
-		val TRANSLUCENT_TRIS = RenderLayer.of("firmament_translucent_tris",
-		                                      VertexFormats.POSITION_COLOR,
-		                                      VertexFormat.DrawMode.TRIANGLES,
-		                                      RenderLayer.CUTOUT_BUFFER_SIZE,
-		                                      false, true,
-		                                      RenderLayer.MultiPhaseParameters.builder()
-			                                      .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
-			                                      .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-			                                      .program(RenderPhase.POSITION_COLOR_PROGRAM)
-			                                      .build(false))
-		val LINES = RenderLayer.of("firmament_rendertype_lines",
-		                           VertexFormats.LINES,
-		                           VertexFormat.DrawMode.LINES,
-		                           RenderLayer.CUTOUT_BUFFER_SIZE,
-		                           false, false, // do we need translucent? i dont think so
-		                           RenderLayer.MultiPhaseParameters.builder()
-			                           .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
-			                           .program(FirmamentShaders.LINES)
-			                           .build(false)
-		)
-		val COLORED_QUADS = RenderLayer.of(
-			"firmament_quads",
-			VertexFormats.POSITION_COLOR,
-			VertexFormat.DrawMode.QUADS,
-			RenderLayer.CUTOUT_BUFFER_SIZE,
-			false, true,
-			RenderLayer.MultiPhaseParameters.builder()
-				.depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
-				.program(RenderPhase.POSITION_COLOR_PROGRAM)
-				.transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-				.build(false)
-		)
-	}
 
 	@Deprecated("stateful color management is no longer a thing")
 	fun color(color: me.shedaniel.math.Color) {
@@ -82,7 +44,7 @@ class RenderInWorldContext private constructor(
 	fun block(blockPos: BlockPos, color: Int) {
 		matrixStack.push()
 		matrixStack.translate(blockPos.x.toFloat(), blockPos.y.toFloat(), blockPos.z.toFloat())
-		buildCube(matrixStack.peek().positionMatrix, vertexConsumers.getBuffer(RenderLayers.COLORED_QUADS), color)
+		buildCube(matrixStack.peek().positionMatrix, vertexConsumers.getBuffer(CustomRenderLayers.COLORED_QUADS), color)
 		matrixStack.pop()
 	}
 
@@ -155,7 +117,7 @@ class RenderInWorldContext private constructor(
 		matrixStack.translate(vec3d.x, vec3d.y, vec3d.z)
 		matrixStack.scale(size, size, size)
 		matrixStack.translate(-.5, -.5, -.5)
-		buildCube(matrixStack.peek().positionMatrix, vertexConsumers.getBuffer(RenderLayers.COLORED_QUADS), color)
+		buildCube(matrixStack.peek().positionMatrix, vertexConsumers.getBuffer(CustomRenderLayers.COLORED_QUADS), color)
 		matrixStack.pop()
 		vertexConsumers.draw()
 	}
@@ -182,8 +144,7 @@ class RenderInWorldContext private constructor(
 
 	fun line(points: List<Vec3d>, lineWidth: Float = 10F) {
 		RenderSystem.lineWidth(lineWidth)
-		// TODO: replace with renderlayers
-		val buffer = tesselator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES)
+		val buffer = vertexConsumers.getBuffer(CustomRenderLayers.LINES)
 
 		val matrix = matrixStack.peek()
 		var lastNormal: Vector3f? = null
@@ -203,7 +164,6 @@ class RenderInWorldContext private constructor(
 				.next()
 		}
 
-		RenderLayers.LINES.draw(buffer.end())
 	}
 	// TODO: put the favourite icons in front of items again
 
@@ -281,16 +241,15 @@ class RenderInWorldContext private constructor(
 		fun renderInWorld(event: WorldRenderLastEvent, block: RenderInWorldContext. () -> Unit) {
 			// TODO: there should be *no more global state*. the only thing we should be doing is render layers. that includes settings like culling, blending, shader color, and depth testing
 			// For now i will let these functions remain, but this needs to go before i do a full (non-beta) release
-			RenderSystem.disableDepthTest()
-			RenderSystem.enableBlend()
-			RenderSystem.defaultBlendFunc()
-			RenderSystem.disableCull()
+//			RenderSystem.disableDepthTest()
+//			RenderSystem.enableBlend()
+//			RenderSystem.defaultBlendFunc()
+//			RenderSystem.disableCull()
 
 			event.matrices.push()
 			event.matrices.translate(-event.camera.pos.x, -event.camera.pos.y, -event.camera.pos.z)
 
 			val ctx = RenderInWorldContext(
-				RenderSystem.renderThreadTesselator(),
 				event.matrices,
 				event.camera,
 				event.tickCounter,
@@ -302,10 +261,6 @@ class RenderInWorldContext private constructor(
 			event.matrices.pop()
 			event.vertexConsumers.draw()
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F)
-			VertexBuffer.unbind()
-			RenderSystem.enableDepthTest()
-			RenderSystem.enableCull()
-			RenderSystem.disableBlend()
 		}
 	}
 }

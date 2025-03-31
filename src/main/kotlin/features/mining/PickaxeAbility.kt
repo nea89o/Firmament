@@ -1,6 +1,7 @@
 package moe.nea.firmament.features.mining
 
 import java.util.regex.Pattern
+import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.item.ItemStack
@@ -140,8 +141,7 @@ object PickaxeAbility : FirmamentFeature {
 			}
 		} ?: return
 		val extra = it.item.extraAttributes
-		if (!extra.contains("drill_fuel")) return
-		val fuel = extra.getInt("drill_fuel")
+		val fuel = extra.getInt("drill_fuel").getOrNull() ?: return
 		val percentage = fuel / maxFuel.toFloat()
 		it.barOverride = DurabilityBarEvent.DurabilityBar(
 			lerp(

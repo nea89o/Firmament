@@ -3,6 +3,7 @@ package moe.nea.firmament.features.chat
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.utils.io.jvm.javaio.toInputStream
+import java.net.URI
 import java.net.URL
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
@@ -78,7 +79,7 @@ object ChatLinks : FirmamentFeature {
 					val texId = Firmament.identifier("dynamic_image_preview${nextTexId.getAndIncrement()}")
 					MC.textureManager.registerTexture(
 						texId,
-						NativeImageBackedTexture(image)
+						NativeImageBackedTexture({ texId.path }, image)
 					)
 					Image(texId, image.width, image.height)
 				} else
@@ -102,8 +103,8 @@ object ChatLinks : FirmamentFeature {
 		if (it.screen !is ChatScreen) return
 		val hoveredComponent =
 			MC.inGameHud.chatHud.getTextStyleAt(it.mouseX.toDouble(), it.mouseY.toDouble()) ?: return
-		val hoverEvent = hoveredComponent.hoverEvent ?: return
-		val value = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT) ?: return
+		val hoverEvent = hoveredComponent.hoverEvent as? HoverEvent.ShowText ?: return
+		val value = hoverEvent.value
 		val url = urlRegex.matchEntire(value.unformattedString)?.groupValues?.get(0) ?: return
 		if (!isImageUrl(url)) return
 		val imageFuture = imageCache[url] ?: return
@@ -149,8 +150,8 @@ object ChatLinks : FirmamentFeature {
 					Text.literal(url).setStyle(
 						Style.EMPTY.withUnderline(true).withColor(
 							Formatting.AQUA
-						).withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(url)))
-							.withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, url))
+						).withHoverEvent(HoverEvent.ShowText(Text.literal(url)))
+							.withClickEvent(ClickEvent.OpenUrl(URI(url)))
 					)
 				)
 				if (isImageUrl(url))

@@ -81,7 +81,11 @@ object CustomGlobalArmorOverrides {
 			null,
 			Optional.of(RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY, model)),
 			Optional.empty(),
-			Optional.empty(), false, false, false
+			Optional.empty(),
+			false,
+			false,
+			false,
+			false
 		)
 	}
 

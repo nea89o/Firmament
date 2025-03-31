@@ -43,6 +43,7 @@ import moe.nea.firmament.util.mc.IntrospectableItemModelManager
 import moe.nea.firmament.util.mc.SNbtFormatter
 import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.iterableArmorItems
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.skyBlockId
 
@@ -108,7 +109,7 @@ object PowerUserTools : FirmamentFeature {
 		MC.sendChat(Text.stringifiedTranslatable("firmament.poweruser.entity.position", target.pos))
 		if (target is LivingEntity) {
 			MC.sendChat(Text.translatable("firmament.poweruser.entity.armor"))
-			for (armorItem in target.armorItems) {
+			for ((slot, armorItem) in target.iterableArmorItems) {
 				MC.sendChat(Text.translatable("firmament.poweruser.entity.armor.item", debugFormat(armorItem)))
 			}
 		}
