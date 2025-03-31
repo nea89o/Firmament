@@ -148,9 +148,9 @@ object Firmament {
 		})
 		ClientInitEvent.publish(ClientInitEvent())
 		ResourceManagerHelper.registerBuiltinResourcePack(
-			identifier("transparent_storage"),
+			identifier("transparent_overlay"),
 			modContainer,
-			tr("firmament.resourcepack.transparentstorage", "Transparent Firmament Storage Overlay"),
+			tr("firmament.resourcepack.transparentoverlay", "Transparent Firmament Overlay"),
 			ResourcePackActivationType.NORMAL
 		)
 	}
