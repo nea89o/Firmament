@@ -1,18 +1,12 @@
 
 package moe.nea.firmament.util.render
 
-import com.mojang.blaze3d.systems.RenderSystem
 import io.github.notenoughupdates.moulconfig.platform.next
 import org.joml.Matrix4f
 import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.render.BufferRenderer
-import net.minecraft.client.render.GameRenderer
 import net.minecraft.client.render.LightmapTextureManager
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexConsumer
-import net.minecraft.client.render.VertexFormat
-import net.minecraft.client.render.VertexFormats
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos

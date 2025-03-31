@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.inventory
 
+import java.net.URI
 import net.fabricmc.loader.api.FabricLoader
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,7 +39,7 @@ object REIDependencyWarner {
 			.white()
 			.append(Text.literal("[").aqua())
 			.append(Text.translatable("firmament.download", modName)
-				        .styled { it.withClickEvent(ClickEvent(ClickEvent.Action.OPEN_URL, modrinthLink(slug))) }
+				        .styled { it.withClickEvent(ClickEvent.OpenUrl(URI (modrinthLink(slug)))) }
 				        .yellow()
 				        .also {
 					        if (alreadyDownloaded)

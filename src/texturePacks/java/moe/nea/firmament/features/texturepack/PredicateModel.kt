@@ -9,12 +9,11 @@ import net.minecraft.client.render.item.ItemRenderState
 import net.minecraft.client.render.item.model.BasicItemModel
 import net.minecraft.client.render.item.model.ItemModel
 import net.minecraft.client.render.item.model.ItemModelTypes
-import net.minecraft.client.render.item.tint.TintSource
 import net.minecraft.client.render.model.ResolvableModel
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.LivingEntity
+import net.minecraft.item.ItemDisplayContext
 import net.minecraft.item.ItemStack
-import net.minecraft.item.ModelTransformationMode
 import net.minecraft.util.Identifier
 import moe.nea.firmament.features.texturepack.predicates.AndPredicate
 
@@ -29,10 +28,10 @@ class PredicateModel {
 		)
 
 		override fun update(
-			state: ItemRenderState,
+			state: ItemRenderState?,
 			stack: ItemStack,
-			resolver: ItemModelManager,
-			transformationMode: ModelTransformationMode,
+			resolver: ItemModelManager?,
+			displayContext: ItemDisplayContext?,
 			world: ClientWorld?,
 			user: LivingEntity?,
 			seed: Int
@@ -42,7 +41,7 @@ class PredicateModel {
 					.findLast { it.predicate.test(stack, user) }
 					?.model
 					?: fallback
-			model.update(state, stack, resolver, transformationMode, world, user, seed)
+			model.update(state, stack, resolver, displayContext, world, user, seed)
 		}
 	}
 

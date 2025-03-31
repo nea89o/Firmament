@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.jvm.optionals.getOrNull
 import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import moe.nea.firmament.util.MC
@@ -26,7 +27,7 @@ interface StringMatcher {
     }
 
     fun matches(nbt: NbtString): Boolean {
-        val string = nbt.asString()
+        val string = nbt.value
         val jsonStart = string.indexOf('{')
         val stringStart = string.indexOf('"')
         val isString = stringStart >= 0 && string.subSequence(0, stringStart).isBlank()

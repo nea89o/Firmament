@@ -226,12 +226,12 @@ val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false)
 val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
-val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
+val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false)
 val jadeSourceSet = createIsolatedSourceSet("jade")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
-val reiSourceSet = createIsolatedSourceSet("rei")
+val reiSourceSet = createIsolatedSourceSet("rei", isEnabled = false)
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
-val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
+val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks", isEnabled = false)
 
 dependencies {
 	// Minecraft dependencies

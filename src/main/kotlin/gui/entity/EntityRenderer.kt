@@ -169,13 +169,13 @@ object EntityRenderer {
 		val oldBodyYaw = entity.bodyYaw
 		val oldYaw = entity.yaw
 		val oldPitch = entity.pitch
-		val oldPrevHeadYaw = entity.prevHeadYaw
+		val oldPrevHeadYaw = entity.lastHeadYaw
 		val oldHeadYaw = entity.headYaw
 		entity.bodyYaw = 180.0f + targetYaw * 20.0f
 		entity.yaw = 180.0f + targetYaw * 40.0f
 		entity.pitch = -targetPitch * 20.0f
 		entity.headYaw = entity.yaw
-		entity.prevHeadYaw = entity.yaw
+		entity.lastHeadYaw = entity.yaw
 		val vector3f = Vector3f(0.0f, (entity.height / 2.0f + bottomOffset).toFloat(), 0.0f)
 		InventoryScreen.drawEntity(
 			context,
@@ -190,7 +190,7 @@ object EntityRenderer {
 		entity.bodyYaw = oldBodyYaw
 		entity.yaw = oldYaw
 		entity.pitch = oldPitch
-		entity.prevHeadYaw = oldPrevHeadYaw
+		entity.lastHeadYaw = oldPrevHeadYaw
 		entity.headYaw = oldHeadYaw
 		context.disableScissor()
 	}

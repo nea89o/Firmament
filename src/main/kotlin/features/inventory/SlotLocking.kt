@@ -4,6 +4,7 @@ package moe.nea.firmament.features.inventory
 
 import java.util.UUID
 import org.lwjgl.glfw.GLFW
+import util.render.CustomRenderLayers
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -17,6 +18,9 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.RenderLayers
+import net.minecraft.client.render.TexturedRenderLayers
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.Slot
@@ -45,7 +49,6 @@ import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
 import moe.nea.firmament.util.mc.SlotUtils.swapWithHotBar
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
-import moe.nea.firmament.util.render.GuiRenderLayers
 import moe.nea.firmament.util.render.drawLine
 import moe.nea.firmament.util.skyblock.DungeonUtil
 import moe.nea.firmament.util.skyblockUUID
@@ -445,7 +448,7 @@ object SlotLocking : FirmamentFeature {
 		val isUUIDLocked = (it.slot.stack?.skyblockUUID) in (lockedUUIDs ?: setOf())
 		if (isSlotLocked || isUUIDLocked) {
 			it.context.drawGuiTexture(
-				GuiRenderLayers.GUI_TEXTURED_NO_DEPTH,
+				RenderLayer::getGuiTexturedOverlay,
 				when {
 					isSlotLocked ->
 						(Identifier.of("firmament:slot_locked"))

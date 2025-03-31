@@ -1,50 +1,22 @@
 package moe.nea.firmament.util.render
 
+import com.mojang.blaze3d.pipeline.RenderPipeline
+import com.mojang.blaze3d.platform.DepthTestFunction
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.VertexFormat.DrawMode
 import me.shedaniel.math.Color
 import org.joml.Matrix4f
+import util.render.CustomRenderLayers
+import net.minecraft.client.gl.RenderPipelines
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderLayer.MultiPhaseParameters
-import net.minecraft.client.render.RenderPhase
-import net.minecraft.client.render.VertexFormat
-import net.minecraft.client.render.VertexFormat.DrawMode
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.util.Identifier
-import net.minecraft.util.TriState
-import net.minecraft.util.Util
+import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.MC
 
 fun DrawContext.isUntranslatedGuiDrawContext(): Boolean {
 	return (matrices.peek().positionMatrix.properties() and Matrix4f.PROPERTY_IDENTITY.toInt()) != 0
-}
-
-object GuiRenderLayers {
-	val GUI_TEXTURED_NO_DEPTH = Util.memoize<Identifier, RenderLayer> { texture: Identifier ->
-		RenderLayer.of("firmament_gui_textured_no_depth",
-		               VertexFormats.POSITION_TEXTURE_COLOR,
-		               DrawMode.QUADS,
-		               DEFAULT_BUFFER_SIZE,
-		               MultiPhaseParameters.builder()
-			               .texture(RenderPhase.Texture(texture, TriState.FALSE, false))
-			               .program(RenderPhase.POSITION_TEXTURE_COLOR_PROGRAM)
-			               .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-			               .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
-			               .build(false))
-	}
-	val GUI_TEXTURED_TRIS = Util.memoize { texture: Identifier ->
-		RenderLayer.of("firmament_gui_textured_overlay_tris",
-		               VertexFormats.POSITION_TEXTURE_COLOR,
-		               DrawMode.TRIANGLES,
-		               DEFAULT_BUFFER_SIZE,
-		               MultiPhaseParameters.builder()
-			               .texture(RenderPhase.Texture(texture, TriState.DEFAULT, false))
-			               .program(RenderPhase.POSITION_TEXTURE_COLOR_PROGRAM)
-			               .transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY)
-			               .depthTest(RenderPhase.ALWAYS_DEPTH_TEST)
-			               .writeMaskState(RenderPhase.COLOR_MASK)
-			               .build(false))
-	}
 }
 
 @Deprecated("Use the other drawGuiTexture")
@@ -91,7 +63,7 @@ fun DrawContext.drawLine(fromX: Int, fromY: Int, toX: Int, toY: Int, color: Colo
 	}
 	RenderSystem.lineWidth(MC.window.scaleFactor.toFloat())
 	draw { vertexConsumers ->
-		val buf = vertexConsumers.getBuffer(RenderInWorldContext.RenderLayers.LINES)
+		val buf = vertexConsumers.getBuffer(CustomRenderLayers.LINES)
 		buf.vertex(fromX.toFloat(), fromY.toFloat(), 0F).color(color.color)
 			.normal(toX - fromX.toFloat(), toY - fromY.toFloat(), 0F)
 		buf.vertex(toX.toFloat(), toY.toFloat(), 0F).color(color.color)

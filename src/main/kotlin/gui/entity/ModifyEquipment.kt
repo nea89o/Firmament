@@ -47,7 +47,7 @@ object ModifyEquipment : EntityModifier {
 
 	private fun coloredLeatherArmor(leatherArmor: Item, data: String): ItemStack {
 		val stack = ItemStack(leatherArmor)
-		stack.set(DataComponentTypes.DYED_COLOR, DyedColorComponent(data.toInt(16), false))
+		stack.set(DataComponentTypes.DYED_COLOR, DyedColorComponent(data.toInt(16)))
 		return stack
 	}
 }

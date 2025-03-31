@@ -1,18 +1,12 @@
 package moe.nea.firmament.util.render
 
-import com.mojang.blaze3d.systems.RenderSystem
 import io.github.notenoughupdates.moulconfig.platform.next
 import org.joml.Matrix4f
 import org.joml.Vector2f
+import util.render.CustomRenderLayers
 import kotlin.math.atan2
 import kotlin.math.tan
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.BufferRenderer
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderPhase
-import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexFormat.DrawMode
-import net.minecraft.client.render.VertexFormats
 import net.minecraft.util.Identifier
 
 object RenderCircleProgress {
@@ -26,9 +20,8 @@ object RenderCircleProgress {
 		v1: Float,
 		v2: Float,
 	) {
-		RenderSystem.enableBlend()
 		drawContext.draw {
-			val bufferBuilder = it.getBuffer(GuiRenderLayers.GUI_TEXTURED_TRIS.apply(texture))
+			val bufferBuilder = it.getBuffer(CustomRenderLayers.GUI_TEXTURED_NO_DEPTH_TRIS.apply(texture))
 			val matrix: Matrix4f = drawContext.matrices.peek().positionMatrix
 
 			val corners = listOf(
@@ -86,7 +79,6 @@ object RenderCircleProgress {
 					.next()
 			}
 		}
-		RenderSystem.disableBlend()
 	}
 
 

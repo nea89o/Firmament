@@ -222,7 +222,7 @@ object MinesweeperHelper {
     fun onChat(event: ProcessChatEvent) {
         if (CarnivalFeatures.TConfig.displayTutorials && event.unformattedString == startGameQuestion) {
             MC.sendChat(Text.translatable("firmament.carnival.tutorial.minesweeper").styled {
-                it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, "/firm minesweepertutorial"))
+                it.withClickEvent(ClickEvent.RunCommand("/firm minesweepertutorial"))
             })
         }
         if (!CarnivalFeatures.TConfig.enableBombSolver) {
@@ -259,7 +259,7 @@ object MinesweeperHelper {
         val boardPosition = BoardPosition.fromBlockPos(event.blockPos)
         log.log { "Breaking block at ${event.blockPos} ($boardPosition)" }
         gs.lastClickedPosition = boardPosition
-        gs.lastDowsingMode = DowsingMode.fromItem(event.player.inventory.mainHandStack)
+        gs.lastDowsingMode = DowsingMode.fromItem(event.player.mainHandStack)
     }
 
     @Subscribe

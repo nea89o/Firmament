@@ -24,7 +24,7 @@ import net.minecraft.resource.metadata.ResourceMetadata
 import net.minecraft.resource.metadata.ResourceMetadataSerializer
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
-import net.minecraft.util.PathUtil
+import net.minecraft.util.path.PathUtil
 import moe.nea.firmament.Firmament
 
 class RepoModResourcePack(val basePath: Path) : ModResourcePack {

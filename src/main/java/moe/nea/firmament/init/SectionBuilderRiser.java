@@ -3,10 +3,8 @@ package moe.nea.firmament.init;
 import me.shedaniel.mm.api.ClassTinkerers;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.render.block.BlockModels;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.chunk.SectionBuilder;
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.util.math.BlockPos;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -28,8 +26,8 @@ public class SectionBuilderRiser extends RiserUtils {
     String BlockRenderManager;
     @IntermediaryName(BlockState.class)
     String BlockState;
-    @IntermediaryName(BakedModel.class)
-    String BakedModel;
+//    @IntermediaryName(BakedModel.class)
+//    String BakedModel;
     String CustomBlockTextures = "moe.nea.firmament.features.texturepack.CustomBlockTextures";
 
     Type getModelDesc = Type.getMethodType(
@@ -41,7 +39,8 @@ public class SectionBuilderRiser extends RiserUtils {
         Intermediary.<BlockRenderManager>className(),
         Intermediary.methodName(net.minecraft.client.render.block.BlockRenderManager::getModel),
         Type.getMethodDescriptor(
-            getTypeForClassName(Intermediary.<BakedModel>className()),
+			// TODO: fix this riser
+//            getTypeForClassName(Intermediary.<BakedModel>className()),
             getTypeForClassName(Intermediary.<BlockState>className())
         )
     );
@@ -105,8 +104,9 @@ public class SectionBuilderRiser extends RiserUtils {
                 Opcodes.INVOKESTATIC,
                 getTypeForClassName(CustomBlockTextures).getInternalName(),
                 "patchIndigo",
-                Type.getMethodDescriptor(getTypeForClassName(BakedModel),
-                                         getTypeForClassName(BakedModel),
+                Type.getMethodDescriptor(
+//					getTypeForClassName(BakedModel),
+//                                         getTypeForClassName(BakedModel),
                                          getTypeForClassName(BlockPos),
                                          getTypeForClassName(BlockState)),
                 false

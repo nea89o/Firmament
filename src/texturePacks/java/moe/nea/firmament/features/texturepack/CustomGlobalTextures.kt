@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.jvm.optionals.getOrNull
-import net.minecraft.client.util.ModelIdentifier
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
 import net.minecraft.text.Text

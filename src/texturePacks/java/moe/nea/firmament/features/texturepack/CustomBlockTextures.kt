@@ -19,8 +19,8 @@ import kotlinx.serialization.serializer
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
-import net.minecraft.client.render.model.BakedModel
-import net.minecraft.client.util.ModelIdentifier
+import net.minecraft.client.render.item.model.ItemModel
+import net.minecraft.client.render.model.BlockStateModel
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.resource.ResourceManager
@@ -57,11 +57,11 @@ object CustomBlockTextures {
     ) {
 
         @Transient
-        val blockModelIdentifier get() = ModelIdentifier(block.withPrefixedPath("block/"), "firmament")
+        val blockModelIdentifier get() = block.withPrefixedPath("block/")
 
         @Transient
-        val bakedModel: BakedModel by lazy(LazyThreadSafetyMode.NONE) {
-            MC.instance.bakedModelManager.getModel(blockModelIdentifier)
+        val bakedModel: ItemModel by lazy(LazyThreadSafetyMode.NONE) {
+            MC.instance.bakedModelManager.blockModels.(blockModelIdentifier)
         }
 
         @OptIn(ExperimentalSerializationApi::class)
@@ -189,7 +189,7 @@ object CustomBlockTextures {
     }
 
     @JvmStatic
-    fun getReplacementModel(block: BlockState, blockPos: BlockPos?): BakedModel? {
+    fun getReplacementModel(block: BlockState, blockPos: BlockPos?): BlockStateModel? {
         return getReplacement(block, blockPos)?.bakedModel
     }
 
@@ -267,11 +267,6 @@ object CustomBlockTextures {
         }
 
         return BakedReplacements(map.mapValues { LocationReplacements(it.value) })
-    }
-
-    @JvmStatic
-    fun patchIndigo(orig: BakedModel, pos: BlockPos, state: BlockState): BakedModel {
-        return getReplacementModel(state, pos) ?: orig
     }
 
     @Subscribe

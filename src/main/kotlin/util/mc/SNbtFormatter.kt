@@ -1,5 +1,6 @@
 package moe.nea.firmament.util.mc
 
+import net.minecraft.nbt.AbstractNbtList
 import net.minecraft.nbt.NbtByte
 import net.minecraft.nbt.NbtByteArray
 import net.minecraft.nbt.NbtCompound
@@ -38,7 +39,7 @@ class SNbtFormatter private constructor() : NbtElementVisitor {
 
 
 	override fun visitString(element: NbtString) {
-		result.append(NbtString.escape(element.asString()))
+		result.append(NbtString.escape(element.value))
 	}
 
 	override fun visitByte(element: NbtByte) {
@@ -65,18 +66,18 @@ class SNbtFormatter private constructor() : NbtElementVisitor {
 		result.append(element.doubleValue()).append("d")
 	}
 
-	private fun visitArrayContents(array: List<NbtElement>) {
+	private fun visitArrayContents(array: AbstractNbtList) {
 		array.forEachIndexed { index, element ->
 			writeIndent()
 			element.accept(this)
-			if (array.size != index + 1) {
+			if (array.size() != index + 1) {
 				result.append(",")
 			}
 			result.append("\n")
 		}
 	}
 
-	private fun writeArray(arrayTypeTag: String, array: List<NbtElement>) {
+	private fun writeArray(arrayTypeTag: String, array: AbstractNbtList) {
 		result.append("[").append(arrayTypeTag).append("\n")
 		pushIndent()
 		visitArrayContents(array)
