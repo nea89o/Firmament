@@ -218,7 +218,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 	}
 
 	fun drawPlayerInventory(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
-		val items = MC.player?.inventory?.main ?: return
+		val items = MC.player?.inventory?.mainStacks ?: return
 		items.withIndex().forEach { (index, item) ->
 			val (x, y) = getPlayerInventorySlotPosition(index)
 			context.drawItem(item, x, y, 0)

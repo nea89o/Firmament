@@ -127,13 +127,13 @@ fun MutableText.darkGrey() = withColor(Formatting.DARK_GRAY)
 fun MutableText.red() = withColor(Formatting.RED)
 fun MutableText.white() = withColor(Formatting.WHITE)
 fun MutableText.bold(): MutableText = styled { it.withBold(true) }
-fun MutableText.hover(text: Text): MutableText = styled {it.withHoverEvent(HoverEvent(HoverEvent.Action.SHOW_TEXT, text))}
+fun MutableText.hover(text: Text): MutableText = styled {it.withHoverEvent(HoverEvent.ShowText(text))}
 
 
 fun MutableText.clickCommand(command: String): MutableText {
 	require(command.startsWith("/"))
 	return this.styled {
-		it.withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+		it.withClickEvent(ClickEvent.RunCommand(command))
 	}
 }
 

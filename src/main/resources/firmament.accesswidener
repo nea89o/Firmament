@@ -9,9 +9,6 @@ accessible class net/minecraft/registry/RegistryOps$CachedRegistryInfoGetter
 
 accessible field net/minecraft/entity/mob/CreeperEntity CHARGED Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/entity/decoration/ArmorStandEntity setSmall (Z)V
-accessible field net/minecraft/entity/passive/AbstractHorseEntity items Lnet/minecraft/inventory/SimpleInventory;
-accessible field net/minecraft/entity/passive/AbstractHorseEntity SADDLED_FLAG I
-accessible field net/minecraft/entity/passive/AbstractHorseEntity HORSE_FLAGS Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/resource/NamespaceResourceManager loadMetadata (Lnet/minecraft/resource/InputSupplier;)Lnet/minecraft/resource/metadata/ResourceMetadata;
 accessible method net/minecraft/client/gui/DrawContext drawTexturedQuad (Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIIIFFFFI)V
 

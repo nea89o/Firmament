@@ -19,6 +19,7 @@ import me.shedaniel.rei.api.common.entry.EntryIngredient
 import me.shedaniel.rei.api.common.entry.EntryStack
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnReason
+import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.village.VillagerProfession
@@ -33,6 +34,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.AprilFoolsUtil
 import moe.nea.firmament.util.FirmFormatters
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.gold
 import moe.nea.firmament.util.grey
@@ -92,7 +94,7 @@ class SBReforgeRecipe(
 				list.add(Widgets.withTooltip(
 					EntityWidget(
 						EntityType.VILLAGER.create(EntityRenderer.fakeWorld, SpawnReason.COMMAND)
-							?.also { it.villagerData = it.villagerData.withProfession(VillagerProfession.WEAPONSMITH) },
+							?.also { it.villagerData = it.villagerData.withProfession(MC.currentOrDefaultRegistries.getEntryOrThrow(VillagerProfession.WEAPONSMITH)) },
 						Point(bounds.minX + 10 + 24 + 8 - dimension.width / 2, bounds.centerY - dimension.height / 2),
 						dimension
 					),

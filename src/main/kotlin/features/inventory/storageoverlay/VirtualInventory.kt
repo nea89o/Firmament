@@ -11,6 +11,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.jvm.optionals.getOrNull
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtIo
@@ -42,15 +43,15 @@ data class VirtualInventory(
 		override fun deserialize(decoder: Decoder): VirtualInventory {
 			val s = decoder.decodeString()
 			val n = NbtIo.readCompressed(ByteArrayInputStream(s.decodeBase64Bytes()), NbtSizeTracker.of(100_000_000))
-			val items = n.getList(INVENTORY, NbtCompound.COMPOUND_TYPE.toInt())
+			val items = n.getList(INVENTORY).getOrNull()
 			val ops = getOps()
-			return VirtualInventory(items.map {
+			return VirtualInventory(items?.map {
 				it as NbtCompound
 				if (it.isEmpty) ItemStack.EMPTY
 				else ErrorUtil.catch("Could not deserialize item") {
 					ItemStack.CODEC.parse(ops, it).orThrow
 				}.or { ItemStack.EMPTY }
-			})
+			} ?: listOf())
 		}
 
 		fun getOps() = TolerantRegistriesOps(NbtOps.INSTANCE, MC.currentOrDefaultRegistries)

@@ -1,3 +1,4 @@
+
 package moe.nea.firmament.features.texturepack.predicates
 
 import com.google.gson.Gson
@@ -5,8 +6,9 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.mojang.serialization.JsonOps
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
+import com.mojang.serialization.JsonOps
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import moe.nea.firmament.features.texturepack.StringMatcher
