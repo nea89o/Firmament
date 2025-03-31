@@ -78,9 +78,9 @@ object InventoryButtons : FirmamentFeature {
         ScreenUtil.setScreenLater(
             InventoryButtonEditor(
                 lastRectangle ?: Rectangle(
-                    MC.window.scaledWidth / 2 - 100,
-                    MC.window.scaledHeight / 2 - 100,
-                    200, 200,
+                    MC.window.scaledWidth / 2 - 88,
+                    MC.window.scaledHeight / 2 - 83,
+                    176, 166,
                 )
             )
         )

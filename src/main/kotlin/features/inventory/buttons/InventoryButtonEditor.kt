@@ -6,6 +6,7 @@ import io.github.notenoughupdates.moulconfig.xml.Bind
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import org.lwjgl.glfw.GLFW
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.util.InputUtil
@@ -53,6 +54,11 @@ class InventoryButtonEditor(
 		InventoryButtons.DConfig.data.buttons = buttons
 		InventoryButtons.DConfig.markDirty()
 		super.close()
+	}
+
+	override fun resize(client: MinecraftClient, width: Int, height: Int) {
+		lastGuiRect.move(MC.window.scaledWidth / 2 - 88, MC.window.scaledHeight / 2 - 83)
+		super.resize(client, width, height)
 	}
 
 	override fun init() {
