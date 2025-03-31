@@ -57,7 +57,7 @@ class InventoryButtonEditor(
 	}
 
 	override fun resize(client: MinecraftClient, width: Int, height: Int) {
-		lastGuiRect.move(MC.window.scaledWidth / 2 - 88, MC.window.scaledHeight / 2 - 83)
+		lastGuiRect.move(MC.window.scaledWidth / 2 - lastGuiRect.width / 2, MC.window.scaledHeight / 2 - lastGuiRect.height / 2)
 		super.resize(client, width, height)
 	}
 
