@@ -10,6 +10,7 @@ class DebugLogger(val tag: String) {
 	companion object {
 		val allInstances = InstanceList<DebugLogger>("DebugLogger")
 	}
+
 	object EnabledLogs : DataHolder<MutableSet<String>>(serializer(), "DebugLogs", ::mutableSetOf)
 
 	init {
@@ -17,6 +18,7 @@ class DebugLogger(val tag: String) {
 	}
 
 	fun isEnabled() = DeveloperFeatures.isEnabled && EnabledLogs.data.contains(tag)
+	fun log(text: String) = log { text }
 	fun log(text: () -> String) {
 		if (!isEnabled()) return
 		MC.sendChat(Text.literal(text()))

@@ -1,10 +1,13 @@
 package moe.nea.firmament.events
 
+import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
+import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import moe.nea.firmament.util.collections.WeakCache
+import moe.nea.firmament.util.collections.WeakCache.CacheFunction
 import moe.nea.firmament.util.mc.IntrospectableItemModelManager
 
 // TODO: assert an order on these events
@@ -14,7 +17,36 @@ data class CustomItemModelEvent(
 	var overrideModel: Identifier? = null,
 ) : FirmamentEvent() {
 	companion object : FirmamentEventBus<CustomItemModelEvent>() {
-		val cache = WeakCache.memoize("ItemModelIdentifier", ::getModelIdentifier0)
+		val weakCache =
+			object : WeakCache<ItemStack, IntrospectableItemModelManager, Optional<Identifier>>("ItemModelIdentifier") {
+				override fun mkRef(
+					key: ItemStack,
+					extraData: IntrospectableItemModelManager
+				): WeakCache<ItemStack, IntrospectableItemModelManager, Optional<Identifier>>.Ref {
+					return IRef(key, extraData)
+				}
+
+				inner class IRef(weakInstance: ItemStack, data: IntrospectableItemModelManager) :
+					Ref(weakInstance, data) {
+					override fun shouldBeEvicted(): Boolean = false
+					val isSimpleStack = weakInstance.componentChanges.isEmpty || (weakInstance.componentChanges.size() == 1 && weakInstance.get(
+						DataComponentTypes.CUSTOM_DATA)?.isEmpty == true)
+					val item = weakInstance.item
+					override fun hashCode(): Int {
+						if (isSimpleStack)
+							return Objects.hash(item, extraData)
+						return super.hashCode()
+					}
+
+					override fun equals(other: Any?): Boolean {
+						if (other is IRef && isSimpleStack) {
+							return other.isSimpleStack && item == other.item
+						}
+						return super.equals(other)
+					}
+				}
+			}
+		val cache = CacheFunction.WithExtraData(weakCache, ::getModelIdentifier0)
 
 		@JvmStatic
 		fun getModelIdentifier(itemStack: ItemStack?, itemModelManager: IntrospectableItemModelManager): Identifier? {

@@ -45,7 +45,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
 		listOf(
 			skullTextureCache.cache,
 			CustomItemModelEvent.cache.cache,
-			CustomGlobalArmorOverrides.overrideCache.cache
+			// TODO: re-add this once i figure out how to make the cache useful again  CustomGlobalArmorOverrides.overrideCache.cache
 		)
 	}
 

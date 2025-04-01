@@ -85,16 +85,19 @@ object CustomGlobalArmorOverrides {
 		)
 	}
 
+	// TODO: BipedEntityRenderer.getEquippedStack create copies of itemstacks for rendering. This means this cache is essentially useless
+	// If i figure out how to circumvent this (maybe track the origin of those copied itemstacks in some sort of variable in the itemstack to track back the original instance) i should reenable this cache.
+	// Then also re add this to the cache clearing function
 	val overrideCache =
-		WeakCache.memoize<ItemStack, EquipmentSlot, Optional<EquippableComponent>>("ArmorOverrides") { stack, slot ->
-			val id = stack.skyBlockId ?: return@memoize Optional.empty()
-			val override = overrides[id.neuItem] ?: return@memoize Optional.empty()
+		WeakCache.dontMemoize<ItemStack, EquipmentSlot, Optional<EquippableComponent>>("ArmorOverrides") { stack, slot ->
+			val id = stack.skyBlockId ?: return@dontMemoize Optional.empty()
+			val override = overrides[id.neuItem] ?: return@dontMemoize Optional.empty()
 			for (suboverride in override.overrides) {
 				if (suboverride.predicate.test(stack)) {
-					return@memoize resolveComponent(slot, suboverride.modelIdentifier).intoOptional()
+					return@dontMemoize resolveComponent(slot, suboverride.modelIdentifier).intoOptional()
 				}
 			}
-			return@memoize resolveComponent(slot, override.modelIdentifier).intoOptional()
+			return@dontMemoize resolveComponent(slot, override.modelIdentifier).intoOptional()
 		}
 
 	var overrides: Map<String, ArmorOverride> = mapOf()
