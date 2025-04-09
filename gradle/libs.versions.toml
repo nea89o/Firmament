@@ -6,20 +6,21 @@
 minecraft = "1.21.5"
 
 # Update from https://kotlinlang.org/
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 # Update from https://github.com/google/ksp/releases
-kotlin_ksp = "2.1.10-1.0.30"
+kotlin_ksp = "2.1.20-2.0.0"
 
 # Update from https://linkie.shedaniel.me/dependencies?loader=fabric
-fabric_loader = "0.16.10"
-fabric_api = "0.119.5+1.21.5"
+fabric_loader = "0.16.13"
+fabric_api = "0.119.9+1.21.5"
 yarn = "1.21.5+build.1"
 modmenu = "14.0.0-rc.2"
 architectury = "16.0.3"
+# Update from https://maven.architectury.dev/me/shedaniel/RoughlyEnoughItems-fabric/ (but is typically late)
 rei = "18.0.796"
 
 # Update from https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/
-fabric_kotlin = "1.13.1+kotlin.2.1.10"
+fabric_kotlin = "1.13.2+kotlin.2.1.20"
 
 # Update from https://maven.architectury.dev/dev/architectury/loom/dev.architectury.loom.gradle.plugin/
 loom = "1.7.414" # TODO: port back to architectury (and) 1.9.424
@@ -28,10 +29,10 @@ loom = "1.7.414" # TODO: port back to architectury (and) 1.9.424
 qolify = "1.6.0-1.21.1"
 
 # Update from https://modrinth.com/mod/sodium/versions?l=fabric
-sodium = "mc1.21.5-0.6.11-fabric"
+sodium = "mc1.21.5-0.6.13-fabric"
 
 # Update from https://modrinth.com/mod/freecam/versions?l=fabric
-freecammod = "1.3.2+mc1.21.4"
+freecammod = "1.3.3+mc1.21.5"
 
 # Update from https://modrinth.com/mod/no-chat-reports/versions?l=fabric
 ncr = "Fabric-1.21.5-v2.12.0"
@@ -43,18 +44,18 @@ femalegender = "4.3.3+1.21.4"
 explosiveenhancement = "1.2.3-1.21.0"
 
 # Update from https://modrinth.com/mod/not-enough-animations/versions?l=fabric
-notenoughanimations = "eZykTicT"
+notenoughanimations = "prj4BdjU"
 
 # Update from https://modrinth.com/mod/cit-resewn/versions?l=fabric
 citresewn = "1.2.0+1.21"
 
 # Update from https://modrinth.com/mod/jade/versions?l=fabric
-jade = "17.2.2+fabric"
+jade = "18.1.0+fabric"
 
 devauth = "1.2.1"
 
-# Update from https://ktor.io/
-ktor = "3.0.3"
+# Update from https://ktor.io/docs/
+ktor = "3.1.2"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/neurepoparser
 neurepoparser = "1.7.0"
@@ -72,10 +73,13 @@ nealisp = "1.1.0"
 # Update from https://github.com/NotEnoughUpdates/MoulConfig/tags
 moulconfig = "3.3.0"
 
+# Update from https://repo.nea.moe/#/releases/moe/nea/mc-auto-translations/moe.nea.mc-auto-translations.gradle.plugin
+mcAutoTranslations = "0.3.0"
+
 # Update from https://www.curseforge.com/minecraft/mc-mods/configured/files/all?page=1&pageSize=20
 configured = "6023970"
 
-# Update from https://modrinth.com/mod/hypixel-mod-api/versions
+# Update from https://modrinth.com/mod/hypixel-mod-api/versions?l=fabric
 hypixelmodapi = "1.0.1"
 hypixelmodapi_fabric = "1.0.1+build.1+mc1.21"
 
@@ -86,14 +90,14 @@ manninghamMills = "2.4.1"
 # Nvm, they just don't update docs: https://modrinth.com/mod/yacl/versions?l=fabric
 yacl = "3.6.6+1.21.5-fabric"
 
-# Update from https://maven.shedaniel.me/me/shedaniel/cloth/basic-math/0.6.1/
+# Update from https://maven.shedaniel.me/me/shedaniel/cloth/basic-math/
 basicMath = "0.6.1"
 
 # Update from https://mvnrepository.com/artifact/net.lenni0451.classtransform/core
-classtransform = "1.14.0"
+classtransform = "1.14.1"
 
 # Update from https://mvnrepository.com/artifact/org.ow2.asm/asm/
-asm = "9.7.1"
+asm = "9.8"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -159,3 +163,4 @@ kotlin_plugin_powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", v
 kotlin_plugin_ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin_ksp" }
 loom = { id = "dev.architectury.loom", version.ref = "loom" }
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+mcAutoTranslations = { id = "moe.nea.mc-auto-translations", version.ref = "mcAutoTranslations" }

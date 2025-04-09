@@ -7,6 +7,7 @@
  */
 
 import com.google.common.hash.Hashing
+import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -32,7 +33,7 @@ plugins {
 	id("fabric-loom") version "1.10.1"
 	alias(libs.plugins.shadow)
 	id("moe.nea.licenseextractificator")
-	id("moe.nea.mc-auto-translations") version "0.2.0"
+	alias(libs.plugins.mcAutoTranslations)
 }
 
 version = getGitTagInfo(libs.versions.minecraft.get())
@@ -139,8 +140,10 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 	val mainSS = sourceSets.main.get()
 	val upperName = ss.name.capitalizeN()
 	afterEvaluate {
-		tasks.named("ksp${upperName}Kotlin", KspTaskJvm::class) {
-			this.options.add(SubpluginOption("apoption", "firmament.sourceset=${ss.name}"))
+		tasks.named("ksp${upperName}Kotlin", KspAATask::class) {
+			this.commandLineArgumentProviders.add { // TODO: update https://github.com/google/ksp/issues/2075
+				listOf("firmament.sourceset=${ss.name}")
+			}
 		}
 		tasks.named("compile${upperName}Kotlin", KotlinCompile::class) {
 			this.enabled = isEnabled
@@ -231,7 +234,7 @@ val jadeSourceSet = createIsolatedSourceSet("jade", isEnabled = false)
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei", isEnabled = false)
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
-val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks", isEnabled = false)
+val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
 
 dependencies {
 	// Minecraft dependencies
