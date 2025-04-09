@@ -22,11 +22,22 @@ object CustomRenderPipelines {
 			.withCull(false)
 			.withDepthWrite(false)
 			.build()
-	val COLORED_OMNIPRESENT_QUADS = RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)// TODO: split this up to support better transparent ordering.
-		.withLocation(Firmament.identifier("colored_omnipresent_quads"))
-		.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+	val OMNIPRESENT_LINES = RenderPipeline
+		.builder(RenderPipelines.RENDERTYPE_LINES_SNIPPET)
+		.withLocation(Firmament.identifier("lines"))
 		.withDepthWrite(false)
+		.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
 		.build()
+	val COLORED_OMNIPRESENT_QUADS =
+		RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_SNIPPET)// TODO: split this up to support better transparent ordering.
+			.withLocation(Firmament.identifier("colored_omnipresent_quads"))
+			.withVertexShader("core/position_color")
+			.withFragmentShader("core/position_color")
+			.withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.QUADS)
+			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+			.withCull(false)
+			.withDepthWrite(false)
+			.build()
 }
 
 object CustomRenderLayers {
@@ -48,8 +59,8 @@ object CustomRenderLayers {
 	val LINES = RenderLayer.of(
 		"firmament_lines",
 		RenderLayer.DEFAULT_BUFFER_SIZE,
-		RenderPipelines.LINES,
-		RenderLayer.MultiPhaseParameters.builder()
+		CustomRenderPipelines.OMNIPRESENT_LINES,
+		RenderLayer.MultiPhaseParameters.builder() // TODO: accept linewidth here
 			.build(false)
 	)
 	val COLORED_QUADS = RenderLayer.of(
@@ -57,6 +68,7 @@ object CustomRenderLayers {
 		RenderLayer.DEFAULT_BUFFER_SIZE,
 		CustomRenderPipelines.COLORED_OMNIPRESENT_QUADS,
 		RenderLayer.MultiPhaseParameters.builder()
+			.lightmap(RenderPhase.DISABLE_LIGHTMAP)
 			.build(false)
 	)
 }
