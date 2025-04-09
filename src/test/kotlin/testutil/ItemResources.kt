@@ -24,7 +24,7 @@ object ItemResources {
 	}
 
 	fun loadSNbt(path: String): NbtCompound {
-		return StringNbtReader.parse(loadString(path))
+		return StringNbtReader.readCompound(loadString(path))
 	}
 	fun getNbtOps(): RegistryOps<NbtElement> = MC.currentOrDefaultRegistries.getOps(NbtOps.INSTANCE)
 

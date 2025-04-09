@@ -23,6 +23,7 @@ import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.client.render.model.Baker
 import net.minecraft.client.render.model.BlockStateModel
+import net.minecraft.client.render.model.ReferencedModelsCollector
 import net.minecraft.client.render.model.SimpleBlockStateModel
 import net.minecraft.client.render.model.json.ModelVariant
 import net.minecraft.registry.RegistryKey
@@ -308,6 +309,19 @@ object CustomBlockTextures {
 		})
 	}
 
+	fun simpleBlockModel(blockId: Identifier): SimpleBlockStateModel.Unbaked {
+		// TODO: does this need to be shared between resolving and baking? I think not, but it would probably be wise to do so in the future.
+		return SimpleBlockStateModel.Unbaked(
+			ModelVariant(blockId)
+		)
+	}
+
+	@JvmStatic
+	fun collectExtraModels(modelsCollector: ReferencedModelsCollector) {
+		preparationFuture.join().collectAllReplacements()
+			.forEach { modelsCollector.resolve(simpleBlockModel(it.blockModelIdentifier)) }
+	}
+
 	@JvmStatic
 	fun createBakedModels(baker: Baker, executor: Executor): CompletableFuture<Void?> {
 		return preparationFuture.thenComposeAsync(Function { replacements ->
@@ -315,7 +329,7 @@ object CustomBlockTextures {
 			val modelBakingTask = AsyncHelper.mapValues(byModel, { blockId, replacements ->
 				val unbakedModel = SimpleBlockStateModel.Unbaked(
 					ModelVariant(blockId)
-				) // TODO: do i need to resolve models here? Maybe this needs to be resolved earlier before baking.
+				)
 				val baked = unbakedModel.bake(baker)
 				replacements.forEach {
 					it.blockModel = baked
