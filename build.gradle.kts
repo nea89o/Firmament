@@ -227,7 +227,7 @@ val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false)
-val jadeSourceSet = createIsolatedSourceSet("jade")
+val jadeSourceSet = createIsolatedSourceSet("jade", isEnabled = false)
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei", isEnabled = false)
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
@@ -269,7 +269,6 @@ dependencies {
 
 	modCompileOnly(libs.fabric.api)
 	modRuntimeOnly(libs.fabric.api.deprecated)
-	modApi(libs.architectury)
 	modCompileOnly(libs.jarvis.api)
 	include(libs.jarvis.fabric)
 
