@@ -234,7 +234,7 @@ val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false)
 val yaclSourceSet = createIsolatedSourceSet("yacl")
 val explosiveEnhancementSourceSet =
 	createIsolatedSourceSet("explosiveEnhancement", isEnabled = false) // TODO: wait for their port
-val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false)
+val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
 val jadeSourceSet = createIsolatedSourceSet("jade")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
 val reiSourceSet = createIsolatedSourceSet("rei")
