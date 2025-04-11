@@ -17,7 +17,7 @@ yarn = "1.21.5+build.1"
 modmenu = "14.0.0-rc.2"
 architectury = "16.0.3"
 # Update from https://maven.architectury.dev/me/shedaniel/RoughlyEnoughItems-fabric/ (but is typically late)
-rei = "18.0.796"
+rei = "19.0.805"
 
 # Update from https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/
 fabric_kotlin = "1.13.2+kotlin.2.1.20"
