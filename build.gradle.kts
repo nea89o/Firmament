@@ -195,6 +195,11 @@ val SourceSet.modImplementationConfigurationName
 		loom.remapConfigurations.find {
 			it.targetConfigurationName.get() == this.implementationConfigurationName
 		}!!.sourceConfiguration
+val SourceSet.modRuntimeOnlyConfigurationName
+	get() =
+		loom.remapConfigurations.find {
+			it.targetConfigurationName.get() == this.runtimeOnlyConfigurationName
+		}!!.sourceConfiguration
 
 val shadowMe by configurations.creating {
 	exclude(group = "org.jetbrains.kotlin")
@@ -232,7 +237,7 @@ val explosiveEnhancementSourceSet =
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender", isEnabled = false)
 val jadeSourceSet = createIsolatedSourceSet("jade", isEnabled = false)
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
-val reiSourceSet = createIsolatedSourceSet("rei", isEnabled = false)
+val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
 val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
 
@@ -288,10 +293,8 @@ dependencies {
 	(yaclSourceSet.modImplementationConfigurationName)(libs.yacl)
 
 	// Actual dependencies
-	(reiSourceSet.modImplementationConfigurationName)(libs.rei.api) {
-		exclude(module = "architectury")
-		exclude(module = "architectury-fabric")
-	}
+	(reiSourceSet.modImplementationConfigurationName)(libs.rei.api)
+	(reiSourceSet.modRuntimeOnlyConfigurationName)(libs.rei.fabric)
 	nonModImplentation(libs.repoparser)
 	shadowMe(libs.repoparser)
 	fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
