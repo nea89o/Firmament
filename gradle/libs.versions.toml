@@ -71,7 +71,7 @@ jarvis = "1.1.4"
 nealisp = "1.1.0"
 
 # Update from https://github.com/NotEnoughUpdates/MoulConfig/tags
-moulconfig = "3.3.0"
+moulconfig = "3.6.0"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/mc-auto-translations/moe.nea.mc-auto-translations.gradle.plugin
 mcAutoTranslations = "0.3.0"
@@ -107,7 +107,7 @@ fabric_api_deprecated = { module = "net.fabricmc.fabric-api:fabric-api-deprecate
 fabric_kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric_kotlin" }
 architectury = { module = "dev.architectury:architectury", version.ref = "architectury" }
 rei_api = { module = "me.shedaniel:RoughlyEnoughItems-api", version.ref = "rei" }
-moulconfig = { module = "org.notenoughupdates.moulconfig:modern", version.ref = "moulconfig" }
+moulconfig = { module = "org.notenoughupdates.moulconfig:modern-1.21.5", version.ref = "moulconfig" }
 repoparser = { module = "moe.nea:neurepoparser", version.ref = "neurepoparser" }
 mixinextras = { module = "io.github.llamalad7:mixinextras-fabric", version.ref = "mixinextras" }
 jarvis_api = { module = "moe.nea.jarvis:jarvis-api", version.ref = "jarvis" }
