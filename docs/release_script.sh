@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # ARG_OPTIONAL_BOOLEAN([no-check],[n],[Skip checking preconditions, such as a clean git working directory])
+# ARG_OPTIONAL_BOOLEAN([no-test],[t],[Skip running gradle tests.])
+# ARG_OPTIONAL_BOOLEAN([dry],[d],[Dry run])
 # ARG_HELP([Script to help creating releases])
 # ARGBASH_GO()
 # needed because of Argbash --> m4_ignore([
@@ -23,20 +25,24 @@ die()
 
 begins_with_short_option()
 {
-	local first_option all_short_options='nh'
+	local first_option all_short_options='ntdh'
 	first_option="${1:0:1}"
 	test "$all_short_options" = "${all_short_options/$first_option/}" && return 1 || return 0
 }
 
 # THE DEFAULTS INITIALIZATION - OPTIONALS
 _arg_no_check="off"
+_arg_no_test="off"
+_arg_dry="off"
 
 
 print_help()
 {
 	printf '%s\n' "Script to help creating releases"
-	printf 'Usage: %s [-n|--(no-)no-check] [-h|--help]\n' "$0"
+	printf 'Usage: %s [-n|--(no-)no-check] [-t|--(no-)no-test] [-d|--(no-)dry] [-h|--help]\n' "$0"
 	printf '\t%s\n' "-n, --no-check, --no-no-check: Skip checking preconditions, such as a clean git working directory (off by default)"
+	printf '\t%s\n' "-t, --no-test, --no-no-test: Skip running gradle tests. (off by default)"
+	printf '\t%s\n' "-d, --dry, --no-dry: Dry run (off by default)"
 	printf '\t%s\n' "-h, --help: Prints help"
 }
 
@@ -57,6 +63,30 @@ parse_commandline()
 				if test -n "$_next" -a "$_next" != "$_key"
 				then
 					{ begins_with_short_option "$_next" && shift && set -- "-n" "-${_next}" "$@"; } || die "The short option '$_key' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
+				fi
+				;;
+			-t|--no-no-test|--no-test)
+				_arg_no_test="on"
+				test "${1:0:5}" = "--no-" && _arg_no_test="off"
+				;;
+			-t*)
+				_arg_no_test="on"
+				_next="${_key##-t}"
+				if test -n "$_next" -a "$_next" != "$_key"
+				then
+					{ begins_with_short_option "$_next" && shift && set -- "-t" "-${_next}" "$@"; } || die "The short option '$_key' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
+				fi
+				;;
+			-d|--no-dry|--dry)
+				_arg_dry="on"
+				test "${1:0:5}" = "--no-" && _arg_dry="off"
+				;;
+			-d*)
+				_arg_dry="on"
+				_next="${_key##-d}"
+				if test -n "$_next" -a "$_next" != "$_key"
+				then
+					{ begins_with_short_option "$_next" && shift && set -- "-d" "-${_next}" "$@"; } || die "The short option '$_key' can't be decomposed to ${_key:0:2} and -${_key:2}, because ${_key:0:2} doesn't accept value and '-${_key:2:1}' doesn't correspond to a short option."
 				fi
 				;;
 			-h|--help)
@@ -129,19 +159,28 @@ fi
 
 echo "Confirming new version as $newversion"
 
-echo Committing release commit
-git commit --allow-empty -m 'Prepare release '"$newversion"'
+if [ "$_arg_dry" == off ]; then
+	echo Committing release commit
+	git commit --allow-empty -m 'Prepare release '"$newversion"'
 
 [no changelog]'
-echo Tagging release commit
-git tag "$newversion"
+	echo Tagging release commit
+    git tag "$newversion"
+fi
 mkdir -p "$basedir/.gradle"
 releasenotes="$basedir/.gradle/releasenotes.md"
 
+comparetag="$(
+if [ "$_arg_dry" == off ]; then
+	echo "$newversion"
+else
+	echo "HEAD"
+fi)"
+
 echo Building release notes
-echo "**Full Changelog**: <https://github.com/nea89o/Firmament/compare/$oldversion...$newversion>" > "$releasenotes"
+echo "**Full Changelog**: <https://github.com/nea89o/Firmament/compare/$oldversion...$comparetag>" > "$releasenotes"
 echo >> "$releasenotes"
-git log --pretty='- %s' --grep '[no changelog]' --invert-grep --fixed-strings "$oldversion..$newversion" | tac >> "$releasenotes"
+git log --pretty='- %s' --grep '[no changelog]' --invert-grep --fixed-strings "$oldversion..$comparetag" | tac >> "$releasenotes"
 echo >> "$releasenotes"
 
 echo Check Release notes:
@@ -153,22 +192,29 @@ read
 
 echo Building JAR
 "$basedir"/gradlew --stop
-"$basedir"/gradlew clean build
+if [ "$_arg_no_test" == off ]; then
+	echo Building and testing
+	"$basedir"/gradlew clean build
+else
+	echo Building without testing
+	"$basedir"/gradlew clean assemble
+fi
 
 echo Release notes:
 echo ----------------------------------------------
 cat "$releasenotes"
 echo ----------------------------------------------
 
-echo Pushing to github
-git push "$REMOTE" "HEAD" "$newversion"
-
-if command -v gh; then
-    echo Creating github release
-    (set -x; gh release create -t "Firmament $newversion" "$newversion" -F "$releasenotes" "$basedir/build/libs/Firmament-$newversion.jar")
-else
-    echo Could not find github command utility. Opening github releases
-    xdg-open "https://github.com/nea89o/firmament/releases/new"
+if [ "$_arg_dry" == off ]; then
+	echo Pushing to github
+	git push "$REMOTE" "HEAD" "$newversion"
+	if command -v gh; then
+        echo Creating github release
+        (set -x; gh release create -t "Firmament $newversion" "$newversion" -F "$releasenotes" "$basedir/build/libs/Firmament-$newversion.jar")
+    else
+        echo Could not find github command utility. Opening github releases
+        xdg-open "https://github.com/nea89o/firmament/releases/new"
+    fi
 fi
 
 echo Opening modrinth releases

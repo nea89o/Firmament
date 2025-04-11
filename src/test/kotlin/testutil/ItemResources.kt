@@ -35,6 +35,7 @@ object ItemResources {
 
 	fun loadItem(name: String): ItemStack {
 		// TODO: make the load work with enchantments
+		// TODO: use DFU to load older items
 		return ItemStack.CODEC.parse(getNbtOps(), loadSNbt("testdata/items/$name.snbt"))
 			.getOrThrow { IllegalStateException("Could not load test item '$name': $it") }
 	}
