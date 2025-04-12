@@ -26,7 +26,6 @@ public class PatchLegacyTexturePathsIntoArmorLayers {
 		// legacy format: "assets/{identifier.namespace}/textures/models/armor/{identifier.path}_layer_{isLegs ? 2 : 1}{suffix}.png"
 		// suffix is sadly not available to us here. this means leather armor will look a bit shite
 		var legacyIdentifier = this.textureId.withPath((textureName) -> {
-			String var10000 = layerType.asString();
 			return "textures/models/armor/" + textureName + "_layer_" +
 				       (layerType == EquipmentModel.LayerType.HUMANOID_LEGGINGS ? 2 : 1)
 				       + ".png";

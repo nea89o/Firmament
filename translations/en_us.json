@@ -299,7 +299,6 @@
 	"firmament.inventory-buttons.save-preset": "Save Preset",
 	"firmament.key.category": "Firmament",
 	"firmament.keybinding.external": "%s",
-	"firmament.mixins.start": "Applied firmament mixins:",
 	"firmament.modapi.event": "Received mod API event: %s",
 	"firmament.poweruser.entity.armor": "Entity Armor:",
 	"firmament.poweruser.entity.armor.item": " - %s",

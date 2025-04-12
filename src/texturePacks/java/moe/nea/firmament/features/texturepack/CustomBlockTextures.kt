@@ -316,6 +316,15 @@ object CustomBlockTextures {
 		)
 	}
 
+	/**
+	 * Used by [moe.nea.firmament.init.SectionBuilderRiser]
+	 */
+
+	@JvmStatic
+	fun patchIndigo(original: BlockStateModel, pos: BlockPos?, state: BlockState): BlockStateModel {
+		return getReplacementModel(state, pos) ?: original
+	}
+
 	@JvmStatic
 	fun collectExtraModels(modelsCollector: ReferencedModelsCollector) {
 		preparationFuture.join().collectAllReplacements()

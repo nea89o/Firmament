@@ -8,7 +8,6 @@
 
 import com.google.common.hash.Hashing
 import com.google.devtools.ksp.gradle.KspAATask
-import com.google.devtools.ksp.gradle.KspTaskJvm
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
@@ -16,7 +15,6 @@ import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.charset.StandardCharsets
 import java.util.Base64
@@ -166,14 +164,16 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 			extendsFrom(getByName(mainSS.annotationProcessorConfigurationName))
 		}
 		(mainSS.runtimeOnlyConfigurationName) {
-			extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
+			if (isEnabled)
+				extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
 		}
 		("ksp$upperName") {
 			extendsFrom(ksp.get())
 		}
 	}
 	dependencies {
-		runtimeOnly(ss.output)
+		if (isEnabled)
+			runtimeOnly(ss.output)
 		(ss.implementationConfigurationName)(project.files(tasks.compileKotlin.map { it.destinationDirectory }))
 		(ss.implementationConfigurationName)(project.files(tasks.compileJava.map { it.destinationDirectory }))
 	}
@@ -337,6 +337,7 @@ loom {
 				         File(it.output.classesDirs.asPath).absolutePath
 			         })
 			property("mixin.debug.export", "true")
+			property("mixin.debug", "true")
 
 			parseEnvFile(file(".env")).forEach { (t, u) ->
 				environmentVariable(t, u)
