@@ -3,7 +3,10 @@ package moe.nea.firmament.features.mining
 import java.util.regex.Pattern
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.toast.SystemToast
 import net.minecraft.item.ItemStack
+import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
@@ -47,6 +50,7 @@ object PickaxeAbility : FirmamentFeature {
 	object TConfig : ManagedConfig(identifier, Category.MINING) {
 		val cooldownEnabled by toggle("ability-cooldown") { false }
 		val cooldownScale by integer("ability-scale", 16, 64) { 16 }
+		val cooldownReadyToast by toggle("ability-cooldown-toast") { false }
 		val drillFuelBar by toggle("fuel-bar") { true }
 		val blockOnPrivateIsland by choice(
 			"block-on-dynamic",
@@ -170,6 +174,11 @@ object PickaxeAbility : FirmamentFeature {
 		nowAvailable.useMatch(it.unformattedString) {
 			val ability = group("name")
 			lastUsage[ability] = TimeMark.farPast()
+			if (!TConfig.cooldownReadyToast) return
+			val mc: MinecraftClient = MinecraftClient.getInstance()
+			mc.toastManager.add(
+				SystemToast.create(mc, SystemToast.Type.NARRATOR_TOGGLE, Text.of("Pickaxe Cooldown"), Text.of("Pickaxe ability is ready!"))
+			)
 		}
 	}
 
