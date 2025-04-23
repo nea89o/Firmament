@@ -177,7 +177,7 @@ object PickaxeAbility : FirmamentFeature {
 			if (!TConfig.cooldownReadyToast) return
 			val mc: MinecraftClient = MinecraftClient.getInstance()
 			mc.toastManager.add(
-				SystemToast.create(mc, SystemToast.Type.NARRATOR_TOGGLE, Text.of("Pickaxe Cooldown"), Text.of("Pickaxe ability is ready!"))
+				SystemToast.create(mc, SystemToast.Type.NARRATOR_TOGGLE, tr("firmament.pickaxe.ability-ready","Pickaxe Cooldown"), tr("firmament.pickaxe.ability-ready.desc", "Pickaxe ability is ready!"))
 			)
 		}
 	}
