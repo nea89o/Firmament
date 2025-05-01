@@ -26,3 +26,5 @@ accessible method net/minecraft/client/render/RenderPhase$Texture getId ()Ljava/
 accessible field net/minecraft/client/render/RenderLayer$MultiPhase phases Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters;
 accessible field net/minecraft/client/render/RenderLayer$MultiPhaseParameters texture Lnet/minecraft/client/render/RenderPhase$TextureBase;
 accessible field net/minecraft/client/network/ClientPlayerInteractionManager currentBreakingPos Lnet/minecraft/util/math/BlockPos;
+
+mutable field net/minecraft/client/render/entity/state/LivingEntityRenderState headItemRenderState Lnet/minecraft/client/render/item/ItemRenderState;

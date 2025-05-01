@@ -110,6 +110,10 @@ object CustomModelOverrideParser {
 			Firmament.identifier("predicates/legacy"),
 			PredicateModel.Unbaked.CODEC
 		)
+		ItemModelTypes.ID_MAPPER.put(
+			Firmament.identifier("head_model"),
+			HeadModelChooser.Unbaked.CODEC
+		)
 	}
 
 }

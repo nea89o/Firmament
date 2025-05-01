@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import moe.nea.firmament.Firmament;
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures;
+import moe.nea.firmament.features.texturepack.HeadModelChooser;
 import moe.nea.firmament.features.texturepack.PredicateModel;
 import moe.nea.firmament.util.ErrorUtil;
 import net.minecraft.client.item.ItemAsset;
@@ -61,6 +62,7 @@ public class SupplyFakeModelPatch {
 			try (var is = resource.getInputStream()) {
 				var jsonObject = Firmament.INSTANCE.getGson().fromJson(new InputStreamReader(is), JsonObject.class);
 				unbakedModel = PredicateModel.Unbaked.fromLegacyJson(jsonObject, unbakedModel);
+				unbakedModel = HeadModelChooser.Unbaked.fromLegacyJson(jsonObject, unbakedModel);
 			} catch (Exception e) {
 				ErrorUtil.INSTANCE.softError("Could not create resource for fake model supplication: " + model.getKey(), e);
 			}
