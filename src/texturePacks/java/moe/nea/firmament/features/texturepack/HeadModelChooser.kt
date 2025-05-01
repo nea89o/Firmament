@@ -11,8 +11,8 @@ import net.minecraft.client.render.item.model.ItemModelTypes
 import net.minecraft.client.render.model.ResolvableModel
 import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.LivingEntity
+import net.minecraft.item.ItemDisplayContext
 import net.minecraft.item.ItemStack
-import net.minecraft.item.ModelTransformationMode
 import net.minecraft.util.Identifier
 
 object HeadModelChooser {
@@ -32,7 +32,7 @@ object HeadModelChooser {
 			state: ItemRenderState,
 			stack: ItemStack?,
 			resolver: ItemModelManager?,
-			transformationMode: ModelTransformationMode?,
+			displayContext: ItemDisplayContext,
 			world: ClientWorld?,
 			user: LivingEntity?,
 			seed: Int
@@ -44,7 +44,7 @@ object HeadModelChooser {
 				} else {
 					regular
 				}
-			instance.update(state, stack, resolver, transformationMode, world, user, seed)
+			instance.update(state, stack, resolver, displayContext, world, user, seed)
 		}
 	}
 
