@@ -16,7 +16,7 @@ class CastPredicate : FirmamentModelPredicate {
 	}
 
 	override fun test(stack: ItemStack, holder: LivingEntity?): Boolean {
-		return (holder as? PlayerEntity)?.fishHook != null && holder.activeItem === stack
+		return (holder as? PlayerEntity)?.fishHook != null && holder.mainHandStack === stack
 	}
 
 	override fun test(stack: ItemStack): Boolean {
