@@ -21,6 +21,7 @@ import net.minecraft.network.RegistryByteBuf
 import net.minecraft.network.codec.PacketCodec
 import net.minecraft.network.codec.PacketCodecs
 import net.minecraft.util.Identifier
+import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.collections.WeakCache
@@ -104,8 +105,10 @@ data class HypixelPetInfo(
 	val candyUsed: Int = 0,
 	val uuid: UUID? = null,
 	val active: Boolean = false,
+	val heldItem: String? = null,
 ) {
 	val skyblockId get() = SkyblockId("${type.uppercase()};${tier.ordinal}") // TODO: is this ordinal set up correctly?
+	val level get() = ExpLadders.getExpLadder(type, tier).getPetLevel(exp)
 }
 
 private val jsonparser = Json { ignoreUnknownKeys = true }

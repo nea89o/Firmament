@@ -164,4 +164,14 @@ fun Text.transformEachRecursively(function: (Text) -> Text): Text {
 
 fun tr(key: String, default: String): MutableText = error("Compiler plugin did not run.")
 fun trResolved(key: String, vararg args: Any): MutableText = Text.stringifiedTranslatable(key, *args)
+fun titleCase(str: String): String {
+	return str
+		.lowercase()
+		.replace("_", " ")
+		.split(" ")
+		.joinToString(" ") { word ->
+			word.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+		}
+}
+
 

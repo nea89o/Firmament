@@ -19,7 +19,8 @@ object ExpLadders : IReloadable {
         val expInCurrentLevel: Float,
         var expTotal: Float,
     ) {
-        val percentageToNextLevel: Float = expInCurrentLevel / expRequiredForNextLevel
+		val percentageToNextLevel: Float = expInCurrentLevel / expRequiredForNextLevel
+		val percentageToMaxLevel: Float = expTotal / expRequiredForMaxLevel
     }
 
     data class ExpLadder(
