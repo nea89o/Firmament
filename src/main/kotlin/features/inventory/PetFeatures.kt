@@ -79,7 +79,7 @@ object PetFeatures : FirmamentFeature {
 		lines.add("Required L100: ${FirmFormatters.shortFormat(xp.expTotal.toDouble())}/${FirmFormatters.shortFormat(xp.expRequiredForMaxLevel.toDouble())} (${xp.percentageToMaxLevel * 100}%)")
 
 		for ((index, line) in lines.withIndex()) {
-			it.context.drawText(MC.font, "${LegacyFormattingCode.GRAY.formattingCode}$line", 36, MC.font.fontHeight * index, -1, false)
+			it.context.drawText(MC.font, "${LegacyFormattingCode.GRAY.formattingCode}$line", 36, MC.font.fontHeight * index, -1, true)
 		}
 
 		it.context.matrices.pop()
