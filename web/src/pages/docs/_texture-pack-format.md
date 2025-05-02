@@ -167,6 +167,32 @@ Sub object match:
 }
 ```
 
+#### Components
+
+You can match generic components similarly to [extra attributes](#extra-attributes). If you want to match an extra
+attribute match directly using that, for better performance.
+
+You can specify a `path` and match similar to extra attributes, but in addition you can also specify a `component`. This
+variable is the identifier of a component type that will then be encoded to nbt and matched according to the `match`
+using a [nbt matcher](#nbt-matcher).
+
+```json5
+"firmament:component": {
+    "path": "rgb",
+	"component": "minecraft:dyed_color",
+	"int": 255
+}
+// Alternatively
+"firmament:component": {
+	"path": "rgb",
+	"component": "minecraft:dyed_color",
+	"match": {
+		"int": 255
+	}
+}
+```
+
+
 #### Pet Data
 
 Filter by pet information. While you can already filter by the skyblock id for pet type and tier, this allows you to
