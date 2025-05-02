@@ -39,15 +39,14 @@ object PetFeatures : FirmamentFeature {
 	fun onSlotRender(event: SlotRenderEvents.Before) {
 		if (!TConfig.highlightEquippedPet) return
 		val stack = event.slot.stack
-		if (stack.petData?.active == true) {
+		if (stack.petData?.active == true)
+			petMenuTitle.useMatch(MC.screenName ?: return) {
 			activePetData = stack.petData
 			petItemStack = stack
-			petMenuTitle.useMatch(MC.screenName ?: return) {
-				event.context.drawGuiTexture(
-					event.slot.x, event.slot.y, 0, 16, 16,
-					Identifier.of("firmament:selected_pet_background")
-				)
-			}
+			event.context.drawGuiTexture(
+				event.slot.x, event.slot.y, 0, 16, 16,
+				Identifier.of("firmament:selected_pet_background")
+			)
 		}
 	}
 
