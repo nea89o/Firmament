@@ -28,11 +28,11 @@ object Routes {
         return withContext(MinecraftDispatcher) {
             UUIDToName.computeIfAbsent(uuid) {
                 async(Firmament.coroutineScope.coroutineContext) {
-                    val response = Firmament.httpClient.get("https://api.ashcon.app/mojang/v2/user/$uuid")
+                    val response = Firmament.httpClient.get("https://mowojang.matdoes.dev/$uuid")
                     if (!response.status.isSuccess()) return@async null
-                    val data = response.body<AshconNameLookup>()
+                    val data = response.body<MowojangNameLookup>()
                     launch(MinecraftDispatcher) {
-                        nameToUUID[data.username] = async { data.uuid }
+                        nameToUUID[data.username] = async { data.id }
                     }
                     data.username
                 }
@@ -44,13 +44,13 @@ object Routes {
         return withContext(MinecraftDispatcher) {
             nameToUUID.computeIfAbsent(name) {
                 async(Firmament.coroutineScope.coroutineContext) {
-                    val response = Firmament.httpClient.get("https://api.ashcon.app/mojang/v2/user/$name")
+                    val response = Firmament.httpClient.get("https://mowojang.matdoes.dev/$name")
                     if (!response.status.isSuccess()) return@async null
-                    val data = response.body<AshconNameLookup>()
+                    val data = response.body<MowojangNameLookup>()
                     launch(MinecraftDispatcher) {
-                        UUIDToName[data.uuid] = async { data.username }
+                        UUIDToName[data.id] = async { data.username }
                     }
-                    data.uuid
+                    data.id
                 }
             }
         }.await()
