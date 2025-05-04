@@ -205,7 +205,7 @@ fun interface NbtMatcher {
 
 	class MatchStringExact(val string: String) : NbtMatcher {
 		override fun matches(nbt: NbtElement): Boolean {
-			return nbt.asString() == string
+			return nbt.asString().getOrNull() == string
 		}
 
 		override fun toString(): String {
@@ -215,7 +215,7 @@ fun interface NbtMatcher {
 
 	class MatchString(val string: StringMatcher) : NbtMatcher {
 		override fun matches(nbt: NbtElement): Boolean {
-			return nbt.asString().let(string::matches)
+			return nbt.asString().map(string::matches).getOrDefault(false)
 		}
 
 		override fun toString(): String {
@@ -270,13 +270,13 @@ class NbtPrism(val path: List<String>) {
 			if (pathSegment != "*" && pathSegment.startsWith("*")) {
 				if (pathSegment == "*json") {
 					for (element in rootSet) {
-						val eString = element.asString() ?: continue
+						val eString = element.asString().getOrNull() ?: continue
 						val element = Gson().fromJson(eString, JsonElement::class.java)
 						switch.add(JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, element))
 					}
 				} else if (pathSegment == "*base64") {
 					for (element in rootSet) {
-						val string = element.asString() ?: continue
+						val string = element.asString().getOrNull() ?: continue
 						switch.add(NbtString.of(Base64Util.decodeString(string)))
 					}
 				}
