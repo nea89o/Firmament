@@ -2,6 +2,7 @@ package moe.nea.firmament.util
 
 import io.github.moulberry.repo.data.Coordinate
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.jvm.optionals.getOrNull
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.hud.InGameHud
 import net.minecraft.client.gui.screen.Screen
@@ -16,10 +17,14 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket
 import net.minecraft.registry.BuiltinRegistries
+import net.minecraft.registry.Registry
+import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.registry.RegistryWrapper
+import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.resource.ReloadableResourceManagerImpl
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import moe.nea.firmament.events.TickEvent
@@ -120,6 +125,19 @@ object MC {
 			return field
 		}
 		private set
+
+
+	fun <T> unsafeGetRegistryEntry(registry: RegistryKey<out Registry<T>>, identifier: Identifier) =
+		unsafeGetRegistryEntry(RegistryKey.of(registry, identifier))
+
+
+	fun <T> unsafeGetRegistryEntry(registryKey: RegistryKey<T>): T? {
+		return currentOrDefaultRegistries
+			.getOrThrow(registryKey.registryRef)
+			.getOptional(registryKey)
+			.getOrNull()
+			?.value()
+	}
 }
 
 

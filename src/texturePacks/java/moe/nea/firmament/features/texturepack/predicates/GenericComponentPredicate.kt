@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.NbtPrism
 
 data class GenericComponentPredicate<T>(
 	val componentType: ComponentType<T>,
