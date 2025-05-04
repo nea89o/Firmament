@@ -139,6 +139,26 @@ Filter by item type:
 "firmament:item": "minecraft:clock"
 ```
 
+#### Skulls
+
+You can match skulls using the skull textures and other properties using the skull predicate. If there are no properties specified this is equivalent to checking if the item is a `minecraft:player_head`.
+
+```json
+"firmament:skull": {
+	"profileId": "cca2d452-c6d3-39cb-b695-5ec92b2d6729",
+	"textureProfileId": "1d5233d388624bafb00e3150a7aa3a89",
+	"skinUrl": "http://textures.minecraft.net/texture/7bf01c198f6e16965e230235cd22a5a9f4a40e40941234478948ff9a56e51775",
+	"textureValue": "ewogICJ0aW1lc3RhbXAiIDogMTYxODUyMTY2MzY1NCwKICAicHJvZmlsZUlkIiA6ICIxZDUyMzNkMzg4NjI0YmFmYjAwZTMxNTBhN2FhM2E4OSIsCiAgInByb2ZpbGVOYW1lIiA6ICIwMDAwMDAwMDAwMDAwMDBKIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzdiZjAxYzE5OGY2ZTE2OTY1ZTIzMDIzNWNkMjJhNWE5ZjRhNDBlNDA5NDEyMzQ0Nzg5NDhmZjlhNTZlNTE3NzUiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ"
+}
+```
+
+| Name               | Type                      | Description                                                                                                                                                                                                                                         |
+|--------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `profileId`        | UUID                      | Match the uuid of the profile component directly.                                                                                                                                                                                                   |
+| `textureProfileId` | UUID                      | Match the uuid of the skin owner in the encoded texture value. This is more expensive, but can deviate from the profile id of the profile owner.                                                                                                    |
+| `skinUrl`          | [string](#string-matcher) | Match the texture url of the skin. This starts with `http://`, not with `https:/` in most cases.                                                                                                                                                    |
+| `textureValue`     | [string](#string-matcher) | Match the texture value. This is the encoded base64 string of the texture url along with metadata. It is faster to query than the `skinUrl`, but it can out of changed without causing any semantic changes, and is less readable than the skinUrl. |
+
 #### Extra attributes
 
 Filter by extra attribute NBT data:

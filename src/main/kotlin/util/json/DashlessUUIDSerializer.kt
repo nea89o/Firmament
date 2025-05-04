@@ -10,6 +10,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import moe.nea.firmament.util.parseDashlessUUID
+import moe.nea.firmament.util.parsePotentiallyDashlessUUID
 
 object DashlessUUIDSerializer : KSerializer<UUID> {
     override val descriptor: SerialDescriptor =
@@ -17,10 +18,7 @@ object DashlessUUIDSerializer : KSerializer<UUID> {
 
     override fun deserialize(decoder: Decoder): UUID {
         val str = decoder.decodeString()
-        if ("-" in str) {
-            return UUID.fromString(str)
-        }
-        return parseDashlessUUID(str)
+        return parsePotentiallyDashlessUUID(str)
     }
 
     override fun serialize(encoder: Encoder, value: UUID) {
