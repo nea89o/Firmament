@@ -1,10 +1,12 @@
-
 package moe.nea.firmament.features.texturepack.predicates
 
+import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.mojang.serialization.JsonOps
+import kotlin.jvm.optionals.getOrDefault
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import moe.nea.firmament.features.texturepack.StringMatcher
@@ -17,8 +19,10 @@ import net.minecraft.nbt.NbtFloat
 import net.minecraft.nbt.NbtInt
 import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtLong
+import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtShort
 import net.minecraft.nbt.NbtString
+import moe.nea.firmament.util.Base64Util
 import moe.nea.firmament.util.extraAttributes
 
 fun interface NbtMatcher {
@@ -261,6 +265,20 @@ class NbtPrism(val path: List<String>) {
 		var switch = mutableListOf<NbtElement>()
 		for (pathSegment in path) {
 			if (pathSegment == ".") continue
+			if (pathSegment != "*" && pathSegment.startsWith("*")) {
+				if (pathSegment == "*json") {
+					for (element in rootSet) {
+						val eString = element.asString() ?: continue
+						val element = Gson().fromJson(eString, JsonElement::class.java)
+						switch.add(JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, element))
+					}
+				} else if (pathSegment == "*base64") {
+					for (element in rootSet) {
+						val string = element.asString() ?: continue
+						switch.add(NbtString.of(Base64Util.decodeString(string)))
+					}
+				}
+			}
 			for (element in rootSet) {
 				if (element is NbtList) {
 					if (pathSegment == "*")
