@@ -362,7 +362,7 @@ An nbt prism (or path) is used to specify where in a complex nbt construct to lo
 like a dot-separated path (`parent.child.grandchild`), but more complex paths can be constructed.
 
 First the specified path is split into dot separated chunks: `"a.b.c"` -> `["a", "b", "c"]`. You can also directly
-specify the list if you would like. Any entry in that list not starting with a `*` ist treated as an attribute name or
+specify the list if you would like. Any entry in that list not starting with a `*` is treated as an attribute name or
 an index:
 
 ```json
@@ -390,7 +390,7 @@ of the values of `[100, 1000]` to your match object.
 Sometimes values are encoded in a non-nbt format inside a string. For those you can use other star based directives like
 `*base64` or `*json` to decode those entries.
 
-`*base64` turns a base64 encoded string into the base64 decoded counterpart. `*.json` decodes a string into the json
+`*base64` turns a base64 encoded string into the base64 decoded counterpart. `*json` decodes a string into the json
 object represented by that string. Note that json to nbt conversion isn't always straightforwards and the types can
 end up being mangled (for example what could have been a byte ends up an int).
 
