@@ -10,6 +10,9 @@ abstract class ProcessedOptionFirm(
 	private val accordionId: Int,
 	private val config: Config
 ) : ProcessedOption {
+	override fun getPath(): String? {
+		return "nonsense"
+	}
 	lateinit var category: ProcessedCategoryFirm
 	override fun getAccordionId(): Int {
 		return accordionId

@@ -139,11 +139,31 @@ Filter by item type:
 "firmament:item": "minecraft:clock"
 ```
 
+#### Skulls
+
+You can match skulls using the skull textures and other properties using the skull predicate. If there are no properties specified this is equivalent to checking if the item is a `minecraft:player_head`.
+
+```json
+"firmament:skull": {
+	"profileId": "cca2d452-c6d3-39cb-b695-5ec92b2d6729",
+	"textureProfileId": "1d5233d388624bafb00e3150a7aa3a89",
+	"skinUrl": "http://textures.minecraft.net/texture/7bf01c198f6e16965e230235cd22a5a9f4a40e40941234478948ff9a56e51775",
+	"textureValue": "ewogICJ0aW1lc3RhbXAiIDogMTYxODUyMTY2MzY1NCwKICAicHJvZmlsZUlkIiA6ICIxZDUyMzNkMzg4NjI0YmFmYjAwZTMxNTBhN2FhM2E4OSIsCiAgInByb2ZpbGVOYW1lIiA6ICIwMDAwMDAwMDAwMDAwMDBKIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzdiZjAxYzE5OGY2ZTE2OTY1ZTIzMDIzNWNkMjJhNWE5ZjRhNDBlNDA5NDEyMzQ0Nzg5NDhmZjlhNTZlNTE3NzUiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ"
+}
+```
+
+| Name               | Type                      | Description                                                                                                                                                                                                                                         |
+|--------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `profileId`        | UUID                      | Match the uuid of the profile component directly.                                                                                                                                                                                                   |
+| `textureProfileId` | UUID                      | Match the uuid of the skin owner in the encoded texture value. This is more expensive, but can deviate from the profile id of the profile owner.                                                                                                    |
+| `skinUrl`          | [string](#string-matcher) | Match the texture url of the skin. This starts with `http://`, not with `https:/` in most cases.                                                                                                                                                    |
+| `textureValue`     | [string](#string-matcher) | Match the texture value. This is the encoded base64 string of the texture url along with metadata. It is faster to query than the `skinUrl`, but it can out of changed without causing any semantic changes, and is less readable than the skinUrl. |
+
 #### Extra attributes
 
 Filter by extra attribute NBT data:
 
-Specify a `path` to look at, separating sub elements with a `.`. You can use a `*` to check any child.
+Specify a `path` (using an [nbt prism](#nbt-prism)) to look at, separating sub elements with a `.`. You can use a `*` to check any child.
 
 Then either specify a `match` sub-object or directly inline that object in the format of an [nbt matcher](#nbt-matcher).
 
@@ -166,6 +186,32 @@ Sub object match:
     }    
 }
 ```
+
+#### Components
+
+You can match generic components similarly to [extra attributes](#extra-attributes). If you want to match an extra
+attribute match directly using that, for better performance.
+
+You can specify a `path` (using an [nbt prism](#nbt-prism)) and match similar to extra attributes, but in addition you can also specify a `component`. This
+variable is the identifier of a component type that will then be encoded to nbt and matched according to the `match`
+using a [nbt matcher](#nbt-matcher).
+
+```json5
+"firmament:component": {
+    "path": "rgb",
+	"component": "minecraft:dyed_color",
+	"int": 255
+}
+// Alternatively
+"firmament:component": {
+	"path": "rgb",
+	"component": "minecraft:dyed_color",
+	"match": {
+		"int": 255
+	}
+}
+```
+
 
 #### Pet Data
 
@@ -309,6 +355,58 @@ compare your number:
 
 This example would match if the level is less than fifty. The available operators are `<`, `>`, `<=` and `>=`. The
 operator needs to be specified on the left. The versions of the operator with `=` also allow the number to be equal.
+
+### Nbt Prism
+
+An nbt prism (or path) is used to specify where in a complex nbt construct to look for a value. A basic prism just looks
+like a dot-separated path (`parent.child.grandchild`), but more complex paths can be constructed.
+
+First the specified path is split into dot separated chunks: `"a.b.c"` -> `["a", "b", "c"]`. You can also directly
+specify the list if you would like. Any entry in that list not starting with a `*` is treated as an attribute name or
+an index:
+
+```json
+{
+	"propA": {
+		"propB": {
+			"propC": 100,
+			"propD": 1000
+		}
+	},
+	"someOtherProp": "hello",
+	"someThirdProp": "{\"innerProp\": true}",
+	"someFourthProp": "aGlkZGVuIHZhbHVl"
+}
+```
+
+In this example json (which is supposed to represent a corresponding nbt object), you can use a path like
+`propA.propB.propC` to directly extract the value `100`.
+
+If you want to extract all of the innermost values of `propB`
+(for example if `propB` was an array instead), you could use `propA.propB.*`. You can use the `*` at any level:
+`*.*.*` for example extracts all properties that are exactly at the third level. In that case you would try to match any
+of the values of `[100, 1000]` to your match object.
+
+Sometimes values are encoded in a non-nbt format inside a string. For those you can use other star based directives like
+`*base64` or `*json` to decode those entries.
+
+`*base64` turns a base64 encoded string into the base64 decoded counterpart. `*json` decodes a string into the json
+object represented by that string. Note that json to nbt conversion isn't always straightforwards and the types can
+end up being mangled (for example what could have been a byte ends up an int).
+
+| Path                            | Result                          |
+|---------------------------------|---------------------------------|
+| `propA.propB`                   | `{"propC": 100, "propD": 1000}` |
+| `propA.propB.propC`             | `100`                           |
+| `propA.*.propC`                 | `100`                           |
+| `propA.propB.*`                 | `100`, `1000`                   |
+| `someOtherProp`                 | `"hello"`                       |
+| `someThirdProp`                 | "{\"innerProp\": true}"         |
+| `someThirdProp.*json`           | {"innerProp": true}             |
+| `someThirdProp.*json.innerProp` | true                            |
+| `someFourthProp`                | `"aGlkZGVuIHZhbHVl"`            |
+| `someFourthProp.*base64`        | `"hidden value"`                |
+
 
 ### Nbt Matcher
 

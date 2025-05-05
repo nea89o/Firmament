@@ -4,7 +4,6 @@ import com.mojang.serialization.Dynamic
 import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import io.github.moulberry.repo.data.NEUItem
-import io.github.notenoughupdates.moulconfig.xml.Bind
 import java.text.NumberFormat
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -13,7 +12,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.SharedConstants
-import net.minecraft.client.resource.language.I18n
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.NbtComponent
 import net.minecraft.datafixer.Schemas
@@ -28,9 +26,6 @@ import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.gui.config.HudMeta
-import moe.nea.firmament.gui.config.HudPosition
-import moe.nea.firmament.gui.hud.MoulConfigHud
 import moe.nea.firmament.repo.RepoManager.initialize
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.LegacyTagParser
@@ -140,7 +135,8 @@ object ItemCache : IReloadable {
 				ItemStack.fromNbt(MC.defaultRegistries, modernItemTag).getOrNull() ?: return brokenItemStack(this)
 			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
 			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)
-			val extraAttributes = oldItemTag.getCompound("tag").getCompound("ExtraAttributes")
+			val extraAttributes = oldItemTag.getCompound("tag").flatMap { it.getCompound("ExtraAttributes") }
+				.getOrNull()
 			if (extraAttributes != null)
 				itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
 			return itemInstance

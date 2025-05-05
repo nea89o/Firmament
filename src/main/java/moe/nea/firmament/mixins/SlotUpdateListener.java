@@ -43,11 +43,11 @@ public abstract class SlotUpdateListener extends ClientCommonNetworkHandler {
 	private void onMultiSlotUpdate(InventoryS2CPacket packet, CallbackInfo ci) {
 		var player = this.client.player;
 		assert player != null;
-		if (packet.getSyncId() == 0) {
-			PlayerInventoryUpdate.Companion.publish(new PlayerInventoryUpdate.Multi(packet.getContents()));
-		} else if (packet.getSyncId() == player.currentScreenHandler.syncId) {
+		if (packet.syncId() == 0) {
+			PlayerInventoryUpdate.Companion.publish(new PlayerInventoryUpdate.Multi(packet.contents()));
+		} else if (packet.syncId() == player.currentScreenHandler.syncId) {
 			ChestInventoryUpdateEvent.Companion.publish(
-				new ChestInventoryUpdateEvent.Multi(packet.getContents())
+				new ChestInventoryUpdateEvent.Multi(packet.contents())
 			);
 		}
 	}

@@ -17,12 +17,14 @@ import moe.nea.firmament.features.texturepack.predicates.AndPredicate
 import moe.nea.firmament.features.texturepack.predicates.CastPredicate
 import moe.nea.firmament.features.texturepack.predicates.DisplayNamePredicate
 import moe.nea.firmament.features.texturepack.predicates.ExtraAttributesPredicate
+import moe.nea.firmament.features.texturepack.predicates.GenericComponentPredicate
 import moe.nea.firmament.features.texturepack.predicates.ItemPredicate
 import moe.nea.firmament.features.texturepack.predicates.LorePredicate
 import moe.nea.firmament.features.texturepack.predicates.NotPredicate
 import moe.nea.firmament.features.texturepack.predicates.OrPredicate
 import moe.nea.firmament.features.texturepack.predicates.PetPredicate
 import moe.nea.firmament.features.texturepack.predicates.PullingPredicate
+import moe.nea.firmament.features.texturepack.predicates.SkullPredicate
 import moe.nea.firmament.util.json.KJsonOps
 
 object CustomModelOverrideParser {
@@ -63,6 +65,8 @@ object CustomModelOverrideParser {
 		registerPredicateParser("item", ItemPredicate.Parser)
 		registerPredicateParser("extra_attributes", ExtraAttributesPredicate.Parser)
 		registerPredicateParser("pet", PetPredicate.Parser)
+		registerPredicateParser("component", GenericComponentPredicate.Parser)
+		registerPredicateParser("skull", SkullPredicate.Parser)
 	}
 
 	private val neverPredicate = listOf(

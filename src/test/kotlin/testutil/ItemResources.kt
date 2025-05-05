@@ -24,7 +24,7 @@ object ItemResources {
 	}
 
 	fun loadSNbt(path: String): NbtCompound {
-		return StringNbtReader.parse(loadString(path))
+		return StringNbtReader.readCompound(loadString(path))
 	}
 	fun getNbtOps(): RegistryOps<NbtElement> = MC.currentOrDefaultRegistries.getOps(NbtOps.INSTANCE)
 
@@ -35,6 +35,7 @@ object ItemResources {
 
 	fun loadItem(name: String): ItemStack {
 		// TODO: make the load work with enchantments
+		// TODO: use DFU to load older items
 		return ItemStack.CODEC.parse(getNbtOps(), loadSNbt("testdata/items/$name.snbt"))
 			.getOrThrow { IllegalStateException("Could not load test item '$name': $it") }
 	}

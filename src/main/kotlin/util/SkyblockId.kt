@@ -133,13 +133,14 @@ fun ItemStack.modifyExtraAttributes(block: (NbtCompound) -> Unit) {
 }
 
 val ItemStack.skyblockUUIDString: String?
-	get() = extraAttributes.getString("uuid")?.takeIf { it.isNotBlank() }
+	get() = extraAttributes.getString("uuid").getOrNull()?.takeIf { it.isNotBlank() }
 
 val ItemStack.skyblockUUID: UUID?
 	get() = skyblockUUIDString?.let { UUID.fromString(it) }
 
 private val petDataCache = WeakCache.memoize<ItemStack, Optional<HypixelPetInfo>>("PetInfo") {
 	val jsonString = it.extraAttributes.getString("petInfo")
+		.getOrNull()
 	if (jsonString.isNullOrBlank()) return@memoize Optional.empty()
 	ErrorUtil.catch<HypixelPetInfo?>("Could not decode hypixel pet info") {
 		jsonparser.decodeFromString<HypixelPetInfo>(jsonString)
@@ -148,8 +149,8 @@ private val petDataCache = WeakCache.memoize<ItemStack, Optional<HypixelPetInfo>
 }
 
 fun ItemStack.getUpgradeStars(): Int {
-	return extraAttributes.getInt("upgrade_level").takeIf { it > 0 }
-		?: extraAttributes.getInt("dungeon_item_level").takeIf { it > 0 }
+	return extraAttributes.getInt("upgrade_level").getOrNull()?.takeIf { it > 0 }
+		?: extraAttributes.getInt("dungeon_item_level").getOrNull()?.takeIf { it > 0 }
 		?: 0
 }
 
@@ -158,7 +159,7 @@ fun ItemStack.getUpgradeStars(): Int {
 value class ReforgeId(val id: String)
 
 fun ItemStack.getReforgeId(): ReforgeId? {
-	return extraAttributes.getString("modifier").takeIf { it.isNotBlank() }?.let(::ReforgeId)
+	return extraAttributes.getString("modifier").getOrNull()?.takeIf { it.isNotBlank() }?.let(::ReforgeId)
 }
 
 val ItemStack.petData: HypixelPetInfo?
@@ -172,8 +173,8 @@ fun ItemStack.setSkyBlockId(skyblockId: SkyblockId): ItemStack {
 
 val ItemStack.skyBlockId: SkyblockId?
 	get() {
-		return when (val id = extraAttributes.getString("id")) {
-			"" -> {
+		return when (val id = extraAttributes.getString("id").getOrNull()) {
+			"", null -> {
 				null
 			}
 
@@ -183,20 +184,22 @@ val ItemStack.skyBlockId: SkyblockId?
 
 			"RUNE", "UNIQUE_RUNE" -> {
 				val runeData = extraAttributes.getCompound("runes")
-				val runeKind = runeData.keys.singleOrNull()
+					.getOrNull()
+				val runeKind = runeData?.keys?.singleOrNull()
 				if (runeKind == null) SkyblockId("RUNE")
-				else SkyblockId("${runeKind.uppercase()}_RUNE;${runeData.getInt(runeKind)}")
+				else SkyblockId("${runeKind.uppercase()}_RUNE;${runeData.getInt(runeKind).getOrNull()}")
 			}
 
 			"ABICASE" -> {
-				SkyblockId("ABICASE_${extraAttributes.getString("model").uppercase()}")
+				SkyblockId("ABICASE_${extraAttributes.getString("model").getOrNull()?.uppercase()}")
 			}
 
 			"ENCHANTED_BOOK" -> {
 				val enchantmentData = extraAttributes.getCompound("enchantments")
-				val enchantName = enchantmentData.keys.singleOrNull()
+					.getOrNull()
+				val enchantName = enchantmentData?.keys?.singleOrNull()
 				if (enchantName == null) SkyblockId("ENCHANTED_BOOK")
-				else SkyblockId("${enchantName.uppercase()};${enchantmentData.getInt(enchantName)}")
+				else SkyblockId("${enchantName.uppercase()};${enchantmentData.getInt(enchantName).getOrNull()}")
 			}
 
 			// TODO: PARTY_HAT_CRAB{,_ANIMATED,_SLOTH},POTION

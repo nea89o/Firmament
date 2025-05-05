@@ -6,12 +6,11 @@ accessible field net/minecraft/client/gui/hud/InGameHud SCOREBOARD_ENTRY_COMPARA
 accessible field net/minecraft/client/network/ClientPlayNetworkHandler combinedDynamicRegistries Lnet/minecraft/registry/DynamicRegistryManager$Immutable;
 accessible method net/minecraft/registry/RegistryOps <init> (Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/registry/RegistryOps$RegistryInfoGetter;)V
 accessible class net/minecraft/registry/RegistryOps$CachedRegistryInfoGetter
+accessible class net/minecraft/client/render/model/ModelBaker$BakerImpl
+accessible method net/minecraft/client/render/model/ModelBaker$BakerImpl <init> (Lnet/minecraft/client/render/model/ModelBaker;Lnet/minecraft/client/render/model/ErrorCollectingSpriteGetter;)V
 
 accessible field net/minecraft/entity/mob/CreeperEntity CHARGED Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/entity/decoration/ArmorStandEntity setSmall (Z)V
-accessible field net/minecraft/entity/passive/AbstractHorseEntity items Lnet/minecraft/inventory/SimpleInventory;
-accessible field net/minecraft/entity/passive/AbstractHorseEntity SADDLED_FLAG I
-accessible field net/minecraft/entity/passive/AbstractHorseEntity HORSE_FLAGS Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/resource/NamespaceResourceManager loadMetadata (Lnet/minecraft/resource/InputSupplier;)Lnet/minecraft/resource/metadata/ResourceMetadata;
 accessible method net/minecraft/client/gui/DrawContext drawTexturedQuad (Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIIIFFFFI)V
 

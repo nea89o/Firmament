@@ -188,7 +188,7 @@ data class PlayerData(
 }
 
 @Serializable
-data class AshconNameLookup(
+data class MowojangNameLookup(
     val username: String,
-    val uuid: UUID,
+    val id: UUID,
 )

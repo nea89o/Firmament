@@ -262,7 +262,8 @@ fun firmamentCommand() = literal("firmament") {
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.gametype", locrawInfo.gametype))
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.mode", locrawInfo.mode))
 					source.sendFeedback(Text.stringifiedTranslatable("firmament.sbinfo.map", locrawInfo.map))
-					source.sendFeedback(tr("firmament.sbinfo.custommining", "Custom Mining: ${formatBool(locrawInfo.skyblockLocation?.hasCustomMining ?: false)}"))
+					source.sendFeedback(tr("firmament.sbinfo.custommining",
+					                       "Custom Mining: ${formatBool(locrawInfo.skyblockLocation?.hasCustomMining ?: false)}"))
 				}
 			}
 		}
@@ -313,13 +314,15 @@ fun firmamentCommand() = literal("firmament") {
 		}
 		thenLiteral("mixins") {
 			thenExecute {
-				source.sendFeedback(Text.translatable("firmament.mixins.start"))
-				MixinPlugin.appliedMixins
-					.map { it.removePrefix(MixinPlugin.mixinPackage) }
-					.forEach {
-						source.sendFeedback(Text.literal(" - ").withColor(0xD020F0)
-							                    .append(Text.literal(it).withColor(0xF6BA20)))
-					}
+				MixinPlugin.instances.forEach { plugin ->
+					source.sendFeedback(tr("firmament.mixins.start.package", "Mixins (base ${plugin.mixinPackage}):"))
+					plugin.appliedMixins
+						.map { it.removePrefix(plugin.mixinPackage) }
+						.forEach {
+							source.sendFeedback(Text.literal(" - ").withColor(0xD020F0)
+								                    .append(Text.literal(it).withColor(0xF6BA20)))
+						}
+				}
 			}
 		}
 		thenLiteral("repo") {

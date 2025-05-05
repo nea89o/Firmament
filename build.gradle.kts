@@ -7,7 +7,7 @@
  */
 
 import com.google.common.hash.Hashing
-import com.google.devtools.ksp.gradle.KspTaskJvm
+import com.google.devtools.ksp.gradle.KspAATask
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import moe.nea.licenseextractificator.LicenseDiscoveryTask
@@ -15,7 +15,6 @@ import moe.nea.mcautotranslations.gradle.CollectTranslations
 import net.fabricmc.loom.LoomGradleExtension
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.charset.StandardCharsets
 import java.util.Base64
@@ -29,10 +28,10 @@ plugins {
 	alias(libs.plugins.kotlin.plugin.ksp)
 	//	alias(libs.plugins.loom)
 	// TODO: use arch loom once they update to 1.8
-	id("fabric-loom") version "1.9.2"
+	id("fabric-loom") version "1.10.1"
 	alias(libs.plugins.shadow)
 	id("moe.nea.licenseextractificator")
-	id("moe.nea.mc-auto-translations") version "0.2.0"
+	alias(libs.plugins.mcAutoTranslations)
 }
 
 version = getGitTagInfo(libs.versions.minecraft.get())
@@ -139,8 +138,10 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 	val mainSS = sourceSets.main.get()
 	val upperName = ss.name.capitalizeN()
 	afterEvaluate {
-		tasks.named("ksp${upperName}Kotlin", KspTaskJvm::class) {
-			this.options.add(SubpluginOption("apoption", "firmament.sourceset=${ss.name}"))
+		tasks.named("ksp${upperName}Kotlin", KspAATask::class) {
+			this.commandLineArgumentProviders.add { // TODO: update https://github.com/google/ksp/issues/2075
+				listOf("firmament.sourceset=${ss.name}")
+			}
 		}
 		tasks.named("compile${upperName}Kotlin", KotlinCompile::class) {
 			this.enabled = isEnabled
@@ -163,14 +164,16 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 			extendsFrom(getByName(mainSS.annotationProcessorConfigurationName))
 		}
 		(mainSS.runtimeOnlyConfigurationName) {
-			extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
+			if (isEnabled)
+				extendsFrom(getByName(ss.runtimeClasspathConfigurationName))
 		}
 		("ksp$upperName") {
 			extendsFrom(ksp.get())
 		}
 	}
 	dependencies {
-		runtimeOnly(ss.output)
+		if (isEnabled)
+			runtimeOnly(ss.output)
 		(ss.implementationConfigurationName)(project.files(tasks.compileKotlin.map { it.destinationDirectory }))
 		(ss.implementationConfigurationName)(project.files(tasks.compileJava.map { it.destinationDirectory }))
 	}
@@ -191,6 +194,11 @@ val SourceSet.modImplementationConfigurationName
 	get() =
 		loom.remapConfigurations.find {
 			it.targetConfigurationName.get() == this.implementationConfigurationName
+		}!!.sourceConfiguration
+val SourceSet.modRuntimeOnlyConfigurationName
+	get() =
+		loom.remapConfigurations.find {
+			it.targetConfigurationName.get() == this.runtimeOnlyConfigurationName
 		}!!.sourceConfiguration
 
 val shadowMe by configurations.creating {
@@ -269,7 +277,6 @@ dependencies {
 
 	modCompileOnly(libs.fabric.api)
 	modRuntimeOnly(libs.fabric.api.deprecated)
-	modApi(libs.architectury)
 	modCompileOnly(libs.jarvis.api)
 	include(libs.jarvis.fabric)
 
@@ -286,10 +293,8 @@ dependencies {
 	(yaclSourceSet.modImplementationConfigurationName)(libs.yacl)
 
 	// Actual dependencies
-	(reiSourceSet.modImplementationConfigurationName)(libs.rei.api) {
-		exclude(module = "architectury")
-		exclude(module = "architectury-fabric")
-	}
+	(reiSourceSet.modImplementationConfigurationName)(libs.rei.api)
+	(reiSourceSet.modRuntimeOnlyConfigurationName)(libs.rei.fabric)
 	nonModImplentation(libs.repoparser)
 	shadowMe(libs.repoparser)
 	fun ktor(mod: String) = "io.ktor:ktor-$mod-jvm:${libs.versions.ktor.get()}"
@@ -332,6 +337,7 @@ loom {
 				         File(it.output.classesDirs.asPath).absolutePath
 			         })
 			property("mixin.debug.export", "true")
+			property("mixin.debug", "true")
 
 			parseEnvFile(file(".env")).forEach { (t, u) ->
 				environmentVariable(t, u)

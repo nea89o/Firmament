@@ -8,7 +8,7 @@ import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ModelTransformationMode;
+import net.minecraft.item.ItemDisplayContext;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,7 +37,7 @@ public class ReplaceHeadModel<T extends LivingEntity, S extends LivingEntityRend
 
 		HeadModelChooser.INSTANCE.getIS_CHOOSING_HEAD_MODEL().set(true);
 		tempRenderState.clear();
-		this.itemModelResolver.updateForLivingEntity(tempRenderState, headItemStack, ModelTransformationMode.HEAD, false, livingEntity);
+		this.itemModelResolver.updateForLivingEntity(tempRenderState, headItemStack, ItemDisplayContext.HEAD, livingEntity);
 		HeadModelChooser.INSTANCE.getIS_CHOOSING_HEAD_MODEL().set(false);
 
 		if (HeadModelChooser.HasExplicitHeadModelMarker.cast(tempRenderState)

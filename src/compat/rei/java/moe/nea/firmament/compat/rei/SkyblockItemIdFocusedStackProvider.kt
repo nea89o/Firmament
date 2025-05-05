@@ -9,7 +9,6 @@ import me.shedaniel.rei.api.common.entry.EntryStack
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
-import moe.nea.firmament.util.skyBlockId
 
 object SkyblockItemIdFocusedStackProvider : FocusedStackProvider {
     override fun provide(screen: Screen?, mouse: Point?): CompoundEventResult<EntryStack<*>> {

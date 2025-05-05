@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
 public class MixinPlugin implements IMixinConfigPlugin {
 
     AutoDiscoveryPlugin autoDiscoveryPlugin = new AutoDiscoveryPlugin();
-    public static String mixinPackage;
+	public static List<MixinPlugin> instances = new ArrayList<>();
+	public String mixinPackage;
     @Override
     public void onLoad(String mixinPackage) {
         MixinExtrasBootstrap.init();
-        MixinPlugin.mixinPackage = mixinPackage;
+		instances.add(this);
+        this.mixinPackage = mixinPackage;
         autoDiscoveryPlugin.setMixinPackage(mixinPackage);
     }
 
@@ -52,7 +54,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     }
 
-    public static List<String> appliedMixins = new ArrayList<>();
+    public List<String> appliedMixins = new ArrayList<>();
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
