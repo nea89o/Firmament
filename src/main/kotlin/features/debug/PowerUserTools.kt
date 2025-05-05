@@ -180,10 +180,10 @@ object PowerUserTools : FirmamentFeature {
 				Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.skull-id", skullTexture.toString()))
 			println("Copied skull id: $skullTexture")
 		} else if (it.matches(TConfig.copyItemStack)) {
-			ClipboardUtils.setTextContent(
-				ItemStack.CODEC
-					.encodeStart(MC.currentOrDefaultRegistries.getOps(NbtOps.INSTANCE), item)
-					.orThrow.toPrettyString())
+			val nbt = ItemStack.CODEC
+				.encodeStart(MC.currentOrDefaultRegistries.getOps(NbtOps.INSTANCE), item)
+				.orThrow
+			ClipboardUtils.setTextContent(nbt.toPrettyString())
 			lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.stack"))
 		}
 	}

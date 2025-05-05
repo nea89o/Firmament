@@ -1,4 +1,7 @@
 {
+	source: {
+		dataVersion: 4189,
+	},
 	components: {
 		"minecraft:attribute_modifiers": {
 			modifiers: [

@@ -81,7 +81,6 @@ object AnimatedClothingScanner {
 								if (subject == null) run {
 									val entity = MC.instance.targetedEntity ?: return@run null
 									val clipboard = ClipboardUtils.getTextContents()
-									MC.instance.entit
 									if (!clipboard.startsWith(EXPORT_WATERMARK)) {
 										ClipboardUtils.setTextContent(EXPORT_WATERMARK)
 									} else {
