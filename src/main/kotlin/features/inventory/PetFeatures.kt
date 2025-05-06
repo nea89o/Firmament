@@ -2,21 +2,23 @@ package moe.nea.firmament.features.inventory
 
 import moe.nea.jarvis.api.Point
 import net.minecraft.item.ItemStack
-import net.minecraft.util.Identifier
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
+import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
-import moe.nea.firmament.util.FirmFormatters
-import moe.nea.firmament.util.HypixelPetInfo
-import moe.nea.firmament.util.LegacyFormattingCode
+import moe.nea.firmament.util.FirmFormatters.formatPercent
+import moe.nea.firmament.util.FirmFormatters.shortFormat
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.titleCase
 import moe.nea.firmament.util.useMatch
+import moe.nea.firmament.util.withColor
 
 object PetFeatures : FirmamentFeature {
 	override val identifier: String
@@ -32,7 +34,6 @@ object PetFeatures : FirmamentFeature {
 	}
 
 	val petMenuTitle = "Pets(?: \\([0-9]+/[0-9]+\\))?".toPattern()
-	var activePetData: HypixelPetInfo? = null
 	var petItemStack: ItemStack? = null
 
 	@Subscribe
@@ -41,11 +42,10 @@ object PetFeatures : FirmamentFeature {
 		val stack = event.slot.stack
 		if (stack.petData?.active == true)
 			petMenuTitle.useMatch(MC.screenName ?: return) {
-			activePetData = stack.petData
 			petItemStack = stack
 			event.context.drawGuiTexture(
-				event.slot.x, event.slot.y, 0, 16, 16,
-				Identifier.of("firmament:selected_pet_background")
+				Firmament.identifier("selected_pet_background"),
+				event.slot.x, event.slot.y, 16, 16,
 			)
 		}
 	}
@@ -54,9 +54,9 @@ object PetFeatures : FirmamentFeature {
 	fun onRenderHud(it: HudRenderEvent) {
 		if (!TConfig.petOverlay) return
 		val itemStack = petItemStack ?: return
-		val petData = activePetData ?: return
-		val rarity = Rarity.fromString(petData.tier.name)
-		val rarityCode = Rarity.colourMap[rarity]?.code ?: "f"
+		val petData = petItemStack?.petData ?: return
+		val rarity = Rarity.fromNeuRepo(petData.tier)
+		val rarityCode = Rarity.colourMap[rarity] ?: Formatting.WHITE
 		val xp = petData.level
 		val petType = titleCase(petData.type)
 		val heldItem = petData.heldItem?.let { item -> "Held Item: ${titleCase(item)}" }
@@ -64,21 +64,20 @@ object PetFeatures : FirmamentFeature {
 		it.context.matrices.push()
 		TConfig.petOverlayHud.applyTransformations(it.context.matrices)
 
-		val lines: MutableList<String> = ArrayList<String>()
+		val lines = mutableListOf<Text>()
 		it.context.matrices.push()
 		it.context.matrices.translate(-0.5, -0.5, 0.0)
 		it.context.matrices.scale(2f, 2f, 1f)
 		it.context.drawItem(itemStack, 0, 0)
 		it.context.matrices.pop()
 
-
-		lines.add("[Lvl ${xp.currentLevel}] §$rarityCode$petType")
-		if (heldItem != null) lines.add(heldItem)
-		if (xp.currentLevel != xp.maxLevel) lines.add("Required L${xp.currentLevel + 1}: ${FirmFormatters.shortFormat(xp.expInCurrentLevel.toDouble())}/${FirmFormatters.shortFormat(xp.expRequiredForNextLevel.toDouble())} (${xp.percentageToNextLevel * 100}%)")
-		lines.add("Required L100: ${FirmFormatters.shortFormat(xp.expTotal.toDouble())}/${FirmFormatters.shortFormat(xp.expRequiredForMaxLevel.toDouble())} (${xp.percentageToMaxLevel * 100}%)")
+		lines.add(Text.literal("[Lvl ${xp.currentLevel}] ").append(Text.literal(petType).withColor(rarityCode)))
+		if (heldItem != null) lines.add(Text.literal(heldItem))
+		if (xp.currentLevel != xp.maxLevel) lines.add(Text.literal("Required L${xp.currentLevel + 1}: ${shortFormat(xp.expInCurrentLevel.toDouble())}/${shortFormat(xp.expRequiredForNextLevel.toDouble())} (${formatPercent(xp.percentageToNextLevel.toDouble())})"))
+		lines.add(Text.literal("Required L100: ${shortFormat(xp.expTotal.toDouble())}/${shortFormat(xp.expRequiredForMaxLevel.toDouble())} (${formatPercent(xp.percentageToMaxLevel.toDouble())})"))
 
 		for ((index, line) in lines.withIndex()) {
-			it.context.drawText(MC.font, "${LegacyFormattingCode.GRAY.formattingCode}$line", 36, MC.font.fontHeight * index, -1, true)
+			it.context.drawText(MC.font, line.copy().withColor(Formatting.GRAY), 36, MC.font.fontHeight * index, -1, true)
 		}
 
 		it.context.matrices.pop()

@@ -135,4 +135,8 @@ object FirmFormatters {
 	fun formatPosition(position: BlockPos): Text {
 		return Text.literal("x: ${position.x}, y: ${position.y}, z: ${position.z}")
 	}
+
+	fun formatPercent(value: Double, decimals: Int = 1): String {
+		return "%.${decimals}f%%".format(value * 100)
+	}
 }
