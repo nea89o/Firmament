@@ -50,7 +50,7 @@ object Fixes : FirmamentFeature {
 					"firmament.fixes.auto-sprint.sprinting"
 				else
 					"firmament.fixes.auto-sprint.not-sprinting"
-			), 0, 0, -1, false
+			), 0, 0, -1, true
 		)
 		it.context.matrices.pop()
 	}
