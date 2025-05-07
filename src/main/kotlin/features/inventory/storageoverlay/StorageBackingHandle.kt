@@ -32,8 +32,8 @@ sealed interface StorageBackingHandle {
         StorageBackingHandle, HasBackingScreen
 
     companion object {
-        private val enderChestName = "^Ender Chest \\(([1-9])/[1-9]\\)$".toRegex()
-        private val backPackName = "^.+Backpack \\(Slot #([0-9]+)\\)$".toRegex()
+        private val enderChestName = "^Ender Chest (?:✦ )?\\(([1-9])/[1-9]\\)$".toRegex()
+        private val backPackName = "^.+Backpack (?:✦ )?\\(Slot #([0-9]+)\\)$".toRegex()
 
         /**
          * Parse a screen into a [StorageBackingHandle]. If this returns null it means that the screen is not
