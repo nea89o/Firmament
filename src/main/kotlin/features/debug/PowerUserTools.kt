@@ -1,31 +1,25 @@
 package moe.nea.firmament.features.debug
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.DynamicOps
 import com.mojang.serialization.JsonOps
-import com.mojang.serialization.codecs.RecordCodecBuilder
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtOps
-import net.minecraft.nbt.NbtString
 import net.minecraft.predicate.NbtPredicate
 import net.minecraft.text.Text
 import net.minecraft.text.TextCodecs
 import net.minecraft.util.Identifier
+import net.minecraft.util.Nameable
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
-import net.minecraft.util.math.Position
-import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
@@ -46,6 +40,7 @@ import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.iterableArmorItems
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.skyBlockId
+import moe.nea.firmament.util.tr
 
 object PowerUserTools : FirmamentFeature {
 	override val identifier: String
@@ -60,6 +55,7 @@ object PowerUserTools : FirmamentFeature {
 		val copySkullTexture by keyBindingWithDefaultUnbound("copy-skull-texture")
 		val copyEntityData by keyBindingWithDefaultUnbound("entity-data")
 		val copyItemStack by keyBindingWithDefaultUnbound("copy-item-stack")
+		val copyTitle by keyBindingWithDefaultUnbound("copy-title")
 	}
 
 	override val config
@@ -185,6 +181,18 @@ object PowerUserTools : FirmamentFeature {
 				.orThrow
 			ClipboardUtils.setTextContent(nbt.toPrettyString())
 			lastCopiedStack = Pair(item, Text.stringifiedTranslatable("firmament.tooltip.copied.stack"))
+		} else if (it.matches(TConfig.copyTitle)) {
+			val allTitles = NbtList()
+			val inventoryNames =
+				it.screen.screenHandler.slots
+					.mapNotNullTo(mutableSetOf()) { it.inventory }
+					.filterIsInstance<Nameable>()
+					.map { it.name }
+			for (it in listOf(it.screen.title) + inventoryNames) {
+				allTitles.add(TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, it).result().getOrNull()!!)
+			}
+			ClipboardUtils.setTextContent(allTitles.toPrettyString())
+			MC.sendChat(tr("firmament.power-user.title.copied", "Copied screen and inventory titles"))
 		}
 	}
 

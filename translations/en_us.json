@@ -192,6 +192,8 @@
 	"firmament.config.power-user.copy-skull-texture.description": "Copy the texture location that can be used to re-texture the skull under your cross-hair.",
 	"firmament.config.power-user.copy-texture-pack-id": "Copy Texture Pack Id",
 	"firmament.config.power-user.copy-texture-pack-id.description": "Copy the texture pack id that is used for the item stack under your cursor.",
+	"firmament.config.power-user.copy-title": "Copy Inventory Title",
+	"firmament.config.power-user.copy-title.description": "Copies Inventory and Screen Titles",
 	"firmament.config.power-user.entity-data": "Show Entity Data",
 	"firmament.config.power-user.entity-data.description": "Print out information about the entity under your cross-hair.",
 	"firmament.config.power-user.show-item-id": "Show SkyBlock Ids",
