@@ -32,9 +32,9 @@ object Routes {
                     if (!response.status.isSuccess()) return@async null
                     val data = response.body<MowojangNameLookup>()
                     launch(MinecraftDispatcher) {
-                        nameToUUID[data.username] = async { data.id }
+                        nameToUUID[data.name] = async { data.id }
                     }
-                    data.username
+                    data.name
                 }
             }
         }.await()
@@ -48,7 +48,7 @@ object Routes {
                     if (!response.status.isSuccess()) return@async null
                     val data = response.body<MowojangNameLookup>()
                     launch(MinecraftDispatcher) {
-                        UUIDToName[data.id] = async { data.username }
+                        UUIDToName[data.id] = async { data.name }
                     }
                     data.id
                 }
