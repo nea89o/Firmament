@@ -12,7 +12,7 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.tr
 
-class SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
+object SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
 	override fun render(recipe: NEUCraftingRecipe, bounds: Rectangle, layouter: RecipeLayouter) {
 		val point = Point(bounds.centerX - 58, bounds.centerY - 27)
 		layouter.createArrow(point.x + 60, point.y + 18)
@@ -31,6 +31,9 @@ class SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
 			RecipeLayouter.SlotKind.BIG_OUTPUT
 		)
 	}
+
+	override val typ: Class<NEUCraftingRecipe>
+		get() = NEUCraftingRecipe::class.java
 
 	override fun getInputs(recipe: NEUCraftingRecipe): Collection<SBItemStack> {
 		return recipe.allInputs.mapNotNull { SBItemStack(it) }

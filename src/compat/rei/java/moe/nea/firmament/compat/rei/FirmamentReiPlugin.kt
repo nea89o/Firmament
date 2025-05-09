@@ -1,5 +1,6 @@
 package moe.nea.firmament.compat.rei
 
+import io.github.moulberry.repo.data.NEUCraftingRecipe
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
@@ -19,11 +20,12 @@ import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import moe.nea.firmament.compat.rei.recipes.SBCraftingRecipe
+import moe.nea.firmament.compat.rei.recipes.GenericREIRecipe
 import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
+import moe.nea.firmament.compat.rei.recipes.SBRecipe
 import moe.nea.firmament.compat.rei.recipes.SBReforgeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBShopRecipe
 import moe.nea.firmament.events.HandledScreenPushREIEvent
@@ -31,6 +33,7 @@ import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.repo.recipes.SBCraftingRecipeRenderer
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.guessRecipeId
@@ -52,19 +55,23 @@ class FirmamentReiPlugin : REIClientPlugin {
 		registry.register(TransferHandler { context ->
 			val screen = context.containerScreen
 			val display = context.display
-			if (display !is SBCraftingRecipe) return@TransferHandler TransferHandler.Result.createNotApplicable()
-			val neuItem = RepoManager.getNEUItem(SkyblockId(display.neuRecipe.output.itemId))
-				?: error("Could not find neu item ${display.neuRecipe.output.itemId} which is used in a recipe output")
+			if (display !is SBRecipe) return@TransferHandler TransferHandler.Result.createNotApplicable()
+			val recipe = display.neuRecipe
+			if (recipe !is NEUCraftingRecipe) return@TransferHandler TransferHandler.Result.createNotApplicable()
+			val neuItem = RepoManager.getNEUItem(SkyblockId(recipe.output.itemId))
+				?: error("Could not find neu item ${recipe.output.itemId} which is used in a recipe output")
 			val useSuperCraft = context.isStackedCrafting || RepoManager.Config.alwaysSuperCraft
 			if (neuItem.isVanilla && useSuperCraft) return@TransferHandler TransferHandler.Result.createFailed(Text.translatable(
 				"firmament.recipe.novanilla"))
 			var shouldReturn = true
 			if (context.isActuallyCrafting && !useSuperCraft) {
-				if (screen !is GenericContainerScreen || screen.title?.unformattedString != CraftingOverlay.CRAFTING_SCREEN_NAME) {
+				val craftingScreen = (screen as? GenericContainerScreen)
+					?.takeIf { it.title?.unformattedString == CraftingOverlay.CRAFTING_SCREEN_NAME }
+				if (craftingScreen == null) {
 					MC.sendCommand("craft")
 					shouldReturn = false
 				}
-				CraftingOverlay.setOverlay(screen as? GenericContainerScreen, display.neuRecipe)
+				CraftingOverlay.setOverlay(craftingScreen, recipe)
 			}
 			if (context.isActuallyCrafting && useSuperCraft) {
 				shouldReturn = false
@@ -75,8 +82,13 @@ class FirmamentReiPlugin : REIClientPlugin {
 	}
 
 
+	val generics = listOf<GenericREIRecipe<*>>( // Order matters: The order in here is the order in which they show up in REI
+		GenericREIRecipe(SBCraftingRecipeRenderer),
+
+	)
+
 	override fun registerCategories(registry: CategoryRegistry) {
-		registry.add(SBCraftingRecipe.Category)
+		registry.add(generics)
 		registry.add(SBForgeRecipe.Category)
 		registry.add(SBMobDropRecipe.Category)
 		registry.add(SBKatRecipe.Category)
@@ -91,9 +103,9 @@ class FirmamentReiPlugin : REIClientPlugin {
 	}
 
 	override fun registerDisplays(registry: DisplayRegistry) {
-		registry.registerDisplayGenerator(
-			SBCraftingRecipe.Category.catIdentifier,
-			SkyblockCraftingRecipeDynamicGenerator)
+		generics.forEach {
+			it.registerDynamicGenerator(registry)
+		}
 		registry.registerDisplayGenerator(
 			SBReforgeRecipe.catIdentifier,
 			SBReforgeRecipe.DynamicGenerator

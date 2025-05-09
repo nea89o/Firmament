@@ -16,4 +16,5 @@ interface GenericRecipeRenderer<T : NEURecipe> {
 	val title: Text
 	val identifier: Identifier
 	fun findAllRecipes(neuRepository: NEURepository): Iterable<T>
+	val typ: Class<T>
 }
