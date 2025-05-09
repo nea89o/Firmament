@@ -11,7 +11,6 @@ import me.shedaniel.rei.api.client.view.ViewSearchBuilder
 import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.entry.EntryStack
 import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
-import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.compat.rei.recipes.SBShopRecipe
@@ -19,9 +18,6 @@ import moe.nea.firmament.repo.EssenceRecipeProvider
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 
-
-val SkyblockForgeRecipeDynamicGenerator =
-	neuDisplayGenerator<SBForgeRecipe, NEUForgeRecipe> { SBForgeRecipe(it) }
 
 val SkyblockMobDropRecipeDynamicGenerator =
 	neuDisplayGenerator<SBMobDropRecipe, NEUMobDropRecipe> { SBMobDropRecipe(it) }

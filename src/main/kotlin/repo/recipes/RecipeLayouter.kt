@@ -1,6 +1,8 @@
 package moe.nea.firmament.repo.recipes
 
 import io.github.notenoughupdates.moulconfig.gui.GuiComponent
+import me.shedaniel.math.Point
+import me.shedaniel.math.Rectangle
 import net.minecraft.text.Text
 import moe.nea.firmament.repo.SBItemStack
 
@@ -21,13 +23,16 @@ interface RecipeLayouter {
 		slotKind: SlotKind,
 	)
 
+	fun createTooltip(rectangle: Rectangle, label: Text)
+
 	fun createLabel(
 		x: Int, y: Int,
 		text: Text
 	)
 
-	fun createArrow(x: Int, y: Int)
+	fun createArrow(x: Int, y: Int): Rectangle
 
 	fun createMoulConfig(x: Int, y: Int, w: Int, h: Int, component: GuiComponent)
+	fun createFire(ingredientsCenter: Point, animationTicks: Int)
 }
 

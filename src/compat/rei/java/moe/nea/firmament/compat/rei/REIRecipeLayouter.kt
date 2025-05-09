@@ -13,6 +13,8 @@ import moe.nea.firmament.repo.recipes.RecipeLayouter
 
 class REIRecipeLayouter : RecipeLayouter {
 	val container: MutableList<Widget> = mutableListOf()
+	fun <T: Widget> add(t: T): T = t.also(container::add)
+
 	override fun createItemSlot(
 		x: Int,
 		y: Int,
@@ -27,19 +29,22 @@ class REIRecipeLayouter : RecipeLayouter {
 			RecipeLayouter.SlotKind.SMALL_OUTPUT -> slot.markOutput()
 			RecipeLayouter.SlotKind.BIG_OUTPUT -> {
 				slot.markOutput().disableBackground()
-				container.add(Widgets.createResultSlotBackground(Point(x, y)))
+				add(Widgets.createResultSlotBackground(Point(x, y)))
 			}
 		}
-		container.add(slot)
+		add(slot)
+	}
+
+	override fun createTooltip(rectangle: Rectangle, label: Text) {
+		add(Widgets.createTooltip(rectangle, label))
 	}
 
 	override fun createLabel(x: Int, y: Int, text: Text) {
-		container.add(Widgets.createLabel(Point(x, y), text))
+		add(Widgets.createLabel(Point(x, y), text))
 	}
 
-	override fun createArrow(x: Int, y: Int) {
-		container.add(Widgets.createArrow(Point(x, y)))
-	}
+	override fun createArrow(x: Int, y: Int) =
+		add(Widgets.createArrow(Point(x, y))).bounds
 
 	override fun createMoulConfig(
 		x: Int,
@@ -48,6 +53,10 @@ class REIRecipeLayouter : RecipeLayouter {
 		h: Int,
 		component: GuiComponent
 	) {
-		container.add(wrapWidget(Rectangle(Point(x, y), Dimension(w, h)), component))
+		add(wrapWidget(Rectangle(Point(x, y), Dimension(w, h)), component))
+	}
+
+	override fun createFire(ingredientsCenter: Point, animationTicks: Int) {
+		add(Widgets.createBurningFire(ingredientsCenter).animationDurationTicks(animationTicks.toDouble()))
 	}
 }

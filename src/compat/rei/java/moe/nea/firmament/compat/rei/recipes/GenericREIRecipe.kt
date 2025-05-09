@@ -1,6 +1,7 @@
 package moe.nea.firmament.compat.rei.recipes
 
 import io.github.moulberry.repo.data.NEUCraftingRecipe
+import io.github.moulberry.repo.data.NEURecipe
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.gui.Renderer
 import me.shedaniel.rei.api.client.gui.widgets.Widget
@@ -14,7 +15,7 @@ import moe.nea.firmament.compat.rei.REIRecipeLayouter
 import moe.nea.firmament.compat.rei.neuDisplayGeneratorWithItem
 import moe.nea.firmament.repo.recipes.GenericRecipeRenderer
 
-class GenericREIRecipe<T : NEUCraftingRecipe>(
+class GenericREIRecipe<T : NEURecipe>(
 	val renderer: GenericRecipeRenderer<T>,
 ) : DisplayCategory<GenericRecipe<T>> {
 	private val dynamicGenerator =
@@ -23,6 +24,10 @@ class GenericREIRecipe<T : NEUCraftingRecipe>(
 	private val categoryIdentifier = CategoryIdentifier.of<GenericRecipe<T>>(renderer.identifier)
 	override fun getCategoryIdentifier(): CategoryIdentifier<GenericRecipe<T>> {
 		return categoryIdentifier
+	}
+
+	override fun getDisplayHeight(): Int {
+		return renderer.displayHeight
 	}
 
 	override fun getTitle(): Text? {
@@ -45,7 +50,7 @@ class GenericREIRecipe<T : NEUCraftingRecipe>(
 	}
 }
 
-class GenericRecipe<T : NEUCraftingRecipe>(
+class GenericRecipe<T : NEURecipe>(
 	override val neuRecipe: T,
 	val id: CategoryIdentifier<GenericRecipe<T>>
 ) : SBRecipe() {

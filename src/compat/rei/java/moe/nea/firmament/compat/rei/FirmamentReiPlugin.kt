@@ -22,7 +22,6 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import moe.nea.firmament.compat.rei.recipes.GenericREIRecipe
 import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
-import moe.nea.firmament.compat.rei.recipes.SBForgeRecipe
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.compat.rei.recipes.SBRecipe
@@ -34,6 +33,7 @@ import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.repo.recipes.SBCraftingRecipeRenderer
+import moe.nea.firmament.repo.recipes.SBForgeRecipeRenderer
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.guessRecipeId
@@ -84,12 +84,11 @@ class FirmamentReiPlugin : REIClientPlugin {
 
 	val generics = listOf<GenericREIRecipe<*>>( // Order matters: The order in here is the order in which they show up in REI
 		GenericREIRecipe(SBCraftingRecipeRenderer),
-
+		GenericREIRecipe(SBForgeRecipeRenderer),
 	)
 
 	override fun registerCategories(registry: CategoryRegistry) {
 		registry.add(generics)
-		registry.add(SBForgeRecipe.Category)
 		registry.add(SBMobDropRecipe.Category)
 		registry.add(SBKatRecipe.Category)
 		registry.add(SBReforgeRecipe.Category)
@@ -110,9 +109,6 @@ class FirmamentReiPlugin : REIClientPlugin {
 			SBReforgeRecipe.catIdentifier,
 			SBReforgeRecipe.DynamicGenerator
 		)
-		registry.registerDisplayGenerator(
-			SBForgeRecipe.Category.categoryIdentifier,
-			SkyblockForgeRecipeDynamicGenerator)
 		registry.registerDisplayGenerator(
 			SBMobDropRecipe.Category.categoryIdentifier,
 			SkyblockMobDropRecipeDynamicGenerator)
