@@ -20,7 +20,8 @@ object SBForgeRecipeRenderer : GenericRecipeRenderer<NEUForgeRecipe> {
 	override fun render(
 		recipe: NEUForgeRecipe,
 		bounds: Rectangle,
-		layouter: RecipeLayouter
+		layouter: RecipeLayouter,
+		mainItem: SBItemStack?,
 	) {
 		val arrow = layouter.createArrow(bounds.minX + 90, bounds.minY + 54 - 18 / 2)
 		layouter.createTooltip(

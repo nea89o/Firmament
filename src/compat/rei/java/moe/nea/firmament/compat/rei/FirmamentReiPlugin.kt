@@ -20,8 +20,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import moe.nea.firmament.compat.rei.recipes.GenericREIRecipe
-import moe.nea.firmament.compat.rei.recipes.SBEssenceUpgradeRecipe
+import moe.nea.firmament.compat.rei.recipes.GenericREIRecipeCategory
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
 import moe.nea.firmament.compat.rei.recipes.SBRecipe
@@ -33,6 +32,7 @@ import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.repo.recipes.SBCraftingRecipeRenderer
+import moe.nea.firmament.repo.recipes.SBEssenceUpgradeRecipeRenderer
 import moe.nea.firmament.repo.recipes.SBForgeRecipeRenderer
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
@@ -82,9 +82,10 @@ class FirmamentReiPlugin : REIClientPlugin {
 	}
 
 
-	val generics = listOf<GenericREIRecipe<*>>( // Order matters: The order in here is the order in which they show up in REI
-		GenericREIRecipe(SBCraftingRecipeRenderer),
-		GenericREIRecipe(SBForgeRecipeRenderer),
+	val generics = listOf<GenericREIRecipeCategory<*>>( // Order matters: The order in here is the order in which they show up in REI
+		GenericREIRecipeCategory(SBCraftingRecipeRenderer),
+		GenericREIRecipeCategory(SBForgeRecipeRenderer),
+		GenericREIRecipeCategory(SBEssenceUpgradeRecipeRenderer),
 	)
 
 	override fun registerCategories(registry: CategoryRegistry) {
@@ -92,7 +93,6 @@ class FirmamentReiPlugin : REIClientPlugin {
 		registry.add(SBMobDropRecipe.Category)
 		registry.add(SBKatRecipe.Category)
 		registry.add(SBReforgeRecipe.Category)
-		registry.add(SBEssenceUpgradeRecipe.Category)
 		registry.add(SBShopRecipe.Category)
 	}
 
@@ -118,10 +118,6 @@ class FirmamentReiPlugin : REIClientPlugin {
 		registry.registerDisplayGenerator(
 			SBKatRecipe.Category.categoryIdentifier,
 			SkyblockKatRecipeDynamicGenerator)
-		registry.registerDisplayGenerator(
-			SBEssenceUpgradeRecipe.Category.categoryIdentifier,
-			SkyblockEssenceRecipeDynamicGenerator
-		)
 	}
 
 	override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {

@@ -1,6 +1,5 @@
 package moe.nea.firmament.compat.rei.recipes
 
-import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEURecipe
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.gui.Renderer
@@ -13,13 +12,20 @@ import me.shedaniel.rei.api.common.util.EntryStacks
 import net.minecraft.text.Text
 import moe.nea.firmament.compat.rei.REIRecipeLayouter
 import moe.nea.firmament.compat.rei.neuDisplayGeneratorWithItem
+import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.repo.recipes.GenericRecipeRenderer
 
-class GenericREIRecipe<T : NEURecipe>(
+class GenericREIRecipeCategory<T : NEURecipe>(
 	val renderer: GenericRecipeRenderer<T>,
 ) : DisplayCategory<GenericRecipe<T>> {
 	private val dynamicGenerator =
-		neuDisplayGeneratorWithItem<GenericRecipe<T>, T>(renderer.typ) { _, it -> GenericRecipe(it, categoryIdentifier) }
+		neuDisplayGeneratorWithItem<GenericRecipe<T>, T>(renderer.typ) { item, recipe ->
+			GenericRecipe(
+				recipe,
+				item,
+				categoryIdentifier
+			)
+		}
 
 	private val categoryIdentifier = CategoryIdentifier.of<GenericRecipe<T>>(renderer.identifier)
 	override fun getCategoryIdentifier(): CategoryIdentifier<GenericRecipe<T>> {
@@ -41,7 +47,7 @@ class GenericREIRecipe<T : NEURecipe>(
 	override fun setupDisplay(display: GenericRecipe<T>, bounds: Rectangle): List<Widget> {
 		val layouter = REIRecipeLayouter()
 		layouter.container.add(Widgets.createRecipeBase(bounds))
-		renderer.render(display.neuRecipe, bounds, layouter)
+		renderer.render(display.neuRecipe, bounds, layouter, display.sourceItem)
 		return layouter.container
 	}
 
@@ -52,6 +58,7 @@ class GenericREIRecipe<T : NEURecipe>(
 
 class GenericRecipe<T : NEURecipe>(
 	override val neuRecipe: T,
+	val sourceItem: SBItemStack?,
 	val id: CategoryIdentifier<GenericRecipe<T>>
 ) : SBRecipe() {
 	override fun getCategoryIdentifier(): CategoryIdentifier<*>? {

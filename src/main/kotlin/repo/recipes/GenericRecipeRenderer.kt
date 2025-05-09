@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier
 import moe.nea.firmament.repo.SBItemStack
 
 interface GenericRecipeRenderer<T : NEURecipe> {
-	fun render(recipe: T, bounds: Rectangle, layouter: RecipeLayouter)
+	fun render(recipe: T, bounds: Rectangle, layouter: RecipeLayouter, mainItem: SBItemStack?)
 	fun getInputs(recipe: T): Collection<SBItemStack>
 	fun getOutputs(recipe: T): Collection<SBItemStack>
 	val icon: ItemStack

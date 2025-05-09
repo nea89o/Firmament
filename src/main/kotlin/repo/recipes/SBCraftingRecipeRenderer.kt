@@ -13,16 +13,23 @@ import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.tr
 
 object SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
-	override fun render(recipe: NEUCraftingRecipe, bounds: Rectangle, layouter: RecipeLayouter) {
+	override fun render(
+		recipe: NEUCraftingRecipe,
+		bounds: Rectangle,
+		layouter: RecipeLayouter,
+		mainItem: SBItemStack?,
+	) {
 		val point = Point(bounds.centerX - 58, bounds.centerY - 27)
 		layouter.createArrow(point.x + 60, point.y + 18)
 		for (i in 0 until 3) {
 			for (j in 0 until 3) {
 				val item = recipe.inputs[i + j * 3]
-				layouter.createItemSlot(point.x + 1 + i * 18,
-				                        point.y + 1 + j * 18,
-				                        SBItemStack(item),
-				                        RecipeLayouter.SlotKind.SMALL_INPUT)
+				layouter.createItemSlot(
+					point.x + 1 + i * 18,
+					point.y + 1 + j * 18,
+					SBItemStack(item),
+					RecipeLayouter.SlotKind.SMALL_INPUT
+				)
 			}
 		}
 		layouter.createItemSlot(
@@ -48,6 +55,6 @@ object SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
 	}
 
 	override val icon: ItemStack = ItemStack(Blocks.CRAFTING_TABLE)
-	override val title: Text = tr("firmament.category.crafting", "SkyBlock Crafting") // TODO: fix tr not being included in jars
+	override val title: Text = tr("firmament.category.crafting", "SkyBlock Crafting")
 	override val identifier: Identifier = Firmament.identifier("crafting_recipe")
 }
