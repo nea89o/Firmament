@@ -151,8 +151,8 @@ runtime_optional = [
 	"devauth",
 	#	"freecammod",
 	#	"sodium",
-	#    "qolify",
-	"ncr",
+	#	"qolify",
+	#	"ncr",
 	#	"citresewn",
 ]
 

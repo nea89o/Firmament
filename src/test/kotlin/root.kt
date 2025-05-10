@@ -24,6 +24,7 @@ object FirmTestBootstrap {
 		println("Bootstrap completed at $loadEnd after $loadDuration")
 	}
 
+	@JvmStatic
 	fun bootstrapMinecraft() {
 	}
 }

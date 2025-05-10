@@ -1,12 +1,12 @@
 package moe.nea.firmament.test.util.math
 
-import io.kotest.core.spec.style.AnnotationSpec
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import moe.nea.firmament.util.math.GChainReconciliation
 import moe.nea.firmament.util.math.GChainReconciliation.rotated
 
-class GChainReconciliationTest : AnnotationSpec() {
+class GChainReconciliationTest  {
 
 	fun <T> assertEqualCycles(
 		expected: List<T>,

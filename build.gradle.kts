@@ -317,8 +317,8 @@ dependencies {
 	}
 
 
-	testImplementation("io.kotest:kotest-runner-junit5:6.0.0.M1")
-	testAgent(project(":testagent", configuration = "shadow"))
+	testImplementation("net.fabricmc:fabric-loader-junit:${libs.versions.fabric.loader.get()}")
+	testAgent(files(tasks.getByPath(":testagent:jar")))
 
 	implementation(projects.symbols)
 	ksp(projects.symbols)
