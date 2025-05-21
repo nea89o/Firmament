@@ -33,6 +33,7 @@ object StorageOverlay : FirmamentFeature {
 		val inverseScroll by toggle("inverse-scroll") { false }
 		val padding by integer("padding", 1, 20) { 5 }
 		val margin by integer("margin", 1, 60) { 20 }
+		val itemsBlockScrolling by toggle("block-item-scrolling") { true }
 	}
 
 	fun adjustScrollSpeed(amount: Double): Double {

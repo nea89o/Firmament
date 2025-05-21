@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.slot.Slot
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.customgui.CustomGui
+import moe.nea.firmament.util.focusedItemStack
 
 class StorageOverlayCustom(
 	val handler: StorageBackingHandle,
@@ -113,6 +114,8 @@ class StorageOverlayCustom(
 		horizontalAmount: Double,
 		verticalAmount: Double
 	): Boolean {
+		if (screen.focusedItemStack != null && StorageOverlay.TConfig.itemsBlockScrolling)
+			return false
 		return overview.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
 	}
 }
