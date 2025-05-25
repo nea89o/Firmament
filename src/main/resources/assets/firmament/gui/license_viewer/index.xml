@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Root xmlns="http://notenoughupdates.org/moulconfig"
+	  xmlns:firm="http://firmament.nea.moe/moulconfig"
+>
+	<Center>
+		<Panel background="VANILLA">
+			<Column>
+				<Center>
+					<Scale scale="2">
+						<Text text="Firmament Licenses"/>
+					</Scale>
+				</Center>
+				<!--				<firm:Line/>-->
+				<ScrollPanel width="306" height="250">
+					<Panel insets="3" background="TRANSPARENT">
+						<Array data="@softwares">
+							<Center>
+								<firm:Fixed width="300">
+									<Panel background="VANILLA" insets="8">
+										<Column>
+											<Scale scale="1.2">
+												<Text text="@projectName"/>
+											</Scale>
+											<When condition="@hasWebPresence">
+												<Row>
+													<firm:Button onClick="@open">
+														<Text text="Navigate to WebSite"/>
+													</firm:Button>
+												</Row>
+												<Spacer/>
+											</When>
+											<Text text="@projectDescription" width="280"/>
+											<Array data="@developers">
+												<Row>
+													<Text text="by "/>
+													<Text text="@name"/>
+												</Row>
+											</Array>
+											<Array data="@licenses">
+												<When condition="@hasUrl">
+													<firm:Button onClick="@open">
+														<Center>
+															<Row>
+																<Text text="License: "/>
+																<Text text="@name"/>
+															</Row>
+														</Center>
+													</firm:Button>
+													<Row>
+														<Text text="License: "/>
+														<Text text="@name"/>
+													</Row>
+												</When>
+											</Array>
+										</Column>
+									</Panel>
+								</firm:Fixed>
+							</Center>
+						</Array>
+					</Panel>
+				</ScrollPanel>
+			</Column>
+		</Panel>
+	</Center>
+</Root>

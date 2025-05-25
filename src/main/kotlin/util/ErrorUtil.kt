@@ -38,6 +38,8 @@ object ErrorUtil {
 	}
 
 	class Catch<T> private constructor(val value: T?, val exc: Throwable?) {
+		fun orNull(): T? = value
+
 		inline fun or(block: (exc: Throwable) -> T): T {
 			contract {
 				callsInPlace(block, InvocationKind.AT_MOST_ONCE)

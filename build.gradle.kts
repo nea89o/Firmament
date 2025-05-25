@@ -17,7 +17,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.charset.StandardCharsets
-import java.util.Base64
+import java.util.*
 
 plugins {
 	java
@@ -227,8 +227,10 @@ val testAgent by configurations.creating {
 }
 
 
-val configuredSourceSet = createIsolatedSourceSet("configured",
-                                                  isEnabled = false) // Wait for update (also low prio, because configured sucks)
+val configuredSourceSet = createIsolatedSourceSet(
+	"configured",
+	isEnabled = false
+) // Wait for update (also low prio, because configured sucks)
 val sodiumSourceSet = createIsolatedSourceSet("sodium", isEnabled = false)
 val citResewnSourceSet = createIsolatedSourceSet("citresewn", isEnabled = false) // TODO: Wait for update
 val yaclSourceSet = createIsolatedSourceSet("yacl")
@@ -262,14 +264,14 @@ dependencies {
 	include(libs.hypixelmodapi.fabric)
 	compileOnly(projects.javaplugin)
 	annotationProcessor(projects.javaplugin)
-	implementation("com.google.auto.service:auto-service-annotations:1.1.1")
+	nonModImplentation("com.google.auto.service:auto-service-annotations:1.1.1")
 	ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
 	include(libs.manninghamMills)
 	include(libs.moulconfig)
 
 
 	annotationProcessor(libs.mixinextras)
-	implementation(libs.mixinextras)
+	nonModImplentation(libs.mixinextras)
 	include(libs.mixinextras)
 
 	nonModImplentation(libs.nealisp)
@@ -332,10 +334,11 @@ loom {
 		configureEach {
 			property("fabric.log.level", "info")
 			property("firmament.debug", "true")
-			property("firmament.classroots",
-			         compatSourceSets.joinToString(File.pathSeparator) {
-				         File(it.output.classesDirs.asPath).absolutePath
-			         })
+			property(
+				"firmament.classroots",
+				compatSourceSets.joinToString(File.pathSeparator) {
+					File(it.output.classesDirs.asPath).absolutePath
+				})
 			property("mixin.debug.export", "true")
 			property("mixin.debug", "true")
 
@@ -370,12 +373,16 @@ val updateTestRepo by tasks.registering {
 	doLast {
 		val propertiesFile = rootProject.file("gradle.properties")
 		val json =
-			Gson().fromJson(uri("https://api.github.com/repos/NotEnoughUpdates/NotEnoughUpdates-REPO/branches/master")
-				                .toURL().readText(), JsonObject::class.java)
+			Gson().fromJson(
+				uri("https://api.github.com/repos/NotEnoughUpdates/NotEnoughUpdates-REPO/branches/master")
+					.toURL().readText(), JsonObject::class.java
+			)
 		val latestSha = json["commit"].asJsonObject["sha"].asString
 		var text = propertiesFile.readText()
-		text = text.replace("firmament\\.compiletimerepohash=[^\n]*".toRegex(),
-		                    "firmament.compiletimerepohash=$latestSha")
+		text = text.replace(
+			"firmament\\.compiletimerepohash=[^\n]*".toRegex(),
+			"firmament.compiletimerepohash=$latestSha"
+		)
 		propertiesFile.writeText(text)
 	}
 }
@@ -389,8 +396,10 @@ tasks.test {
 	doFirst {
 		wd.mkdirs()
 		wd.resolve("config").deleteRecursively()
-		systemProperty("firmament.testrepo",
-		               downloadTestRepo.flatMap { it.outputDirectory.asFile }.map { it.absolutePath }.get())
+		systemProperty(
+			"firmament.testrepo",
+			downloadTestRepo.flatMap { it.outputDirectory.asFile }.map { it.absolutePath }.get()
+		)
 		jvmArgs("-javaagent:${testAgent.singleFile.absolutePath}")
 	}
 	systemProperty("jdk.attach.allowAttachSelf", "true")
@@ -408,13 +417,15 @@ tasks.withType<JavaCompile> {
 	this.targetCompatibility = "21"
 	options.encoding = "UTF-8"
 	val module = "ALL-UNNAMED"
-	options.forkOptions.jvmArgs!!.addAll(listOf(
-		"--add-exports=jdk.compiler/com.sun.tools.javac.util=$module",
-		"--add-exports=jdk.compiler/com.sun.tools.javac.comp=$module",
-		"--add-exports=jdk.compiler/com.sun.tools.javac.tree=$module",
-		"--add-exports=jdk.compiler/com.sun.tools.javac.api=$module",
-		"--add-exports=jdk.compiler/com.sun.tools.javac.code=$module",
-	))
+	options.forkOptions.jvmArgs!!.addAll(
+		listOf(
+			"--add-exports=jdk.compiler/com.sun.tools.javac.util=$module",
+			"--add-exports=jdk.compiler/com.sun.tools.javac.comp=$module",
+			"--add-exports=jdk.compiler/com.sun.tools.javac.tree=$module",
+			"--add-exports=jdk.compiler/com.sun.tools.javac.api=$module",
+			"--add-exports=jdk.compiler/com.sun.tools.javac.code=$module",
+		)
+	)
 	options.isFork = true
 	afterEvaluate {
 		options.compilerArgs.add("-Xplugin:IntermediaryNameReplacement mappingFile=${LoomGradleExtension.get(project).mappingsFile.absolutePath} sourceNs=named")
@@ -463,12 +474,18 @@ tasks.processResources {
 tasks.scanLicenses {
 	scanConfiguration(nonModImplentation)
 	scanConfiguration(configurations.modCompileClasspath.get())
+	compatSourceSets.forEach {
+		scanConfiguration(it.modImplementationConfigurationName.get())
+	}
 	outputFile.set(layout.buildDirectory.file("LICENSES-FIRMAMENT.json"))
 	licenseFormatter.set(moe.nea.licenseextractificator.JsonLicenseFormatter())
 }
-tasks.create("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).apply {
+tasks.register("printAllLicenses", LicenseDiscoveryTask::class.java, licensing).configure {
 	outputFile.set(layout.buildDirectory.file("LICENSES-FIRMAMENT.txt"))
 	licenseFormatter.set(moe.nea.licenseextractificator.TextLicenseFormatter())
+	compatSourceSets.forEach {
+		scanConfiguration(it.modImplementationConfigurationName.get())
+	}
 	scanConfiguration(nonModImplentation)
 	scanConfiguration(configurations.modCompileClasspath.get())
 	doLast {
@@ -505,16 +522,20 @@ fun patchRenderDoc(
 			if (!fileF.exists()) {
 				fileF.parentFile.mkdirs()
 				if (isWindows) {
-					fileF.writeText("""
+					fileF.writeText(
+						"""
 					setlocal enableextensions
 					start "" renderdoccmd.exe capture --opt-hook-children --wait-for-exit --working-dir . "$wrappedJavaExecutable" %*
 					endlocal
-					""".trimIndent())
+					""".trimIndent()
+					)
 				} else {
-					fileF.writeText("""
+					fileF.writeText(
+						"""
 					#!/usr/bin/env bash
 					exec renderdoccmd capture --opt-hook-children --wait-for-exit --working-dir . "$wrappedJavaExecutable" "$@"
-					""".trimIndent())
+					""".trimIndent()
+					)
 					fileF.setExecutable(true)
 				}
 			}
