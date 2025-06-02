@@ -118,7 +118,7 @@ object CustomGlobalArmorOverrides {
 			val equipmentLayers = layers.map {
 				EquipmentModel.Layer(
 					it.identifier, if (it.tint) {
-						Optional.of(EquipmentModel.Dyeable(Optional.empty()))
+						Optional.of(EquipmentModel.Dyeable(Optional.of(0xFFA06540.toInt())))
 					} else {
 						Optional.empty()
 					},
