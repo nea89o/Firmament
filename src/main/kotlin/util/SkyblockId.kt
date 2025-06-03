@@ -6,8 +6,7 @@ import com.mojang.serialization.Codec
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
@@ -202,7 +201,31 @@ val ItemStack.skyBlockId: SkyblockId?
 				else SkyblockId("${enchantName.uppercase()};${enchantmentData.getInt(enchantName).getOrNull()}")
 			}
 
-			// TODO: PARTY_HAT_CRAB{,_ANIMATED,_SLOTH},POTION
+			"ATTRIBUTE_SHARD" -> {
+				val attributeData = extraAttributes.getCompound("attributes").getOrNull()
+				val attributeName = attributeData?.keys?.singleOrNull()
+				if (attributeName == null) SkyblockId("ATTRIBUTE_SHARD")
+				else SkyblockId(
+					"ATTRIBUTE_SHARD_${attributeName.uppercase()};${
+						attributeData.getInt(attributeName).getOrNull()
+					}"
+				)
+			}
+
+			"POTION" -> {
+				val potionData = extraAttributes.getString("potion").getOrNull()
+				val potionName = extraAttributes.getString("potion_name").getOrNull()
+				val potionLevel = extraAttributes.getInt("potion_level").getOrNull()
+				val potionType = extraAttributes.getString("potion_type").getOrNull()
+				when {
+					potionName != null -> SkyblockId("POTION_${potionName.uppercase()};$potionLevel")
+					potionData != null -> SkyblockId("POTION_${potionData.uppercase()};$potionLevel")
+					potionType != null -> SkyblockId("POTION${potionType.uppercase()}")
+					else -> SkyblockId("WATER_BOTTLE")
+				}
+			}
+
+			// TODO: PARTY_HAT_CRAB{,_ANIMATED,_SLOTH}
 			else -> {
 				SkyblockId(id)
 			}
