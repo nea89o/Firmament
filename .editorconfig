@@ -17,3 +17,4 @@ max_line_length = 120
 ij_kotlin_name_count_to_use_star_import = 99999
 ij_kotlin_name_count_to_use_star_import_for_members = 99999
 ij_kotlin_imports_layout = *, |, kotlinx.**, kotlin.**, net.minecraft.**, moe.nea.firmament.**, |, $*
+ij_kotlin_packages_to_use_import_on_demand = false
