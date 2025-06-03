@@ -6,7 +6,8 @@ import com.mojang.serialization.Codec
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
@@ -220,7 +221,7 @@ val ItemStack.skyBlockId: SkyblockId?
 				when {
 					potionName != null -> SkyblockId("POTION_${potionName.uppercase()};$potionLevel")
 					potionData != null -> SkyblockId("POTION_${potionData.uppercase()};$potionLevel")
-					potionType != null -> SkyblockId("POTION${potionType.uppercase()}")
+					potionType != null -> SkyblockId("POTION_${potionType.uppercase()}")
 					else -> SkyblockId("WATER_BOTTLE")
 				}
 			}
