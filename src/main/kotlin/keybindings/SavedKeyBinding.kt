@@ -87,6 +87,10 @@ data class SavedKeyBinding(
         return keyCode == this.keyCode && getMods(modifiers) == Triple(shift, ctrl, alt)
     }
 
+	override fun toString(): String {
+		return format().string
+	}
+
     fun format(): Text {
         val stroke = Text.literal("")
         if (ctrl) {
