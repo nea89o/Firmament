@@ -5,6 +5,8 @@ package moe.nea.firmament.features.inventory.buttons
 import me.shedaniel.math.Rectangle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
+import net.minecraft.client.MinecraftClient
+import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HandledScreenClickEvent
 import moe.nea.firmament.events.HandledScreenForegroundEvent
@@ -15,6 +17,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.data.DataHolder
 import moe.nea.firmament.util.accessors.getRectangle
+import moe.nea.firmament.util.gold
 
 object InventoryButtons : FirmamentFeature {
     override val identifier: String
@@ -24,6 +27,7 @@ object InventoryButtons : FirmamentFeature {
         val _openEditor by button("open-editor") {
             openEditor()
         }
+		val hoverText by toggle("hover-text") { true }
     }
 
     object DConfig : DataHolder<Data>(serializer(), identifier, ::Data)
@@ -63,12 +67,24 @@ object InventoryButtons : FirmamentFeature {
     @Subscribe
     fun onRenderForeground(it: HandledScreenForegroundEvent) {
         val bounds = it.screen.getRectangle()
+
         for (button in getValidButtons()) {
             val buttonBounds = button.getBounds(bounds)
             it.context.matrices.push()
             it.context.matrices.translate(buttonBounds.minX.toFloat(), buttonBounds.minY.toFloat(), 0F)
             button.render(it.context)
             it.context.matrices.pop()
+
+			if (buttonBounds.contains(it.mouseX, it.mouseY) && TConfig.hoverText) {
+				it.context.drawText(
+					MinecraftClient.getInstance().textRenderer,
+					Text.literal(button.command).gold(),
+					buttonBounds.minX - 15,
+					buttonBounds.minY + 20,
+					0xFFFF00,
+					false
+				)
+			}
         }
         lastRectangle = bounds
     }
