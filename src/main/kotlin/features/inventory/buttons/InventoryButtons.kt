@@ -5,6 +5,7 @@ package moe.nea.firmament.features.inventory.buttons
 import me.shedaniel.math.Rectangle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
+import kotlin.time.Duration.Companion.seconds
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
@@ -12,9 +13,11 @@ import moe.nea.firmament.events.HandledScreenClickEvent
 import moe.nea.firmament.events.HandledScreenForegroundEvent
 import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.FirmamentFeature
+import moe.nea.firmament.gui.FirmHoverComponent
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil
+import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.data.DataHolder
 import moe.nea.firmament.util.accessors.getRectangle
 import moe.nea.firmament.util.gold
@@ -64,10 +67,14 @@ object InventoryButtons : FirmamentFeature {
         }
     }
 
+	var lastHoveredComponent: InventoryButton? = null
+	var lastMouseMove = TimeMark.farPast()
+
     @Subscribe
     fun onRenderForeground(it: HandledScreenForegroundEvent) {
         val bounds = it.screen.getRectangle()
 
+		var hoveredComponent: InventoryButton? = null
         for (button in getValidButtons()) {
             val buttonBounds = button.getBounds(bounds)
             it.context.matrices.push()
@@ -75,17 +82,21 @@ object InventoryButtons : FirmamentFeature {
             button.render(it.context)
             it.context.matrices.pop()
 
-			if (buttonBounds.contains(it.mouseX, it.mouseY) && TConfig.hoverText) {
-				it.context.drawText(
-					MinecraftClient.getInstance().textRenderer,
-					Text.literal(button.command).gold(),
-					buttonBounds.minX - 15,
-					buttonBounds.minY + 20,
-					0xFFFF00,
-					false
-				)
+			if (buttonBounds.contains(it.mouseX, it.mouseY) && TConfig.hoverText && hoveredComponent == null) {
+				hoveredComponent = button
+				if (lastMouseMove.passedTime() > 0.6.seconds && lastHoveredComponent === button) {
+					it.context.drawTooltip(
+						MC.font,
+						listOf(Text.literal(button.command).gold()),
+						buttonBounds.minX - 15,
+						buttonBounds.maxY + 20,
+					)
+				}
 			}
         }
+		if (hoveredComponent !== lastHoveredComponent)
+			lastMouseMove = TimeMark.now()
+		lastHoveredComponent = hoveredComponent
         lastRectangle = bounds
     }
 
