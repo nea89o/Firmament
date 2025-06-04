@@ -40,34 +40,7 @@ class KeyBindingHandler(val name: String, val managedConfig: ManagedConfig) :
 			{ button.blur() },
 			{ button.requestFocus() }
 		)
-		button = object : FirmButtonComponent(
-			TextComponent(
-				IMinecraft.instance.defaultFontRenderer,
-				{ sm.label.string },
-				130,
-				TextComponent.TextAlignment.LEFT,
-				false,
-				false
-			), action = {
-				sm.onClick()
-			}) {
-			override fun keyboardEvent(event: KeyboardEvent, context: GuiImmediateContext): Boolean {
-				if (event is KeyboardEvent.KeyPressed) {
-					return sm.keyboardEvent(event.keycode, event.pressed)
-				}
-				return super.keyboardEvent(event, context)
-			}
-
-			override fun getBackground(context: GuiImmediateContext): NinePatch<MyResourceLocation> {
-				if (sm.editing) return activeBg
-				return super.getBackground(context)
-			}
-
-
-			override fun onLostFocus() {
-				sm.onLostFocus()
-			}
-		}
+		button = sm.createButton()
 		sm.updateLabel()
 		return button
 	}

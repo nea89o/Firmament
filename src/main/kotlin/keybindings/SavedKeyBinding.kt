@@ -57,7 +57,9 @@ data class SavedKeyBinding(
         fun isShiftDown() = InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_LEFT_SHIFT)
             || InputUtil.isKeyPressed(h, GLFW.GLFW_KEY_RIGHT_SHIFT)
 
-    }
+		fun unbound(): SavedKeyBinding =
+			SavedKeyBinding(GLFW.GLFW_KEY_UNKNOWN)
+	}
 
     fun isPressed(atLeast: Boolean = false): Boolean {
         if (!isBound) return false

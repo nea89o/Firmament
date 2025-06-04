@@ -1,8 +1,15 @@
 package moe.nea.firmament.gui.config
 
+import io.github.notenoughupdates.moulconfig.common.IMinecraft
+import io.github.notenoughupdates.moulconfig.common.MyResourceLocation
+import io.github.notenoughupdates.moulconfig.deps.libninepatch.NinePatch
+import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
+import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
+import io.github.notenoughupdates.moulconfig.gui.component.TextComponent
 import org.lwjgl.glfw.GLFW
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import moe.nea.firmament.gui.FirmButtonComponent
 import moe.nea.firmament.keybindings.SavedKeyBinding
 
 class KeyBindingStateManager(
@@ -51,9 +58,11 @@ class KeyBindingStateManager(
 		) {
 			lastPressed = ch
 		} else {
-			setValue(SavedKeyBinding(
-				ch, modifiers
-			))
+			setValue(
+				SavedKeyBinding(
+					ch, modifiers
+				)
+			)
 			editing = false
 			blur()
 			lastPressed = 0
@@ -104,5 +113,34 @@ class KeyBindingStateManager(
 		label = stroke
 	}
 
+	fun createButton(): FirmButtonComponent {
+		return object : FirmButtonComponent(
+			TextComponent(
+				IMinecraft.instance.defaultFontRenderer,
+				{ this@KeyBindingStateManager.label.string },
+				130,
+				TextComponent.TextAlignment.LEFT,
+				false,
+				false
+			), action = {
+				this@KeyBindingStateManager.onClick()
+			}) {
+			override fun keyboardEvent(event: KeyboardEvent, context: GuiImmediateContext): Boolean {
+				if (event is KeyboardEvent.KeyPressed) {
+					return this@KeyBindingStateManager.keyboardEvent(event.keycode, event.pressed)
+				}
+				return super.keyboardEvent(event, context)
+			}
 
+			override fun getBackground(context: GuiImmediateContext): NinePatch<MyResourceLocation> {
+				if (this@KeyBindingStateManager.editing) return activeBg
+				return super.getBackground(context)
+			}
+
+
+			override fun onLostFocus() {
+				this@KeyBindingStateManager.onLostFocus()
+			}
+		}
+	}
 }

@@ -10,6 +10,7 @@ import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.keybindings.SavedKeyBinding
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
+import moe.nea.firmament.util.tr
 
 object ComboProcessor {
 
@@ -22,18 +23,13 @@ object ComboProcessor {
 	var isInputting = false
 	var lastInput = TimeMark.farPast()
 	val breadCrumbs = mutableListOf<SavedKeyBinding>()
-	// TODO: keep breadcrumbs
-
 
 	init {
 		val f = SavedKeyBinding(InputUtil.GLFW_KEY_F)
 		val one = SavedKeyBinding(InputUtil.GLFW_KEY_1)
 		val two = SavedKeyBinding(InputUtil.GLFW_KEY_2)
 		setActions(
-			listOf(
-				ComboKeyAction(CommandAction("wardrobe"), listOf(f, one)),
-				ComboKeyAction(CommandAction("equipment"), listOf(f, two)),
-			)
+			MacroData.DConfig.data.comboActions
 		)
 	}
 
@@ -68,10 +64,24 @@ object ComboProcessor {
 			0F
 		)
 		val breadCrumbText = breadCrumbs.joinToString(" > ")
-		event.context.drawText(MC.font, breadCrumbText, 0, 0, -1, true)
+		event.context.drawText(
+			MC.font,
+			tr("firmament.combo.active", "Current Combo: ").append(breadCrumbText),
+			0,
+			0,
+			-1,
+			true
+		)
 		event.context.matrices.translate(0F, MC.font.fontHeight + 2F, 0F)
 		for ((key, value) in activeTrie.nodes) {
-			event.context.drawText(MC.font, Text.literal("$breadCrumbText > $key: ").append(value.label), 0, 0, -1, true)
+			event.context.drawText(
+				MC.font,
+				Text.literal("$breadCrumbText > $key: ").append(value.label),
+				0,
+				0,
+				-1,
+				true
+			)
 			event.context.matrices.translate(0F, MC.font.fontHeight + 1F, 0F)
 		}
 		event.context.matrices.pop()

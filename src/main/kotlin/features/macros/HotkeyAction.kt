@@ -1,14 +1,19 @@
 package moe.nea.firmament.features.macros
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import net.minecraft.text.Text
 import moe.nea.firmament.util.MC
 
-interface HotkeyAction {
+@Serializable
+sealed interface HotkeyAction {
 	// TODO: execute
 	val label: Text
 	fun execute()
 }
 
+@Serializable
+@SerialName("command")
 data class CommandAction(val command: String) : HotkeyAction {
 	override val label: Text
 		get() = Text.literal("/$command")

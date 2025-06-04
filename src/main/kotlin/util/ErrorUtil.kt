@@ -75,4 +75,7 @@ object ErrorUtil {
 		return nullable
 	}
 
+	fun softUserError(string: String) {
+		MC.sendChat(tr("frimanet.usererror", "Firmament encountered a user caused error: $string"))
+	}
 }

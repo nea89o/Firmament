@@ -1,7 +1,9 @@
 package moe.nea.firmament.features.macros
 
+import kotlinx.serialization.Serializable
 import net.minecraft.text.Text
 import moe.nea.firmament.keybindings.SavedKeyBinding
+import moe.nea.firmament.util.ErrorUtil
 
 sealed interface KeyComboTrie {
 	val label: Text
@@ -13,19 +15,27 @@ sealed interface KeyComboTrie {
 			val root = Branch(mutableMapOf())
 			for (combo in combos) {
 				var p = root
-				require(combo.keys.isNotEmpty())
+				if (combo.keys.isEmpty()) {
+					ErrorUtil.softUserError("Key Combo for ${combo.action.label.string} is empty")
+					continue
+				}
 				for ((index, key) in combo.keys.withIndex()) {
 					val m = (p.nodes as MutableMap)
 					if (index == combo.keys.lastIndex) {
-						if (key in m)
-							error("Overlapping actions found for ${combo.keys} (another action ${m[key]} already exists).")
+						if (key in m) {
+							ErrorUtil.softUserError("Overlapping actions found for ${combo.keys.joinToString(" > ")} (another action ${m[key]} already exists).")
+							break
+						}
 
 						m[key] = Leaf(combo.action)
 					} else {
 						val c = m.getOrPut(key) { Branch(mutableMapOf()) }
-						if (c !is Branch)
-							error("Overlapping actions found for ${combo.keys} (final node exists at index $index) through another action already")
-						p = c
+						if (c !is Branch) {
+							ErrorUtil.softUserError("Overlapping actions found for ${combo.keys} (final node exists at index $index) through another action already")
+							break
+						} else {
+							p = c
+						}
 					}
 				}
 			}
@@ -35,6 +45,7 @@ sealed interface KeyComboTrie {
 }
 
 
+@Serializable
 data class ComboKeyAction(
 	val action: HotkeyAction,
 	val keys: List<SavedKeyBinding>,
