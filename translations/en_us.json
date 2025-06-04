@@ -129,7 +129,7 @@
 	"firmament.config.fixes.player-skins": "Fix unsigned Player Skins",
 	"firmament.config.fixes.player-skins.description": "Mark all player skins as signed, preventing console spam, and some rendering issues.",
 	"firmament.config.inventory-buttons": "Inventory buttons",
-	"firmament.config.inventory-buttons.hover-text": "Hover Text",
+	"firmament.config.inventory-buttons.hover-text": "Hover Tooltip",
 	"firmament.config.inventory-buttons.hover-text.description": "Hovering over inventory buttons will show the command they run.",
 	"firmament.config.inventory-buttons.open-editor": "Open Editor",
 	"firmament.config.inventory-buttons.open-editor.description": "Click anywhere to create a new inventory button or to edit one. Hold SHIFT to grid align.",
