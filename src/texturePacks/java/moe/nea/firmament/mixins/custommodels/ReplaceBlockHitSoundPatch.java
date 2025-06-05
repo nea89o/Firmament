@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ClientPlayerInteractionManager.class)
 public class ReplaceBlockHitSoundPatch {
-    @WrapOperation(method = "updateBlockBreakingProgress", at = @At(value = "NEW", target = "(Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFLnet/minecraft/util/math/random/Random;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/client/sound/PositionedSoundInstance;"))
+    @WrapOperation(method = "updateBlockBreakingProgress",
+		at = @At(value = "NEW", target = "(Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFLnet/minecraft/util/math/random/Random;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/client/sound/PositionedSoundInstance;"))
     private PositionedSoundInstance replaceSound(
         SoundEvent sound, SoundCategory category, float volume, float pitch,
         Random random, BlockPos pos, Operation<PositionedSoundInstance> original,

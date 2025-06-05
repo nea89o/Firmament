@@ -1,0 +1,6 @@
+{
+	// These are require by jade, but i don't think they are actually rendered in game.
+	// Jade throws exceptions if they are not present however.
+	"config.jade.plugin_firmament.toolprovider": "Firmament Tool Provider",
+	"config.jade.plugin_firmament.custom_mining_hardness": "Firmament Mining Hardness"
+}

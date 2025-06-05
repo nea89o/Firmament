@@ -126,6 +126,7 @@ fun innerJarsOf(name: String, dependency: Dependency): Provider<FileTree> {
 
 val collectTranslations by tasks.registering(CollectTranslations::class) {
 	this.baseTranslations.from(file("translations/en_us.json"))
+	this.baseTranslations.from(file("translations/extra.json"))
 	this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
 }
 
