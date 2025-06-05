@@ -22,7 +22,7 @@ object PriceData : FirmamentFeature {
 	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
 		val tooltipEnabled by toggle("enable-always") { true }
 		val enableKeybinding by keyBindingWithDefaultUnbound("enable-keybind")
-		val stackSizeKey by keyBinding("stack-size") { GLFW.GLFW_KEY_LEFT_SHIFT }
+		val stackSizeKey by keyBinding("stack-size-keybind") { GLFW.GLFW_KEY_LEFT_SHIFT }
 	}
 
 	override val config get() = TConfig

@@ -207,6 +207,8 @@
 	"firmament.config.price-data.enable-always.description": "Show item auction/bazaar prices on SkyBlock items",
 	"firmament.config.price-data.enable-keybind": "Enable only with Keybinding",
 	"firmament.config.price-data.enable-keybind.description": "Only show auction/bazaar prices when holding this keybinding. Unbind to always show.",
+	"firmament.config.price-data.stack-size-keybind": "Stack Size Multiplier Keybinding",
+	"firmament.config.price-data.stack-size-keybind.description": "Press this key while hovering over an item to show its price multiplied by the number of items you have.",
 	"firmament.config.pristine-profit": "Pristine Profit Tracker",
 	"firmament.config.pristine-profit.fine-gemstones": "Use Fine Gemstones",
 	"firmament.config.pristine-profit.fine-gemstones.description": "Use the (more stable) price of fine gemstones, instead of flawed gemstones.",
