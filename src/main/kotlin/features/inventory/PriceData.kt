@@ -48,7 +48,7 @@ object PriceData : FirmamentFeature {
 		}
 		val sbId = it.stack.skyBlockId
 		val stackSize = it.stack.count
-		val isShowingStack = TConfig.stackSizeKey.isPressed(atLeast = true)
+		val isShowingStack = TConfig.stackSizeKey.isPressed()
 		val multiplier = if (isShowingStack) stackSize else 1
 		val multiplierText =
 			if (isShowingStack)
