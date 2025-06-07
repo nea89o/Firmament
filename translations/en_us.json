@@ -279,6 +279,8 @@
 	"firmament.config.storage-overlay.inverse-scroll.description": "Invert the mouse wheel scrolling in Firmament's storage overlay.",
 	"firmament.config.storage-overlay.margin": "Margin",
 	"firmament.config.storage-overlay.margin.description": "Margin inside of the storage overview.",
+	"firmament.config.storage-overlay.outline-active-page": "Outline Active Page",
+	"firmament.config.storage-overlay.outline-active-page.description": "Put a border around the selected storage page in the storage overlay.",
 	"firmament.config.storage-overlay.padding": "Padding",
 	"firmament.config.storage-overlay.padding.description": "Padding inside of the storage overview.",
 	"firmament.config.storage-overlay.rows": "Columns",
@@ -397,5 +399,5 @@
 	"firmament.warp-util.mark-excluded": "Firmament: Tried to warp to %s, but it was not unlocked. I will avoid warping there again.",
 	"firmament.warp-util.no-warp-found": "Could not find an unlocked warp in %s",
 	"firmament.waypoint.temporary": "Temporary Waypoint: %s",
-	"firmanent.config.edit": "Edit"
+	"zzzzzzzzz.lastentry": "Here so every real firmament entry has a trailing ,"
 }

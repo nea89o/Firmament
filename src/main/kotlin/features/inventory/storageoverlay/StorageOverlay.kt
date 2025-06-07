@@ -27,6 +27,7 @@ object StorageOverlay : FirmamentFeature {
 
 	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
 		val alwaysReplace by toggle("always-replace") { true }
+		val outlineActiveStoragePage by toggle("outline-active-page") { false }
 		val columns by integer("rows", 1, 10) { 3 }
 		val height by integer("height", 80, 3000) { 3 * 18 * 6 }
 		val scrollSpeed by integer("scroll-speed", 1, 50) { 10 }
@@ -101,7 +102,8 @@ object StorageOverlay : FirmamentFeature {
 		screen.customGui = StorageOverlayCustom(
 			currentHandler ?: return,
 			screen,
-			storageOverlayScreen ?: (if (TConfig.alwaysReplace) StorageOverlayScreen() else return))
+			storageOverlayScreen ?: (if (TConfig.alwaysReplace) StorageOverlayScreen() else return)
+		)
 	}
 
 	fun rememberContent(handler: StorageBackingHandle?) {

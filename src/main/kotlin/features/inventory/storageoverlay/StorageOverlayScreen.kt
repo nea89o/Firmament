@@ -47,7 +47,8 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val PLAYER_Y_INSET = 3
 		val SLOT_SIZE = 18
 		val PADDING = 10
-		val PAGE_WIDTH = SLOT_SIZE * 9
+		val PAGE_SLOTS_WIDTH = SLOT_SIZE * 9
+		val PAGE_WIDTH = PAGE_SLOTS_WIDTH + 4
 		val HOTBAR_X = 12
 		val HOTBAR_Y = 67
 		val MAIN_INVENTORY_Y = 9
@@ -68,7 +69,8 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val x = width / 2 - overviewWidth / 2
 		val overviewHeight = minOf(
 			height - PLAYER_HEIGHT - minOf(80, height / 10),
-			StorageOverlay.TConfig.height)
+			StorageOverlay.TConfig.height
+		)
 		val innerScrollPanelHeight = overviewHeight - PADDING * 2
 		val y = height / 2 - (overviewHeight + PLAYER_HEIGHT) / 2
 		val playerX = width / 2 - PLAYER_WIDTH / 2
@@ -100,6 +102,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		coerceScroll(StorageOverlay.adjustScrollSpeed(verticalAmount).toFloat())
 		return true
 	}
+
 	fun coerceScroll(offset: Float) {
 		scroll = (scroll + offset)
 			.coerceAtMost(getMaxScroll())
@@ -159,11 +162,16 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 
 	val guiContext = GuiContext(EmptyComponent())
 	private val knobStub = EmptyComponent()
-	val editButton = FirmButtonComponent(TextComponent(tr("firmament.storage-overlay.edit-pages", "Edit Pages").string), action = ::editPages)
+	val editButton = FirmButtonComponent(
+		TextComponent(tr("firmament.storage-overlay.edit-pages", "Edit Pages").string),
+		action = ::editPages
+	)
 	val searchText = Property.of("") // TODO: sync with REI
-	val searchField = TextFieldComponent(searchText, 100, GetSetter.constant(true),
-	                                     tr("firmament.storage-overlay.search.suggestion", "Search...").string,
-	                                     IMinecraft.instance.defaultFontRenderer)
+	val searchField = TextFieldComponent(
+		searchText, 100, GetSetter.constant(true),
+		tr("firmament.storage-overlay.search.suggestion", "Search...").string,
+		IMinecraft.instance.defaultFontRenderer
+	)
 	val controlComponent = PanelComponent(
 		ColumnComponent(
 			searchField,
@@ -186,25 +194,31 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			controllerBackground,
 			measurements.controlX,
 			measurements.controlY,
-			CONTROL_BACKGROUND_WIDTH, CONTROL_HEIGHT)
+			CONTROL_BACKGROUND_WIDTH, CONTROL_HEIGHT
+		)
 		context.drawMCComponentInPlace(
 			controlComponent,
 			measurements.controlX, measurements.controlY,
 			CONTROL_WIDTH, CONTROL_HEIGHT,
-			mouseX, mouseY)
+			mouseX, mouseY
+		)
 	}
 
 	fun drawBackgrounds(context: DrawContext) {
-		context.drawGuiTexture(upperBackgroundSprite,
-		                       measurements.x,
-		                       measurements.y,
-		                       measurements.overviewWidth,
-		                       measurements.overviewHeight)
-		context.drawGuiTexture(playerInventorySprite,
-		                       measurements.playerX,
-		                       measurements.playerY,
-		                       PLAYER_WIDTH,
-		                       PLAYER_HEIGHT)
+		context.drawGuiTexture(
+			upperBackgroundSprite,
+			measurements.x,
+			measurements.y,
+			measurements.overviewWidth,
+			measurements.overviewHeight
+		)
+		context.drawGuiTexture(
+			playerInventorySprite,
+			measurements.playerX,
+			measurements.playerY,
+			PLAYER_WIDTH,
+			PLAYER_HEIGHT
+		)
 	}
 
 	fun getPlayerInventorySlotPosition(int: Int): Pair<Int, Int> {
@@ -227,17 +241,21 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 	}
 
 	fun getScrollBarRect(): Rectangle {
-		return Rectangle(measurements.x + PADDING + measurements.innerScrollPanelWidth + PADDING,
-		                 measurements.y + PADDING,
-		                 SCROLL_BAR_WIDTH,
-		                 measurements.innerScrollPanelHeight)
+		return Rectangle(
+			measurements.x + PADDING + measurements.innerScrollPanelWidth + PADDING,
+			measurements.y + PADDING,
+			SCROLL_BAR_WIDTH,
+			measurements.innerScrollPanelHeight
+		)
 	}
 
 	fun getScrollPanelInner(): Rectangle {
-		return Rectangle(measurements.x + PADDING,
-		                 measurements.y + PADDING,
-		                 measurements.innerScrollPanelWidth,
-		                 measurements.innerScrollPanelHeight)
+		return Rectangle(
+			measurements.x + PADDING,
+			measurements.y + PADDING,
+			measurements.innerScrollPanelWidth,
+			measurements.innerScrollPanelHeight
+		)
 	}
 
 	fun createScissors(context: DrawContext) {
@@ -257,12 +275,13 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		createScissors(context)
 		val data = StorageOverlay.Data.data ?: StorageData()
 		layoutedForEach(data) { rect, page, inventory ->
-			drawPage(context,
-			         rect.x,
-			         rect.y,
-			         page, inventory,
-			         if (excluding == page) slots else null,
-			         slotOffset
+			drawPage(
+				context,
+				rect.x,
+				rect.y,
+				page, inventory,
+				if (excluding == page) slots else null,
+				slotOffset
 			)
 		}
 		context.disableScissor()
@@ -282,11 +301,13 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			knobGrabbed = false
 			return true
 		}
-		if (clickMCComponentInPlace(controlComponent,
-		                            measurements.controlX, measurements.controlY,
-		                            CONTROL_WIDTH, CONTROL_HEIGHT,
-		                            mouseX.toInt(), mouseY.toInt(),
-		                            MouseEvent.Click(button, false))
+		if (clickMCComponentInPlace(
+				controlComponent,
+				measurements.controlX, measurements.controlY,
+				CONTROL_WIDTH, CONTROL_HEIGHT,
+				mouseX.toInt(), mouseY.toInt(),
+				MouseEvent.Click(button, false)
+			)
 		) return true
 		return super.mouseReleased(mouseX, mouseY, button)
 	}
@@ -322,11 +343,13 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 			knobGrabbed = true
 			return true
 		}
-		if (clickMCComponentInPlace(controlComponent,
-		                            measurements.controlX, measurements.controlY,
-		                            CONTROL_WIDTH, CONTROL_HEIGHT,
-		                            mouseX.toInt(), mouseY.toInt(),
-		                            MouseEvent.Click(button, true))
+		if (clickMCComponentInPlace(
+				controlComponent,
+				measurements.controlX, measurements.controlY,
+				CONTROL_WIDTH, CONTROL_HEIGHT,
+				mouseX.toInt(), mouseY.toInt(),
+				MouseEvent.Click(button, true)
+			)
 		) return true
 		return false
 	}
@@ -420,7 +443,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val filter = getFilteredPages()
 		for ((page, inventory) in data.storageInventories.entries) {
 			if (page !in filter) continue
-			val currentHeight = inventory.inventory?.let { it.rows * SLOT_SIZE + 4 + textRenderer.fontHeight }
+			val currentHeight = inventory.inventory?.let { it.rows * SLOT_SIZE + 6 + textRenderer.fontHeight }
 				?: 18
 			maxHeight = maxOf(maxHeight, currentHeight)
 			val rect = Rectangle(
@@ -452,22 +475,35 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val inv = inventory.inventory
 		if (inv == null) {
 			context.drawGuiTexture(upperBackgroundSprite, x, y, PAGE_WIDTH, 18)
-			context.drawText(textRenderer,
-			                 Text.literal("TODO: open this page"),
-			                 x + 4,
-			                 y + 4,
-			                 -1,
-			                 true)
+			context.drawText(
+				textRenderer,
+				Text.literal("TODO: open this page"),
+				x + 4,
+				y + 4,
+				-1,
+				true
+			)
 			return 18
 		}
 		assertTrueOr(slots == null || slots.size == inv.stacks.size) { return 0 }
 		val name = page.defaultName()
-		context.drawText(textRenderer, Text.literal(name), x + 4, y + 2,
-		                 if (slots == null) 0xFFFFFFFF.toInt() else 0xFFFFFF00.toInt(), true)
-		context.drawGuiTexture(slotRowSprite, x, y + 4 + textRenderer.fontHeight, PAGE_WIDTH, inv.rows * SLOT_SIZE)
+		val pageHeight = inv.rows * SLOT_SIZE + 8 + textRenderer.fontHeight
+		if (slots != null && StorageOverlay.TConfig.outlineActiveStoragePage)
+			context.drawBorder(x, y + 3 + textRenderer.fontHeight, PAGE_WIDTH, inv.rows * SLOT_SIZE + 4, 0xFFFF00FF.toInt())
+		context.drawText(
+			textRenderer, Text.literal(name), x + 6, y + 3,
+			if (slots == null) 0xFFFFFFFF.toInt() else 0xFFFFFF00.toInt(), true
+		)
+		context.drawGuiTexture(
+			slotRowSprite,
+			x + 2,
+			y + 5 + textRenderer.fontHeight,
+			PAGE_SLOTS_WIDTH,
+			inv.rows * SLOT_SIZE
+		)
 		inv.stacks.forEachIndexed { index, stack ->
-			val slotX = (index % 9) * SLOT_SIZE + x + 1
-			val slotY = (index / 9) * SLOT_SIZE + y + 4 + textRenderer.fontHeight + 1
+			val slotX = (index % 9) * SLOT_SIZE + x + 3
+			val slotY = (index / 9) * SLOT_SIZE + y + 5 + textRenderer.fontHeight + 1
 			val fakeSlot = FakeSlot(stack, slotX, slotY)
 			if (slots == null) {
 				SlotRenderEvents.Before.publish(SlotRenderEvents.Before(context, fakeSlot))
@@ -480,22 +516,29 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 				slot.y = slotY - slotOffset.y
 			}
 		}
-		return inv.rows * SLOT_SIZE + 4 + textRenderer.fontHeight
+		return pageHeight + 6
 	}
 
 	fun getBounds(): List<Rectangle> {
 		return listOf(
-			Rectangle(measurements.x,
-			          measurements.y,
-			          measurements.overviewWidth,
-			          measurements.overviewHeight),
-			Rectangle(measurements.playerX,
-			          measurements.playerY,
-			          PLAYER_WIDTH,
-			          PLAYER_HEIGHT),
-			Rectangle(measurements.controlX,
-			          measurements.controlY,
-			          CONTROL_WIDTH,
-			          CONTROL_HEIGHT))
+			Rectangle(
+				measurements.x,
+				measurements.y,
+				measurements.overviewWidth,
+				measurements.overviewHeight
+			),
+			Rectangle(
+				measurements.playerX,
+				measurements.playerY,
+				PLAYER_WIDTH,
+				PLAYER_HEIGHT
+			),
+			Rectangle(
+				measurements.controlX,
+				measurements.controlY,
+				CONTROL_WIDTH,
+				CONTROL_HEIGHT
+			)
+		)
 	}
 }
