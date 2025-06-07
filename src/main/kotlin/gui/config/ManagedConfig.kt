@@ -39,6 +39,7 @@ abstract class ManagedConfig(
 		CHAT,
 		INVENTORY,
 		MINING,
+		GARDEN,
 		EVENTS,
 		INTEGRATIONS,
 		META,
