@@ -242,7 +242,7 @@ val ItemStack.skyBlockId: SkyblockId?
 			}
 
 			else -> {
-				SkyblockId(id)
+				SkyblockId(id.replace(":", "-"))
 			}
 		}
 	}
