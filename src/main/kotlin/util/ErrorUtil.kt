@@ -76,6 +76,8 @@ object ErrorUtil {
 	}
 
 	fun softUserError(string: String) {
-		MC.sendChat(tr("frimanet.usererror", "Firmament encountered a user caused error: $string"))
+		if (TestUtil.isInTest)
+			error(string)
+		MC.sendChat(tr("firmament.usererror", "Firmament encountered a user caused error: $string"))
 	}
 }
