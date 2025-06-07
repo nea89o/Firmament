@@ -3,27 +3,29 @@ package moe.nea.firmament.repo
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import org.apache.logging.log4j.LogManager
-import org.lwjgl.glfw.GLFW
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration.Companion.minutes
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.apis.CollectionResponse
 import moe.nea.firmament.apis.CollectionSkillData
-import moe.nea.firmament.keybindings.IKeyBinding
 import moe.nea.firmament.util.SkyblockId
-import moe.nea.firmament.util.async.waitForInput
 
 object HypixelStaticData {
 	private val logger = LogManager.getLogger("Firmament.HypixelStaticData")
 	private val moulberryBaseUrl = "https://moulberry.codes"
 	private val hypixelApiBaseUrl = "https://api.hypixel.net"
 	var lowestBin: Map<SkyblockId, Double> = mapOf()
+		private set
+	var avg1dlowestBin: Map<SkyblockId, Double> = mapOf()
+		private set
+	var avg3dlowestBin: Map<SkyblockId, Double> = mapOf()
+		private set
+	var avg7dlowestBin: Map<SkyblockId, Double> = mapOf()
 		private set
 	var bazaarData: Map<SkyblockId, BazaarData> = mapOf()
 		private set
@@ -89,6 +91,12 @@ object HypixelStaticData {
 
 	private suspend fun fetchPricesFromMoulberry() {
 		lowestBin = Firmament.httpClient.get("$moulberryBaseUrl/lowestbin.json")
+			.body<Map<SkyblockId, Double>>()
+		avg1dlowestBin = Firmament.httpClient.get("$moulberryBaseUrl/auction_averages_lbin/1day.json")
+			.body<Map<SkyblockId, Double>>()
+		avg3dlowestBin = Firmament.httpClient.get("$moulberryBaseUrl/auction_averages_lbin/3day.json")
+			.body<Map<SkyblockId, Double>>()
+		avg7dlowestBin = Firmament.httpClient.get("$moulberryBaseUrl/auction_averages_lbin/7day.json")
 			.body<Map<SkyblockId, Double>>()
 	}
 

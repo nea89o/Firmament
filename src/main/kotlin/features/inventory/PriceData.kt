@@ -2,6 +2,7 @@ package moe.nea.firmament.features.inventory
 
 import org.lwjgl.glfw.GLFW
 import net.minecraft.text.Text
+import net.minecraft.util.StringIdentifiable
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.features.FirmamentFeature
@@ -23,6 +24,22 @@ object PriceData : FirmamentFeature {
 		val tooltipEnabled by toggle("enable-always") { true }
 		val enableKeybinding by keyBindingWithDefaultUnbound("enable-keybind")
 		val stackSizeKey by keyBinding("stack-size-keybind") { GLFW.GLFW_KEY_LEFT_SHIFT }
+		val avgLowestBin by choice(
+			"avg-lowest-bin-days",
+		) {
+			AvgLowestBin.THREEDAYAVGLOWESTBIN
+		}
+	}
+
+	enum class AvgLowestBin : StringIdentifiable {
+		OFF,
+		ONEDAYAVGLOWESTBIN,
+		THREEDAYAVGLOWESTBIN,
+		SEVENDAYAVGLOWESTBIN;
+
+		override fun asString(): String {
+			return name
+		}
 	}
 
 	override val config get() = TConfig
@@ -60,6 +77,12 @@ object PriceData : FirmamentFeature {
 				).darkGrey()
 		val bazaarData = HypixelStaticData.bazaarData[sbId]
 		val lowestBin = HypixelStaticData.lowestBin[sbId]
+		val avgBinValue: Double? = when (TConfig.avgLowestBin) {
+			AvgLowestBin.ONEDAYAVGLOWESTBIN -> HypixelStaticData.avg1dlowestBin[sbId]
+			AvgLowestBin.THREEDAYAVGLOWESTBIN -> HypixelStaticData.avg3dlowestBin[sbId]
+			AvgLowestBin.SEVENDAYAVGLOWESTBIN -> HypixelStaticData.avg7dlowestBin[sbId]
+			AvgLowestBin.OFF -> null
+		}
 		if (bazaarData != null) {
 			it.lines.add(Text.literal(""))
 			it.lines.add(multiplierText)
@@ -84,6 +107,14 @@ object PriceData : FirmamentFeature {
 					lowestBin * multiplier
 				)
 			)
+			if (avgBinValue != null) {
+				it.lines.add(
+					formatPrice(
+						tr("firmament.tooltip.ah.avg-lowestbin", "AVG Lowest BIN"),
+						avgBinValue * multiplier
+					)
+				)
+			}
 		}
 	}
 }
