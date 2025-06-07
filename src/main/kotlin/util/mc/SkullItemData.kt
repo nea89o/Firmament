@@ -10,7 +10,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import kotlinx.serialization.encodeToString
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.ProfileComponent
 import net.minecraft.item.ItemStack
@@ -51,7 +50,7 @@ fun ItemStack.setEncodedSkullOwner(uuid: UUID, encodedData: String) {
     this.set(DataComponentTypes.PROFILE, ProfileComponent(gameProfile))
 }
 
-val zeroUUID = UUID.fromString("d3cb85e2-3075-48a1-b213-a9bfb62360c1")
+val arbitraryUUID = UUID.fromString("d3cb85e2-3075-48a1-b213-a9bfb62360c1")
 fun createSkullItem(uuid: UUID, url: String) = ItemStack(Items.PLAYER_HEAD)
     .also { it.setSkullOwner(uuid, url) }
 

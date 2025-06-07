@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.features.inventory.buttons
 
 import com.mojang.brigadier.StringReader
@@ -18,69 +16,86 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.collections.memoize
+import moe.nea.firmament.util.mc.arbitraryUUID
+import moe.nea.firmament.util.mc.createSkullItem
 import moe.nea.firmament.util.render.drawGuiTexture
 
 @Serializable
 data class InventoryButton(
-    var x: Int,
-    var y: Int,
-    var anchorRight: Boolean,
-    var anchorBottom: Boolean,
-    var icon: String? = "",
-    var command: String? = "",
+	var x: Int,
+	var y: Int,
+	var anchorRight: Boolean,
+	var anchorBottom: Boolean,
+	var icon: String? = "",
+	var command: String? = "",
 ) {
-    companion object {
-        val itemStackParser by lazy {
-            ItemStackArgumentType.itemStack(CommandRegistryAccess.of(MC.defaultRegistries,
-                                                                     FeatureFlags.VANILLA_FEATURES))
-        }
-        val dimensions = Dimension(18, 18)
-        val getItemForName = ::getItemForName0.memoize(1024)
-        fun getItemForName0(icon: String): ItemStack {
-            val repoItem = RepoManager.getNEUItem(SkyblockId(icon))
-            var itemStack = repoItem.asItemStack(idHint = SkyblockId(icon))
-            if (repoItem == null) {
-                val giveSyntaxItem = if (icon.startsWith("/give") || icon.startsWith("give"))
-                    icon.split(" ", limit = 3).getOrNull(2) ?: icon
-                else icon
-                val componentItem =
-                    runCatching {
-                        itemStackParser.parse(StringReader(giveSyntaxItem)).createStack(1, false)
-                    }.getOrNull()
-                if (componentItem != null)
-                    itemStack = componentItem
-            }
-            return itemStack
-        }
-    }
+	companion object {
+		val itemStackParser by lazy {
+			ItemStackArgumentType.itemStack(
+				CommandRegistryAccess.of(
+					MC.defaultRegistries,
+					FeatureFlags.VANILLA_FEATURES
+				)
+			)
+		}
+		val dimensions = Dimension(18, 18)
+		val getItemForName = ::getItemForName0.memoize(1024)
+		fun getItemForName0(icon: String): ItemStack {
+			val repoItem = RepoManager.getNEUItem(SkyblockId(icon))
+			var itemStack = repoItem.asItemStack(idHint = SkyblockId(icon))
+			if (repoItem == null) {
+				when {
+					icon.startsWith("skull:") -> {
+						itemStack = createSkullItem(
+							arbitraryUUID,
+							"https://textures.minecraft.net/texture/${icon.substring("skull:".length)}"
+						)
+					}
 
-    fun render(context: DrawContext) {
-        context.drawGuiTexture(
-            0,
-            0,
-            0,
-            dimensions.width,
-            dimensions.height,
-            Identifier.of("firmament:inventory_button_background")
-        )
-        context.drawItem(getItem(), 1, 1)
-    }
+					else -> {
+						val giveSyntaxItem = if (icon.startsWith("/give") || icon.startsWith("give"))
+							icon.split(" ", limit = 3).getOrNull(2) ?: icon
+						else icon
+						val componentItem =
+							runCatching {
+								itemStackParser.parse(StringReader(giveSyntaxItem)).createStack(1, false)
+							}.getOrNull()
+						if (componentItem != null)
+							itemStack = componentItem
+					}
+				}
+			}
+			return itemStack
+		}
+	}
 
-    fun isValid() = !icon.isNullOrBlank() && !command.isNullOrBlank()
+	fun render(context: DrawContext) {
+		context.drawGuiTexture(
+			0,
+			0,
+			0,
+			dimensions.width,
+			dimensions.height,
+			Identifier.of("firmament:inventory_button_background")
+		)
+		context.drawItem(getItem(), 1, 1)
+	}
 
-    fun getPosition(guiRect: Rectangle): Point {
-        return Point(
-            (if (anchorRight) guiRect.maxX else guiRect.minX) + x,
-            (if (anchorBottom) guiRect.maxY else guiRect.minY) + y,
-        )
-    }
+	fun isValid() = !icon.isNullOrBlank() && !command.isNullOrBlank()
 
-    fun getBounds(guiRect: Rectangle): Rectangle {
-        return Rectangle(getPosition(guiRect), dimensions)
-    }
+	fun getPosition(guiRect: Rectangle): Point {
+		return Point(
+			(if (anchorRight) guiRect.maxX else guiRect.minX) + x,
+			(if (anchorBottom) guiRect.maxY else guiRect.minY) + y,
+		)
+	}
 
-    fun getItem(): ItemStack {
-        return getItemForName(icon ?: "")
-    }
+	fun getBounds(guiRect: Rectangle): Rectangle {
+		return Rectangle(getPosition(guiRect), dimensions)
+	}
+
+	fun getItem(): ItemStack {
+		return getItemForName(icon ?: "")
+	}
 
 }

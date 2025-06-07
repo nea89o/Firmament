@@ -11,7 +11,7 @@ import net.minecraft.item.Items
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.mc.setEncodedSkullOwner
-import moe.nea.firmament.util.mc.zeroUUID
+import moe.nea.firmament.util.mc.arbitraryUUID
 
 object ModifyEquipment : EntityModifier {
 	val names = mapOf(
@@ -36,7 +36,7 @@ object ModifyEquipment : EntityModifier {
 		if (split.size != 2) return SBItemStack(SkyblockId(item)).asImmutableItemStack()
 		val (type, data) = split
 		return when (type) {
-			"SKULL" -> ItemStack(Items.PLAYER_HEAD).also { it.setEncodedSkullOwner(zeroUUID, data) }
+			"SKULL" -> ItemStack(Items.PLAYER_HEAD).also { it.setEncodedSkullOwner(arbitraryUUID, data) }
 			"LEATHER_LEGGINGS" -> coloredLeatherArmor(Items.LEATHER_LEGGINGS, data)
 			"LEATHER_BOOTS" -> coloredLeatherArmor(Items.LEATHER_BOOTS, data)
 			"LEATHER_HELMET" -> coloredLeatherArmor(Items.LEATHER_HELMET, data)

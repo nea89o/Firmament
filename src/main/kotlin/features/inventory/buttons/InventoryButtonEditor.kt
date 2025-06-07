@@ -1,7 +1,9 @@
 package moe.nea.firmament.features.inventory.buttons
 
 import io.github.notenoughupdates.moulconfig.common.IItemStack
+import io.github.notenoughupdates.moulconfig.gui.component.PanelComponent
 import io.github.notenoughupdates.moulconfig.platform.ModernItemStack
+import io.github.notenoughupdates.moulconfig.platform.ModernRenderContext
 import io.github.notenoughupdates.moulconfig.xml.Bind
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
@@ -57,7 +59,10 @@ class InventoryButtonEditor(
 	}
 
 	override fun resize(client: MinecraftClient, width: Int, height: Int) {
-		lastGuiRect.move(MC.window.scaledWidth / 2 - lastGuiRect.width / 2, MC.window.scaledHeight / 2 - lastGuiRect.height / 2)
+		lastGuiRect.move(
+			MC.window.scaledWidth / 2 - lastGuiRect.width / 2,
+			MC.window.scaledHeight / 2 - lastGuiRect.height / 2
+		)
 		super.resize(client, width, height)
 	}
 
@@ -89,14 +94,20 @@ class InventoryButtonEditor(
 		val movedButtons = mutableListOf<InventoryButton>()
 		for (button in buttons) {
 			if ((!button.anchorBottom && !button.anchorRight && button.x > 0 && button.y > 0)) {
-				MC.sendChat(tr("firmament.inventory-buttons.button-moved",
-				               "One of your imported buttons intersects with the inventory and has been moved to the top left."))
-				movedButtons.add(button.copy(
-					x = 0,
-					y = -InventoryButton.dimensions.width,
-					anchorRight = false,
-					anchorBottom = false
-				))
+				MC.sendChat(
+					tr(
+						"firmament.inventory-buttons.button-moved",
+						"One of your imported buttons intersects with the inventory and has been moved to the top left."
+					)
+				)
+				movedButtons.add(
+					button.copy(
+						x = 0,
+						y = -InventoryButton.dimensions.width,
+						anchorRight = false,
+						anchorBottom = false
+					)
+				)
 			} else {
 				newButtons.add(button)
 			}
@@ -105,9 +116,11 @@ class InventoryButtonEditor(
 		val zeroRect = Rectangle(0, 0, 1, 1)
 		for (movedButton in movedButtons) {
 			fun getPosition(button: InventoryButton, index: Int) =
-				button.copy(x = (index % 10) * InventoryButton.dimensions.width,
-				            y = (index / 10) * -InventoryButton.dimensions.height,
-				            anchorRight = false, anchorBottom = false)
+				button.copy(
+					x = (index % 10) * InventoryButton.dimensions.width,
+					y = (index / 10) * -InventoryButton.dimensions.height,
+					anchorRight = false, anchorBottom = false
+				)
 			while (true) {
 				val newPos = getPosition(movedButton, i++)
 				val newBounds = newPos.getBounds(zeroRect)
@@ -131,7 +144,12 @@ class InventoryButtonEditor(
 		super.render(context, mouseX, mouseY, delta)
 		context.matrices.push()
 		context.matrices.translate(0f, 0f, -10f)
-		context.fill(lastGuiRect.minX, lastGuiRect.minY, lastGuiRect.maxX, lastGuiRect.maxY, -1)
+		PanelComponent.DefaultBackgroundRenderer.VANILLA
+			.render(
+				ModernRenderContext(context),
+				lastGuiRect.minX, lastGuiRect.minY,
+				lastGuiRect.width, lastGuiRect.height,
+			)
 		context.matrices.pop()
 		for (button in buttons) {
 			val buttonPosition = button.getBounds(lastGuiRect)
@@ -193,14 +211,6 @@ class InventoryButtonEditor(
 	)
 
 	fun getCoordsForMouse(mx: Int, my: Int): AnchoredCoords? {
-		if (lastGuiRect.contains(mx, my) || lastGuiRect.contains(
-				Point(
-					mx + InventoryButton.dimensions.width,
-					my + InventoryButton.dimensions.height,
-				)
-			)
-		) return null
-
 		val anchorRight = mx > lastGuiRect.maxX
 		val anchorBottom = my > lastGuiRect.maxY
 		var offsetX = mx - if (anchorRight) lastGuiRect.maxX else lastGuiRect.minX
@@ -209,7 +219,10 @@ class InventoryButtonEditor(
 			offsetX = MathHelper.floor(offsetX / 20F) * 20
 			offsetY = MathHelper.floor(offsetY / 20F) * 20
 		}
-		return AnchoredCoords(anchorRight, anchorBottom, offsetX, offsetY)
+		val rect = InventoryButton(offsetX, offsetY, anchorRight, anchorBottom).getBounds(lastGuiRect)
+		if (rect.intersects(lastGuiRect)) return null
+		val anchoredCoords = AnchoredCoords(anchorRight, anchorBottom, offsetX, offsetY)
+		return anchoredCoords
 	}
 
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
