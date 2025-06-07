@@ -35,7 +35,7 @@ object PriceData : FirmamentFeature {
 			.append(": ")
 			.append(
 				Text.literal(formatCommas(price, fractionalDigits = 1))
-					.append(if(price != 1.0) " coins" else " coin")
+					.append(if (price != 1.0) " coins" else " coin")
 					.gold()
 					.bold()
 			)
@@ -48,10 +48,16 @@ object PriceData : FirmamentFeature {
 		}
 		val sbId = it.stack.skyBlockId
 		val stackSize = it.stack.count
-		val multiplier = if (TConfig.stackSizeKey.isPressed(atLeast = true)) stackSize else 1
+		val isShowingStack = TConfig.stackSizeKey.isPressed(atLeast = true)
+		val multiplier = if (isShowingStack) stackSize else 1
 		val multiplierText =
-			Text.literal("[").append(TConfig.stackSizeKey.format().string).append(" to show x").append("${stackSize}]")
-				.darkGrey()
+			if (isShowingStack)
+				tr("firmament.tooltip.multiply", "Showing prices for x${stackSize}").darkGrey()
+			else
+				tr(
+					"firmament.tooltip.multiply.hint",
+					"[${TConfig.stackSizeKey.format()}] to show x${stackSize}"
+				).darkGrey()
 		val bazaarData = HypixelStaticData.bazaarData[sbId]
 		val lowestBin = HypixelStaticData.lowestBin[sbId]
 		if (bazaarData != null) {
