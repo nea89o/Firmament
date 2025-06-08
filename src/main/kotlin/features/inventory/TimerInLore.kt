@@ -81,6 +81,8 @@ object TimerInLore {
 		CHOCOLATEFACTORY("Next Charge", "Available at"),
 		STONKSAUCTION("Auction ends in", "Ends at"),
 		LIZSTONKREDEMPTION("Resets in:", "Resets at"),
+		TIMEREMAININGS("Time Remaining:", "Ends at"),
+		ONCOOLDOWN("On cooldown:", "Available at"),
 		EVENTENDING("Event ends in:", "Ends at");
 	}
 
