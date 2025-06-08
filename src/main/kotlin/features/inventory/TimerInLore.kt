@@ -82,6 +82,7 @@ object TimerInLore {
 		STONKSAUCTION("Auction ends in", "Ends at"),
 		LIZSTONKREDEMPTION("Resets in:", "Resets at"),
 		TIMEREMAININGS("Time Remaining:", "Ends at"),
+		COOLDOWN("Cooldown:", "Come back at"),
 		ONCOOLDOWN("On cooldown:", "Available at"),
 		EVENTENDING("Event ends in:", "Ends at");
 	}
