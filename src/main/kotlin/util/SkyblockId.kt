@@ -237,8 +237,10 @@ val ItemStack.skyBlockId: SkyblockId?
 				}
 			}
 
-			"BALLOON_HAT_2024" -> {
-				SkyblockId("BALLOON_HAT_2024_${extraAttributes.getString("party_hat_color").getOrNull()?.uppercase()}")
+			"BALLOON_HAT_2024", "BALLOON_HAT_2025" -> {
+				val partyHatYear = extraAttributes.getInt("party_hat_year").getOrNull()
+				val partyHatColor = extraAttributes.getString("party_hat_color").getOrNull()
+				SkyblockId("BALLOON_HAT_${partyHatYear}_${partyHatColor?.uppercase()}")
 			}
 
 			else -> {
