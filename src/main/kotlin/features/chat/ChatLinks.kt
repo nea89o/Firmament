@@ -51,7 +51,7 @@ object ChatLinks : FirmamentFeature {
 	private fun isUrlAllowed(url: String) = isHostAllowed(url.removePrefix("https://").substringBefore("/"))
 
 	override val config get() = TConfig
-	val urlRegex = "https://[^. ]+\\.[^ ]+(\\.?( |$))".toRegex()
+	val urlRegex = "https://[^. ]+\\.[^ ]+(\\.?(\\s|$))".toRegex()
 	val nextTexId = AtomicInteger(0)
 
 	data class Image(
@@ -139,19 +139,20 @@ object ChatLinks : FirmamentFeature {
 			var index = 0
 			while (index < text.length) {
 				val nextMatch = urlRegex.find(text, index)
-				if (nextMatch == null) {
+				val url = nextMatch?.groupValues[0]
+				val uri = runCatching { url?.let(::URI) }.getOrNull()
+				if (nextMatch == null || url == null) {
 					s.append(Text.literal(text.substring(index, text.length)))
 					break
 				}
 				val range = nextMatch.groups[0]!!.range
-				val url = nextMatch.groupValues[0]
 				s.append(Text.literal(text.substring(index, range.first)))
 				s.append(
 					Text.literal(url).setStyle(
 						Style.EMPTY.withUnderline(true).withColor(
 							Formatting.AQUA
 						).withHoverEvent(HoverEvent.ShowText(Text.literal(url)))
-							.withClickEvent(ClickEvent.OpenUrl(URI(url)))
+							.withClickEvent(ClickEvent.OpenUrl(uri))
 					)
 				)
 				if (isImageUrl(url))
