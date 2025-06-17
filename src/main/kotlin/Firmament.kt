@@ -66,6 +66,8 @@ object Firmament {
 	}
 	val version: Version by lazy { metadata.version }
 
+	private val DEFAULT_JSON_INDENT = "    "
+
 	@OptIn(ExperimentalSerializationApi::class)
 	val json = Json {
 		prettyPrint = DEBUG
@@ -73,20 +75,21 @@ object Firmament {
 		allowTrailingComma = true
 		ignoreUnknownKeys = true
 		encodeDefaults = true
-		prettyPrintIndent = "\t"
+		prettyPrintIndent = if (prettyPrint) "\t" else DEFAULT_JSON_INDENT
 	}
 
 	/**
 	 * FUCK two space indentation
 	 */
 	val twoSpaceJson = Json(from = json) {
+		prettyPrint = true
 		prettyPrintIndent = "  "
 	}
 	val gson = Gson()
 	val tightJson = Json(from = json) {
 		prettyPrint = false
 		// Reset pretty print indent back to default to prevent getting yelled at by json
-		prettyPrintIndent = "    "
+		prettyPrintIndent = DEFAULT_JSON_INDENT
 		encodeDefaults = false
 		explicitNulls = false
 	}
