@@ -195,7 +195,7 @@ class MacroUI {
 
 		@Bind
 		fun saveAndClose() {
-			this@MacroUI.discard()
+			this@MacroUI.saveAndClose()
 		}
 
 		@Bind
