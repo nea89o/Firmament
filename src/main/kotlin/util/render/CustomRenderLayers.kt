@@ -1,10 +1,12 @@
 package util.render
 
+import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.platform.DepthTestFunction
 import com.mojang.blaze3d.vertex.VertexFormat.DrawMode
 import java.util.function.Function
 import net.minecraft.client.gl.RenderPipelines
+import net.minecraft.client.gl.UniformType
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.RenderPhase
 import net.minecraft.client.render.VertexFormats
@@ -38,23 +40,33 @@ object CustomRenderPipelines {
 			.withCull(false)
 			.withDepthWrite(false)
 			.build()
+
+	val CIRCLE_FILTER_TRANSLUCENT_GUI_TRIS =
+		RenderPipeline.builder(RenderPipelines.POSITION_TEX_COLOR_SNIPPET)
+			.withVertexFormat(VertexFormats.POSITION_TEXTURE_COLOR, DrawMode.TRIANGLES)
+			.withLocation(Firmament.identifier("gui_textured_overlay_tris_circle"))
+			.withUniform("InnerCutoutRadius", UniformType.FLOAT)
+			.withFragmentShader(Firmament.identifier("circle_discard_color"))
+			.withBlend(BlendFunction.TRANSLUCENT)
+			.build()
 }
 
 object CustomRenderLayers {
-
-
 	inline fun memoizeTextured(crossinline func: (Identifier) -> RenderLayer) = memoize(func)
 	inline fun <T, R> memoize(crossinline func: (T) -> R): Function<T, R> {
 		return Util.memoize { it: T -> func(it) }
 	}
 
 	val GUI_TEXTURED_NO_DEPTH_TRIS = memoizeTextured { texture ->
-		RenderLayer.of("firmament_gui_textured_overlay_tris",
-		               RenderLayer.DEFAULT_BUFFER_SIZE,
-		               CustomRenderPipelines.GUI_TEXTURED_NO_DEPTH_TRIS,
-		               RenderLayer.MultiPhaseParameters.builder().texture(
-			               RenderPhase.Texture(texture, TriState.DEFAULT, false))
-			               .build(false))
+		RenderLayer.of(
+			"firmament_gui_textured_overlay_tris",
+			RenderLayer.DEFAULT_BUFFER_SIZE,
+			CustomRenderPipelines.GUI_TEXTURED_NO_DEPTH_TRIS,
+			RenderLayer.MultiPhaseParameters.builder().texture(
+				RenderPhase.Texture(texture, TriState.DEFAULT, false)
+			)
+				.build(false)
+		)
 	}
 	val LINES = RenderLayer.of(
 		"firmament_lines",
@@ -71,4 +83,13 @@ object CustomRenderLayers {
 			.lightmap(RenderPhase.DISABLE_LIGHTMAP)
 			.build(false)
 	)
+
+	val TRANSLUCENT_CIRCLE_GUI =
+		RenderLayer.of(
+			"firmament_circle_gui",
+			RenderLayer.DEFAULT_BUFFER_SIZE,
+			CustomRenderPipelines.CIRCLE_FILTER_TRANSLUCENT_GUI_TRIS,
+			RenderLayer.MultiPhaseParameters.builder()
+				.build(false)
+		)
 }

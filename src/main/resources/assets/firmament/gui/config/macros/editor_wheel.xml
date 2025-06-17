@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Root xmlns="http://notenoughupdates.org/moulconfig" xmlns:firm="http://firmament.nea.moe/moulconfig"
+>
+	<Center>
+		<Panel background="VANILLA" insets="10">
+			<Column>
+				<Row>
+					<firm:Button onClick="@back">
+						<Text text="←"/>
+					</firm:Button>
+					<Text text="Editing wheel macro"/>
+				</Row>
+				<Row>
+					<Text text="Key (Hold):"/>
+					<Align horizontal="RIGHT">
+						<firm:Fixed width="160">
+							<Indirect value="@button"/>
+						</firm:Fixed>
+					</Align>
+				</Row>
+				<Row>
+					<Text text="Menu Options:"/>
+					<Align horizontal="RIGHT">
+						<firm:Button onClick="@addOption">
+							<Text text="+"/>
+						</firm:Button>
+					</Align>
+				</Row>
+				<Array data="@editableCommands">
+					<Row>
+						<Text text="/"/>
+						<TextField value="@text" width="160"/>
+						<Align horizontal="RIGHT">
+							<firm:Button onClick="@delete">
+								<Text text="Delete"/>
+							</firm:Button>
+						</Align>
+					</Row>
+				</Array>
+			</Column>
+		</Panel>
+	</Center>
+</Root>

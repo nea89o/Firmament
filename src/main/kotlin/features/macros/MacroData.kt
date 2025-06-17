@@ -5,7 +5,8 @@ import moe.nea.firmament.util.data.DataHolder
 
 @Serializable
 data class MacroData(
-    var comboActions: List<ComboKeyAction> = listOf(),
-){
+	var comboActions: List<ComboKeyAction> = listOf(),
+	var wheels: List<MacroWheel> = listOf(),
+) {
 	object DConfig : DataHolder<MacroData>(kotlinx.serialization.serializer(), "macros", ::MacroData)
 }

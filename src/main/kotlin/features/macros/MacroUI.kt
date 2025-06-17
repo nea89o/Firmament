@@ -32,22 +32,148 @@ class MacroUI {
 	@field:Bind("combos")
 	val combos = Combos()
 
-	class Combos {
+	@field:Bind("wheels")
+	val wheels = Wheels()
+	var dontSave = false
+
+	@Bind
+	fun beforeClose(): CloseEventListener.CloseAction {
+		if (!dontSave)
+			save()
+		return CloseEventListener.CloseAction.NO_OBJECTIONS_TO_CLOSE
+	}
+
+	fun save() {
+		MacroData.DConfig.data.comboActions = combos.actions.map { it.asSaveable() }
+		MacroData.DConfig.data.wheels = wheels.wheels.map { it.asSaveable() }
+		MacroData.DConfig.markDirty()
+		RadialMacros.setWheels(MacroData.DConfig.data.wheels)
+		ComboProcessor.setActions(MacroData.DConfig.data.comboActions)
+	}
+
+	fun discard() {
+		dontSave = true
+		MC.screen?.close()
+	}
+
+	class Command(
+		@field:Bind("text")
+		var text: String,
+		val parent: Wheel,
+	) {
+		@Bind
+		fun delete() {
+			parent.editableCommands.removeIf { it === this }
+			parent.editableCommands.update()
+			parent.commands.update()
+		}
+
+		fun asCommandAction() = CommandAction(text)
+	}
+
+	inner class Wheel(
+		val parent: Wheels,
+		var binding: SavedKeyBinding,
+		commands: List<CommandAction>,
+	) {
+
+		fun asSaveable(): MacroWheel {
+			return MacroWheel(binding, commands.map { it.asCommandAction() })
+		}
+
+		@Bind("keyCombo")
+		fun text() = binding.format().string
+
+		@field:Bind("commands")
+		val commands = commands.mapTo(ObservableList(mutableListOf())) { Command(it.command, this) }
+
+		@field:Bind("editableCommands")
+		val editableCommands = this.commands.toObservableList()
+
+		@Bind
+		fun addOption() {
+			editableCommands.add(Command("", this))
+		}
+
+		@Bind
+		fun back() {
+			MC.screen?.close()
+		}
+
+		@Bind
+		fun edit() {
+			MC.screen = MoulConfigUtils.loadScreen("config/macros/editor_wheel", this, MC.screen)
+		}
+
+		@Bind
+		fun delete() {
+			parent.wheels.removeIf { it === this }
+			parent.wheels.update()
+		}
+
+		val sm = KeyBindingStateManager(
+			{ binding },
+			{ binding = it },
+			::blur,
+			::requestFocus
+		)
+
+		@field:Bind
+		val button = sm.createButton()
+
+		init {
+			sm.updateLabel()
+		}
+
+		fun blur() {
+			button.blur()
+		}
+
+
+		fun requestFocus() {
+			button.requestFocus()
+		}
+	}
+
+	inner class Wheels {
+		@field:Bind("wheels")
+		val wheels: ObservableList<Wheel> = MacroData.DConfig.data.wheels.mapTo(ObservableList(mutableListOf())) {
+			Wheel(this, it.key, it.options.map { CommandAction((it as CommandAction).command) })
+		}
+
+		@Bind
+		fun discard() {
+			this@MacroUI.discard()
+		}
+
+		@Bind
+		fun saveAndClose() {
+			this@MacroUI.saveAndClose()
+		}
+
+		@Bind
+		fun save() {
+			this@MacroUI.save()
+		}
+
+		@Bind
+		fun addWheel() {
+			wheels.add(Wheel(this, SavedKeyBinding.unbound(), listOf()))
+		}
+	}
+
+	fun saveAndClose() {
+		save()
+		MC.screen?.close()
+	}
+
+	inner class Combos {
 		@field:Bind("actions")
 		val actions: ObservableList<ActionEditor> = ObservableList(
 			MacroData.DConfig.data.comboActions.mapTo(mutableListOf()) {
 				ActionEditor(it, this)
 			}
 		)
-
-		var dontSave = false
-
-		@Bind
-		fun beforeClose(): CloseEventListener.CloseAction {
-			if (!dontSave)
-				save()
-			return CloseEventListener.CloseAction.NO_OBJECTIONS_TO_CLOSE
-		}
 
 		@Bind
 		fun addCommand() {
@@ -64,21 +190,17 @@ class MacroUI {
 
 		@Bind
 		fun discard() {
-			dontSave = true
-			MC.screen?.close()
+			this@MacroUI.discard()
 		}
 
 		@Bind
 		fun saveAndClose() {
-			save()
-			MC.screen?.close()
+			this@MacroUI.discard()
 		}
 
 		@Bind
 		fun save() {
-			MacroData.DConfig.data.comboActions = actions.map { it.asSaveable() }
-			MacroData.DConfig.markDirty()
-			ComboProcessor.setActions(MacroData.DConfig.data.comboActions) // TODO: automatically reload those from the config on startup
+			this@MacroUI.save()
 		}
 	}
 
@@ -101,18 +223,19 @@ class MacroUI {
 			button.blur()
 		}
 
+
+		fun requestFocus() {
+			button.requestFocus()
+		}
+
 		@Bind
 		fun delete() {
 			parent.combo.removeIf { it === this }
 			parent.combo.update()
 		}
-
-		fun requestFocus() {
-			button.requestFocus()
-		}
 	}
 
-	class ActionEditor(val action: ComboKeyAction, val parent: MacroUI.Combos) {
+	class ActionEditor(val action: ComboKeyAction, val parent: Combos) {
 		fun asSaveable(): ComboKeyAction {
 			return ComboKeyAction(
 				CommandAction(command),
@@ -145,9 +268,10 @@ class MacroUI {
 			parent.actions.removeIf { it === this }
 			parent.actions.update()
 		}
+
 		@Bind
 		fun edit() {
-			MC.screen = MoulConfigUtils.loadScreen("config/macros/editor", this, MC.screen)
+			MC.screen = MoulConfigUtils.loadScreen("config/macros/editor_combo", this, MC.screen)
 		}
 	}
 }

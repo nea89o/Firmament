@@ -5,16 +5,12 @@
 		<Column>
 			<ScrollPanel width="380" height="300">
 				<Align horizontal="CENTER">
-					<Array data="@actions">
-						<!-- evenBackground="#8B8B8B" oddBackground="#C6C6C6" -->
+					<Array data="@wheels">
 						<Panel background="TRANSPARENT" insets="3">
 							<Panel background="VANILLA" insets="6">
 								<Column>
 									<Row>
-										<Text text="@command" width="280"/>
-									</Row>
-									<Row>
-										<Text text="@formattedCombo" width="250"/>
+										<Text text="@keyCombo" width="250"/>
 										<Align horizontal="RIGHT">
 											<Row>
 												<firm:Button onClick="@edit">
@@ -27,6 +23,9 @@
 											</Row>
 										</Align>
 									</Row>
+									<Array data="@commands">
+										<Text text="@text" width="280"/>
+									</Array>
 								</Column>
 							</Panel>
 
@@ -45,8 +44,8 @@
 					<firm:Button onClick="@save">
 						<Text text="Save"/>
 					</firm:Button>
-					<firm:Button onClick="@addCommand">
-						<Text text="Add Combo Command"/>
+					<firm:Button onClick="@addWheel">
+						<Text text="Add Wheel"/>
 					</firm:Button>
 				</Row>
 			</Align>

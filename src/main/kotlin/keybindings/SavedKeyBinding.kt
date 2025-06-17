@@ -7,6 +7,7 @@ import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import moe.nea.firmament.util.MC
 
+// TODO: add support for mouse keybindings
 @Serializable
 data class SavedKeyBinding(
 	val keyCode: Int,
@@ -84,6 +85,12 @@ data class SavedKeyBinding(
 		return (ctrl == this.ctrl) &&
 			(alt == this.alt) &&
 			(shift == this.shift)
+	}
+
+	override fun matchesAtLeast(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		if (this.keyCode == GLFW.GLFW_KEY_UNKNOWN) return false
+		val (shift, ctrl, alt) = getMods(modifiers)
+		return keyCode == this.keyCode && this.shift <= shift && this.ctrl <= ctrl && this.alt <= alt
 	}
 
 	override fun matches(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
