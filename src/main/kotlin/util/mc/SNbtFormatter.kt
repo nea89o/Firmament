@@ -110,7 +110,7 @@ class SNbtFormatter private constructor() : NbtElementVisitor {
 		keys.forEachIndexed { index, key ->
 			writeIndent()
 			val element = compound[key] ?: error("Key '$key' found but not present in compound: $compound")
-			val escapedName = if (key.matches(SIMPLE_NAME)) key else NbtString.escape(key)
+			val escapedName = escapeName(key)
 			result.append(escapedName).append(": ")
 			element.accept(this)
 			if (keys.size != index + 1) {
@@ -134,6 +134,9 @@ class SNbtFormatter private constructor() : NbtElementVisitor {
 
 		fun NbtElement.toPrettyString() = prettify(this)
 
-		private val SIMPLE_NAME = "[A-Za-z0-9._+-]+".toRegex()
+		fun escapeName(key: String): String =
+			if (key.matches(SIMPLE_NAME)) key else NbtString.escape(key)
+
+		val SIMPLE_NAME = "[A-Za-z0-9._+-]+".toRegex()
 	}
 }

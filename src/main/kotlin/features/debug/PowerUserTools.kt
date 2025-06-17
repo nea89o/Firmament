@@ -56,6 +56,7 @@ object PowerUserTools : FirmamentFeature {
 		val copyEntityData by keyBindingWithDefaultUnbound("entity-data")
 		val copyItemStack by keyBindingWithDefaultUnbound("copy-item-stack")
 		val copyTitle by keyBindingWithDefaultUnbound("copy-title")
+		val exportItemStackToRepo by keyBindingWithDefaultUnbound("export-item-stack")
 	}
 
 	override val config
@@ -64,14 +65,13 @@ object PowerUserTools : FirmamentFeature {
 	var lastCopiedStack: Pair<ItemStack, Text>? = null
 		set(value) {
 			field = value
-			if (value != null) lastCopiedStackViewTime = true
+			if (value != null) lastCopiedStackViewTime = 2
 		}
-	var lastCopiedStackViewTime = false
+	var lastCopiedStackViewTime = 0
 
 	@Subscribe
 	fun resetLastCopiedStack(event: TickEvent) {
-		if (!lastCopiedStackViewTime) lastCopiedStack = null
-		lastCopiedStackViewTime = false
+		if (lastCopiedStackViewTime-- < 0) lastCopiedStack = null
 	}
 
 	@Subscribe
@@ -232,7 +232,7 @@ object PowerUserTools : FirmamentFeature {
 			lastCopiedStack = null
 			return
 		}
-		lastCopiedStackViewTime = true
+		lastCopiedStackViewTime = 0
 		it.lines.add(text)
 	}
 

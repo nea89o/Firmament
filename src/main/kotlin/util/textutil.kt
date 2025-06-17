@@ -56,6 +56,7 @@ fun OrderedText.reconstitute(): MutableText {
 	return base
 
 }
+
 fun StringVisitable.reconstitute(): MutableText {
 	val base = Text.literal("")
 	base.setStyle(Style.EMPTY.withItalic(false))
@@ -82,15 +83,47 @@ val Text.unformattedString: String
 
 val Text.directLiteralStringContent: String? get() = (this.content as? PlainTextContent)?.string()
 
-fun Text.getLegacyFormatString() =
+fun Text.getLegacyFormatString(trimmed: Boolean = false): String =
 	run {
+		var lastCode = "§r"
 		val sb = StringBuilder()
+		fun appendCode(code: String) {
+			if (code != lastCode || !trimmed) {
+				sb.append(code)
+				lastCode = code
+			}
+		}
 		for (component in iterator()) {
-			sb.append(component.style.color?.toChatFormatting()?.toString() ?: "§r")
+			if (component.directLiteralStringContent.isNullOrEmpty() && component.siblings.isEmpty()) {
+				continue
+			}
+			appendCode(component.style.let { style ->
+				var color = style.color?.toChatFormatting()?.toString() ?: "§r"
+				if (style.isBold)
+					color += LegacyFormattingCode.BOLD.formattingCode
+				if (style.isItalic)
+					color += LegacyFormattingCode.ITALIC.formattingCode
+				if (style.isUnderlined)
+					color += LegacyFormattingCode.UNDERLINE.formattingCode
+				if (style.isObfuscated)
+					color += LegacyFormattingCode.OBFUSCATED.formattingCode
+				if (style.isStrikethrough)
+					color += LegacyFormattingCode.STRIKETHROUGH.formattingCode
+				color
+			})
 			sb.append(component.directLiteralStringContent)
-			sb.append("§r")
+			if (!trimmed)
+				appendCode("§r")
 		}
 		sb.toString()
+	}.also {
+		var it = it
+		if (trimmed) {
+			it = it.removeSuffix("§r")
+			if (it.length == 2 && it.startsWith("§"))
+				it = ""
+		}
+		it
 	}
 
 private val textColorLUT = Formatting.entries
@@ -127,7 +160,7 @@ fun MutableText.darkGrey() = withColor(Formatting.DARK_GRAY)
 fun MutableText.red() = withColor(Formatting.RED)
 fun MutableText.white() = withColor(Formatting.WHITE)
 fun MutableText.bold(): MutableText = styled { it.withBold(true) }
-fun MutableText.hover(text: Text): MutableText = styled {it.withHoverEvent(HoverEvent.ShowText(text))}
+fun MutableText.hover(text: Text): MutableText = styled { it.withHoverEvent(HoverEvent.ShowText(text)) }
 
 
 fun MutableText.clickCommand(command: String): MutableText {

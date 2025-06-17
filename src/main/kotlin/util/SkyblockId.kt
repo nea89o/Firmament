@@ -104,7 +104,7 @@ data class HypixelPetInfo(
 	val exp: Double = 0.0,
 	val candyUsed: Int = 0,
 	val uuid: UUID? = null,
-	val active: Boolean = false,
+	val active: Boolean? = false,
 	val heldItem: String? = null,
 ) {
 	val skyblockId get() = SkyblockId("${type.uppercase()};${tier.ordinal}") // TODO: is this ordinal set up correctly?
