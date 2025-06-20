@@ -127,6 +127,8 @@
 	"firmament.config.fixes.disable-hurt-cam.description": "Disable the damage screen shake animation.",
 	"firmament.config.fixes.hide-mob-effects": "Hide Potion Effects",
 	"firmament.config.fixes.hide-mob-effects.description": "Hide Potion effects on the right side of your player inventory.",
+	"firmament.config.fixes.hide-off-hand": "No Off Hand",
+	"firmament.config.fixes.hide-off-hand.description": "Remove the recipe slot from your inventory",
 	"firmament.config.fixes.hide-slot-highlights": "Hide Slot Highlights",
 	"firmament.config.fixes.hide-slot-highlights.description": "Hide slot highlights for items with disabled tooltip. This makes /sbmenu look nicer with smooth texture packs.",
 	"firmament.config.fixes.peek-chat": "Peek Chat",

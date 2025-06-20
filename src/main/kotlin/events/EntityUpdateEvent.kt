@@ -26,7 +26,6 @@ sealed class EntityUpdateEvent : FirmamentEvent() {
 				EquipmentSlot.CHEST to 38,
 				EquipmentSlot.LEGS to 37,
 				EquipmentSlot.FEET to 36,
-				EquipmentSlot.OFFHAND to 40,
 				EquipmentSlot.MAINHAND to p.inventory.selectedSlot, // TODO: also equipment update when you swap your selected slot perhaps
 			).mapNotNull { (slot, stackIndex) ->
 				val slotIndex = p.playerScreenHandler.getSlotIndex(p.inventory, stackIndex).asInt
