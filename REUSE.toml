@@ -47,3 +47,7 @@ path = ["src/test/resources/testdata/**/*.snbt"]
 SPDX-License-Identifier = "CC-BY-4.0"
 SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"]
 
+[[annotations]]
+path = ["src/main/resources/legacy_data/*.json"]
+SPDX-License-Identifier = "MIT"
+SPDX-FileCopyrightText = ["PrismarineJS Minecraft Data"]
