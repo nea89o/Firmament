@@ -2,6 +2,7 @@ package moe.nea.firmament.features.texturepack
 
 import java.util.Optional
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
@@ -18,12 +19,23 @@ object CustomTextColors : SinglePreparationResourceReloader<CustomTextColors.Tex
 	data class TextOverrides(
 		val defaultColor: Int,
 		val overrides: List<TextOverride> = listOf()
-	)
+	) {
+		/**
+		 * Stub custom text color to allow always returning a text override
+		 */
+		@Transient
+		val baseOverride = TextOverride(
+			StringMatcher.Equals("", false),
+			defaultColor,
+			false
+		)
+	}
 
 	@Serializable
 	data class TextOverride(
 		val predicate: StringMatcher,
 		val override: Int,
+		val hidden: Boolean = false,
 	)
 
 	@Subscribe

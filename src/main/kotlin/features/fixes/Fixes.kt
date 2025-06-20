@@ -25,6 +25,7 @@ object Fixes : FirmamentFeature {
 		val hidePotionEffects by toggle("hide-mob-effects") { false }
 		val noHurtCam by toggle("disable-hurt-cam") { false }
 		val hideSlotHighlights by toggle("hide-slot-highlights") { false }
+		val hideRecipeBook by toggle("hide-recipe-book") { false }
 		val hideOffHand by toggle("hide-off-hand") { false }
 	}
 

@@ -37,6 +37,13 @@ object ErrorUtil {
 		else Firmament.logger.error(message)
 	}
 
+	fun <T> Result<T>.intoCatch(message: String): Catch<T> {
+		return this.map { Catch.succeed(it) }.getOrElse {
+			softError(message, it)
+			Catch.fail(it)
+		}
+	}
+
 	class Catch<T> private constructor(val value: T?, val exc: Throwable?) {
 		fun orNull(): T? = value
 
