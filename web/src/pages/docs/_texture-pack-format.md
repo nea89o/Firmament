@@ -575,6 +575,84 @@ not screens from other mods. You can also target specific texts via a [string ma
 | `overrides.predicate` | true     | This is a [string matcher](#string-matcher) that allows you to match on the text you are replacing |
 | `overrides.override`  | true     | This is the replacement color that will be used if the predicate matches.                          |
 
+## Screen Layout Replacement
+
+You can change the layout of an entire screen by using screen layout overrides. These get placed in `firmskyblock:overrides/screen_layout/*.json`, with one file per screen. You can match on the title of a screen, replace the background texture (including extending the background canvas further than vanilla allows you) and move slots around.
+
+### Selecting a screen
+
+```json
+{
+	"predicates": {
+		"label": {
+			"regex": "Hyper Furnace"
+		}
+	}
+}
+```
+
+The `label` property is a regular [string matcher](#string-matcher) and matches against the screens title (typically the chest title, or "Crafting" for the players inventory).
+
+### Changing the background
+
+```json
+{
+	"predicates": {
+		"label": {
+			"regex": "Hyper Furnace"
+		}
+	},
+	"background": {
+		"texture": "firmskyblock:textures/furnace.png",
+		"x": -21,
+		"y": -30,
+		"width": 197,
+		"height": 196
+	}
+}
+```
+
+You need to specify an x and y offset relative to where the regular screen would render. This means you just check where the upper left corner of the UI texture would be in your texture (and turn it into a negative number). You also need to specify a width and height of your texture. This is the width in pixels rendered. If you want a higher or lower resolution texture, you can scale the actual texture up (tho it is expected to meet the same aspect ratio as the one defined here).
+
+### Moving slots around
+
+```json
+{
+	"predicates": {
+		"label": {
+			"regex": "Hyper Furnace"
+		}
+	},
+	"slots": [
+		{
+			"index": 10,
+			"x": -5000,
+			"y": -5000
+		}
+	]
+}
+```
+
+You can move slots around by a specific index. This is not the index in the inventory, but rather the index in the screen (so if you have a chest screen then all the player inventory slots would be a higher index since the chest slots move them down the list). The x and y are relative to where the regular screen top left would be. Set to large values to effectively "delete" a slot by moving it offscreen.
+
+### All together
+
+| Field                | Required | Description                                                                                |
+|----------------------|----------|--------------------------------------------------------------------------------------------|
+| `predicates`         | true     | A list of predicates that need to match in order to change the layout of a screen          |
+| `predicates.label`   | true     | A [string matcher](#string-matcher) for the screen title                                   |
+| `background`         | false    | Allows replacing the background texture                                                    |
+| `background.texture` | true     | The texture of the background as an identifier                                             |
+| `background.x`       | true     | The x offset of the background relative to where the regular background would be rendered. |
+| `background.y`       | true     | The y offset of the background relative to where the regular background would be rendered. |
+| `background.width`   | true     | The width of the background texture.                                                       |
+| `background.height`  | true     | The height of the background texture.                                                      |
+| `slots`              | false    | An array of slots to move around.                                                          |
+| `slots[*].index`     | true     | The index in the array of all slots on the screen (not inventory).                         |
+| `slots[*].x`         | true     | The x coordinate of the slot relative to the top left of the screen                        |
+| `slots[*].y`         | true     | The y coordinate of the slot relative to the top left of the screen                        |
+
+
 ## Global Item Texture Replacement
 
 Most texture replacement is done based on the SkyBlock id of the item. However, some items you might want to re-texture

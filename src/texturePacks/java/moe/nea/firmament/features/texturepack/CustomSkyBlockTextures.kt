@@ -36,6 +36,7 @@ object CustomSkyBlockTextures : FirmamentFeature {
 		val enableLegacyMinecraftCompat by toggle("legacy-minecraft-path-support") { true }
 		val enableLegacyCIT by toggle("legacy-cit") { true }
 		val allowRecoloringUiText by toggle("recolor-text") { true }
+		val allowLayoutChanges by toggle("screen-layouts") { true }
 	}
 
 	override val config: ManagedConfig
