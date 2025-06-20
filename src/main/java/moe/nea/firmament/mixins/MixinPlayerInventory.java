@@ -21,19 +21,4 @@ public class MixinPlayerInventory {
 		if (slot == OFF_HAND_SLOT && Fixes.TConfig.INSTANCE.getHideOffHand()) ci.cancel();
 	}
 
-	@Inject(method = "getStack", at = @At("HEAD"), cancellable = true)
-	private void cancelGetOffhand(int slot, CallbackInfoReturnable<ItemStack> cir) {
-		if (slot == OFF_HAND_SLOT && Fixes.TConfig.INSTANCE.getHideOffHand()) cir.setReturnValue(ItemStack.EMPTY);
-	}
-
-	@Inject(method = "removeStack(I)Lnet/minecraft/item/ItemStack;", at = @At("HEAD"), cancellable = true)
-	private void cancelRemoveStack(int slot, CallbackInfoReturnable<ItemStack> cir) {
-		if (slot == OFF_HAND_SLOT && Fixes.TConfig.INSTANCE.getHideOffHand()) cir.setReturnValue(ItemStack.EMPTY);
-	}
-
-	@Inject(method = "removeStack(II)Lnet/minecraft/item/ItemStack;", at = @At("HEAD"), cancellable = true)
-	private void cancelRemoveStackWithAmount(int slot, int amount, CallbackInfoReturnable<ItemStack> cir) {
-		if (slot == OFF_HAND_SLOT && Fixes.TConfig.INSTANCE.getHideOffHand()) cir.setReturnValue(ItemStack.EMPTY);
-	}
-
 }
