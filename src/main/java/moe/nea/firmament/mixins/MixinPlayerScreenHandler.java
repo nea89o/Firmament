@@ -17,10 +17,15 @@ public class MixinPlayerScreenHandler {
 	private static final int OFF_HAND_SLOT = 40;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void removeOffhandSlot(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
+	private void moveOffHandSlot(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci) {
 		if (Fixes.TConfig.INSTANCE.getHideOffHand()) {
 			PlayerScreenHandler self = (PlayerScreenHandler) (Object) this;
-			self.slots.removeIf(slot -> slot.getIndex() == OFF_HAND_SLOT);
+			self.slots.stream()
+				.filter(slot -> slot.getIndex() == OFF_HAND_SLOT)
+				.forEach(slot -> {
+					slot.x = -1000;
+					slot.y = -1000;
+				});
 		}
 	}
 }
