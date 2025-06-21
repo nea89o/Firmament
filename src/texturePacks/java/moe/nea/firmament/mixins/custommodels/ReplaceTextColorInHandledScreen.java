@@ -31,7 +31,7 @@ public class ReplaceTextColorInHandledScreen {
 		expect = 0,
 		require = 0)
 	private int replaceTextColorWithVariableShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, boolean shadow, Operation<Integer> original) {
-		return original.call(instance, textRenderer, text, x, y, CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
+		return original.call(instance, textRenderer, text, CustomTextColors.INSTANCE.mapTextToX(text, x), CustomTextColors.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
 	}
 
 	@WrapOperation(
@@ -42,7 +42,7 @@ public class ReplaceTextColorInHandledScreen {
 		expect = 0,
 		require = 0)
 	private int replaceTextColorWithShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, Operation<Integer> original) {
-		return original.call(instance, textRenderer, text, x, y, CustomTextColors.INSTANCE.mapTextColor(text, color));
+		return original.call(instance, textRenderer, text, CustomTextColors.INSTANCE.mapTextToX(text, x), CustomTextColors.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color));
 	}
 
 }
