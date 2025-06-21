@@ -1,8 +1,8 @@
 package moe.nea.firmament.mixins.custommodels;
 
-
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import moe.nea.firmament.features.texturepack.CustomScreenLayouts;
 import moe.nea.firmament.features.texturepack.CustomTextColors;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -31,7 +31,7 @@ public class ReplaceTextColorInHandledScreen {
 		expect = 0,
 		require = 0)
 	private int replaceTextColorWithVariableShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, boolean shadow, Operation<Integer> original) {
-		return original.call(instance, textRenderer, text, CustomTextColors.INSTANCE.mapTextToX(text, x), CustomTextColors.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
+		return original.call(instance, textRenderer, text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
 	}
 
 	@WrapOperation(
@@ -42,7 +42,7 @@ public class ReplaceTextColorInHandledScreen {
 		expect = 0,
 		require = 0)
 	private int replaceTextColorWithShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, Operation<Integer> original) {
-		return original.call(instance, textRenderer, text, CustomTextColors.INSTANCE.mapTextToX(text, x), CustomTextColors.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color));
+		return original.call(instance, textRenderer, text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color));
 	}
 
 }

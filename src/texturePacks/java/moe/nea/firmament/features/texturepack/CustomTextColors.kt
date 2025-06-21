@@ -55,16 +55,6 @@ object CustomTextColors : SinglePreparationResourceReloader<CustomTextColors.Tex
 		return override?.override ?: textOverrides?.defaultColor ?: oldColor
 	}
 
-	fun mapTextToX(text: Text, x: Int): Int {
-		val override = cache(text).orElse(null)
-		return x + (override?.x ?: 0)
-	}
-
-	fun mapTextToY(text: Text, y: Int): Int {
-		val override = cache(text).orElse(null)
-		return y + (override?.y ?: 0)
-	}
-
 	override fun prepare(
 		manager: ResourceManager,
 		profiler: Profiler

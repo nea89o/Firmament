@@ -8,12 +8,14 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
 import net.minecraft.screen.slot.Slot
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.events.ScreenChangeEvent
+import moe.nea.firmament.features.texturepack.CustomTextColors.cache
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ErrorUtil.intoCatch
 import moe.nea.firmament.util.IdentifierSerializer
@@ -25,6 +27,8 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 		val predicates: Preds,
 		val background: BackgroundReplacer? = null,
 		val slots: List<SlotReplacer> = listOf(),
+		val playerTitle: TitleReplacer = TitleReplacer(),
+		val containerTitle: TitleReplacer = TitleReplacer()
 	)
 
 	@Serializable
@@ -85,6 +89,20 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 			slot.x = x
 			slot.y = y
 		}
+	}
+
+	@Serializable
+	data class TitleReplacer(
+		val x: Int = 0,
+		val y: Int = 0,
+	)
+
+	fun mapTextToX(text: Text, x: Int): Int {
+		return x + if (text.string == "Inventory") activeScreenOverride?.playerTitle?.x ?: 0 else activeScreenOverride?.containerTitle?.x ?: 0
+	}
+
+	fun mapTextToY(text: Text, y: Int): Int {
+		return y + if (text.string == "Inventory") activeScreenOverride?.playerTitle?.y ?: 0 else activeScreenOverride?.containerTitle?.y ?: 0
 	}
 
 

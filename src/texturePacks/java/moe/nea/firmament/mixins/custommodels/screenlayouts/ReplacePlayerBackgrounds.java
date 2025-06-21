@@ -1,6 +1,5 @@
 package moe.nea.firmament.mixins.custommodels.screenlayouts;
 
-
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import moe.nea.firmament.features.texturepack.CustomScreenLayouts;
 import net.minecraft.client.gui.DrawContext;
