@@ -1,6 +1,5 @@
 package moe.nea.firmament.mixins.custommodels.screenlayouts;
 
-
 import moe.nea.firmament.features.texturepack.CustomScreenLayouts;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.*;
