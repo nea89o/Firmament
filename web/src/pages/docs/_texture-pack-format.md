@@ -637,20 +637,28 @@ You can move slots around by a specific index. This is not the index in the inve
 
 ### All together
 
-| Field                | Required | Description                                                                                |
-|----------------------|----------|--------------------------------------------------------------------------------------------|
-| `predicates`         | true     | A list of predicates that need to match in order to change the layout of a screen          |
-| `predicates.label`   | true     | A [string matcher](#string-matcher) for the screen title                                   |
-| `background`         | false    | Allows replacing the background texture                                                    |
-| `background.texture` | true     | The texture of the background as an identifier                                             |
-| `background.x`       | true     | The x offset of the background relative to where the regular background would be rendered. |
-| `background.y`       | true     | The y offset of the background relative to where the regular background would be rendered. |
-| `background.width`   | true     | The width of the background texture.                                                       |
-| `background.height`  | true     | The height of the background texture.                                                      |
-| `slots`              | false    | An array of slots to move around.                                                          |
-| `slots[*].index`     | true     | The index in the array of all slots on the screen (not inventory).                         |
-| `slots[*].x`         | true     | The x coordinate of the slot relative to the top left of the screen                        |
-| `slots[*].y`         | true     | The y coordinate of the slot relative to the top left of the screen                        |
+| Field                  | Required | Description                                                                                |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `predicates`           | true     | A list of predicates that need to match in order to change the layout of a screen          |
+| `predicates.label`     | true     | A [string matcher](#string-matcher) for the screen title                                   |
+| `background`           | false    | Allows replacing the background texture                                                    |
+| `background.texture`   | true     | The texture of the background as an identifier                                             |
+| `background.x`         | true     | The x offset of the background relative to where the regular background would be rendered. |
+| `background.y`         | true     | The y offset of the background relative to where the regular background would be rendered. |
+| `background.width`     | true     | The width of the background texture.                                                       |
+| `background.height`    | true     | The height of the background texture.                                                      |
+| `slots`                | false    | An array of slots to move around.                                                          |
+| `slots[*].index`       | true     | The index in the array of all slots on the screen (not inventory).                         |
+| `slots[*].x`           | true     | The x coordinate of the slot relative to the top left of the screen                        |
+| `slots[*].y`           | true     | The y coordinate of the slot relative to the top left of the screen                        |
+| `playerTitle`          | false    | The Inventory title.                                                                       |
+| `playerTitle.x`        | false    | The x coordinate of the slot relative to the text normally is                              |
+| `playerTitle.y`        | false    | The y coordinate of the slot relative to the text normally is                              |
+| `playerTitle.align`    | false    | How you want the text to align. "left", "center" or "right"                                |
+| `containerTitle`       | false    | The container title (eg chest, ender chest, ect)                                           |
+| `containerTitle.x`     | false    | The x coordinate of the slot relative to the text normally is                              |
+| `containerTitle.y`     | false    | The y coordinate of the slot relative to the text normally is                              |
+| `containerTitle.align` | false    | How you want the text to align. "left", "center" or "right"                                |
 
 
 ## Global Item Texture Replacement
