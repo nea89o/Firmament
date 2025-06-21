@@ -574,6 +574,7 @@ not screens from other mods. You can also target specific texts via a [string ma
 | `overrides`           | false    | Allows you to replace colors for specific strings. Is an array.                                    |
 | `overrides.predicate` | true     | This is a [string matcher](#string-matcher) that allows you to match on the text you are replacing |
 | `overrides.override`  | true     | This is the replacement color that will be used if the predicate matches.                          |
+| `overrides.hidden`    | false    | Allows you to hide the title.                                                                      |
 
 ## Screen Layout Replacement
 
