@@ -1,5 +1,3 @@
-
-
 package moe.nea.firmament.mixins.accessor;
 
 import net.minecraft.client.gui.screen.ingame.HandledScreen;

@@ -27,7 +27,8 @@ object CustomTextColors : SinglePreparationResourceReloader<CustomTextColors.Tex
 		val baseOverride = TextOverride(
 			StringMatcher.Equals("", false),
 			defaultColor,
-			false
+			0,
+			0
 		)
 	}
 
@@ -35,7 +36,8 @@ object CustomTextColors : SinglePreparationResourceReloader<CustomTextColors.Tex
 	data class TextOverride(
 		val predicate: StringMatcher,
 		val override: Int,
-		val hidden: Boolean = false,
+		val x: Int = 0,
+		val y: Int = 0,
 	)
 
 	@Subscribe
@@ -43,14 +45,14 @@ object CustomTextColors : SinglePreparationResourceReloader<CustomTextColors.Tex
 		event.resourceManager.registerReloader(this)
 	}
 
-	val cache = WeakCache.memoize<Text, Optional<Int>>("CustomTextColor") { text ->
+	val cache = WeakCache.memoize<Text, Optional<TextOverride>>("CustomTextColor") { text ->
 		val override = textOverrides ?: return@memoize Optional.empty()
-		Optional.of(override.overrides.find { it.predicate.matches(text) }?.override ?: override.defaultColor)
+		Optional.ofNullable(override.overrides.find { it.predicate.matches(text) })
 	}
 
 	fun mapTextColor(text: Text, oldColor: Int): Int {
-		if (textOverrides == null) return oldColor
-		return cache(text).getOrNull() ?: oldColor
+		val override = cache(text).orElse(null)
+		return override?.override ?: textOverrides?.defaultColor ?: oldColor
 	}
 
 	override fun prepare(

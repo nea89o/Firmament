@@ -1,9 +1,10 @@
 package moe.nea.firmament.mixins.custommodels;
 
-
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import moe.nea.firmament.features.texturepack.CustomScreenLayouts;
 import moe.nea.firmament.features.texturepack.CustomTextColors;
+import moe.nea.firmament.mixins.accessor.AccessorHandledScreen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
@@ -31,7 +32,8 @@ public class ReplaceTextColorInHandledScreen {
 		expect = 0,
 		require = 0)
 	private int replaceTextColorWithVariableShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, boolean shadow, Operation<Integer> original) {
-		return original.call(instance, textRenderer, text, x, y, CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
+		int width = ((AccessorHandledScreen) this).getBackgroundWidth_Firmament();
+		return original.call(instance, textRenderer, CustomScreenLayouts.INSTANCE.mapReplaceText(text), CustomScreenLayouts.INSTANCE.alignText(text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), width), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
 	}
 
 	@WrapOperation(
@@ -42,7 +44,8 @@ public class ReplaceTextColorInHandledScreen {
 		expect = 0,
 		require = 0)
 	private int replaceTextColorWithShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, Operation<Integer> original) {
-		return original.call(instance, textRenderer, text, x, y, CustomTextColors.INSTANCE.mapTextColor(text, color));
+		int width = ((AccessorHandledScreen) this).getBackgroundWidth_Firmament();
+		return original.call(instance, textRenderer, CustomScreenLayouts.INSTANCE.mapReplaceText(text), CustomScreenLayouts.INSTANCE.alignText(text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), width), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color));
 	}
 
 }
