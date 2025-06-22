@@ -6,8 +6,14 @@ import com.mojang.serialization.Codec
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 import java.util.Optional
 import java.util.UUID
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
@@ -131,12 +137,67 @@ fun ItemStack.modifyExtraAttributes(block: (NbtCompound) -> Unit) {
 	block(baseNbt)
 	set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(baseNbt))
 }
+val ItemStack.timestamp: String?
+	get() {
+		var longStamp = extraAttributes.getLong("timestamp").getOrNull()
+		var stringStamp = extraAttributes.getString("timestamp").getOrNull()
+		//If item is in string format, handle
+		if(stringStamp !=null) {
+			val longStringStamp = standardLongConvert(stringStamp.toString())
+			val realStamp = getDateTime(longStringStamp.toString())
+			return realStamp.toString()
+		}
+		//If item is in long format, handle
+		if(longStamp !=null){
+			val realStamp = getDateTime(longStamp.toString())
+			return realStamp.toString()
+		}else{
+			return null
+		}
+	}
 
-val ItemStack.timestampString: String?
-	get() = extraAttributes.getString("timestamp").getOrNull()?.takeIf { it.isNotBlank() }
+fun standardLongConvert(s:String): String? {
+	try{
+		val splitS = s.split(" ")
 
-val ItemStack.timestampLong: Long?
-	get() = extraAttributes.getLong("timestamp").getOrNull()
+			val hourMinute = splitS[1].split(":")
+			//Adjust for EST Timezone compared to UTC (I think that's right?)
+			if(splitS[2] == "PM") {
+				val estHour = hourMinute[0].toInt() + 7
+				val s2 = splitS[0]+ " " + estHour + ":" + hourMinute[1]
+				val fullUNIXTime = SimpleDateFormat("MM/dd/yy HH:mm").parse(s2).time
+				return fullUNIXTime.toString();
+			}else{
+				val estHour = hourMinute[0].toInt() - 5
+				val s2 = splitS[0]+ " " + estHour + ":" + hourMinute[1]
+				val fullUNIXTime = SimpleDateFormat("MM/dd/yy HH:mm").parse(s2).time
+				return fullUNIXTime.toString();
+		}
+	}catch(e: Exception) {
+		return null
+	}
+}
+
+fun getDateTime(s: String): String? {
+	try {
+		//Remove long indicator
+		if(s.endsWith("L")){
+			s.dropLast(1);
+		}
+		//If timestamp is rounded, don't display milliseconds
+		if(s.endsWith("000")){
+			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss z")
+			val netDate = Date(s.toLong())
+			return sdf.format(netDate)
+		}else {
+			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS z")
+			val netDate = Date(s.toLong())
+			return sdf.format(netDate)
+		}
+	} catch (e: Exception) {
+		return e.toString()
+	}
+}
 
 val ItemStack.skyblockUUIDString: String?
 	get() = extraAttributes.getString("uuid").getOrNull()?.takeIf { it.isNotBlank() }

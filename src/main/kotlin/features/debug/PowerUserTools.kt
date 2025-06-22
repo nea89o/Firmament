@@ -43,8 +43,7 @@ import moe.nea.firmament.util.mc.iterableArmorItems
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.grey
-import moe.nea.firmament.util.timestampLong
-import moe.nea.firmament.util.timestampString
+import moe.nea.firmament.util.timestamp
 import moe.nea.firmament.util.tr
 
 object PowerUserTools : FirmamentFeature {
@@ -245,34 +244,12 @@ object PowerUserTools : FirmamentFeature {
 	@Subscribe
 	fun addTimestamp(it: ItemTooltipEvent) {
 		if (TConfig.showTimestamp) {
-			val timestampString = it.stack.timestampString
-			if(timestampString == null) {
-				val timestampLong = it.stack.timestampLong
-				if(timestampLong != null) {
-					val realTimestamp = getDateTime(timestampLong.toString());
-					it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.timestamp", realTimestamp).grey())
-				}
-			}else{
-				it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.timestamp", timestampString).grey())
+			val timestamp = it.stack.timestamp
+			//Show timestamp if item has one
+			if(timestamp!=null) {
+				it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.timestamp", timestamp).grey())
 			}
-
-
 		}
 		return
 	}
-
-	fun getDateTime(s: String): String? {
-		try {
-			if(s.endsWith("L")){
-				s.dropLast(1);
-			}
-			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS z")
-			val netDate = Date(s.toLong())
-			return sdf.format(netDate)
-		} catch (e: Exception) {
-			return e.toString()
-		}
-	}
-
-
 }
