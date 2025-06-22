@@ -1,8 +1,6 @@
 package moe.nea.firmament.features.debug
 
 import com.mojang.serialization.JsonOps
-import java.text.SimpleDateFormat
-import java.util.Date
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
