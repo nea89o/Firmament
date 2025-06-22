@@ -1,6 +1,7 @@
 package moe.nea.firmament.features.debug.itemeditor
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -110,23 +111,55 @@ object ItemExporter {
 								)
 							)
 						}
-						modifyJson(itemid) {
-							val mutJson = it.toMutableMap()
-							val legacyTag = LegacyTagParser.parse(mutJson["nbttag"]!!.jsonPrimitive.content)
-							val display = legacyTag.getCompoundOrEmpty("display")
-							legacyTag.put("display", display)
-							display.putString("Name", mutJson["displayname"]!!.jsonPrimitive.content)
-							display.put(
-								"Lore",
-								(mutJson["lore"] as JsonArray).map { NbtString.of(it.jsonPrimitive.content) }
-									.toNbtList()
+						fixLoreNbtFor(itemid)
+						MC.sendChat(
+							tr(
+								"firmament.repo.export.relore",
+								"Updated lore / display name for $itemid"
 							)
-							mutJson["nbttag"] = JsonPrimitive(legacyTag.toLegacyString())
-							JsonObject(mutJson)
+						)
+					}
+				}
+				thenLiteral("all") {
+					thenExecute {
+						var i = 0
+						val chunkSize = 100
+						val items = RepoManager.neuRepo.items.items.keys
+						Firmament.coroutineScope.launch {
+							items.chunked(chunkSize).forEach { key ->
+								MC.sendChat(
+									tr(
+										"firmament.repo.export.relore.progress",
+										"Updated lore / display for ${i * chunkSize} / ${items.size}."
+									)
+								)
+								i++
+								key.forEach {
+									fixLoreNbtFor(SkyblockId(it))
+								}
+							}
+							MC.sendChat(tr("firmament.repo.export.relore.alldone", "All lores updated."))
 						}
 					}
 				}
 			}
+		}
+	}
+
+	fun fixLoreNbtFor(itemid: SkyblockId) {
+		modifyJson(itemid) {
+			val mutJson = it.toMutableMap()
+			val legacyTag = LegacyTagParser.parse(mutJson["nbttag"]!!.jsonPrimitive.content)
+			val display = legacyTag.getCompoundOrEmpty("display")
+			legacyTag.put("display", display)
+			display.putString("Name", mutJson["displayname"]!!.jsonPrimitive.content)
+			display.put(
+				"Lore",
+				(mutJson["lore"] as JsonArray).map { NbtString.of(it.jsonPrimitive.content) }
+					.toNbtList()
+			)
+			mutJson["nbttag"] = JsonPrimitive(legacyTag.toLegacyString())
+			JsonObject(mutJson)
 		}
 	}
 
