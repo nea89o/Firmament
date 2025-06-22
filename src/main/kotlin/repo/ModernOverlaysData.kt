@@ -4,6 +4,7 @@ import io.github.moulberry.repo.IReloadable
 import io.github.moulberry.repo.NEURepository
 import java.nio.file.Path
 import kotlin.io.path.extension
+import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.nameWithoutExtension
 import moe.nea.firmament.util.SkyblockId
@@ -19,8 +20,9 @@ class ModernOverlaysData : IReloadable {
 	override fun reload(repo: NEURepository) {
 		val items = mutableMapOf<SkyblockId, MutableList<OverlayFile>>()
 		repo.baseFolder.resolve("itemsOverlay")
-			.listDirectoryEntries()
-			.forEach { versionFolder ->
+			.takeIf { it.isDirectory() }
+			?.listDirectoryEntries()
+			?.forEach { versionFolder ->
 				val version = versionFolder.fileName.toString().toIntOrNull() ?: return@forEach
 				versionFolder.listDirectoryEntries()
 					.forEach { item ->
