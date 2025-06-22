@@ -60,7 +60,6 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 			loadFeature(PowerUserTools)
 			loadFeature(Waypoints)
 			loadFeature(ChatLinks)
-			loadFeature(InventoryButtons)
 			loadFeature(CompatibliltyFeatures)
 			loadFeature(AnniversaryFeatures)
 			loadFeature(QuickCommands)

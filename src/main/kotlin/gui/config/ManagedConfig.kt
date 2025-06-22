@@ -70,6 +70,7 @@ abstract class ManagedConfig(
 		category.configs.add(this)
 	}
 
+	// TODO: warn if two files use the same config file name :(
 	val file = Firmament.CONFIG_DIR.resolve("$name.json")
 	val data: JsonObject by lazy {
 		try {
