@@ -139,14 +139,14 @@ val ItemStack.timestamp: String?
 		var stringStamp = extraAttributes.getString("timestamp").getOrNull()
 		//If item is in string format, handle
 		if(stringStamp !=null) {
-			val longStringStamp = standardLongConvert(stringStamp.toString())
-			val realStamp = getDateTime(longStringStamp.toString())
-			return realStamp.toString()
+			val longStringStamp = standardLongConvert(stringStamp)
+			val realStamp = getDateTime(longStringStamp.toString()).toString()
+			return realStamp
 		}
 		//If item is in long format, handle
 		if(longStamp !=null){
-			val realStamp = getDateTime(longStamp.toString())
-			return realStamp.toString()
+			val realStamp = getDateTime(longStamp.toString()).toString()
+			return realStamp
 		}else{
 			return null
 		}
@@ -182,11 +182,11 @@ fun getDateTime(s: String): String? {
 		}
 		//If timestamp is rounded, don't display milliseconds
 		if(s.endsWith("000")){
-			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss z")
+			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss 'GMT'Z")
 			val netDate = Date(s.toLong())
 			return sdf.format(netDate)
 		}else {
-			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS z")
+			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS 'GMT'Z")
 			val netDate = Date(s.toLong())
 			return sdf.format(netDate)
 		}
