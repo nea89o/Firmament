@@ -19,7 +19,7 @@ public class MinecraftInitLevelListener {
 		InitLevel.bump(InitLevel.RENDER);
 	}
 
-	@Inject(method = "onFinishedLoading", at = @At(value = "HEAD"))
+	@Inject(method = "method_29339", at = @At(value = "HEAD"))
 	private void onFinishedLoading(CallbackInfo ci) {
 		InitLevel.bump(InitLevel.MAIN_MENU);
 	}
