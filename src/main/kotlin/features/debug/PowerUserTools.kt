@@ -57,6 +57,7 @@ object PowerUserTools : FirmamentFeature {
 		val copyItemStack by keyBindingWithDefaultUnbound("copy-item-stack")
 		val copyTitle by keyBindingWithDefaultUnbound("copy-title")
 		val exportItemStackToRepo by keyBindingWithDefaultUnbound("export-item-stack")
+		val exportUIRecipes by keyBindingWithDefaultUnbound("export-recipe")
 	}
 
 	override val config
