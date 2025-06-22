@@ -33,7 +33,7 @@ public class ReplaceTextColorInHandledScreen {
 		require = 0)
 	private int replaceTextColorWithVariableShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, boolean shadow, Operation<Integer> original) {
 		int width = ((AccessorHandledScreen) this).getBackgroundWidth_Firmament();
-		return original.call(instance, textRenderer, text, CustomScreenLayouts.INSTANCE.alignText(text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), width), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
+		return original.call(instance, textRenderer, CustomScreenLayouts.INSTANCE.mapReplaceText(text), CustomScreenLayouts.INSTANCE.alignText(text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), width), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color), shadow);
 	}
 
 	@WrapOperation(
@@ -45,7 +45,7 @@ public class ReplaceTextColorInHandledScreen {
 		require = 0)
 	private int replaceTextColorWithShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, Operation<Integer> original) {
 		int width = ((AccessorHandledScreen) this).getBackgroundWidth_Firmament();
-		return original.call(instance, textRenderer, text, CustomScreenLayouts.INSTANCE.alignText(text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), width), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color));
+		return original.call(instance, textRenderer, CustomScreenLayouts.INSTANCE.mapReplaceText(text), CustomScreenLayouts.INSTANCE.alignText(text, CustomScreenLayouts.INSTANCE.mapTextToX(text, x), width), CustomScreenLayouts.INSTANCE.mapTextToY(text, y), CustomTextColors.INSTANCE.mapTextColor(text, color));
 	}
 
 }

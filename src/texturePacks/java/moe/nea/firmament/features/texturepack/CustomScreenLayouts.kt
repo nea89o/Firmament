@@ -107,14 +107,16 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 	data class TitleReplacer(
 		val x: Int = 0,
 		val y: Int = 0,
-		val align: Alignment = Alignment.LEFT
+		val align: Alignment = Alignment.LEFT,
+		val replace: String? = null
 	)
 
 	fun alignText(text: Text, x: Int, width: Int): Int {
-		val align = if (text.string == "Inventory") activeScreenOverride?.playerTitle?.align ?: Alignment.LEFT
+		var currentText = mapReplaceText(text)
+		val align = if (currentText.string == "Inventory") activeScreenOverride?.playerTitle?.align ?: Alignment.LEFT
 		else activeScreenOverride?.containerTitle?.align ?: Alignment.LEFT
 
-		val textWidth = MinecraftClient.getInstance().textRenderer.getWidth(Text.literal(text.string))
+		val textWidth = MinecraftClient.getInstance().textRenderer.getWidth(Text.literal(currentText.string))
 
 
 		return when (align) {
@@ -122,6 +124,12 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 			Alignment.CENTER -> x + (width - textWidth) / 2
 			Alignment.RIGHT -> x + (width - textWidth)
 		}
+	}
+
+	fun mapReplaceText(text: Text): Text {
+		val replaceText = if (text.string == "Inventory")  activeScreenOverride?.playerTitle?.replace ?: null else activeScreenOverride?.containerTitle?.replace ?: null
+		if (replaceText == null) return text
+		return Text.literal(replaceText)
 	}
 
 	fun mapTextToX(text: Text, x: Int): Int {

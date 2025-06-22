@@ -635,30 +635,52 @@ You need to specify an x and y offset relative to where the regular screen would
 
 You can move slots around by a specific index. This is not the index in the inventory, but rather the index in the screen (so if you have a chest screen then all the player inventory slots would be a higher index since the chest slots move them down the list). The x and y are relative to where the regular screen top left would be. Set to large values to effectively "delete" a slot by moving it offscreen.
 
+### Moving window title around
+
+```json
+{
+	"predicates": {
+		"label": {
+			"regex": "Hyper Furnace"
+		}
+	},
+	"playerTitle": {
+		"x": 0,
+		"y": 0,
+		"align": "left",
+		"replace": "a"
+	}
+}
+```
+
+You can move the window title around. The x and y are relative to where the text normally is. Set to large values to effectively "delete" a slot by moving it offscreen. playerTitle is the Inventory text where containerTitle is the chest text at the top
+
 ### All together
 
-| Field                  | Required | Description                                                                                |
-| ---------------------- | -------- | ------------------------------------------------------------------------------------------ |
-| `predicates`           | true     | A list of predicates that need to match in order to change the layout of a screen          |
-| `predicates.label`     | true     | A [string matcher](#string-matcher) for the screen title                                   |
-| `background`           | false    | Allows replacing the background texture                                                    |
-| `background.texture`   | true     | The texture of the background as an identifier                                             |
-| `background.x`         | true     | The x offset of the background relative to where the regular background would be rendered. |
-| `background.y`         | true     | The y offset of the background relative to where the regular background would be rendered. |
-| `background.width`     | true     | The width of the background texture.                                                       |
-| `background.height`    | true     | The height of the background texture.                                                      |
-| `slots`                | false    | An array of slots to move around.                                                          |
-| `slots[*].index`       | true     | The index in the array of all slots on the screen (not inventory).                         |
-| `slots[*].x`           | true     | The x coordinate of the slot relative to the top left of the screen                        |
-| `slots[*].y`           | true     | The y coordinate of the slot relative to the top left of the screen                        |
-| `playerTitle`          | false    | The Inventory title.                                                                       |
-| `playerTitle.x`        | false    | The x coordinate of the slot relative to the text normally is                              |
-| `playerTitle.y`        | false    | The y coordinate of the slot relative to the text normally is                              |
-| `playerTitle.align`    | false    | How you want the text to align. "left", "center" or "right"                                |
-| `containerTitle`       | false    | The container title (eg chest, ender chest, ect)                                           |
-| `containerTitle.x`     | false    | The x coordinate of the slot relative to the text normally is                              |
-| `containerTitle.y`     | false    | The y coordinate of the slot relative to the text normally is                              |
-| `containerTitle.align` | false    | How you want the text to align. "left", "center" or "right"                                |
+| Field                    | Required | Description                                                                                |
+|--------------------------|----------|--------------------------------------------------------------------------------------------|
+| `predicates`             | true     | A list of predicates that need to match in order to change the layout of a screen          |
+| `predicates.label`       | true     | A [string matcher](#string-matcher) for the screen title                                   |
+| `background`             | false    | Allows replacing the background texture                                                    |
+| `background.texture`     | true     | The texture of the background as an identifier                                             |
+| `background.x`           | true     | The x offset of the background relative to where the regular background would be rendered. |
+| `background.y`           | true     | The y offset of the background relative to where the regular background would be rendered. |
+| `background.width`       | true     | The width of the background texture.                                                       |
+| `background.height`      | true     | The height of the background texture.                                                      |
+| `slots`                  | false    | An array of slots to move around.                                                          |
+| `slots[*].index`         | true     | The index in the array of all slots on the screen (not inventory).                         |
+| `slots[*].x`             | true     | The x coordinate of the slot relative to the top left of the screen                        |
+| `slots[*].y`             | true     | The y coordinate of the slot relative to the top left of the screen                        |
+| `playerTitle`            | false    | The Inventory title.                                                                       |
+| `playerTitle.x`          | false    | The x coordinate of the slot relative to the text normally is                              |
+| `playerTitle.y`          | false    | The y coordinate of the slot relative to the text normally is                              |
+| `playerTitle.align`      | false    | How you want the text to align. "left", "center" or "right"                                |
+| `playerTitle.replace`    | false    | Replace window text with your text                                                         |
+| `containerTitle`         | false    | The container title (eg chest, ender chest, ect)                                           |
+| `containerTitle.x`       | false    | The x coordinate of the slot relative to the text normally is                              |
+| `containerTitle.y`       | false    | The y coordinate of the slot relative to the text normally is                              |
+| `containerTitle.align`   | false    | How you want the text to align. "left", "center" or "right"                                |
+| `containerTitle.replace` | false    | Replace window text with your text                                                         |
 
 
 ## Global Item Texture Replacement
