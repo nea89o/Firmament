@@ -10,6 +10,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
 import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -18,9 +19,13 @@ import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.repo.RepoDownloadManager
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.focusedItemStack
 import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
+import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.setSkyBlockId
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.tr
 
@@ -52,8 +57,11 @@ object ItemExporter {
 	fun pathFor(skyBlockId: SkyblockId) =
 		RepoManager.neuRepo.baseFolder.resolve("items/${skyBlockId.neuItem}.json")
 
+	fun isExported(skyblockId: SkyblockId) =
+		pathFor(skyblockId).exists()
+
 	fun ensureExported(itemStack: ItemStack) {
-		if (!pathFor(itemStack.skyBlockId ?: return).exists())
+		if (!isExported(itemStack.skyBlockId ?: return))
 			exportItem(itemStack)
 	}
 
@@ -72,5 +80,14 @@ object ItemExporter {
 			val itemStack = event.screen.focusedItemStack ?: return
 			PowerUserTools.lastCopiedStack = (itemStack to exportItem(itemStack))
 		}
+	}
+
+	fun exportStub(skyblockId: SkyblockId, title: String) {
+		exportItem(ItemStack(Items.PLAYER_HEAD).also {
+			it.displayNameAccordingToNbt = Text.literal(title)
+			it.loreAccordingToNbt = listOf(Text.literal(""))
+			it.setSkyBlockId(skyblockId)
+		})
+		MC.sendChat(tr("firmament.repo.export.stub", "Exported a stub item for $skyblockId"))
 	}
 }

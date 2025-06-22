@@ -75,6 +75,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		deleteLineUntilNextSpace { it.startsWith("Held Item: ") }
 		deleteLineUntilNextSpace { it.startsWith("Progress to Level ") }
 		deleteLineUntilNextSpace { it.startsWith("MAX LEVEL") }
+		deleteLineUntilNextSpace { it.startsWith("Click to view recipe!") }
 		collapseWhitespaces()
 
 		name = name.transformEachRecursively {
