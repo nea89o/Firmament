@@ -18,6 +18,7 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ClientStartedEvent
 import moe.nea.firmament.features.debug.ExportedTestConstantMeta
+import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.HypixelPetInfo
 import moe.nea.firmament.util.LegacyTagWriter.Companion.toLegacyString
 import moe.nea.firmament.util.StringUtil.words
@@ -68,6 +69,9 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		if (rarityIdx >= 0) {
 			lore = lore.subList(0, rarityIdx + 1)
 		}
+
+		trimStats()
+
 		deleteLineUntilNextSpace { it.startsWith("Held Item: ") }
 		deleteLineUntilNextSpace { it.startsWith("Progress to Level ") }
 		deleteLineUntilNextSpace { it.startsWith("MAX LEVEL") }
@@ -78,6 +82,24 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 			string = string.replace("Lvl \\d+".toRegex(), "Lvl {LVL}")
 			Text.literal(string).setStyle(it.style)
 		}
+	}
+
+	private fun trimStats() {
+		val lore = this.lore.toMutableList()
+		for (index in lore.indices) {
+			val value = lore[index]
+			val statLine = SBItemStack.parseStatLine(value)
+			if (statLine == null) break
+			val v = value.copy()
+			require(value.directLiteralStringContent == "")
+			v.siblings.removeIf { it.directLiteralStringContent!!.contains("(") }
+			val last = v.siblings.last()
+			v.siblings[v.siblings.lastIndex] =
+				Text.literal(last.directLiteralStringContent!!.trimEnd())
+					.setStyle(last.style)
+			lore[index] = v
+		}
+		this.lore = lore
 	}
 
 	fun collapseWhitespaces() {

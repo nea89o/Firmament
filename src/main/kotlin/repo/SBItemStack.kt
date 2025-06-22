@@ -263,7 +263,7 @@ data class SBItemStack constructor(
 			return segments.joinToString(" ") { it.replaceFirstChar { it.uppercaseChar() } }
 		}
 
-		private fun parseStatLine(line: Text): StatLine? {
+		fun parseStatLine(line: Text): StatLine? {
 			val sibs = line.siblings
 			val stat = sibs.firstOrNull() ?: return null
 			if (stat.style.color != TextColor.fromFormatting(Formatting.GRAY)) return null
