@@ -81,6 +81,7 @@ class MiningRepoData : IReloadable {
 	) {
 		@Transient
 		val dropItem = baseDrop?.let(::SBItemStack)
+		@OptIn(ExpensiveItemCacheApi::class)
 		private val labeledStack by lazy {
 			dropItem?.asCopiedItemStack()?.also(::markItemStack)
 		}
@@ -110,6 +111,7 @@ class MiningRepoData : IReloadable {
 
 		fun isActiveIn(location: SkyBlockIsland) = onlyIn == null || location in onlyIn
 
+		@OptIn(ExpensiveItemCacheApi::class)
 		private fun convertToModernBlock(): Block? {
 			// TODO: this should be in a shared util, really
 			val newCompound = ItemCache.convert189ToModern(NbtCompound().apply {

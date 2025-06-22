@@ -11,6 +11,7 @@ import net.minecraft.command.argument.ItemStackArgumentType
 import net.minecraft.item.ItemStack
 import net.minecraft.resource.featuretoggle.FeatureFlags
 import net.minecraft.util.Identifier
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
@@ -40,6 +41,7 @@ data class InventoryButton(
 		}
 		val dimensions = Dimension(18, 18)
 		val getItemForName = ::getItemForName0.memoize(1024)
+		@OptIn(ExpensiveItemCacheApi::class)
 		fun getItemForName0(icon: String): ItemStack {
 			val repoItem = RepoManager.getNEUItem(SkyblockId(icon))
 			var itemStack = repoItem.asItemStack(idHint = SkyblockId(icon))

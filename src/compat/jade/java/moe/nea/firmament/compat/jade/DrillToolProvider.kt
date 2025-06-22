@@ -13,18 +13,17 @@ import snownee.jade.api.ui.IElementHelper
 import snownee.jade.impl.ui.ItemStackElement
 import snownee.jade.impl.ui.TextElement
 import kotlin.jvm.optionals.getOrDefault
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec2f
 import moe.nea.firmament.Firmament
-import moe.nea.firmament.repo.ItemCache.asItemStack
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
 
 class DrillToolProvider : IBlockComponentProvider {
+	@OptIn(ExpensiveItemCacheApi::class)
 	override fun appendTooltip(
 		tooltip: ITooltip,
 		accessor: BlockAccessor,

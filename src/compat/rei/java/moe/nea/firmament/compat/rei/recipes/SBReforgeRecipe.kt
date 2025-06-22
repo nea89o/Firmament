@@ -1,3 +1,5 @@
+@file:OptIn(ExpensiveItemCacheApi::class)
+
 package moe.nea.firmament.compat.rei.recipes
 
 import java.util.Optional
@@ -27,6 +29,7 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.compat.rei.EntityWidget
 import moe.nea.firmament.compat.rei.SBItemEntryDefinition
 import moe.nea.firmament.gui.entity.EntityRenderer
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.Reforge
 import moe.nea.firmament.repo.ReforgeStore
 import moe.nea.firmament.repo.RepoItemTypeCache

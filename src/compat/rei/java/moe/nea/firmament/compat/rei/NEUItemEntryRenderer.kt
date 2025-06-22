@@ -17,10 +17,13 @@ import me.shedaniel.rei.api.common.entry.EntryStack
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.text.Text
-import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.events.ItemTooltipEvent
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
+import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.ErrorUtil
@@ -32,6 +35,7 @@ import moe.nea.firmament.util.mc.loreAccordingToNbt
 // TODO: make this re implement BatchedEntryRenderer, if possible (likely not, due to no-alloc rendering)
 // Also it is probably not even that much faster now, with render layers.
 object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
+	@OptIn(ExpensiveItemCacheApi::class)
 	override fun render(
 		entry: EntryStack<SBItemStack>,
 		context: DrawContext,
@@ -40,13 +44,20 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 		mouseY: Int,
 		delta: Float
 	) {
+		val neuItem = entry.value.neuItem
+		val itemToRender = if(RepoManager.Config.perfectRenders < RepoManager.PerfectRender.RENDER && !entry.value.isWarm() && neuItem != null) {
+			ItemCache.recacheSoon(neuItem)
+			ItemStack(Items.PAINTING)
+		} else {
+			entry.value.asImmutableItemStack()
+		}
+
 		context.matrices.push()
 		context.matrices.translate(bounds.centerX.toFloat(), bounds.centerY.toFloat(), 0F)
 		context.matrices.scale(bounds.width.toFloat() / 16F, bounds.height.toFloat() / 16F, 1f)
-		val item = entry.asItemEntry().value
-		context.drawItemWithoutEntity(item, -8, -8)
+		context.drawItemWithoutEntity(itemToRender, -8, -8)
 		context.drawStackOverlay(
-			minecraft.textRenderer, item, -8, -8,
+			minecraft.textRenderer, itemToRender, -8, -8,
 			if (entry.value.getStackSize() > 1000) FirmFormatters.shortFormat(
 				entry.value.getStackSize()
 					.toDouble()
@@ -59,8 +70,9 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 	val minecraft = MinecraftClient.getInstance()
 	var canUseVanillaTooltipEvents = true
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
-		if (!entry.value.isWarm() && !RepoManager.Config.perfectTooltips) {
+		if (!entry.value.isWarm() && RepoManager.Config.perfectRenders < RepoManager.PerfectRender.RENDER_AND_TEXT) {
 			val neuItem = entry.value.neuItem
 			if (neuItem != null) {
 				val lore = mutableListOf<Text>()

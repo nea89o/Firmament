@@ -8,8 +8,14 @@ import java.text.NumberFormat
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.logging.log4j.LogManager
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.SharedConstants
 import net.minecraft.component.DataComponentTypes
@@ -30,6 +36,7 @@ import moe.nea.firmament.repo.RepoManager.initialize
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.TestUtil
 import moe.nea.firmament.util.directLiteralStringContent
@@ -40,6 +47,7 @@ import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.modifyLore
 import moe.nea.firmament.util.mc.setCustomName
 import moe.nea.firmament.util.mc.setSkullOwner
+import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.transformEachRecursively
 
 object ItemCache : IReloadable {
@@ -56,7 +64,10 @@ object ItemCache : IReloadable {
 		putShort("Damage", damage.toShort())
 	}
 
+	@ExpensiveItemCacheApi
 	private fun NbtCompound.transformFrom10809ToModern() = convert189ToModern(this@transformFrom10809ToModern)
+
+	@ExpensiveItemCacheApi
 	fun convert189ToModern(nbtComponent: NbtCompound): NbtCompound? =
 		try {
 			df.update(
@@ -126,6 +137,7 @@ object ItemCache : IReloadable {
 		return base
 	}
 
+	@ExpensiveItemCacheApi
 	private fun NEUItem.asItemStackNow(): ItemStack {
 		try {
 			val oldItemTag = get10809CompoundTag()
@@ -150,6 +162,7 @@ object ItemCache : IReloadable {
 		return skyblockId.neuItem in cache
 	}
 
+	@ExpensiveItemCacheApi
 	fun NEUItem?.asItemStack(idHint: SkyblockId? = null, loreReplacements: Map<String, String>? = null): ItemStack {
 		if (this == null) return brokenItemStack(null, idHint)
 		var s = cache[this.skyblockItemId]
@@ -183,22 +196,43 @@ object ItemCache : IReloadable {
 		}
 	}
 
-	var job: Job? = null
+	var itemRecacheScope: CoroutineScope? = null
 
-	override fun reload(repository: NEURepository) {
-		val j = job
-		if (j != null && j.isActive) {
-			j.cancel()
+	private var recacheSoonSubmitted = mutableSetOf<SkyblockId>()
+
+	@OptIn(ExpensiveItemCacheApi::class)
+	fun recacheSoon(neuItem: NEUItem) {
+		itemRecacheScope?.launch {
+			if (!withContext(MinecraftDispatcher) {
+					recacheSoonSubmitted.add(neuItem.skyblockId)
+				}) {
+				return@launch
+			}
+			neuItem.asItemStack()
 		}
+	}
+
+	@OptIn(ExpensiveItemCacheApi::class)
+	override fun reload(repository: NEURepository) {
+		val j = itemRecacheScope
+		j?.cancel("New reload invoked")
 		cache.clear()
 		isFlawless = true
 		if (TestUtil.isInTest) return
-		job = Firmament.coroutineScope.launch {
-			val items = repository.items?.items ?: return@launch
-			items.values.forEach {
-				it.asItemStack() // Rebuild cache
-			}
+		val newScope =
+			CoroutineScope(Firmament.coroutineScope.coroutineContext + SupervisorJob(Firmament.globalJob) + Dispatchers.Default)
+		val items = repository.items?.items
+		newScope.launch {
+			val items = items ?: return@launch
+			items.values.chunked(500).map { chunk ->
+				async {
+					chunk.forEach {
+						it.asItemStack() // Rebuild cache
+					}
+				}
+			}.awaitAll()
 		}
+		itemRecacheScope = newScope
 	}
 
 	fun coinItem(coinAmount: Int): ItemStack {

@@ -353,7 +353,9 @@ data class SBItemStack constructor(
 	}
 
 	// TODO: avoid instantiating the item stack here
+	@ExpensiveItemCacheApi
 	val itemType: ItemType? get() = ItemType.fromItemStack(asImmutableItemStack())
+	@ExpensiveItemCacheApi
 	val rarity: Rarity? get() = Rarity.fromItem(asImmutableItemStack())
 
 	private var itemStack_: ItemStack? = null
@@ -364,6 +366,7 @@ data class SBItemStack constructor(
 				group("power").toInt()
 			} ?: 0
 
+	@ExpensiveItemCacheApi
 	private val itemStack: ItemStack
 		get() {
 			val itemStack = itemStack_ ?: run {
@@ -437,15 +440,18 @@ data class SBItemStack constructor(
 		return false
 	}
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	fun asLazyImmutableItemStack(): ItemStack? {
 		if (isWarm()) return asImmutableItemStack()
 		return null
 	}
 
-	fun asImmutableItemStack(): ItemStack {
+	@ExpensiveItemCacheApi
+	fun asImmutableItemStack(): ItemStack { // TODO: add a "or fallback to painting" option to asLazyImmutableItemStack to be used in more places.
 		return itemStack
 	}
 
+	@ExpensiveItemCacheApi
 	fun asCopiedItemStack(): ItemStack {
 		return itemStack.copy()
 	}
