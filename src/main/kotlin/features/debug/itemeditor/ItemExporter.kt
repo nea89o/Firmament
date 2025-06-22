@@ -106,12 +106,18 @@ class ItemExporter(var itemStack: ItemStack) {
 		// TODO: calculate hideflags
 		legacyNbt.put("HideFlags", NbtInt.of(254))
 		copyUnbreakable()
+		copyItemModel()
 		copyExtraAttributes()
 		copyLegacySkullNbt()
 		copyDisplay()
 		copyEnchantments()
 		copyEnchantGlint()
 		// TODO: copyDisplay
+	}
+
+	private fun copyItemModel() {
+		val itemModel = itemStack.get(DataComponentTypes.ITEM_MODEL) ?: return
+		legacyNbt.put("ItemModel", NbtString.of(itemModel.toString()))
 	}
 
 	private fun copyDisplay() {

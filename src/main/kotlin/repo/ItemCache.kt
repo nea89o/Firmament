@@ -31,6 +31,7 @@ import net.minecraft.nbt.NbtString
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.RepoManager.initialize
 import moe.nea.firmament.util.LegacyFormattingCode
@@ -147,10 +148,14 @@ object ItemCache : IReloadable {
 				ItemStack.fromNbt(MC.defaultRegistries, modernItemTag).getOrNull() ?: return brokenItemStack(this)
 			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
 			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)
-			val extraAttributes = oldItemTag.getCompound("tag").flatMap { it.getCompound("ExtraAttributes") }
+			val tag = oldItemTag.getCompound("tag")
+			val extraAttributes = tag.flatMap { it.getCompound("ExtraAttributes") }
 				.getOrNull()
 			if (extraAttributes != null)
 				itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
+			val itemModel = tag.flatMap { it.getString("ItemModel") }.getOrNull()
+			if (itemModel != null)
+				itemInstance.set(DataComponentTypes.ITEM_MODEL, Identifier.of(itemModel))
 			return itemInstance
 		} catch (e: Exception) {
 			e.printStackTrace()
