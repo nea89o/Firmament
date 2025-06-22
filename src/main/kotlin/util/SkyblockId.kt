@@ -132,6 +132,12 @@ fun ItemStack.modifyExtraAttributes(block: (NbtCompound) -> Unit) {
 	set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(baseNbt))
 }
 
+val ItemStack.timestampString: String?
+	get() = extraAttributes.getString("timestamp").getOrNull()?.takeIf { it.isNotBlank() }
+
+val ItemStack.timestampLong: Long?
+	get() = extraAttributes.getLong("timestamp").getOrNull()
+
 val ItemStack.skyblockUUIDString: String?
 	get() = extraAttributes.getString("uuid").getOrNull()?.takeIf { it.isNotBlank() }
 

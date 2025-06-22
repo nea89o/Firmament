@@ -1,6 +1,8 @@
 package moe.nea.firmament.features.debug
 
 import com.mojang.serialization.JsonOps
+import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.SkullBlock
 import net.minecraft.block.entity.SkullBlockEntity
@@ -40,6 +42,9 @@ import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.iterableArmorItems
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.skyBlockId
+import moe.nea.firmament.util.grey
+import moe.nea.firmament.util.timestampLong
+import moe.nea.firmament.util.timestampString
 import moe.nea.firmament.util.tr
 
 object PowerUserTools : FirmamentFeature {
@@ -47,6 +52,7 @@ object PowerUserTools : FirmamentFeature {
 		get() = "power-user"
 
 	object TConfig : ManagedConfig(identifier, Category.DEV) {
+		val showTimestamp by toggle("show-timestamp") { false }
 		val showItemIds by toggle("show-item-id") { false }
 		val copyItemId by keyBindingWithDefaultUnbound("copy-item-id")
 		val copyTexturePackId by keyBindingWithDefaultUnbound("copy-texture-pack-id")
@@ -57,6 +63,7 @@ object PowerUserTools : FirmamentFeature {
 		val copyItemStack by keyBindingWithDefaultUnbound("copy-item-stack")
 		val copyTitle by keyBindingWithDefaultUnbound("copy-title")
 		val exportItemStackToRepo by keyBindingWithDefaultUnbound("export-item-stack")
+
 	}
 
 	override val config
@@ -225,7 +232,7 @@ object PowerUserTools : FirmamentFeature {
 	fun addItemId(it: ItemTooltipEvent) {
 		if (TConfig.showItemIds) {
 			val id = it.stack.skyBlockId ?: return
-			it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.skyblockid", id.neuItem))
+			it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.skyblockid", id.neuItem).grey())
 		}
 		val (item, text) = lastCopiedStack ?: return
 		if (!ItemStack.areEqual(item, it.stack)) {
@@ -234,6 +241,38 @@ object PowerUserTools : FirmamentFeature {
 		}
 		lastCopiedStackViewTime = 0
 		it.lines.add(text)
+	}
+
+	@Subscribe
+	fun addTimestamp(it: ItemTooltipEvent) {
+		if (TConfig.showTimestamp) {
+			val timestampString = it.stack.timestampString
+			if(timestampString == null) {
+				val timestampLong = it.stack.timestampLong
+				if(timestampLong != null) {
+					val realTimestamp = getDateTime(timestampLong.toString());
+					it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.timestamp", realTimestamp).grey())
+				}
+			}else{
+				it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.timestamp", timestampString).grey())
+			}
+
+
+		}
+		return
+	}
+
+	fun getDateTime(s: String): String? {
+		try {
+			if(s.endsWith("L")){
+				s.dropLast(1);
+			}
+			val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS z")
+			val netDate = Date(s.toLong())
+			return sdf.format(netDate)
+		} catch (e: Exception) {
+			return e.toString()
+		}
 	}
 
 
