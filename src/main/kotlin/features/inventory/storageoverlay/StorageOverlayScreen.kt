@@ -54,9 +54,11 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val MAIN_INVENTORY_Y = 9
 		val SCROLL_BAR_WIDTH = 8
 		val SCROLL_BAR_HEIGHT = 16
+		val CONTROL_X_INSET = 3
+		val CONTROL_Y_INSET = 5
 		val CONTROL_WIDTH = 70
-		val CONTROL_BACKGROUND_WIDTH = CONTROL_WIDTH + PLAYER_Y_INSET
-		val CONTROL_HEIGHT = 100
+		val CONTROL_BACKGROUND_WIDTH = CONTROL_WIDTH + CONTROL_X_INSET + 1
+		val CONTROL_HEIGHT = 50
 	}
 
 	var isExiting: Boolean = false
@@ -75,8 +77,8 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val y = height / 2 - (overviewHeight + PLAYER_HEIGHT) / 2
 		val playerX = width / 2 - PLAYER_WIDTH / 2
 		val playerY = y + overviewHeight - PLAYER_Y_INSET
-		val controlX = x - CONTROL_WIDTH
-		val controlY = y + overviewHeight / 2 - CONTROL_HEIGHT / 2
+		val controlX = playerX - CONTROL_WIDTH + CONTROL_X_INSET
+		val controlY = playerY - CONTROL_Y_INSET
 		val totalWidth = overviewWidth
 		val totalHeight = overviewHeight - PLAYER_Y_INSET + PLAYER_HEIGHT
 	}
@@ -489,7 +491,13 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val name = page.defaultName()
 		val pageHeight = inv.rows * SLOT_SIZE + 8 + textRenderer.fontHeight
 		if (slots != null && StorageOverlay.TConfig.outlineActiveStoragePage)
-			context.drawBorder(x, y + 3 + textRenderer.fontHeight, PAGE_WIDTH, inv.rows * SLOT_SIZE + 4, 0xFFFF00FF.toInt())
+			context.drawBorder(
+				x,
+				y + 3 + textRenderer.fontHeight,
+				PAGE_WIDTH,
+				inv.rows * SLOT_SIZE + 4,
+				0xFFFF00FF.toInt()
+			)
 		context.drawText(
 			textRenderer, Text.literal(name), x + 6, y + 3,
 			if (slots == null) 0xFFFFFFFF.toInt() else 0xFFFFFF00.toInt(), true
