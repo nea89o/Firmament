@@ -94,6 +94,7 @@ object ItemExporter {
 			it.displayNameAccordingToNbt = Text.literal(title)
 			it.loreAccordingToNbt = listOf(Text.literal(""))
 			it.setSkyBlockId(skyblockId)
+			extra(it) // LOL
 		})
 		MC.sendChat(tr("firmament.repo.export.stub", "Exported a stub item for $skyblockId"))
 	}
