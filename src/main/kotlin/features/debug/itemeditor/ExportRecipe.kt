@@ -1,19 +1,27 @@
 package moe.nea.firmament.features.debug.itemeditor
 
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import net.minecraft.client.network.ClientPlayerEntity
+import net.minecraft.entity.decoration.ArmorStandEntity
+import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
+import moe.nea.firmament.events.WorldKeyboardEvent
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.repo.ItemNameLookup
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SHORT_NUMBER_FORMAT
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.async.waitForTextInput
 import moe.nea.firmament.util.ifDropLast
 import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.mc.setSkullOwner
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.red
 import moe.nea.firmament.util.removeColorCodes
@@ -32,9 +40,45 @@ object ExportRecipe {
 		val x = it % 3
 		val y = it / 3
 
-		(xNames[x].toString() + yNames[y]) to x + y * 9 + 10
+		(yNames[y].toString() + xNames[x].toString()) to x + y * 9 + 10
 	}
 	val resultSlot = 25
+
+	@Subscribe
+	fun exportNpcLocation(event: WorldKeyboardEvent) {
+		if (!event.matches(PowerUserTools.TConfig.exportNpcLocation)) {
+			return
+		}
+		val entity = MC.instance.targetedEntity
+		if (entity == null) {
+			MC.sendChat(tr("firmament.repo.export.npc.noentity", "Could not find entity to export"))
+			return
+		}
+		Firmament.coroutineScope.launch {
+			val guessName = entity.world.getEntitiesByClass(
+				ArmorStandEntity::class.java,
+				entity.boundingBox.expand(0.1),
+				{ !it.name.string.contains("CLICK") })
+				.firstOrNull()?.customName?.string
+				?: ""
+			val reply = waitForTextInput("$guessName (NPC)", "Export stub")
+			val id = generateName(reply)
+			ItemExporter.exportStub(id, reply) {
+				val playerEntity = entity as? ClientPlayerEntity
+				val textureUrl = playerEntity?.skinTextures?.textureUrl
+				if (textureUrl != null)
+					it.setSkullOwner(playerEntity.uuid, textureUrl)
+			}
+			ItemExporter.modifyJson(id) {
+				val mutJson = it.toMutableMap()
+				mutJson["island"] = JsonPrimitive(SBData.skyblockLocation?.locrawMode ?: "unknown")
+				mutJson["x"] = JsonPrimitive(entity.blockX)
+				mutJson["y"] = JsonPrimitive(entity.blockY)
+				mutJson["z"] = JsonPrimitive(entity.blockZ)
+				JsonObject(mutJson)
+			}
+		}
+	}
 
 	@Subscribe
 	fun onRecipeKeyBind(event: HandledScreenKeyPressedEvent) {
@@ -138,7 +182,7 @@ object ExportRecipe {
 	}
 
 	fun generateName(name: String): SkyblockId {
-		return SkyblockId(name.uppercase().replace(" ", "_"))
+		return SkyblockId(name.uppercase().replace(" ", "_").replace("(", "").replace(")", ""))
 	}
 
 	fun findStackableItemByName(name: String, fallbackToGenerated: Boolean = false): Pair<SkyblockId, Double>? {

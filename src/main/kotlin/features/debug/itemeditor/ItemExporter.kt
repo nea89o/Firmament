@@ -65,13 +65,20 @@ object ItemExporter {
 			exportItem(itemStack)
 	}
 
-	fun appendRecipe(skyblockId: SkyblockId, recipe: JsonObject) {
+	fun modifyJson(skyblockId: SkyblockId, modify: (JsonObject) -> JsonObject) {
 		val oldJson = Firmament.json.decodeFromString<JsonObject>(pathFor(skyblockId).readText())
-		val mutableJson = oldJson.toMutableMap()
-		val recipes = ((mutableJson["recipes"] as JsonArray?) ?: listOf()).toMutableList()
-		recipes.add(recipe)
-		mutableJson["recipes"] = JsonArray(recipes)
-		pathFor(skyblockId).writeText(Firmament.twoSpaceJson.encodeToString(JsonObject(mutableJson)))
+		val newJson = modify(oldJson)
+		pathFor(skyblockId).writeText(Firmament.twoSpaceJson.encodeToString(JsonObject(newJson)))
+	}
+
+	fun appendRecipe(skyblockId: SkyblockId, recipe: JsonObject) {
+		modifyJson(skyblockId) { oldJson ->
+			val mutableJson = oldJson.toMutableMap()
+			val recipes = ((mutableJson["recipes"] as JsonArray?) ?: listOf()).toMutableList()
+			recipes.add(recipe)
+			mutableJson["recipes"] = JsonArray(recipes)
+			JsonObject(mutableJson)
+		}
 	}
 
 	@Subscribe
@@ -82,7 +89,7 @@ object ItemExporter {
 		}
 	}
 
-	fun exportStub(skyblockId: SkyblockId, title: String) {
+	fun exportStub(skyblockId: SkyblockId, title: String, extra: (ItemStack) -> Unit = {}) {
 		exportItem(ItemStack(Items.PLAYER_HEAD).also {
 			it.displayNameAccordingToNbt = Text.literal(title)
 			it.loreAccordingToNbt = listOf(Text.literal(""))

@@ -35,6 +35,9 @@ import moe.nea.firmament.util.transformEachRecursively
 import moe.nea.firmament.util.unformattedString
 
 class LegacyItemExporter private constructor(var itemStack: ItemStack) {
+	init {
+	    require(!itemStack.isEmpty)
+	}
 	var lore = itemStack.loreAccordingToNbt
 	var name = itemStack.displayNameAccordingToNbt
 	val extraAttribs = itemStack.extraAttributes.copy()
