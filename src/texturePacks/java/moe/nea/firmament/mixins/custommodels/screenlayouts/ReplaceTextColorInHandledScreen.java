@@ -53,8 +53,8 @@ public class ReplaceTextColorInHandledScreen {
 		),
 		allow = 1,
 		require = 1)
-	private int replacePlayerShadow(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, boolean shadow, Operation<Integer> original) {
-		var textOverride = CustomScreenLayouts.getTextMover(CustomScreenLayouts.CustomScreenLayout::getContainerTitle);
+	private int replacePlayerTitle(DrawContext instance, TextRenderer textRenderer, Text text, int x, int y, int color, boolean shadow, Operation<Integer> original) {
+		var textOverride = CustomScreenLayouts.getTextMover(CustomScreenLayouts.CustomScreenLayout::getPlayerTitle);
 		return original.call(instance, textRenderer,
 			textOverride.replaceText(text),
 			textOverride.replaceX(textRenderer, text, x),
