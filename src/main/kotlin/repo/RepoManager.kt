@@ -66,9 +66,11 @@ object RepoManager {
 	val essenceRecipeProvider = EssenceRecipeProvider()
 	val recipeCache = BetterRepoRecipeCache(essenceRecipeProvider, ReforgeStore)
 	val miningData = MiningRepoData()
+	val overlayData = ModernOverlaysData()
 
 	fun makeNEURepository(path: Path): NEURepository {
 		return NEURepository.of(path).apply {
+			registerReloadListener(overlayData)
 			registerReloadListener(ItemCache)
 			registerReloadListener(RepoItemTypeCache)
 			registerReloadListener(ExpLadders)

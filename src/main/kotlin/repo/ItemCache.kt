@@ -16,6 +16,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.io.path.readText
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.SharedConstants
 import net.minecraft.component.DataComponentTypes
@@ -28,11 +29,13 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtString
+import net.minecraft.nbt.StringNbtReader
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.repo.RepoManager.initialize
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.LegacyTagParser
@@ -67,6 +70,7 @@ object ItemCache : IReloadable {
 
 	@ExpensiveItemCacheApi
 	private fun NbtCompound.transformFrom10809ToModern() = convert189ToModern(this@transformFrom10809ToModern)
+	val currentSaveVersion = SharedConstants.getGameVersion().saveVersion.id
 
 	@ExpensiveItemCacheApi
 	fun convert189ToModern(nbtComponent: NbtCompound): NbtCompound? =
@@ -75,7 +79,7 @@ object ItemCache : IReloadable {
 				TypeReferences.ITEM_STACK,
 				Dynamic(NbtOps.INSTANCE, nbtComponent),
 				-1,
-				SharedConstants.getGameVersion().saveVersion.id
+				currentSaveVersion
 			).value as NbtCompound
 		} catch (e: Exception) {
 			isFlawless = false
@@ -138,24 +142,48 @@ object ItemCache : IReloadable {
 		return base
 	}
 
+	fun tryFindFromModernFormat(skyblockId: SkyblockId): NbtCompound? {
+		val overlayFile =
+			RepoManager.overlayData.getMostModernReadableOverlay(skyblockId, currentSaveVersion) ?: return null
+		val overlay = StringNbtReader.readCompound(overlayFile.path.readText())
+		val result = ExportedTestConstantMeta.SOURCE_CODEC.decode(
+			NbtOps.INSTANCE, overlay
+		).result().getOrNull() ?: return null
+		val meta = result.first
+		return df.update(
+			TypeReferences.ITEM_STACK,
+			Dynamic(NbtOps.INSTANCE, result.second),
+			meta.dataVersion,
+			currentSaveVersion
+		).value as NbtCompound
+	}
+
 	@ExpensiveItemCacheApi
 	private fun NEUItem.asItemStackNow(): ItemStack {
+
 		try {
+			var modernItemTag = tryFindFromModernFormat(this.skyblockId)
 			val oldItemTag = get10809CompoundTag()
-			val modernItemTag = oldItemTag.transformFrom10809ToModern()
-				?: return brokenItemStack(this)
+			var usedOldNbt = false
+			if (modernItemTag == null) {
+				usedOldNbt = true
+				modernItemTag = oldItemTag.transformFrom10809ToModern()
+					?: return brokenItemStack(this)
+			}
 			val itemInstance =
 				ItemStack.fromNbt(MC.defaultRegistries, modernItemTag).getOrNull() ?: return brokenItemStack(this)
+			if (usedOldNbt) {
+				val tag = oldItemTag.getCompound("tag")
+				val extraAttributes = tag.flatMap { it.getCompound("ExtraAttributes") }
+					.getOrNull()
+				if (extraAttributes != null)
+					itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
+				val itemModel = tag.flatMap { it.getString("ItemModel") }.getOrNull()
+				if (itemModel != null)
+					itemInstance.set(DataComponentTypes.ITEM_MODEL, Identifier.of(itemModel))
+			}
 			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
 			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)
-			val tag = oldItemTag.getCompound("tag")
-			val extraAttributes = tag.flatMap { it.getCompound("ExtraAttributes") }
-				.getOrNull()
-			if (extraAttributes != null)
-				itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
-			val itemModel = tag.flatMap { it.getString("ItemModel") }.getOrNull()
-			if (itemModel != null)
-				itemInstance.set(DataComponentTypes.ITEM_MODEL, Identifier.of(itemModel))
 			return itemInstance
 		} catch (e: Exception) {
 			e.printStackTrace()
