@@ -25,8 +25,8 @@ import moe.nea.firmament.util.useMatch
 object ExportRecipe {
 
 
-	val xNames = "ABC"
-	val yNames = "123"
+	val xNames = "123"
+	val yNames = "ABC"
 
 	val slotIndices = (0..<9).map {
 		val x = it % 3
