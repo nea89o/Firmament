@@ -21,6 +21,7 @@ import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.text.Text
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.events.ItemTooltipEvent
+import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.FirmFormatters
@@ -44,10 +45,13 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 		context.matrices.scale(bounds.width.toFloat() / 16F, bounds.height.toFloat() / 16F, 1f)
 		val item = entry.asItemEntry().value
 		context.drawItemWithoutEntity(item, -8, -8)
-		context.drawStackOverlay(minecraft.textRenderer, item, -8, -8,
-		                         if (entry.value.getStackSize() > 1000) FirmFormatters.shortFormat(entry.value.getStackSize()
-			                                                                                           .toDouble())
-		                         else null
+		context.drawStackOverlay(
+			minecraft.textRenderer, item, -8, -8,
+			if (entry.value.getStackSize() > 1000) FirmFormatters.shortFormat(
+				entry.value.getStackSize()
+					.toDouble()
+			)
+			else null
 		)
 		context.matrices.pop()
 	}
@@ -56,6 +60,16 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 	var canUseVanillaTooltipEvents = true
 
 	override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
+		if (!entry.value.isWarm() && !RepoManager.Config.perfectTooltips) {
+			val neuItem = entry.value.neuItem
+			if (neuItem != null) {
+				val lore = mutableListOf<Text>()
+				lore.add(Text.literal(neuItem.displayName))
+				neuItem.lore.mapTo(mutableListOf()) { Text.literal(it) }
+				return Tooltip.create(lore)
+			}
+		}
+
 		val stack = entry.value.asImmutableItemStack()
 
 		val lore = mutableListOf(stack.displayNameAccordingToNbt)
@@ -70,12 +84,14 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 				ErrorUtil.softError("Failed to use vanilla tooltips", ex)
 			}
 		} else {
-			ItemTooltipEvent.publish(ItemTooltipEvent(
-				stack,
-				tooltipContext.vanillaContext(),
-				TooltipType.BASIC,
-				lore
-			))
+			ItemTooltipEvent.publish(
+				ItemTooltipEvent(
+					stack,
+					tooltipContext.vanillaContext(),
+					TooltipType.BASIC,
+					lore
+				)
+			)
 		}
 		if (entry.value.getStackSize() > 1000 && lore.isNotEmpty())
 			lore.add(1, Text.literal("${entry.value.getStackSize()}x").darkGrey())

@@ -146,6 +146,10 @@ object ItemCache : IReloadable {
 		}
 	}
 
+	fun hasCacheFor(skyblockId: SkyblockId): Boolean {
+		return skyblockId.neuItem in cache
+	}
+
 	fun NEUItem?.asItemStack(idHint: SkyblockId? = null, loreReplacements: Map<String, String>? = null): ItemStack {
 		if (this == null) return brokenItemStack(null, idHint)
 		var s = cache[this.skyblockItemId]

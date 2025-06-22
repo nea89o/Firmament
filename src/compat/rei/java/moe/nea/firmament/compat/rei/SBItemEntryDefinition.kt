@@ -42,7 +42,12 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	}
 
 	override fun asFormattedText(entry: EntryStack<SBItemStack>, value: SBItemStack): Text {
-		return VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack())
+		val neuItem = entry.value.neuItem
+		return if (RepoManager.Config.perfectTooltips || entry.value.isWarm() || neuItem == null) {
+			VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack())
+		} else {
+			Text.literal(neuItem.displayName)
+		}
 	}
 
 	override fun hash(entry: EntryStack<SBItemStack>, value: SBItemStack, context: ComparisonContext): Long {
@@ -51,8 +56,10 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	}
 
 	override fun wildcard(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
-		return value.copy(stackSize = 1, petData = RepoManager.getPotentialStubPetData(value.skyblockId),
-		                  stars = 0, extraLore = listOf(), reforge = null)
+		return value.copy(
+			stackSize = 1, petData = RepoManager.getPotentialStubPetData(value.skyblockId),
+			stars = 0, extraLore = listOf(), reforge = null
+		)
 	}
 
 	override fun normalize(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {

@@ -46,6 +46,7 @@ object RepoManager {
 		}
 		val alwaysSuperCraft by toggle("enable-super-craft") { true }
 		var warnForMissingItemListMod by toggle("warn-for-missing-item-list-mod") { true }
+		val perfectTooltips by toggle("perfect-tooltips") { false }
 	}
 
 	val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash

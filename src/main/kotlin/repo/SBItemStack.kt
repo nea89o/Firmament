@@ -225,14 +225,21 @@ data class SBItemStack constructor(
 							Text.literal(
 								buffKind.prefix + formattedAmount +
 									statFormatting.postFix +
-									buffKind.postFix + " ")
-								.withColor(buffKind.color)))
+									buffKind.postFix + " "
+							)
+								.withColor(buffKind.color)
+						)
+				)
 			}
 
 			fun formatValue() =
-				Text.literal(FirmFormatters.formatCommas(valueNum ?: 0.0,
-				                                         1,
-				                                         includeSign = true) + statFormatting.postFix + " ")
+				Text.literal(
+					FirmFormatters.formatCommas(
+						valueNum ?: 0.0,
+						1,
+						includeSign = true
+					) + statFormatting.postFix + " "
+				)
 					.setStyle(Style.EMPTY.withColor(statFormatting.color))
 
 			val statFormatting = formattingOverrides[statName] ?: StatFormatting("", Formatting.GREEN)
@@ -413,13 +420,26 @@ data class SBItemStack constructor(
 			.append(starString(stars))
 		val isDungeon = ItemType.fromItemStack(itemStack)?.isDungeon ?: true
 		val truncatedStarCount = if (isDungeon) minOf(5, stars) else stars
-		appendEnhancedStats(itemStack,
-		                    baseStats
-			                    .filter { it.statFormatting.isStarAffected }
-			                    .associate {
-				                    it.statName to ((it.valueNum ?: 0.0) * (truncatedStarCount * 0.02))
-			                    },
-		                    BuffKind.STAR_BUFF)
+		appendEnhancedStats(
+			itemStack,
+			baseStats
+				.filter { it.statFormatting.isStarAffected }
+				.associate {
+					it.statName to ((it.valueNum ?: 0.0) * (truncatedStarCount * 0.02))
+				},
+			BuffKind.STAR_BUFF
+		)
+	}
+
+	fun isWarm(): Boolean {
+		if (itemStack_ != null) return true
+		if (ItemCache.hasCacheFor(skyblockId)) return true
+		return false
+	}
+
+	fun asLazyImmutableItemStack(): ItemStack? {
+		if (isWarm()) return asImmutableItemStack()
+		return null
 	}
 
 	fun asImmutableItemStack(): ItemStack {
