@@ -4,6 +4,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import net.minecraft.client.network.AbstractClientPlayerEntity
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import moe.nea.firmament.Firmament
@@ -64,7 +65,7 @@ object ExportRecipe {
 			val reply = waitForTextInput("$guessName (NPC)", "Export stub")
 			val id = generateName(reply)
 			ItemExporter.exportStub(id, reply) {
-				val playerEntity = entity as? ClientPlayerEntity
+				val playerEntity = entity as? AbstractClientPlayerEntity
 				val textureUrl = playerEntity?.skinTextures?.textureUrl
 				if (textureUrl != null)
 					it.setSkullOwner(playerEntity.uuid, textureUrl)
