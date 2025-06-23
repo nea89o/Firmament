@@ -86,6 +86,9 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 			string = string.replace("Lvl \\d+".toRegex(), "Lvl {LVL}")
 			Text.literal(string).setStyle(it.style)
 		}
+
+		if (lore.isEmpty())
+			lore = listOf(Text.empty())
 	}
 
 	private fun trimStats() {
@@ -162,6 +165,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	fun prepare() {
 		preprocess()
 		processNbt()
+		itemStack.extraAttributes = extraAttribs
 	}
 
 	fun exportJson(): JsonElement {

@@ -76,7 +76,7 @@ object ItemExporter {
 
 	fun ensureExported(itemStack: ItemStack) {
 		if (!isExported(itemStack.skyBlockId ?: return))
-			exportItem(itemStack)
+			MC.sendChat(exportItem(itemStack))
 	}
 
 	fun modifyJson(skyblockId: SkyblockId, modify: (JsonObject) -> JsonObject) {

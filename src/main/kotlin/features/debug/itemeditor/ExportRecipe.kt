@@ -28,6 +28,7 @@ import moe.nea.firmament.util.removeColorCodes
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.SkyBlockItems
 import moe.nea.firmament.util.tr
+import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.useMatch
 
 object ExportRecipe {
@@ -43,6 +44,7 @@ object ExportRecipe {
 		(yNames[y].toString() + xNames[x].toString()) to x + y * 9 + 10
 	}
 	val resultSlot = 25
+	val craftingTableSlut = resultSlot - 2
 
 	@Subscribe
 	fun exportNpcLocation(event: WorldKeyboardEvent) {
@@ -87,7 +89,8 @@ object ExportRecipe {
 		}
 		val title = event.screen.title.string
 		val sellSlot = event.screen.getSlotByIndex(49, false)?.stack
-		if (title.endsWith(" Recipe")) {
+		val craftingTableSlot = event.screen.getSlotByIndex(craftingTableSlut, false)
+		if (craftingTableSlot?.stack?.displayNameAccordingToNbt?.unformattedString == "Crafting Table") {
 			slotIndices.forEach { (_, index) ->
 				event.screen.getSlotByIndex(index, false)?.stack?.let(ItemExporter::ensureExported)
 			}
