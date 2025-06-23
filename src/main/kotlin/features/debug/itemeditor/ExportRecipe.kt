@@ -5,7 +5,6 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.client.network.AbstractClientPlayerEntity
-import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -64,7 +63,7 @@ object ExportRecipe {
 				?: ""
 			val reply = waitForTextInput("$guessName (NPC)", "Export stub")
 			val id = generateName(reply)
-			ItemExporter.exportStub(id, reply) {
+			ItemExporter.exportStub(id, "§9$reply") {
 				val playerEntity = entity as? AbstractClientPlayerEntity
 				val textureUrl = playerEntity?.skinTextures?.textureUrl
 				if (textureUrl != null)
@@ -117,7 +116,7 @@ object ExportRecipe {
 			val shopId = SkyblockId(title.uppercase().replace(" ", "_") + "_NPC")
 			if (!ItemExporter.isExported(shopId)) {
 				// TODO: export location + skin of last clicked npc
-				ItemExporter.exportStub(shopId, "$title (NPC)")
+				ItemExporter.exportStub(shopId, "§9$title (NPC)")
 			}
 			for (index in (9..9 * 5)) {
 				val item = event.screen.getSlotByIndex(index, false)?.stack ?: continue

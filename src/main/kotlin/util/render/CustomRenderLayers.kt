@@ -49,6 +49,15 @@ object CustomRenderPipelines {
 			.withFragmentShader(Firmament.identifier("circle_discard_color"))
 			.withBlend(BlendFunction.TRANSLUCENT)
 			.build()
+	val PARALLAX_CAPE_SHADER =
+		RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
+			.withLocation(Firmament.identifier("parallax_cape"))
+			.withFragmentShader(Firmament.identifier("cape/parallax"))
+			.withSampler("Sampler0")
+			.withSampler("Sampler1")
+			.withSampler("Sampler3")
+			.withUniform("Animation", UniformType.FLOAT)
+			.build()
 }
 
 object CustomRenderLayers {

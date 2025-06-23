@@ -1,0 +1,16 @@
+#SPDX-FileCopyrightText: 2025 Linnea Gräf <nea@nea.moe>
+#
+#SPDX-License-Identifier: CC0-1.0
+version = 1
+
+[[annotations]]
+path = ["firmament_star.png", "parallax_background.png", "parallax_template.png"]
+SPDX-License-Identifier = "CC-BY-4.0"
+SPDX-FileCopyrightText = ["ic22487", "Linnea Gräf"]
+
+[[annotations]]
+path = ["firm_static.png"]
+SPDX-License-Identifier = "CC-BY-4.0"
+SPDX-FileCopyrightText = ["ic22487", "kathund"]
+
+
