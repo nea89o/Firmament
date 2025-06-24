@@ -9,6 +9,7 @@ import moe.nea.firmament.events.subscription.Subscription
 import moe.nea.firmament.events.subscription.SubscriptionList
 import moe.nea.firmament.features.chat.AutoCompletions
 import moe.nea.firmament.features.chat.ChatLinks
+import moe.nea.firmament.features.chat.CopyChat
 import moe.nea.firmament.features.chat.QuickCommands
 import moe.nea.firmament.features.debug.DebugView
 import moe.nea.firmament.features.debug.DeveloperFeatures
@@ -69,6 +70,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 			loadFeature(PriceData)
 			loadFeature(Fixes)
 			loadFeature(Hud)
+			loadFeature(CopyChat)
 			loadFeature(DianaWaypoints)
 			loadFeature(ItemRarityCosmetics)
 			loadFeature(PickaxeAbility)
