@@ -8,6 +8,7 @@ import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.WorldKeyboardEvent
+import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
@@ -26,6 +27,7 @@ object Fixes : FirmamentFeature {
 		val noHurtCam by toggle("disable-hurt-cam") { false }
 		val hideSlotHighlights by toggle("hide-slot-highlights") { false }
 		val hideRecipeBook by toggle("hide-recipe-book") { false }
+		val forceMipmap by toggle("force-mipmap") { true }
 	}
 
 	override val config: ManagedConfig
@@ -55,6 +57,14 @@ object Fixes : FirmamentFeature {
 			), 0, 0, -1, true
 		)
 		it.context.matrices.pop()
+	}
+
+	@Subscribe
+	fun onWorldSwap(event: WorldReadyEvent) {
+		if (TConfig.forceMipmap && MC.options.mipmapLevels.value != 4) {
+			MC.options.mipmapLevels.value = 4
+			MC.instance.reloadResources()
+		}
 	}
 
 	@Subscribe

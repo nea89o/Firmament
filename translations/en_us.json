@@ -119,6 +119,8 @@
 	"firmament.config.fishing-warning.display-warning": "Display a warning when you are about to hook a fish",
 	"firmament.config.fishing-warning.highlight-wake-chain": "Highlight fishing particles",
 	"firmament.config.fixes": "Fixes",
+	"firmament.config.fixes.force-mipmap": "Force mipmap",
+	"firmament.config.fixes.force-mipmap.description": "Forces the mipmap value to be 4",
 	"firmament.config.fixes.auto-sprint": "Auto Sprint",
 	"firmament.config.fixes.auto-sprint-hud": "Sprint State Hud",
 	"firmament.config.fixes.auto-sprint-hud.description": "Show your current sprint state on your screen. Only visible if no auto sprint keybind is set.",
