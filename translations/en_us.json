@@ -152,6 +152,7 @@
 	"firmament.config.hud.ping-count-hud": "Ping Count Hud",
 	"firmament.config.hud.ping-count-hud.description": "Shows Ping.",
 	"firmament.config.hud.ping-count-hud.display": "Ping %s",
+	"firmament.config.hud.ping-count.description": "A HUD showing current Ping.",
 	"firmament.config.inventory-buttons-config": "Inventory Buttons",
 	"firmament.config.inventory-buttons-config.hover-text": "Hover Tooltip",
 	"firmament.config.inventory-buttons-config.hover-text.description": "Hovering over inventory buttons will show the command they run.",
