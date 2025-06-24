@@ -3,6 +3,7 @@ package moe.nea.firmament.features.chat
 import net.minecraft.text.OrderedText
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.util.reconstitute
 
 
 object CopyChat : FirmamentFeature {
@@ -17,12 +18,7 @@ object CopyChat : FirmamentFeature {
 		get() = TConfig
 
 	fun orderedTextToString(orderedText: OrderedText): String {
-		val sb = StringBuilder()
-		orderedText.accept { _, _, codePoint ->
-			sb.appendCodePoint(codePoint)
-			true
-		}
-		return sb.toString()
+		return orderedText.reconstitute().string
 	}
 
 

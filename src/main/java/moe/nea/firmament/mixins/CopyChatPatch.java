@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import java.lang.reflect.Field;
 import java.util.List;
 
 @Mixin(ChatScreen.class)
@@ -27,7 +26,7 @@ public class CopyChatPatch {
 		ChatHud chatHud = client.inGameHud.getChatHud();
 		int lineIndex = getChatLineIndex(chatHud, mouseY);
 		if (lineIndex < 0) return;
-		List<ChatHudLine.Visible> visible = getVisibleMessages(chatHud);
+		List<ChatHudLine.Visible> visible = ((AccessorChatHud) chatHud).getVisibleMessages_firmament();
 		if (lineIndex >= visible.size()) return;
 		ChatHudLine.Visible line = visible.get(lineIndex);
 		String text = CopyChat.INSTANCE.orderedTextToString(line.content());
@@ -35,14 +34,6 @@ public class CopyChatPatch {
 		chatHud.addMessage(Text.literal("Copied: ").append(text).formatted(Formatting.GRAY));
 		cir.setReturnValue(true);
 		cir.cancel();
-	}
-
-	@Unique
-	@SuppressWarnings("unchecked")
-	private List<ChatHudLine.Visible> getVisibleMessages(ChatHud chatHud) throws NoSuchFieldException, IllegalAccessException {
-		Field visibleMessagesField = ChatHud.class.getDeclaredField("visibleMessages");
-		visibleMessagesField.setAccessible(true);
-		return (List<ChatHudLine.Visible>) visibleMessagesField.get(chatHud);
 	}
 
 	@Unique
