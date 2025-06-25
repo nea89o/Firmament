@@ -23,6 +23,7 @@ object Fixes : FirmamentFeature {
 		val autoSprintHud by position("auto-sprint-hud", 80, 10) { Point(0.0, 1.0) }
 		val peekChat by keyBindingWithDefaultUnbound("peek-chat")
 		val hidePotionEffects by toggle("hide-mob-effects") { false }
+		val hidePotionEffectsHud by toggle("hide-potion-effects-hud") { false }
 		val noHurtCam by toggle("disable-hurt-cam") { false }
 		val hideSlotHighlights by toggle("hide-slot-highlights") { false }
 		val hideRecipeBook by toggle("hide-recipe-book") { false }

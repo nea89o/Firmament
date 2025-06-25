@@ -30,7 +30,7 @@ public class HudRenderEventsPatch {
 
 	@Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
 	public void hideStatusEffects(CallbackInfo ci) {
-		if (Fixes.TConfig.INSTANCE.getHidePotionEffects()) ci.cancel();
+		if (Fixes.TConfig.INSTANCE.getHidePotionEffectsHud()) ci.cancel();
 	}
 
 }
