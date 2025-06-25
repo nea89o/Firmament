@@ -29,6 +29,7 @@ import moe.nea.firmament.compat.rei.recipes.SBShopRecipe
 import moe.nea.firmament.events.HandledScreenPushREIEvent
 import moe.nea.firmament.features.inventory.CraftingOverlay
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.repo.recipes.SBCraftingRecipeRenderer
@@ -44,6 +45,7 @@ import moe.nea.firmament.util.unformattedString
 class FirmamentReiPlugin : REIClientPlugin {
 
 	companion object {
+		@ExpensiveItemCacheApi
 		fun EntryStack<SBItemStack>.asItemEntry(): EntryStack<ItemStack> {
 			return EntryStack.of(VanillaEntryTypes.ITEM, value.asImmutableItemStack())
 		}
@@ -51,6 +53,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 		val SKYBLOCK_ITEM_TYPE_ID = Identifier.of("firmament", "skyblockitems")
 	}
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	override fun registerTransferHandlers(registry: TransferHandlerRegistry) {
 		registry.register(TransferHandler { context ->
 			val screen = context.containerScreen

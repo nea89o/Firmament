@@ -3,6 +3,7 @@ package moe.nea.firmament.features.inventory
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.gui.config.ManagedConfig
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.repo.ItemCache.asItemStack
@@ -18,6 +19,7 @@ object ItemHotkeys {
 		val openGlobalTradeInterface by keyBindingWithDefaultUnbound("global-trade-interface")
 	}
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	@Subscribe
 	fun onHandledInventoryPress(event: HandledScreenKeyPressedEvent) {
 		if (!event.matches(TConfig.openGlobalTradeInterface)) {

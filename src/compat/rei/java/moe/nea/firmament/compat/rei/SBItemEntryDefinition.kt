@@ -15,6 +15,7 @@ import net.minecraft.registry.tag.TagKey
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
@@ -24,6 +25,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 		return o1.skyblockId == o2.skyblockId && o1.getStackSize() == o2.getStackSize()
 	}
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	override fun cheatsAs(entry: EntryStack<SBItemStack>?, value: SBItemStack): ItemStack {
 		return value.asCopiedItemStack()
 	}
@@ -41,8 +43,14 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 		return Stream.empty()
 	}
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	override fun asFormattedText(entry: EntryStack<SBItemStack>, value: SBItemStack): Text {
-		return VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack())
+		val neuItem = entry.value.neuItem
+		return if (RepoManager.Config.perfectRenders < RepoManager.PerfectRender.RENDER_AND_TEXT || entry.value.isWarm() || neuItem == null) {
+			VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack())
+		} else {
+			Text.literal(neuItem.displayName)
+		}
 	}
 
 	override fun hash(entry: EntryStack<SBItemStack>, value: SBItemStack, context: ComparisonContext): Long {
@@ -51,8 +59,10 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	}
 
 	override fun wildcard(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {
-		return value.copy(stackSize = 1, petData = RepoManager.getPotentialStubPetData(value.skyblockId),
-		                  stars = 0, extraLore = listOf(), reforge = null)
+		return value.copy(
+			stackSize = 1, petData = RepoManager.getPotentialStubPetData(value.skyblockId),
+			stars = 0, extraLore = listOf(), reforge = null
+		)
 	}
 
 	override fun normalize(entry: EntryStack<SBItemStack>?, value: SBItemStack): SBItemStack {

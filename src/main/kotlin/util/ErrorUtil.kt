@@ -29,12 +29,19 @@ object ErrorUtil {
 
 	inline fun softError(message: String, exception: Throwable) {
 		if (aggressiveErrors) throw IllegalStateException(message, exception)
-		else Firmament.logger.error(message, exception)
+		else logError(message, exception)
+	}
+
+	fun logError(message: String, exception: Throwable) {
+		Firmament.logger.error(message, exception)
+	}
+	fun logError(message: String) {
+		Firmament.logger.error(message)
 	}
 
 	inline fun softError(message: String) {
 		if (aggressiveErrors) error(message)
-		else Firmament.logger.error(message)
+		else logError(message)
 	}
 
 	fun <T> Result<T>.intoCatch(message: String): Catch<T> {

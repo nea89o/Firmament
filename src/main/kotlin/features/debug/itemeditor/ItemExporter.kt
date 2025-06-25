@@ -1,246 +1,183 @@
 package moe.nea.firmament.features.debug.itemeditor
 
+import com.mojang.brigadier.arguments.StringArgumentType
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.put
-import kotlin.concurrent.thread
 import kotlin.io.path.createParentDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.notExists
+import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
-import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtInt
+import net.minecraft.item.Items
 import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
-import net.minecraft.util.Unit
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
-import moe.nea.firmament.events.ClientStartedEvent
+import moe.nea.firmament.commands.get
+import moe.nea.firmament.commands.suggestsList
+import moe.nea.firmament.commands.thenArgument
+import moe.nea.firmament.commands.thenExecute
+import moe.nea.firmament.commands.thenLiteral
+import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
+import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.repo.RepoDownloadManager
-import moe.nea.firmament.util.HypixelPetInfo
+import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.LegacyTagWriter.Companion.toLegacyString
-import moe.nea.firmament.util.StringUtil.words
-import moe.nea.firmament.util.directLiteralStringContent
-import moe.nea.firmament.util.extraAttributes
+import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.focusedItemStack
-import moe.nea.firmament.util.getLegacyFormatString
-import moe.nea.firmament.util.json.toJsonArray
+import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.toNbtList
+import moe.nea.firmament.util.setSkyBlockId
 import moe.nea.firmament.util.skyBlockId
-import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.tr
-import moe.nea.firmament.util.transformEachRecursively
-import moe.nea.firmament.util.unformattedString
 
-class ItemExporter(var itemStack: ItemStack) {
-	var lore = itemStack.loreAccordingToNbt
-	var name = itemStack.displayNameAccordingToNbt
-	val extraAttribs = itemStack.extraAttributes.copy()
-	val legacyNbt = NbtCompound()
-	val warnings = mutableListOf<String>()
+object ItemExporter {
 
-	fun preprocess() {
-		// TODO: split up preprocess steps into preprocess actions that can be toggled in a ui
-		extraAttribs.remove("timestamp")
-		extraAttribs.remove("uuid")
-		extraAttribs.remove("modifier")
-		extraAttribs.getString("petInfo").ifPresent { petInfoJson ->
-			var petInfo = Firmament.json.decodeFromString<HypixelPetInfo>(petInfoJson)
-			petInfo = petInfo.copy(candyUsed = 0, heldItem = null, exp = 0.0, active = null, uuid = null)
-			extraAttribs.putString("petInfo", Firmament.tightJson.encodeToString(petInfo))
-		}
-		itemStack.skyBlockId?.let {
-			extraAttribs.putString("id", it.neuItem)
-		}
-		trimLore()
+	fun exportItem(itemStack: ItemStack): Text {
+		val exporter = LegacyItemExporter.createExporter(itemStack)
+		val json = exporter.exportJson()
+		val jsonFormatted = Firmament.twoSpaceJson.encodeToString(json)
+		val fileName = json.jsonObject["internalname"]!!.jsonPrimitive.content
+		val itemFile = RepoDownloadManager.repoSavedLocation.resolve("items").resolve("${fileName}.json")
+		itemFile.createParentDirectories()
+		itemFile.writeText(jsonFormatted)
+		val overlayFile = RepoDownloadManager.repoSavedLocation.resolve("itemsOverlay")
+			.resolve(ExportedTestConstantMeta.current.dataVersion.toString())
+			.resolve("${fileName}.snbt")
+		overlayFile.createParentDirectories()
+		overlayFile.writeText(exporter.exportModernSnbt().toPrettyString())
+		return tr(
+			"firmament.repoexport.success",
+			"Exported item to ${itemFile.relativeTo(RepoDownloadManager.repoSavedLocation)}${
+				exporter.warnings.joinToString(
+					""
+				) { "\nWarning: $it" }
+			}"
+		)
 	}
 
-	fun trimLore() {
-		val rarityIdx = lore.indexOfLast {
-			val firstWordInLine = it.unformattedString.words().filter { it.length > 2 }.firstOrNull()
-			firstWordInLine?.let(Rarity::fromString) != null
-		}
-		if (rarityIdx >= 0) {
-			lore = lore.subList(0, rarityIdx + 1)
-		}
-		deleteLineUntilNextSpace { it.startsWith("Held Item: ") }
-		deleteLineUntilNextSpace { it.startsWith("Progress to Level ") }
-		deleteLineUntilNextSpace { it.startsWith("MAX LEVEL") }
-		collapseWhitespaces()
+	fun pathFor(skyBlockId: SkyblockId) =
+		RepoManager.neuRepo.baseFolder.resolve("items/${skyBlockId.neuItem}.json")
 
-		name = name.transformEachRecursively {
-			var string = it.directLiteralStringContent ?: return@transformEachRecursively it
-			string = string.replace("Lvl \\d+".toRegex(), "Lvl {LVL}")
-			Text.literal(string).setStyle(it.style)
-		}
+	fun isExported(skyblockId: SkyblockId) =
+		pathFor(skyblockId).exists()
+
+	fun ensureExported(itemStack: ItemStack) {
+		if (!isExported(itemStack.skyBlockId ?: return))
+			MC.sendChat(exportItem(itemStack))
 	}
 
-	fun collapseWhitespaces() {
-		lore = (listOf(null as Text?) + lore).zipWithNext()
-			.filter { !it.first?.unformattedString.isNullOrBlank() || !it.second?.unformattedString.isNullOrBlank() }
-			.map { it.second!! }
+	fun modifyJson(skyblockId: SkyblockId, modify: (JsonObject) -> JsonObject) {
+		val oldJson = Firmament.json.decodeFromString<JsonObject>(pathFor(skyblockId).readText())
+		val newJson = modify(oldJson)
+		pathFor(skyblockId).writeText(Firmament.twoSpaceJson.encodeToString(JsonObject(newJson)))
 	}
 
-	fun deleteLineUntilNextSpace(search: (String) -> Boolean) {
-		val idx = lore.indexOfFirst { search(it.unformattedString) }
-		if (idx < 0) return
-		val l = lore.toMutableList()
-		val p = l.subList(idx, l.size)
-		val nextBlank = p.indexOfFirst { it.unformattedString.isEmpty() }
-		if (nextBlank < 0)
-			p.clear()
-		else
-			p.subList(0, nextBlank).clear()
-		lore = l
-	}
-
-	fun processNbt() {
-		// TODO: calculate hideflags
-		legacyNbt.put("HideFlags", NbtInt.of(254))
-		copyUnbreakable()
-		copyExtraAttributes()
-		copyLegacySkullNbt()
-		copyDisplay()
-		copyEnchantments()
-		copyEnchantGlint()
-		// TODO: copyDisplay
-	}
-
-	private fun copyDisplay() {
-		legacyNbt.put("display", NbtCompound().apply {
-			put("Lore", lore.map { NbtString.of(it.getLegacyFormatString(trimmed = true)) }.toNbtList())
-			putString("Name", name.getLegacyFormatString(trimmed = true))
-		})
-	}
-
-	fun exportJson(): JsonElement {
-		preprocess()
-		processNbt()
-		return buildJsonObject {
-			val (itemId, damage) = legacyifyItemStack()
-			put("itemid", itemId)
-			put("displayname", name.getLegacyFormatString(trimmed = true))
-			put("nbttag", legacyNbt.toLegacyString())
-			put("damage", damage)
-			put("lore", lore.map { it.getLegacyFormatString(trimmed = true) }.toJsonArray())
-			val sbId = itemStack.skyBlockId
-			if (sbId == null)
-				warnings.add("Could not find skyblock id")
-			put("internalname", sbId?.neuItem)
-			put("clickcommand", "")
-			put("crafttext", "")
-			put("modver", "Firmament ${Firmament.version.friendlyString}")
-			put("infoType", "")
-			put("info", JsonArray(listOf()))
-		}
-
-	}
-
-	companion object {
-		@Subscribe
-		fun load(event: ClientStartedEvent) {
-			thread(start = true, name = "ItemExporter Meta Load Thread") {
-				LegacyItemData.itemLut
-			}
-		}
-
-		@Subscribe
-		fun onKeyBind(event: HandledScreenKeyPressedEvent) {
-			if (event.matches(PowerUserTools.TConfig.exportItemStackToRepo)) {
-				val itemStack = event.screen.focusedItemStack ?: return
-				val exporter = ItemExporter(itemStack)
-				val json = exporter.exportJson()
-				val jsonFormatted = Firmament.twoSpaceJson.encodeToString(json)
-				val itemFile = RepoDownloadManager.repoSavedLocation.resolve("items")
-					.resolve("${json.jsonObject["internalname"]!!.jsonPrimitive.content}.json")
-				itemFile.createParentDirectories()
-				itemFile.writeText(jsonFormatted)
-				PowerUserTools.lastCopiedStack = Pair(
-					itemStack,
-					tr(
-						"firmament.repoexport.success",
-						"Exported item to ${itemFile.relativeTo(RepoDownloadManager.repoSavedLocation)}${
-							exporter.warnings.joinToString(
-								""
-							) { "\nWarning: $it" }
-						}"
-					)
-				)
-			}
+	fun appendRecipe(skyblockId: SkyblockId, recipe: JsonObject) {
+		modifyJson(skyblockId) { oldJson ->
+			val mutableJson = oldJson.toMutableMap()
+			val recipes = ((mutableJson["recipes"] as JsonArray?) ?: listOf()).toMutableList()
+			recipes.add(recipe)
+			mutableJson["recipes"] = JsonArray(recipes)
+			JsonObject(mutableJson)
 		}
 	}
 
-	fun copyEnchantGlint() {
-		if (itemStack.get(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE) == true) {
-			val ench = legacyNbt.getListOrEmpty("ench")
-			legacyNbt.put("ench", ench)
-		}
-	}
-
-	private fun copyUnbreakable() {
-		if (itemStack.get(DataComponentTypes.UNBREAKABLE) == Unit.INSTANCE) {
-			legacyNbt.putBoolean("Unbreakable", true)
-		}
-	}
-
-	fun copyEnchantments() {
-		val enchantments = itemStack.get(DataComponentTypes.ENCHANTMENTS)?.takeIf { !it.isEmpty } ?: return
-		val enchTag = legacyNbt.getListOrEmpty("ench")
-		legacyNbt.put("ench", enchTag)
-		enchantments.enchantmentEntries.forEach { entry ->
-			val id = entry.key.key.get().value
-			val legacyId = LegacyItemData.enchantmentLut[id]
-			if (legacyId == null) {
-				warnings.add("Could not find legacy enchantment id for ${id}")
-				return@forEach
-			}
-			enchTag.add(NbtCompound().apply {
-				putShort("lvl", entry.intValue.toShort())
-				putShort(
-					"id",
-					legacyId.id.toShort()
-				)
-			})
-		}
-	}
-
-	fun copyExtraAttributes() {
-		legacyNbt.put("ExtraAttributes", extraAttribs)
-	}
-
-	fun copyLegacySkullNbt() {
-		val profile = itemStack.get(DataComponentTypes.PROFILE) ?: return
-		legacyNbt.put("SkullOwner", NbtCompound().apply {
-			profile.id.ifPresent {
-				putString("Id", it.toString())
-			}
-			putBoolean("hypixelPopulated", true)
-			put("Properties", NbtCompound().apply {
-				profile.properties().forEach { prop, value ->
-					val list = getListOrEmpty(prop)
-					put(prop, list)
-					list.add(NbtCompound().apply {
-						value.signature?.let {
-							putString("Signature", it)
+	@Subscribe
+	fun onCommand(event: CommandEvent.SubCommand) {
+		event.subcommand("dev") {
+			thenLiteral("reexportlore") {
+				thenArgument("itemid", StringArgumentType.string()) { itemid ->
+					suggestsList { RepoManager.neuRepo.items.items.keys }
+					thenExecute {
+						val itemid = SkyblockId(get(itemid))
+						if (pathFor(itemid).notExists()) {
+							MC.sendChat(
+								tr(
+									"firmament.repo.export.relore.fail",
+									"Could not find json file to relore for ${itemid}"
+								)
+							)
 						}
-						putString("Value", value.value)
-						putString("Name", value.name)
-					})
+						fixLoreNbtFor(itemid)
+						MC.sendChat(
+							tr(
+								"firmament.repo.export.relore",
+								"Updated lore / display name for $itemid"
+							)
+						)
+					}
 				}
-			})
-		})
+				thenLiteral("all") {
+					thenExecute {
+						var i = 0
+						val chunkSize = 100
+						val items = RepoManager.neuRepo.items.items.keys
+						Firmament.coroutineScope.launch {
+							items.chunked(chunkSize).forEach { key ->
+								MC.sendChat(
+									tr(
+										"firmament.repo.export.relore.progress",
+										"Updated lore / display for ${i * chunkSize} / ${items.size}."
+									)
+								)
+								i++
+								key.forEach {
+									fixLoreNbtFor(SkyblockId(it))
+								}
+							}
+							MC.sendChat(tr("firmament.repo.export.relore.alldone", "All lores updated."))
+						}
+					}
+				}
+			}
+		}
 	}
 
-	fun legacyifyItemStack(): LegacyItemData.LegacyItemType {
-		// TODO: add a default here
-		return LegacyItemData.itemLut[itemStack.item]!!
+	fun fixLoreNbtFor(itemid: SkyblockId) {
+		modifyJson(itemid) {
+			val mutJson = it.toMutableMap()
+			val legacyTag = LegacyTagParser.parse(mutJson["nbttag"]!!.jsonPrimitive.content)
+			val display = legacyTag.getCompoundOrEmpty("display")
+			legacyTag.put("display", display)
+			display.putString("Name", mutJson["displayname"]!!.jsonPrimitive.content)
+			display.put(
+				"Lore",
+				(mutJson["lore"] as JsonArray).map { NbtString.of(it.jsonPrimitive.content) }
+					.toNbtList()
+			)
+			mutJson["nbttag"] = JsonPrimitive(legacyTag.toLegacyString())
+			JsonObject(mutJson)
+		}
+	}
+
+	@Subscribe
+	fun onKeyBind(event: HandledScreenKeyPressedEvent) {
+		if (event.matches(PowerUserTools.TConfig.exportItemStackToRepo)) {
+			val itemStack = event.screen.focusedItemStack ?: return
+			PowerUserTools.lastCopiedStack = (itemStack to exportItem(itemStack))
+		}
+	}
+
+	fun exportStub(skyblockId: SkyblockId, title: String, extra: (ItemStack) -> Unit = {}) {
+		exportItem(ItemStack(Items.PLAYER_HEAD).also {
+			it.displayNameAccordingToNbt = Text.literal(title)
+			it.loreAccordingToNbt = listOf(Text.literal(""))
+			it.setSkyBlockId(skyblockId)
+			extra(it) // LOL
+		})
+		MC.sendChat(tr("firmament.repo.export.stub", "Exported a stub item for $skyblockId"))
 	}
 }

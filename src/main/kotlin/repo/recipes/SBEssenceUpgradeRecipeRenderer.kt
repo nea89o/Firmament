@@ -9,6 +9,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.EssenceRecipeProvider
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
@@ -62,6 +63,7 @@ object SBEssenceUpgradeRecipeRenderer : GenericRecipeRenderer<EssenceRecipeProvi
 		return listOfNotNull(SBItemStack(recipe.itemId))
 	}
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	override val icon: ItemStack get() = SBItemStack(SkyblockId("ESSENCE_WITHER")).asImmutableItemStack()
 	override val title: Text = tr("firmament.category.essence", "Essence Upgrades")
 	override val identifier: Identifier = Firmament.identifier("essence_upgrade")

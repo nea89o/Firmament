@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.InitLevel
 
 // TODO: add support for mouse keybindings
 @Serializable
@@ -113,8 +114,11 @@ data class SavedKeyBinding(
 		if (shift) {
 			stroke.append("SHIFT + ") // TODO: translations?
 		}
-
-		stroke.append(InputUtil.Type.KEYSYM.createFromCode(keyCode).localizedText)
+		if (InitLevel.isAtLeast(InitLevel.RENDER_INIT)) {
+			stroke.append(InputUtil.Type.KEYSYM.createFromCode(keyCode).localizedText)
+		} else {
+			stroke.append(keyCode.toString())
+		}
 		return stroke
 	}
 

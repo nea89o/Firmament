@@ -1,6 +1,9 @@
 package moe.nea.firmament.features.texturepack
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
@@ -8,12 +11,16 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
 import net.minecraft.screen.slot.Slot
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.profiler.Profiler
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.events.ScreenChangeEvent
+import moe.nea.firmament.features.texturepack.CustomScreenLayouts.Alignment.CENTER
+import moe.nea.firmament.features.texturepack.CustomScreenLayouts.Alignment.LEFT
+import moe.nea.firmament.features.texturepack.CustomScreenLayouts.Alignment.RIGHT
 import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.util.ErrorUtil.intoCatch
 import moe.nea.firmament.util.IdentifierSerializer
@@ -25,6 +32,18 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 		val predicates: Preds,
 		val background: BackgroundReplacer? = null,
 		val slots: List<SlotReplacer> = listOf(),
+		val playerTitle: TitleReplacer? = null,
+		val containerTitle: TitleReplacer? = null,
+		val repairCostTitle: TitleReplacer? = null,
+		val nameField: ComponentMover? = null,
+	)
+
+	@Serializable
+	data class ComponentMover(
+		val x: Int,
+		val y: Int,
+		val width: Int? = null,
+		val height: Int? = null,
 	)
 
 	@Serializable
@@ -87,6 +106,54 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 		}
 	}
 
+	@Serializable
+	enum class Alignment {
+		@SerialName("left")
+		LEFT,
+
+		@SerialName("center")
+		CENTER,
+
+		@SerialName("right")
+		RIGHT
+	}
+
+	@Serializable
+	data class TitleReplacer(
+		val x: Int? = null,
+		val y: Int? = null,
+		val align: Alignment = Alignment.LEFT,
+		val replace: String? = null
+	) {
+		@Transient
+		val replacedText: Text? = replace?.let(Text::literal)
+
+		fun replaceText(text: Text): Text {
+			if (replacedText != null) return replacedText
+			return text
+		}
+
+		fun replaceY(y: Int): Int {
+			return this.y ?: y
+		}
+
+		fun replaceX(font: TextRenderer, text: Text, x: Int): Int {
+			val baseX = this.x ?: x
+			return baseX + when (this.align) {
+				LEFT -> 0
+				CENTER -> -font.getWidth(text) / 2
+				RIGHT -> -font.getWidth(text)
+			}
+		}
+
+		/**
+		 * Not technically part of the package, but it does allow for us to later on seamlessly integrate a color option into this class as well
+		 */
+		fun replaceColor(text: Text, color: Int): Int {
+			return CustomTextColors.mapTextColor(text, color)
+		}
+	}
+
 
 	@Subscribe
 	fun onStart(event: FinalizeResourceManagerEvent) {
@@ -119,6 +186,16 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 
 	@get:JvmStatic
 	var activeScreenOverride = null as CustomScreenLayout?
+
+	val DO_NOTHING_TEXT_REPLACER = TitleReplacer()
+
+	@JvmStatic
+	fun <T>getMover(selector: (CustomScreenLayout)-> (T?)) =
+		activeScreenOverride?.let(selector)
+
+	@JvmStatic
+	fun getTextMover(selector: (CustomScreenLayout) -> (TitleReplacer?)) =
+		getMover(selector) ?: DO_NOTHING_TEXT_REPLACER
 
 	@Subscribe
 	fun onScreenOpen(event: ScreenChangeEvent) {

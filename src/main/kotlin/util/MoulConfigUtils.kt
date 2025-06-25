@@ -9,7 +9,6 @@ import io.github.notenoughupdates.moulconfig.gui.GuiContext
 import io.github.notenoughupdates.moulconfig.gui.GuiImmediateContext
 import io.github.notenoughupdates.moulconfig.gui.KeyboardEvent
 import io.github.notenoughupdates.moulconfig.gui.MouseEvent
-import io.github.notenoughupdates.moulconfig.gui.component.PanelComponent
 import io.github.notenoughupdates.moulconfig.observer.GetSetter
 import io.github.notenoughupdates.moulconfig.platform.ModernRenderContext
 import io.github.notenoughupdates.moulconfig.xml.ChildCount
@@ -21,7 +20,6 @@ import java.io.File
 import java.util.function.Supplier
 import javax.xml.namespace.QName
 import me.shedaniel.math.Color
-import org.jetbrains.annotations.Unmodifiable
 import org.w3c.dom.Element
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -41,13 +39,15 @@ object MoulConfigUtils {
 	fun main(args: Array<out String>) {
 		generateXSD(File("MoulConfig.xsd"), XMLUniverse.MOULCONFIG_XML_NS)
 		generateXSD(File("MoulConfig.Firmament.xsd"), firmUrl)
-		File("wrapper.xsd").writeText("""
+		File("wrapper.xsd").writeText(
+			"""
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:import namespace="http://notenoughupdates.org/moulconfig" schemaLocation="MoulConfig.xsd"/>
     <xs:import namespace="http://firmament.nea.moe/moulconfig" schemaLocation="MoulConfig.Firmament.xsd"/>
 </xs:schema>
-        """.trimIndent())
+        """.trimIndent()
+		)
 	}
 
 	val firmUrl = "http://firmament.nea.moe/moulconfig"
@@ -96,9 +96,11 @@ object MoulConfigUtils {
 			override fun createInstance(context: XMLContext<*>, element: Element): FirmHoverComponent {
 				return FirmHoverComponent(
 					context.getChildFragment(element),
-					context.getPropertyFromAttribute(element,
-					                                 QName("lines"),
-					                                 List::class.java) as Supplier<List<String>>,
+					context.getPropertyFromAttribute(
+						element,
+						QName("lines"),
+						List::class.java
+					) as Supplier<List<String>>,
 					context.getPropertyFromAttribute(element, QName("delay"), Duration::class.java, 0.6.seconds),
 				)
 			}
@@ -223,14 +225,19 @@ object MoulConfigUtils {
 		generator.dumpToFile(file)
 	}
 
-	fun loadScreen(name: String, bindTo: Any, parent: Screen?): Screen {
-		return object : GuiComponentWrapper(loadGui(name, bindTo)) {
+	fun wrapScreen(guiContext: GuiContext, parent: Screen?, onClose: () -> Unit = {}): Screen {
+		return object : GuiComponentWrapper(guiContext) {
 			override fun close() {
 				if (context.onBeforeClose() == CloseEventListener.CloseAction.NO_OBJECTIONS_TO_CLOSE) {
 					client!!.setScreen(parent)
+					onClose()
 				}
 			}
 		}
+	}
+
+	fun loadScreen(name: String, bindTo: Any, parent: Screen?): Screen {
+		return wrapScreen(loadGui(name, bindTo), parent)
 	}
 
 	// TODO: move this utility into moulconfig (also rework guicontext into an interface so i can make this mesh better into vanilla)
@@ -288,12 +295,14 @@ object MoulConfigUtils {
 		assert(drawContext?.isUntranslatedGuiDrawContext() != false)
 		val context = drawContext?.let(::ModernRenderContext)
 			?: IMinecraft.instance.provideTopLevelRenderContext()
-		val immContext = GuiImmediateContext(context,
-		                                     0, 0, 0, 0,
-		                                     mouseX, mouseY,
-		                                     mouseX, mouseY,
-		                                     mouseX.toFloat(),
-		                                     mouseY.toFloat())
+		val immContext = GuiImmediateContext(
+			context,
+			0, 0, 0, 0,
+			mouseX, mouseY,
+			mouseX, mouseY,
+			mouseX.toFloat(),
+			mouseY.toFloat()
+		)
 		return immContext
 	}
 

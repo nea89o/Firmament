@@ -29,6 +29,7 @@ import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.mining.PickaxeAbility
 import moe.nea.firmament.features.mining.PristineProfitTracker
+import moe.nea.firmament.features.misc.Hud
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.features.world.Waypoints
 import moe.nea.firmament.util.compatloader.ICompatMeta
@@ -60,7 +61,6 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 			loadFeature(PowerUserTools)
 			loadFeature(Waypoints)
 			loadFeature(ChatLinks)
-			loadFeature(InventoryButtons)
 			loadFeature(CompatibliltyFeatures)
 			loadFeature(AnniversaryFeatures)
 			loadFeature(QuickCommands)
@@ -68,6 +68,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 			loadFeature(SaveCursorPosition)
 			loadFeature(PriceData)
 			loadFeature(Fixes)
+			loadFeature(Hud)
 			loadFeature(DianaWaypoints)
 			loadFeature(ItemRarityCosmetics)
 			loadFeature(PickaxeAbility)

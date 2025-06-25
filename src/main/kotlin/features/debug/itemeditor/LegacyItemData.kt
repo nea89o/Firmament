@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.util.MC
 
@@ -57,6 +58,7 @@ object LegacyItemData {
 	val enchantmentLut = enchantmentData.associateBy { Identifier.ofVanilla(it.name) }
 
 	val itemDat = getLegacyData<List<ItemData>>("items")
+	@OptIn(ExpensiveItemCacheApi::class) // This is fine, we get loaded in a thread.
 	val itemLut = itemDat.flatMap { item ->
 		item.allVariants().map { legacyItemType ->
 			val nbt = ItemCache.convert189ToModern(NbtCompound().apply {

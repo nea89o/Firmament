@@ -635,22 +635,87 @@ You need to specify an x and y offset relative to where the regular screen would
 
 You can move slots around by a specific index. This is not the index in the inventory, but rather the index in the screen (so if you have a chest screen then all the player inventory slots would be a higher index since the chest slots move them down the list). The x and y are relative to where the regular screen top left would be. Set to large values to effectively "delete" a slot by moving it offscreen.
 
+### Moving text around
+
+```json
+{
+	"predicates": {
+		"label": {
+			"regex": "Hyper Furnace"
+		}
+	},
+	"playerTitle": {
+		"x": 0,
+		"y": 0,
+		"align": "left",
+		"replace": "a"
+	}
+}
+```
+
+You can move the window title around. The x and y are relative to the top left of the regular screen (like slots). Set to large values to effectively "delete" a slot by moving it offscreen.
+
+The align only specifies the direction the text grows in, it does not the actual anchor point, so if you want right aligned text you will also need to move the origin of the text to the right (or it will just grow out of the left side of your screen).
+
+You can replace the text with another text to render instead.
+
+Available titles are
+
+- `containerTitle` for the title of the open container, typically at the very top.
+- `playerTitle` for the players inventory title. Note that in the player inventory without a chest or something open, the `containerTitle` is also used for the "Crafting" text.
+- `repairCostTitle` for the repair cost label in anvils.
+
+### Moving components around
+
+```json
+{
+	"predicates": {
+		"label": {
+			"regex": "Hyper Furnace"
+		}
+	},
+	"nameField": {
+		"x": 10,
+		"y": 10,
+		"width": 100,
+		"height": 12
+	}
+}
+```
+
+Some other components can also be moved. These components might be buttons, text inputs or other things not fitting into any category. They can have a x, y (relative to the top left of the screen), as well as sometimes a width, height, and other properties. This is more of a wild card category, and which options work depends on the type of object.
+
+Available options
+
+- `nameField`: x, y, width & height are all available to move the field to set the name of the item in an anvil.
+
 ### All together
 
-| Field                | Required | Description                                                                                |
-|----------------------|----------|--------------------------------------------------------------------------------------------|
-| `predicates`         | true     | A list of predicates that need to match in order to change the layout of a screen          |
-| `predicates.label`   | true     | A [string matcher](#string-matcher) for the screen title                                   |
-| `background`         | false    | Allows replacing the background texture                                                    |
-| `background.texture` | true     | The texture of the background as an identifier                                             |
-| `background.x`       | true     | The x offset of the background relative to where the regular background would be rendered. |
-| `background.y`       | true     | The y offset of the background relative to where the regular background would be rendered. |
-| `background.width`   | true     | The width of the background texture.                                                       |
-| `background.height`  | true     | The height of the background texture.                                                      |
-| `slots`              | false    | An array of slots to move around.                                                          |
-| `slots[*].index`     | true     | The index in the array of all slots on the screen (not inventory).                         |
-| `slots[*].x`         | true     | The x coordinate of the slot relative to the top left of the screen                        |
-| `slots[*].y`         | true     | The y coordinate of the slot relative to the top left of the screen                        |
+| Field                     | Required | Description                                                                                                              |
+|---------------------------|----------|--------------------------------------------------------------------------------------------------------------------------|
+| `predicates`              | true     | A list of predicates that need to match in order to change the layout of a screen                                        |
+| `predicates.label`        | true     | A [string matcher](#string-matcher) for the screen title                                                                 |
+| `background`              | false    | Allows replacing the background texture                                                                                  |
+| `background.texture`      | true     | The texture of the background as an identifier                                                                           |
+| `background.x`            | true     | The x offset of the background relative to where the regular background would be rendered.                               |
+| `background.y`            | true     | The y offset of the background relative to where the regular background would be rendered.                               |
+| `background.width`        | true     | The width of the background texture.                                                                                     |
+| `background.height`       | true     | The height of the background texture.                                                                                    |
+| `slots`                   | false    | An array of slots to move around.                                                                                        |
+| `slots[*].index`          | true     | The index in the array of all slots on the screen (not inventory).                                                       |
+| `slots[*].x`              | true     | The x coordinate of the slot relative to the top left of the screen                                                      |
+| `slots[*].y`              | true     | The y coordinate of the slot relative to the top left of the screen                                                      |
+| `<element>Title`          | false    | The title mover (see above for valid options)                                                                            |
+| `<element>Title.x`        | false    | The x coordinate of text relative to the top left of the screen                                                          |
+| `<element>Title.y`        | false    | The y coordinate of text relative to the top left of the screen                                                          |
+| `<element>Title.align`    | false    | How you want the text to align. "left", "center" or "right". This only changes the text direction, not its anchor point. |
+| `<element>Title.replace`  | false    | Replace the text with your own text                                                                                      |
+| `<extraComponent>`        | false    | Allows you to move button components and similar around                                                                  |
+| `<extraComponent>.x`      | true     | The new x coordinate of the component relative to the top left of the screen                                             |
+| `<extraComponent>.x`      | true     | The new y coordinate of the component relative to the top left of the screen                                             |
+| `<extraComponent>.width`  | false    | The new width of the component                                                                                           |
+| `<extraComponent>.height` | false    | The new height of the component                                                                                          |
+
 
 
 ## Global Item Texture Replacement

@@ -22,6 +22,7 @@ import net.minecraft.network.codec.PacketCodec
 import net.minecraft.network.codec.PacketCodecs
 import net.minecraft.util.Identifier
 import moe.nea.firmament.repo.ExpLadders
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.collections.WeakCache
@@ -86,6 +87,7 @@ value class SkyblockId(val neuItem: String) : Comparable<SkyblockId> {
 val NEUItem.skyblockId get() = SkyblockId(skyblockItemId)
 val NEUIngredient.skyblockId get() = SkyblockId(itemId)
 
+@ExpensiveItemCacheApi
 fun NEUItem.guessRecipeId(): String? {
 	if (!skyblockItemId.contains(";")) return skyblockItemId
 	val item = this.asItemStack()

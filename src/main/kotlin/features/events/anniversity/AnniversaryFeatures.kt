@@ -15,6 +15,7 @@ import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.gui.hud.MoulConfigHud
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemNameLookup
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
@@ -202,7 +203,8 @@ object AnniversaryFeatures : FirmamentFeature {
 	            SBItemStack(SkyblockId.NULL)
             }
 
-            @Bind
+            @OptIn(ExpensiveItemCacheApi::class)
+			@Bind
             fun name(): String {
                 return when (backedBy) {
                     is Reward.Coins -> "Coins"

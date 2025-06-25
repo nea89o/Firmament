@@ -22,27 +22,22 @@ import moe.nea.firmament.util.data.DataHolder
 import moe.nea.firmament.util.accessors.getRectangle
 import moe.nea.firmament.util.gold
 
-object InventoryButtons : FirmamentFeature {
-    override val identifier: String
-        get() = "inventory-buttons"
+object InventoryButtons {
 
-    object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
+    object TConfig : ManagedConfig("inventory-buttons-config", Category.INVENTORY) {
         val _openEditor by button("open-editor") {
             openEditor()
         }
 		val hoverText by toggle("hover-text") { true }
     }
 
-    object DConfig : DataHolder<Data>(serializer(), identifier, ::Data)
+    object DConfig : DataHolder<Data>(serializer(), "inventory-buttons", ::Data)
 
     @Serializable
     data class Data(
         var buttons: MutableList<InventoryButton> = mutableListOf()
     )
 
-
-    override val config: ManagedConfig
-        get() = TConfig
 
     fun getValidButtons() = DConfig.data.buttons.asSequence().filter { it.isValid() }
 
