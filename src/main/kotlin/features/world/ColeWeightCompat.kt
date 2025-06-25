@@ -16,9 +16,9 @@ import moe.nea.firmament.util.tr
 object ColeWeightCompat {
 	@Serializable
 	data class ColeWeightWaypoint(
-		val x: Int,
-		val y: Int,
-		val z: Int,
+		val x: Int?,
+		val y: Int?,
+		val z: Int?,
 		val r: Int = 0,
 		val g: Int = 0,
 		val b: Int = 0,
@@ -31,9 +31,9 @@ object ColeWeightCompat {
 	}
 
 	fun intoFirm(waypoints: List<ColeWeightWaypoint>, relativeTo: BlockPos): FirmWaypoints {
-		val w = waypoints.map {
-			FirmWaypoints.Waypoint(it.x + relativeTo.x, it.y + relativeTo.y, it.z + relativeTo.z)
-		}
+		val w = waypoints
+			.filter { it.x != null && it.y != null && it.z != null }
+			.map { FirmWaypoints.Waypoint(it.x!! + relativeTo.x, it.y!! + relativeTo.y, it.z!! + relativeTo.z) }
 		return FirmWaypoints(
 			"Imported Waypoints",
 			"imported",
