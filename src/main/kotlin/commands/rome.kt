@@ -12,6 +12,7 @@ import moe.nea.firmament.apis.UrsaManager
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.FirmamentEventBus
 import moe.nea.firmament.features.debug.DebugLogger
+import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
@@ -202,7 +203,7 @@ fun firmamentCommand() = literal("firmament") {
 			}
 		}
 	}
-	thenLiteral("dev") {
+	thenLiteral(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
 		thenLiteral("simulate") {
 			thenArgument("message", RestArgumentType) { message ->
 				thenExecute {
