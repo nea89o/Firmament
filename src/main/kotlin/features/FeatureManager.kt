@@ -25,6 +25,7 @@ import moe.nea.firmament.features.inventory.PetFeatures
 import moe.nea.firmament.features.inventory.PriceData
 import moe.nea.firmament.features.inventory.SaveCursorPosition
 import moe.nea.firmament.features.inventory.SlotLocking
+import moe.nea.firmament.features.inventory.WardrobeKeybinds
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.items.EtherwarpOverlay
@@ -71,6 +72,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 			loadFeature(Fixes)
 			loadFeature(Hud)
 			loadFeature(EtherwarpOverlay)
+			loadFeature(WardrobeKeybinds)
 			loadFeature(DianaWaypoints)
 			loadFeature(ItemRarityCosmetics)
 			loadFeature(PickaxeAbility)
