@@ -49,7 +49,7 @@ class ManagedOption<T : Any>(
 				value = handler.fromJson(root[propertyName]!!)
 				return
 			} catch (e: Exception) {
-				ErrorUtil.softError(
+				ErrorUtil.logError(
 					"Exception during loading of config file ${element.name}. This will reset this config.",
 					e
 				)

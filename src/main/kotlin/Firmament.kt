@@ -51,6 +51,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.IDataHolder
+import moe.nea.firmament.util.mc.InitLevel
 import moe.nea.firmament.util.tr
 
 object Firmament {
@@ -134,6 +135,7 @@ object Firmament {
 
 	@JvmStatic
 	fun onClientInitialize() {
+		InitLevel.bump(InitLevel.MC_INIT)
 		FeatureManager.subscribeEvents()
 		ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { instance ->
 			TickEvent.publish(TickEvent(MC.currentTick++))

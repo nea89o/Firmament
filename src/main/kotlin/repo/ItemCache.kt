@@ -8,8 +8,15 @@ import java.text.NumberFormat
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import org.apache.logging.log4j.LogManager
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.io.path.readText
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.SharedConstants
 import net.minecraft.component.DataComponentTypes
@@ -22,14 +29,18 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtString
+import net.minecraft.nbt.StringNbtReader
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
+import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.repo.RepoManager.initialize
 import moe.nea.firmament.util.LegacyFormattingCode
 import moe.nea.firmament.util.LegacyTagParser
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.TestUtil
 import moe.nea.firmament.util.directLiteralStringContent
@@ -40,6 +51,7 @@ import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.modifyLore
 import moe.nea.firmament.util.mc.setCustomName
 import moe.nea.firmament.util.mc.setSkullOwner
+import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.transformEachRecursively
 
 object ItemCache : IReloadable {
@@ -56,14 +68,18 @@ object ItemCache : IReloadable {
 		putShort("Damage", damage.toShort())
 	}
 
+	@ExpensiveItemCacheApi
 	private fun NbtCompound.transformFrom10809ToModern() = convert189ToModern(this@transformFrom10809ToModern)
+	val currentSaveVersion = SharedConstants.getGameVersion().saveVersion.id
+
+	@ExpensiveItemCacheApi
 	fun convert189ToModern(nbtComponent: NbtCompound): NbtCompound? =
 		try {
 			df.update(
 				TypeReferences.ITEM_STACK,
 				Dynamic(NbtOps.INSTANCE, nbtComponent),
 				-1,
-				SharedConstants.getGameVersion().saveVersion.id
+				currentSaveVersion
 			).value as NbtCompound
 		} catch (e: Exception) {
 			isFlawless = false
@@ -126,19 +142,48 @@ object ItemCache : IReloadable {
 		return base
 	}
 
+	fun tryFindFromModernFormat(skyblockId: SkyblockId): NbtCompound? {
+		val overlayFile =
+			RepoManager.overlayData.getMostModernReadableOverlay(skyblockId, currentSaveVersion) ?: return null
+		val overlay = StringNbtReader.readCompound(overlayFile.path.readText())
+		val result = ExportedTestConstantMeta.SOURCE_CODEC.decode(
+			NbtOps.INSTANCE, overlay
+		).result().getOrNull() ?: return null
+		val meta = result.first
+		return df.update(
+			TypeReferences.ITEM_STACK,
+			Dynamic(NbtOps.INSTANCE, result.second),
+			meta.dataVersion,
+			currentSaveVersion
+		).value as NbtCompound
+	}
+
+	@ExpensiveItemCacheApi
 	private fun NEUItem.asItemStackNow(): ItemStack {
+
 		try {
+			var modernItemTag = tryFindFromModernFormat(this.skyblockId)
 			val oldItemTag = get10809CompoundTag()
-			val modernItemTag = oldItemTag.transformFrom10809ToModern()
-				?: return brokenItemStack(this)
+			var usedOldNbt = false
+			if (modernItemTag == null) {
+				usedOldNbt = true
+				modernItemTag = oldItemTag.transformFrom10809ToModern()
+					?: return brokenItemStack(this)
+			}
 			val itemInstance =
 				ItemStack.fromNbt(MC.defaultRegistries, modernItemTag).getOrNull() ?: return brokenItemStack(this)
+			if (usedOldNbt) {
+				val tag = oldItemTag.getCompound("tag")
+				val extraAttributes = tag.flatMap { it.getCompound("ExtraAttributes") }
+					.getOrNull()
+				if (extraAttributes != null)
+					itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
+				val itemModel = tag.flatMap { it.getString("ItemModel") }.getOrNull()
+				if (itemModel != null)
+					itemInstance.set(DataComponentTypes.ITEM_MODEL, Identifier.of(itemModel))
+			}
 			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
 			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)
-			val extraAttributes = oldItemTag.getCompound("tag").flatMap { it.getCompound("ExtraAttributes") }
-				.getOrNull()
-			if (extraAttributes != null)
-				itemInstance.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(extraAttributes))
 			return itemInstance
 		} catch (e: Exception) {
 			e.printStackTrace()
@@ -150,6 +195,7 @@ object ItemCache : IReloadable {
 		return skyblockId.neuItem in cache
 	}
 
+	@ExpensiveItemCacheApi
 	fun NEUItem?.asItemStack(idHint: SkyblockId? = null, loreReplacements: Map<String, String>? = null): ItemStack {
 		if (this == null) return brokenItemStack(null, idHint)
 		var s = cache[this.skyblockItemId]
@@ -183,22 +229,43 @@ object ItemCache : IReloadable {
 		}
 	}
 
-	var job: Job? = null
+	var itemRecacheScope: CoroutineScope? = null
 
-	override fun reload(repository: NEURepository) {
-		val j = job
-		if (j != null && j.isActive) {
-			j.cancel()
+	private var recacheSoonSubmitted = mutableSetOf<SkyblockId>()
+
+	@OptIn(ExpensiveItemCacheApi::class)
+	fun recacheSoon(neuItem: NEUItem) {
+		itemRecacheScope?.launch {
+			if (!withContext(MinecraftDispatcher) {
+					recacheSoonSubmitted.add(neuItem.skyblockId)
+				}) {
+				return@launch
+			}
+			neuItem.asItemStack()
 		}
+	}
+
+	@OptIn(ExpensiveItemCacheApi::class)
+	override fun reload(repository: NEURepository) {
+		val j = itemRecacheScope
+		j?.cancel("New reload invoked")
 		cache.clear()
 		isFlawless = true
 		if (TestUtil.isInTest) return
-		job = Firmament.coroutineScope.launch {
-			val items = repository.items?.items ?: return@launch
-			items.values.forEach {
-				it.asItemStack() // Rebuild cache
-			}
+		val newScope =
+			CoroutineScope(Firmament.coroutineScope.coroutineContext + SupervisorJob(Firmament.globalJob) + Dispatchers.Default)
+		val items = repository.items?.items
+		newScope.launch {
+			val items = items ?: return@launch
+			items.values.chunked(500).map { chunk ->
+				async {
+					chunk.forEach {
+						it.asItemStack() // Rebuild cache
+					}
+				}
+			}.awaitAll()
 		}
+		itemRecacheScope = newScope
 	}
 
 	fun coinItem(coinAmount: Int): ItemStack {

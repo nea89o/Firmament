@@ -26,6 +26,13 @@ inline fun <T> Pattern.useMatch(string: String?, block: Matcher.() -> T): T? {
 		?.let(block)
 }
 
+fun <T> String.ifDropLast(suffix: String, block: (String) -> T): T? {
+	if (endsWith(suffix)) {
+		return block(dropLast(suffix.length))
+	}
+	return null
+}
+
 @Language("RegExp")
 val TIME_PATTERN = "[0-9]+[ms]"
 

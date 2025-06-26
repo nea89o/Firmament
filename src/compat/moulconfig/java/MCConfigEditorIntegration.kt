@@ -313,7 +313,7 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 			}
 
 			override fun getTitle(): String {
-				return "Firmament"
+				return "Firmament ${Firmament.version.friendlyString}"
 			}
 
 			@Deprecated("Deprecated in java")

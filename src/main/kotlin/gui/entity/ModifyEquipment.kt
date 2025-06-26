@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.mc.setEncodedSkullOwner
@@ -31,6 +32,7 @@ object ModifyEquipment : EntityModifier {
 		return entity
 	}
 
+	@OptIn(ExpensiveItemCacheApi::class)
 	private fun createItem(item: String): ItemStack {
 		val split = item.split("#")
 		if (split.size != 2) return SBItemStack(SkyblockId(item)).asImmutableItemStack()

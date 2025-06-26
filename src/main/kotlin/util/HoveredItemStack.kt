@@ -24,4 +24,4 @@ class VanillaScreenProvider : HoveredItemStackProvider {
 val HandledScreen<*>.focusedItemStack: ItemStack?
 	get() =
 		HoveredItemStackProvider.allValidInstances
-			.firstNotNullOfOrNull { it.provideHoveredItemStack(this) }
+			.firstNotNullOfOrNull { it.provideHoveredItemStack(this)?.takeIf { !it.isEmpty } }

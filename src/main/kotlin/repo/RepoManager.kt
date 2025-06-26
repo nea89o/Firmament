@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.recipe.display.CuttingRecipeDisplay
+import net.minecraft.util.StringIdentifiable
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.Firmament.logger
 import moe.nea.firmament.events.ReloadRegistrationEvent
@@ -46,7 +47,16 @@ object RepoManager {
 		}
 		val alwaysSuperCraft by toggle("enable-super-craft") { true }
 		var warnForMissingItemListMod by toggle("warn-for-missing-item-list-mod") { true }
-		val perfectTooltips by toggle("perfect-tooltips") { false }
+		val perfectRenders by choice("perfect-renders") { PerfectRender.RENDER }
+	}
+
+	enum class PerfectRender(val label: String) : StringIdentifiable {
+		NOTHING("nothing"),
+		RENDER("render"),
+		RENDER_AND_TEXT("text"),
+		;
+
+		override fun asString(): String? = label
 	}
 
 	val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash
@@ -56,9 +66,11 @@ object RepoManager {
 	val essenceRecipeProvider = EssenceRecipeProvider()
 	val recipeCache = BetterRepoRecipeCache(essenceRecipeProvider, ReforgeStore)
 	val miningData = MiningRepoData()
+	val overlayData = ModernOverlaysData()
 
 	fun makeNEURepository(path: Path): NEURepository {
 		return NEURepository.of(path).apply {
+			registerReloadListener(overlayData)
 			registerReloadListener(ItemCache)
 			registerReloadListener(RepoItemTypeCache)
 			registerReloadListener(ExpLadders)
@@ -136,8 +148,10 @@ object RepoManager {
 		} catch (exc: NEURepositoryException) {
 			ErrorUtil.softError("Failed to reload repository", exc)
 			MC.sendChat(
-				tr("firmament.repo.reloadfail",
-				   "Failed to reload repository. This will result in some mod features not working.")
+				tr(
+					"firmament.repo.reloadfail",
+					"Failed to reload repository. This will result in some mod features not working."
+				)
 			)
 		}
 	}
