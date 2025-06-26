@@ -4,6 +4,7 @@ package moe.nea.firmament.mixins;
 
 import moe.nea.firmament.events.HotbarItemRenderEvent;
 import moe.nea.firmament.events.HudRenderEvent;
+import moe.nea.firmament.features.fixes.Fixes;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
@@ -26,4 +27,10 @@ public class HudRenderEventsPatch {
         if (stack != null && !stack.isEmpty())
             HotbarItemRenderEvent.Companion.publish(new HotbarItemRenderEvent(stack, context, x, y, tickCounter));
     }
+
+	@Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true)
+	public void hideStatusEffects(CallbackInfo ci) {
+		if (Fixes.TConfig.INSTANCE.getHidePotionEffectsHud()) ci.cancel();
+	}
+
 }
