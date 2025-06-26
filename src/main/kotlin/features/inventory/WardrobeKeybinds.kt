@@ -8,6 +8,8 @@ import moe.nea.firmament.events.HandledScreenKeyPressedEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.SlotUtils.clickLeftMouseButton
+import moe.nea.firmament.util.mc.SlotUtils.clickMiddleMouseButton
 
 object WardrobeKeybinds : FirmamentFeature {
 	override val identifier: String
@@ -15,44 +17,40 @@ object WardrobeKeybinds : FirmamentFeature {
 
 	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
 		val wardrobeKeybinds by toggle("wardrobe-keybinds") { false }
-		val slot1 by keyBinding("slot-1") { GLFW.GLFW_KEY_1 }
-		val slot2 by keyBinding("slot-2") { GLFW.GLFW_KEY_2 }
-		val slot3 by keyBinding("slot-3") { GLFW.GLFW_KEY_3 }
-		val slot4 by keyBinding("slot-4") { GLFW.GLFW_KEY_4 }
-		val slot5 by keyBinding("slot-5") { GLFW.GLFW_KEY_5 }
-		val slot6 by keyBinding("slot-6") { GLFW.GLFW_KEY_6 }
-		val slot7 by keyBinding("slot-7") { GLFW.GLFW_KEY_7 }
-		val slot8 by keyBinding("slot-8") { GLFW.GLFW_KEY_8 }
-		val slot9 by keyBinding("slot-9") { GLFW.GLFW_KEY_9 }
+		val slotKeybinds = (1..9).map {
+			keyBinding("slot-$it") { GLFW.GLFW_KEY_0 + it }
+		}
 	}
 
 	override val config: ManagedConfig?
 		get() = TConfig
 
+	val slotKeybindsWithSlot = TConfig.slotKeybinds.withIndex().map { (index, keybinding) ->
+		index + 36 to keybinding
+	}
+
 	@Subscribe
-	fun switchSlot(it: HandledScreenKeyPressedEvent) {
+	fun switchSlot(event: HandledScreenKeyPressedEvent) {
 		if (MC.player == null || MC.world == null || MC.interactionManager == null) return
 
 		val regex = Regex("Wardrobe \\([12]/2\\)")
-		if (!regex.matches(it.screen.title.string)) return
+		if (!regex.matches(event.screen.title.string)) return
 		if (!TConfig.wardrobeKeybinds) return
 
-		var slot: Int? = null
-		if (it.matches(TConfig.slot1)) slot = 36
-		if (it.matches(TConfig.slot2)) slot = 37
-		if (it.matches(TConfig.slot3)) slot = 38
-		if (it.matches(TConfig.slot4)) slot = 39
-		if (it.matches(TConfig.slot5)) slot = 40
-		if (it.matches(TConfig.slot6)) slot = 41
-		if (it.matches(TConfig.slot7)) slot = 42
-		if (it.matches(TConfig.slot8)) slot = 43
-		if (it.matches(TConfig.slot9)) slot = 44
-		if (slot == null) return
+		val slot =
+			slotKeybindsWithSlot
+				.find { event.matches(it.second.get()) }
+				?.first ?: return
 
-		val itemStack = it.screen.getScreenHandler().getSlot(slot).stack
+		event.cancel()
+
+		val handler = event.screen.screenHandler
+		val invSlot = handler.getSlot(slot)
+
+		val itemStack = invSlot.stack
 		if (itemStack.item != Items.PINK_DYE && itemStack.item != Items.LIME_DYE) return
 
-		MC.interactionManager!!.clickSlot(it.screen.getScreenHandler().syncId, slot, GLFW.GLFW_MOUSE_BUTTON_1, SlotActionType.PICKUP, MC.player);
+		invSlot.clickLeftMouseButton(handler)
 	}
 
 }
