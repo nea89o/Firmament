@@ -6,6 +6,11 @@ import com.mojang.serialization.Codec
 import io.github.moulberry.repo.data.NEUIngredient
 import io.github.moulberry.repo.data.NEUItem
 import io.github.moulberry.repo.data.Rarity
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.SignStyle
+import java.time.temporal.ChronoField
 import java.util.Optional
 import java.util.UUID
 import kotlinx.serialization.Serializable
@@ -38,13 +43,14 @@ import moe.nea.firmament.util.json.DashlessUUIDSerializer
 @Serializable
 value class SkyblockId(val neuItem: String) : Comparable<SkyblockId> {
 	val identifier
-		get() = Identifier.of("skyblockitem",
-		                      neuItem.lowercase().replace(";", "__")
-			                      .replace(":", "___")
-			                      .replace(illlegalPathRegex) {
-				                      it.value.toCharArray()
-					                      .joinToString("") { "__" + it.code.toString(16).padStart(4, '0') }
-			                      })
+		get() = Identifier.of(
+			"skyblockitem",
+			neuItem.lowercase().replace(";", "__")
+				.replace(":", "___")
+				.replace(illlegalPathRegex) {
+					it.value.toCharArray()
+						.joinToString("") { "__" + it.code.toString(16).padStart(4, '0') }
+				})
 
 	override fun toString(): String {
 		return neuItem
@@ -136,6 +142,30 @@ fun ItemStack.modifyExtraAttributes(block: (NbtCompound) -> Unit) {
 
 val ItemStack.skyblockUUIDString: String?
 	get() = extraAttributes.getString("uuid").getOrNull()?.takeIf { it.isNotBlank() }
+
+private val timestampFormat = //"10/11/21 3:39 PM"
+	DateTimeFormatterBuilder().apply {
+		appendValue(ChronoField.MONTH_OF_YEAR, 2)
+		appendLiteral("/")
+		appendValue(ChronoField.DAY_OF_MONTH, 2)
+		appendLiteral("/")
+		appendValueReduced(ChronoField.YEAR, 2, 2, 1950)
+		appendLiteral(" ")
+		appendValue(ChronoField.HOUR_OF_AMPM, 1, 2, SignStyle.NEVER)
+		appendLiteral(":")
+		appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+		appendLiteral(" ")
+		appendText(ChronoField.AMPM_OF_DAY)
+	}.toFormatter()
+val ItemStack.timestamp
+	get() =
+		extraAttributes.getLong("timestamp").getOrNull()?.let { Instant.ofEpochMilli(it) }
+			?: extraAttributes.getString("timestamp").getOrNull()?.let {
+				ErrorUtil.catch("Could not parse timestamp $it") {
+					LocalDateTime.from(timestampFormat.parse(it)).atZone(SBData.hypixelTimeZone)
+						.toInstant()
+				}.orNull()
+			}
 
 val ItemStack.skyblockUUID: UUID?
 	get() = skyblockUUIDString?.let { UUID.fromString(it) }

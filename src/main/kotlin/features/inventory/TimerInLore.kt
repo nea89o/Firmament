@@ -16,12 +16,14 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.aqua
 import moe.nea.firmament.util.grey
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.timestamp
 import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 
 object TimerInLore {
 	object TConfig : ManagedConfig("lore-timers", Category.INVENTORY) {
 		val showTimers by toggle("show") { true }
+		val showCreationTimestamp by toggle("show-creation") { true }
 		val timerFormat by choice("format") { TimerFormat.SOCIALIST }
 	}
 
@@ -91,6 +93,14 @@ object TimerInLore {
 		"(?i)(?:(?<years>[0-9]+) ?(y|years?) )?(?:(?<days>[0-9]+) ?(d|days?))? ?(?:(?<hours>[0-9]+) ?(h|hours?))? ?(?:(?<minutes>[0-9]+) ?(m|minutes?))? ?(?:(?<seconds>[0-9]+) ?(s|seconds?))?\\b".toRegex()
 
 	@Subscribe
+	fun creationInLore(event: ItemTooltipEvent) {
+		if (!TConfig.showCreationTimestamp) return
+		val timestamp = event.stack.timestamp ?: return
+		val formattedTimestamp = TConfig.timerFormat.formatter.format(ZonedDateTime.ofInstant(timestamp, ZoneId.systemDefault()))
+		event.lines.add(tr("firmament.lore.creationtimestamp", "Created at: $formattedTimestamp").grey())
+	}
+
+	@Subscribe
 	fun modifyLore(event: ItemTooltipEvent) {
 		if (!TConfig.showTimers) return
 		var lastTimer: ZonedDateTime? = null
@@ -111,9 +121,13 @@ object TimerInLore {
 			var baseLine = ZonedDateTime.now(SBData.hypixelTimeZone)
 			if (countdownType.isRelative) {
 				if (lastTimer == null) {
-					event.lines.add(i + 1,
-					                tr("firmament.loretimer.missingrelative",
-					                   "Found a relative countdown with no baseline (Firmament)").grey())
+					event.lines.add(
+						i + 1,
+						tr(
+							"firmament.loretimer.missingrelative",
+							"Found a relative countdown with no baseline (Firmament)"
+						).grey()
+					)
 					continue
 				}
 				baseLine = lastTimer
@@ -123,10 +137,11 @@ object TimerInLore {
 			lastTimer = timer
 			val localTimer = timer.withZoneSameInstant(ZoneId.systemDefault())
 			// TODO: install approximate time stabilization algorithm
-			event.lines.add(i + 1,
-			                Text.literal("${countdownType.label}: ")
-				                .grey()
-				                .append(Text.literal(TConfig.timerFormat.formatter.format(localTimer)).aqua())
+			event.lines.add(
+				i + 1,
+				Text.literal("${countdownType.label}: ")
+					.grey()
+					.append(Text.literal(TConfig.timerFormat.formatter.format(localTimer)).aqua())
 			)
 		}
 	}
