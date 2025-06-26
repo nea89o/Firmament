@@ -124,6 +124,8 @@
 	"firmament.config.fixes.auto-sprint-hud.description": "Show your current sprint state on your screen. Only visible if no auto sprint keybind is set.",
 	"firmament.config.fixes.auto-sprint-keybinding": "Auto Sprint KeyBinding",
 	"firmament.config.fixes.auto-sprint-keybinding.description": "Toggle auto sprint via this keybinding.",
+	"firmament.config.fixes.auto-sprint-underwater": "Sprint Under Water",
+	"firmament.config.fixes.auto-sprint-underwater.description": "Also Toggle Sprint under water. Sprinting under water puts you in the swimming animation which changes your camera and hitbox, which can be confusing if you stop and start moving a lot.",
 	"firmament.config.fixes.auto-sprint.description": "This is different from vanilla sprint in the way that it only marks the keybinding pressed for the first tick of walking.",
 	"firmament.config.fixes.disable-hurt-cam": "No Hurt Cam",
 	"firmament.config.fixes.disable-hurt-cam.description": "Disable the damage screen shake animation.",
