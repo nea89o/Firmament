@@ -35,6 +35,7 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.accessors.messages
+import moe.nea.firmament.util.asBazaarStock
 import moe.nea.firmament.util.collections.InstanceList
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.mc.SNbtFormatter
@@ -160,7 +161,7 @@ fun firmamentCommand() = literal("firmament") {
 			thenExecute {
 				val itemName = SkyblockId(get(item))
 				source.sendFeedback(Text.stringifiedTranslatable("firmament.price", itemName.neuItem))
-				val bazaarData = HypixelStaticData.bazaarData[itemName]
+				val bazaarData = HypixelStaticData.bazaarData[itemName.asBazaarStock]
 				if (bazaarData != null) {
 					source.sendFeedback(Text.translatable("firmament.price.bazaar"))
 					source.sendFeedback(

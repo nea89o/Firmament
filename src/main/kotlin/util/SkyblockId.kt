@@ -29,6 +29,7 @@ import net.minecraft.util.Identifier
 import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache.asItemStack
+import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
@@ -69,11 +70,10 @@ value class SkyblockId(val neuItem: String) : Comparable<SkyblockId> {
 	@JvmInline
 	@Serializable
 	value class BazaarStock(val bazaarId: String) {
-		fun toRepoId(): SkyblockId {
-			bazaarEnchantmentRegex.matchEntire(bazaarId)?.let {
-				return SkyblockId("${it.groupValues[1]};${it.groupValues[2]}")
+		companion object {
+			fun fromSkyBlockId(skyblockId: SkyblockId): BazaarStock {
+				return BazaarStock(RepoManager.neuRepo.constants.bazaarStocks.getBazaarStockOrDefault(skyblockId.neuItem))
 			}
-			return SkyblockId(bazaarId.replace(":", "-"))
 		}
 	}
 
@@ -92,6 +92,7 @@ value class SkyblockId(val neuItem: String) : Comparable<SkyblockId> {
 
 val NEUItem.skyblockId get() = SkyblockId(skyblockItemId)
 val NEUIngredient.skyblockId get() = SkyblockId(itemId)
+val SkyblockId.asBazaarStock get() = SkyblockId.BazaarStock.fromSkyBlockId(this)
 
 @ExpensiveItemCacheApi
 fun NEUItem.guessRecipeId(): String? {
