@@ -9,6 +9,7 @@ import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.skyBlockId
+import moe.nea.firmament.util.skyblock.SkyBlockItems
 
 object EtherwarpOverlay : FirmamentFeature {
 	override val identifier: String
@@ -26,28 +27,23 @@ object EtherwarpOverlay : FirmamentFeature {
 
 	@Subscribe
 	fun renderEtherwarpOverlay(event: WorldRenderLastEvent) {
-		val player =
-			MC.player?.takeIf { MC.world != null && MC.camera != null && TConfig.etherwarpOverlay && it.isSneaking }
-				?: return
-		player.mainHandStack.skyBlockId?.takeIf { it.neuItem == "ASPECT_OF_THE_VOID" || it.neuItem == "ASPECT_OF_THE_END" }
-			?: return
-		if (player.mainHandStack.extraAttributes.get("ethermerge") == null) return
+		if (!TConfig.etherwarpOverlay) return
+		val player = MC.player ?: return
+		val world = player.world
 		val camera = MC.camera ?: return
-		val world = MC.world ?: return
+		val heldItem = MC.stackInHand
+		if (heldItem.skyBlockId !in listOf(SkyBlockItems.ASPECT_OF_THE_VOID, SkyBlockItems.ASPECT_OF_THE_END)) return
+		if (!heldItem.extraAttributes.contains("ethermerge")) return
 
 		val hitResult = camera.raycast(61.0, 0.0f, false)
-		if (hitResult is BlockHitResult) {
-			val blockPos = hitResult.blockPos
-			if (camera.squaredDistanceTo(blockPos.toCenterPos()) <= 61.0 * 61.0 && world.getBlockState(blockPos.up()).isAir && world.getBlockState(
-					blockPos.up(2)
-				).isAir
-			) {
-				RenderInWorldContext.renderInWorld(event) {
-					if (TConfig.cube) block(blockPos, 0xFFFFFF00.toInt())
-					if (TConfig.wireframe) wireframeCube(blockPos, 10f)
-				}
-			}
-
+		if (hitResult !is BlockHitResult) return
+		val blockPos = hitResult.blockPos
+		if (camera.squaredDistanceTo(blockPos.toCenterPos()) > 61 * 61) return
+		if (!world.getBlockState(blockPos.up()).isAir) return
+		if (!world.getBlockState(blockPos.up(2)).isAir) return
+		RenderInWorldContext.renderInWorld(event) {
+			if (TConfig.cube) block(blockPos, 0xFFFFFF00.toInt())
+			if (TConfig.wireframe) wireframeCube(blockPos, 10f)
 		}
 	}
 }
