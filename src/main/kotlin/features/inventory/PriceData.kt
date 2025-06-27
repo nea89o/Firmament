@@ -60,9 +60,8 @@ object PriceData : FirmamentFeature {
 
 	@Subscribe
 	fun onItemTooltip(it: ItemTooltipEvent) {
-		if ((!TConfig.tooltipEnabled && !TConfig.enableKeybinding.isBound) || (TConfig.tooltipEnabled && TConfig.enableKeybinding.isBound && !TConfig.enableKeybinding.isPressed())) {
-			return
-		}
+		if (!TConfig.tooltipEnabled) return
+		if (TConfig.enableKeybinding.isBound && !TConfig.enableKeybinding.isPressed()) return
 		val sbId = it.stack.skyBlockId
 		val stackSize = it.stack.count
 		val isShowingStack = TConfig.stackSizeKey.isPressed()
