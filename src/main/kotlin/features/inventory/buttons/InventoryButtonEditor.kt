@@ -11,6 +11,7 @@ import org.lwjgl.glfw.GLFW
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.widget.ButtonWidget
+import net.minecraft.client.gui.widget.TextWidget
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import net.minecraft.util.math.MathHelper
@@ -69,13 +70,29 @@ class InventoryButtonEditor(
 	override fun init() {
 		super.init()
 		addDrawableChild(
+			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.delete")) {
+				MC.sendChat(Text.literal("Why are you clicking me?"))
+			}
+				.position(lastGuiRect.minX, MC.window.scaledHeight - 50)
+				.width(lastGuiRect.width)
+				.build()
+		)
+		addDrawableChild(
+			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.info")) {
+				MC.sendChat(Text.literal("Why are you clicking me?"))
+			}
+				.position(lastGuiRect.minX, MC.window.scaledHeight - 25)
+				.width(lastGuiRect.width)
+				.build()
+		)
+		addDrawableChild(
 			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.load-preset")) {
 				val t = ClipboardUtils.getTextContents()
 				val newButtons = InventoryButtonTemplates.loadTemplate(t)
 				if (newButtons != null)
 					buttons = moveButtons(newButtons.map { it.copy(command = it.command?.removePrefix("/")) })
 			}
-				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 35)
+				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 10)
 				.width(lastGuiRect.width - 20)
 				.build()
 		)
@@ -83,7 +100,7 @@ class InventoryButtonEditor(
 			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.save-preset")) {
 				ClipboardUtils.setTextContent(InventoryButtonTemplates.saveTemplate(buttons))
 			}
-				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 60)
+				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 35)
 				.width(lastGuiRect.width - 20)
 				.build()
 		)
@@ -173,7 +190,8 @@ class InventoryButtonEditor(
 		if (super.mouseReleased(mouseX, mouseY, button)) return true
 		val clickedButton = buttons.firstOrNull { it.getBounds(lastGuiRect).contains(Point(mouseX, mouseY)) }
 		if (clickedButton != null && !justPerformedAClickAction) {
-			createPopup(MoulConfigUtils.loadGui("button_editor_fragment", Editor(clickedButton)), Point(mouseX, mouseY))
+			if (InputUtil.isKeyPressed(MC.window.handle, InputUtil.GLFW_KEY_LEFT_CONTROL)) Editor(clickedButton).delete()
+			else createPopup(MoulConfigUtils.loadGui("button_editor_fragment", Editor(clickedButton)), Point(mouseX, mouseY))
 			return true
 		}
 		justPerformedAClickAction = false

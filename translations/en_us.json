@@ -384,6 +384,8 @@
 	"firmament.inventory-buttons.import-failed": "One of your buttons could only be imported partially",
 	"firmament.inventory-buttons.load-preset": "Load Preset",
 	"firmament.inventory-buttons.save-preset": "Save Preset",
+	"firmament.inventory-buttons.info": "Hold SHIFT to grid align",
+	"firmament.inventory-buttons.delete": "Hold L-CTRL and click to delete",
 	"firmament.key.category": "Firmament",
 	"firmament.keybinding.external": "%s",
 	"firmament.modapi.event": "Received mod API event: %s",
