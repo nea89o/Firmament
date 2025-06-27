@@ -70,10 +70,10 @@ object InventoryButtons {
     @Subscribe
     fun onRenderForeground(it: HandledScreenForegroundEvent) {
 		if (TConfig.onlyInv && it.screen !is InventoryScreen) return
-        val bounds = it.screen.getRectangle()
+		val bounds = it.screen.getRectangle()
 
 		var hoveredComponent: InventoryButton? = null
-        for (button in getValidButtons()) {
+		for (button in getValidButtons()) {
             val buttonBounds = button.getBounds(bounds)
             it.context.matrices.push()
             it.context.matrices.translate(buttonBounds.minX.toFloat(), buttonBounds.minY.toFloat(), 0F)
