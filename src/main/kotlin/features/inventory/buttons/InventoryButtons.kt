@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HandledScreenClickEvent
@@ -29,6 +30,7 @@ object InventoryButtons {
             openEditor()
         }
 		val hoverText by toggle("hover-text") { true }
+		val onlyInv by toggle("only-inv") { false }
     }
 
     object DConfig : DataHolder<Data>(serializer(), "inventory-buttons", ::Data)
@@ -67,6 +69,7 @@ object InventoryButtons {
 
     @Subscribe
     fun onRenderForeground(it: HandledScreenForegroundEvent) {
+		if (TConfig.onlyInv && it.screen !is InventoryScreen) return
         val bounds = it.screen.getRectangle()
 
 		var hoveredComponent: InventoryButton? = null
