@@ -70,6 +70,16 @@ class InventoryButtonEditor(
 	override fun init() {
 		super.init()
 		addDrawableChild(
+			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.reset")) {
+				val newButtons = InventoryButtonTemplates.loadTemplate("TkVVQlVUVE9OUy9bXQ==")
+				if (newButtons != null)
+					buttons = moveButtons(newButtons.map { it.copy(command = it.command?.removePrefix("/")) })
+			}
+				.position(lastGuiRect.minX, MC.window.scaledHeight - 75)
+				.width(lastGuiRect.width)
+				.build()
+		)
+		addDrawableChild(
 			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.delete")) {
 				MC.sendChat(Text.literal("Why are you clicking me?"))
 			}
