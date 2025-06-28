@@ -26,9 +26,12 @@ object Devs {
 		val libyKiwii = Dev("4265c52e-bd6f-4d3c-9cf6-bdfc8fb58023")
 		val madeleaan = Dev("bcb119a3-6000-4324-bda1-744f00c44b31")
 		val turtleSP = Dev("f1ca1934-a582-4723-8283-89921d008657")
+		val papayamm = Dev("ae0eea30-f6a2-40fe-ac17-9c80b3423409")
+		val persuasiveViksy = Dev("ba7ac144-28e0-4f55-a108-1a72fe744c9e")
 		val all = listOf(
 			smolegit, itsCen, webster, vrachel, cunuduh, eiiies,
-			june, denasu, libyKiwii, madeleaan, turtleSP,
+			june, denasu, libyKiwii, madeleaan, turtleSP, papayamm,
+			persuasiveViksy
 		)
 	}
 
