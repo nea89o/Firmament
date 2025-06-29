@@ -9,6 +9,7 @@ import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.util.FirmFormatters.formatCommas
+import moe.nea.firmament.util.asBazaarStock
 import moe.nea.firmament.util.bold
 import moe.nea.firmament.util.darkGrey
 import moe.nea.firmament.util.gold
@@ -74,7 +75,7 @@ object PriceData : FirmamentFeature {
 					"firmament.tooltip.multiply.hint",
 					"[${TConfig.stackSizeKey.format()}] to show x${stackSize}"
 				).darkGrey()
-		val bazaarData = HypixelStaticData.bazaarData[sbId]
+		val bazaarData = HypixelStaticData.bazaarData[sbId?.asBazaarStock]
 		val lowestBin = HypixelStaticData.lowestBin[sbId]
 		val avgBinValue: Double? = when (TConfig.avgLowestBin) {
 			AvgLowestBin.ONEDAYAVGLOWESTBIN -> HypixelStaticData.avg1dlowestBin[sbId]

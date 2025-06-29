@@ -2,7 +2,9 @@ accessWidener   v2  named
 accessible class net/minecraft/client/render/RenderLayer$MultiPhase
 accessible class net/minecraft/client/render/RenderLayer$MultiPhaseParameters
 accessible class net/minecraft/client/font/TextRenderer$Drawer
+
 accessible field net/minecraft/client/gui/hud/InGameHud SCOREBOARD_ENTRY_COMPARATOR Ljava/util/Comparator;
+
 accessible field net/minecraft/client/network/ClientPlayNetworkHandler combinedDynamicRegistries Lnet/minecraft/registry/DynamicRegistryManager$Immutable;
 accessible method net/minecraft/registry/RegistryOps <init> (Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/registry/RegistryOps$RegistryInfoGetter;)V
 accessible class net/minecraft/registry/RegistryOps$CachedRegistryInfoGetter

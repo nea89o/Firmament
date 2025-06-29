@@ -9,7 +9,7 @@ enum class BazaarPriceStrategy {
     NPC_SELL;
 
     fun getSellPrice(skyblockId: SkyblockId): Double {
-        val bazaarEntry = HypixelStaticData.bazaarData[skyblockId] ?: return 0.0
+        val bazaarEntry = HypixelStaticData.bazaarData[skyblockId.asBazaarStock] ?: return 0.0
         return when (this) {
             BUY_ORDER -> bazaarEntry.quickStatus.sellPrice
             SELL_ORDER -> bazaarEntry.quickStatus.buyPrice

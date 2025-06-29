@@ -577,7 +577,7 @@ not screens from other mods. You can also target specific texts via a [string ma
 
 ## Screen Layout Replacement
 
-You can change the layout of an entire screen by using screen layout overrides. These get placed in `firmskyblock:overrides/screen_layout/*.json`, with one file per screen. You can match on the title of a screen, replace the background texture (including extending the background canvas further than vanilla allows you) and move slots around.
+You can change the layout of an entire screen by using screen layout overrides. These get placed in `firmskyblock:overrides/screen_layout/*.json`, with one file per screen. You can match on the title of a screen, the type of screen, replace the background texture (including extending the background canvas further than vanilla allows you) and move slots around.
 
 ### Selecting a screen
 
@@ -586,12 +586,15 @@ You can change the layout of an entire screen by using screen layout overrides. 
 	"predicates": {
 		"label": {
 			"regex": "Hyper Furnace"
-		}
+		},
+		"screenType": "minecraft:furnace"
 	}
 }
 ```
 
 The `label` property is a regular [string matcher](#string-matcher) and matches against the screens title (typically the chest title, or "Crafting" for the players inventory).
+
+The `screenType` property is an optional namespaced identifier that allows matching to a [screen type](https://minecraft.wiki/w/Java_Edition_protocol/Inventory#Types).
 
 ### Changing the background
 

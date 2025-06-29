@@ -1,0 +1,122 @@
+{
+	components: {
+		"minecraft:custom_data": {
+			backpack_color: "BROWN",
+			originTag: "CRAFTING_GRID_COLLECT",
+			timestamp: "10/11/21 3:39 PM",
+			uuid: "3d7c83e8-c619-4603-8cfb-c95ceed90864"
+		},
+		"minecraft:custom_name": {
+			extra: [
+				{
+					color: "gold",
+					text: "Backpack Slot 3"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		"minecraft:lore": [
+			{
+				extra: [
+					{
+						color: "gold",
+						text: "Jumbo Backpack"
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			{
+				extra: [
+					{
+						color: "gray",
+						text: ""
+					},
+					{
+						color: "gray",
+						text: "This backpack has "
+					},
+					{
+						color: "green",
+						text: "45"
+					},
+					{
+						color: "gray",
+						text: " slots."
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			{
+				extra: [
+					" "
+				],
+				italic: 0b,
+				text: ""
+			},
+			{
+				extra: [
+					{
+						color: "gray",
+						text: ""
+					},
+					{
+						color: "yellow",
+						text: "Left-click to open!"
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			{
+				extra: [
+					{
+						color: "gray",
+						text: ""
+					},
+					{
+						color: "yellow",
+						text: "Right-click to remove!"
+					}
+				],
+				italic: 0b,
+				text: ""
+			}
+		],
+		"minecraft:profile": {
+			id: [I;
+				1252359403,
+				1319582828,
+				-1927151386,
+				833492163
+			],
+			properties: [
+				{
+					name: "textures",
+					signature: "U/49v6SXIw8bAmqM6T7t1BIR736N3Adpx7MlWncnT8zcFEm97zwRx9/tyaUy/XxBHaPGSL6BbgW2TdBtfb9gf0emCAZyWmnzSTtqDGiWpxnQM8v3+gHS8zD7Xrho0a/hU33xTbQ2knj2iRz8C+FReoJFxCjS++aXq6IqliIb3GhqB5b1egaiG2Q3t+yerl2Xue4nhdYM3wtGsYApC/ClR3TEuBcJv1WUVZM8rEoU29pbVnyMCKineG6mIN7W86SmzcT2SF+zMVyD0/mI7R2hRT2lbXnkMpM6FFscdnlvzjjPB9brtAWY7JGJ63b9C+khnvZUlhlQ/3E/08dFnON31VeabJXOmfrbfAgsF0Hgfs7Io+HzoXSXr/FCxNCCFMWlSwORmG2WCT4VRFzG2SThatPVPGJkuR/tLLOLzXo4RKOMzY5EIwa2XSxRUI4+5z2SZY11ofGic3bZD3wvICs2EZ54Pi508ZOda0qI9w5Q/TazC+jX/I5Nq2TLqLj+uU/+UX8eKXvHdk8QpBynyv9SyHo21jVXpiUgL1AsdzBp9cTZHNJuYtBxgDogr3SyAKPmw3BOzVeUi6qW8k4lgtefLKYteVSh52PjFgvQZUR1GNmFaJ+hlgKz8yONp+wXhw3nyL4dMOd2Z/dVVSywBp0tyHuN5l3PfaInK4s8qSydaW0=",
+					value: "ewogICJ0aW1lc3RhbXAiIDogMTcxOTUzODgxNTgyNCwKICAicHJvZmlsZUlkIiA6ICJkOWYxNTlhYWYxZjY0NGZlOTEwOTg0NzI2ZDBjMWJjMCIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYW5vbmFtaXNzaW9uRyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS81YWQwYjQwNTIxMjYyYjdhM2Y5OWU2M2JkZGQ0YTNlNTQxOTY1Njc3ZTE0MTRlYWZhMTQyZThiYmE5ZGZlNDgxIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
+				}
+			]
+		},
+		"minecraft:tooltip_display": {
+			hidden_components: [
+				"minecraft:jukebox_playable",
+				"minecraft:painting/variant",
+				"minecraft:map_id",
+				"minecraft:fireworks",
+				"minecraft:attribute_modifiers",
+				"minecraft:unbreakable",
+				"minecraft:written_book_content",
+				"minecraft:banner_patterns",
+				"minecraft:trim",
+				"minecraft:potion_contents",
+				"minecraft:block_entity_data",
+				"minecraft:dyed_color"
+			]
+		}
+	},
+	count: 3,
+	id: "minecraft:player_head"
+}
