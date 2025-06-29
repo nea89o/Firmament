@@ -20,7 +20,7 @@ object SoundVisualizer {
 
 	@Subscribe
 	fun onSubCommand(event: CommandEvent.SubCommand) {
-		event.subcommand("dev") {
+		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
 			thenLiteral("sounds") {
 				thenExecute {
 					showSounds = !showSounds

@@ -13,4 +13,7 @@ path = ["firm_static.png"]
 SPDX-License-Identifier = "CC-BY-4.0"
 SPDX-FileCopyrightText = ["ic22487", "kathund"]
 
-
+[[annotations]]
+path = ["fsr_static.png"]
+SPDX-License-Identifier = "CC-BY-4.0"
+SPDX-FileCopyrightText = ["Tendan"]

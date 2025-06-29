@@ -62,7 +62,7 @@ object AnimatedClothingScanner {
 
 	@Subscribe
 	fun onSubCommand(event: CommandEvent.SubCommand) {
-		event.subcommand("dev") {
+		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
 			thenLiteral("stealthisfit") {
 				thenLiteral("clear") {
 					thenExecute {

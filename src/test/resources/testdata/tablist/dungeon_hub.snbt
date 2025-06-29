@@ -1,0 +1,1170 @@
+{
+	body: [
+		{
+			extra: [
+				"         ",
+				{
+					bold: 1b,
+					color: "green",
+					text: "Players "
+				},
+				{
+					color: "white",
+					text: "(15)"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "aqua",
+					text: "210"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "aqua",
+					text: "lrg89"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "light_purple",
+					text: "322"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "aqua",
+					text: "Basilickk"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "light_purple",
+					text: "330"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "aqua",
+					text: "Schauli23 "
+				},
+				{
+					color: "gray",
+					text: "Σ"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "dark_green",
+					text: "187"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "aqua",
+					text: "bombardiro13"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "yellow",
+					text: "119"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "aqua",
+					text: "Horuu"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "dark_green",
+					text: "188"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "Kirito_Hacker "
+				},
+				{
+					bold: 1b,
+					color: "gray",
+					text: "ꕁ"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "blue",
+					text: "281"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "LasseFTW1N "
+				},
+				{
+					bold: 1b,
+					color: "dark_purple",
+					text: "࿇"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "dark_aqua",
+					text: "274"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "VN_Tuan "
+				},
+				{
+					bold: 1b,
+					color: "aqua",
+					text: "ᛝ"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "aqua",
+					text: "205"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "buttonpurse_1212"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "dark_green",
+					text: "193"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "Moly____ "
+				},
+				{
+					bold: 1b,
+					color: "gray",
+					text: "⚛"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "dark_green",
+					text: "187"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "BehavingTurtle4"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "dark_green",
+					text: "169"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "Kalmaria "
+				},
+				{
+					color: "gold",
+					text: "ௐ"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "yellow",
+					text: "84"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "green",
+					text: "Cxter"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "white",
+					text: "48"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "gray",
+					text: "FredyFazballs"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "gray",
+					text: "21"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "gray",
+					text: "Finn1446"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				"         ",
+				{
+					bold: 1b,
+					color: "green",
+					text: "Players "
+				},
+				{
+					color: "white",
+					text: "(15)"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				"               ",
+				{
+					bold: 1b,
+					color: "dark_aqua",
+					text: "Info"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					bold: 1b,
+					color: "aqua",
+					text: "Area: "
+				},
+				{
+					color: "gray",
+					text: "Dungeon Hub"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Server: ",
+				{
+					color: "dark_gray",
+					text: "mini90J"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Gems: ",
+				{
+					color: "green",
+					text: "65"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Fairy Souls: ",
+				{
+					color: "light_purple",
+					text: "7"
+				},
+				{
+					color: "dark_purple",
+					text: "/"
+				},
+				{
+					color: "light_purple",
+					text: "7"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Unclaimed chests: ",
+				{
+					color: "gold",
+					text: "0"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					bold: 1b,
+					text: ""
+				},
+				{
+					bold: 1b,
+					color: "yellow",
+					text: "Profile: "
+				},
+				{
+					color: "green",
+					text: "Strawberry"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" SB Level",
+				{
+					color: "white",
+					text: ": "
+				},
+				{
+					color: "dark_gray",
+					text: "["
+				},
+				{
+					color: "aqua",
+					text: "210"
+				},
+				{
+					color: "dark_gray",
+					text: "] "
+				},
+				{
+					color: "aqua",
+					text: "26"
+				},
+				{
+					color: "dark_aqua",
+					text: "/"
+				},
+				{
+					color: "aqua",
+					text: "100 XP"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Bank: ",
+				{
+					color: "gold",
+					text: "1.4B"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Interest: ",
+				{
+					color: "yellow",
+					text: "12 Hours"
+				},
+				{
+					color: "gold",
+					text: " (689.1k)"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					bold: 1b,
+					color: "yellow",
+					text: "Collection:"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Bonzo IV: ",
+				{
+					color: "yellow",
+					text: "110"
+				},
+				{
+					color: "gold",
+					text: "/"
+				},
+				{
+					color: "yellow",
+					text: "150"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Scarf II: ",
+				{
+					color: "yellow",
+					text: "25"
+				},
+				{
+					color: "gold",
+					text: "/"
+				},
+				{
+					color: "yellow",
+					text: "50"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" The Professor IV: ",
+				{
+					color: "yellow",
+					text: "141"
+				},
+				{
+					color: "gold",
+					text: "/"
+				},
+				{
+					color: "yellow",
+					text: "150"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Thorn I: ",
+				{
+					color: "yellow",
+					text: "29"
+				},
+				{
+					color: "gold",
+					text: "/"
+				},
+				{
+					color: "yellow",
+					text: "50"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Livid II: ",
+				{
+					color: "yellow",
+					text: "91"
+				},
+				{
+					color: "gold",
+					text: "/"
+				},
+				{
+					color: "yellow",
+					text: "100"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Sadan V: ",
+				{
+					color: "yellow",
+					text: "388"
+				},
+				{
+					color: "gold",
+					text: "/"
+				},
+				{
+					color: "yellow",
+					text: "500"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Necron VI: ",
+				{
+					color: "yellow",
+					text: "531"
+				},
+				{
+					color: "gold",
+					text: "/"
+				},
+				{
+					color: "yellow",
+					text: "750"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				"               ",
+				{
+					bold: 1b,
+					color: "dark_aqua",
+					text: "Info"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					bold: 1b,
+					color: "gold",
+					text: "Dungeons:"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" ",
+				{
+					color: "white",
+					text: "Catacombs 39: "
+				},
+				{
+					color: "green",
+					text: "15%"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" ",
+				{
+					color: "green",
+					text: "Mage 36: "
+				},
+				{
+					color: "green",
+					text: "12.9%"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					bold: 1b,
+					color: "light_purple",
+					text: "RNG Meter"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" ",
+				{
+					color: "green",
+					text: "Catacombs Floor I"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" ",
+				{
+					color: "gray",
+					text: "None"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					bold: 1b,
+					color: "aqua",
+					text: "Essence:"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Undead: ",
+				{
+					color: "light_purple",
+					text: "1,907"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				" Wither: ",
+				{
+					color: "light_purple",
+					text: "318"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			extra: [
+				{
+					bold: 1b,
+					color: "aqua",
+					text: "Party: "
+				},
+				{
+					color: "gray",
+					text: "No party"
+				}
+			],
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		},
+		{
+			italic: 0b,
+			text: ""
+		}
+	],
+	footer: {
+		extra: [
+			"\n",
+			{
+				extra: [
+					{
+						bold: 1b,
+						color: "green",
+						text: "Active Effects"
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					{
+						color: "gray",
+						text: ""
+					},
+					{
+						color: "gray",
+						text: "You have "
+					},
+					{
+						color: "yellow",
+						text: "2 "
+					},
+					{
+						color: "gray",
+						text: 'active effects. Use "'
+					},
+					{
+						color: "gold",
+						text: "/effects"
+					},
+					{
+						color: "gray",
+						text: '" to see them!'
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					{
+						color: "yellow",
+						text: "Haste II"
+					},
+					"",
+					{
+						bold: 0b,
+						italic: 0b,
+						obfuscated: 0b,
+						strikethrough: 0b,
+						text: "",
+						underlined: 0b
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					"",
+					{
+						bold: 0b,
+						extra: [
+							"§s"
+						],
+						italic: 0b,
+						obfuscated: 0b,
+						strikethrough: 0b,
+						text: "",
+						underlined: 0b
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					{
+						bold: 1b,
+						color: "light_purple",
+						text: "Cookie Buff"
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					{
+						color: "gray",
+						text: ""
+					},
+					{
+						color: "gray",
+						text: "Not active! Obtain booster cookies from the community"
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					{
+						color: "gray",
+						text: "shop in the hub."
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					"",
+					{
+						bold: 0b,
+						extra: [
+							"§s"
+						],
+						italic: 0b,
+						obfuscated: 0b,
+						strikethrough: 0b,
+						text: "",
+						underlined: 0b
+					}
+				],
+				italic: 0b,
+				text: ""
+			},
+			"\n",
+			{
+				extra: [
+					{
+						color: "green",
+						extra: [
+							{
+								bold: 1b,
+								color: "red",
+								text: "STORE.HYPIXEL.NET"
+							}
+						],
+						text: "Ranks, Boosters & MORE! "
+					}
+				],
+				italic: 0b,
+				text: ""
+			}
+		],
+		italic: 0b,
+		text: ""
+	},
+	header: {
+		extra: [
+			{
+				color: "aqua",
+				extra: [
+					{
+						bold: 1b,
+						color: "yellow",
+						text: "MC.HYPIXEL.NET"
+					}
+				],
+				text: "You are playing on "
+			},
+			"\n",
+			{
+				extra: [
+					"",
+					{
+						bold: 0b,
+						extra: [
+							"§s"
+						],
+						italic: 0b,
+						obfuscated: 0b,
+						strikethrough: 0b,
+						text: "",
+						underlined: 0b
+					}
+				],
+				italic: 0b,
+				text: ""
+			}
+		],
+		italic: 0b,
+		text: ""
+	},
+	source: {
+		dataVersion: 4325,
+		modVersion: "Firmament 3.1.0-dev+mc1.21.5+g2de6cfb"
+	}
+}
