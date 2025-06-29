@@ -6,14 +6,13 @@ import me.shedaniel.math.Rectangle
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import kotlin.time.Duration.Companion.seconds
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.ingame.HandledScreen
+import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.text.Text
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HandledScreenClickEvent
 import moe.nea.firmament.events.HandledScreenForegroundEvent
 import moe.nea.firmament.events.HandledScreenPushREIEvent
-import moe.nea.firmament.features.FirmamentFeature
-import moe.nea.firmament.gui.FirmHoverComponent
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.ScreenUtil
@@ -29,6 +28,7 @@ object InventoryButtons {
             openEditor()
         }
 		val hoverText by toggle("hover-text") { true }
+		val onlyInv by toggle("only-inv") { false }
     }
 
     object DConfig : DataHolder<Data>(serializer(), "inventory-buttons", ::Data)
@@ -38,13 +38,17 @@ object InventoryButtons {
         var buttons: MutableList<InventoryButton> = mutableListOf()
     )
 
+	fun getValidButtons(screen: HandledScreen<*>): Sequence<InventoryButton> {
+		return DConfig.data.buttons.asSequence().filter { button ->
+			button.isValid() && (!TConfig.onlyInv || screen is InventoryScreen)
+		}
+	}
 
-    fun getValidButtons() = DConfig.data.buttons.asSequence().filter { it.isValid() }
 
     @Subscribe
     fun onRectangles(it: HandledScreenPushREIEvent) {
         val bounds = it.screen.getRectangle()
-        for (button in getValidButtons()) {
+        for (button in getValidButtons(it.screen)) {
             val buttonBounds = button.getBounds(bounds)
             it.block(buttonBounds)
         }
@@ -53,7 +57,7 @@ object InventoryButtons {
     @Subscribe
     fun onClickScreen(it: HandledScreenClickEvent) {
         val bounds = it.screen.getRectangle()
-        for (button in getValidButtons()) {
+        for (button in getValidButtons(it.screen)) {
             val buttonBounds = button.getBounds(bounds)
             if (buttonBounds.contains(it.mouseX, it.mouseY)) {
                 MC.sendCommand(button.command!! /* non null invariant covered by getValidButtons */)
@@ -67,10 +71,10 @@ object InventoryButtons {
 
     @Subscribe
     fun onRenderForeground(it: HandledScreenForegroundEvent) {
-        val bounds = it.screen.getRectangle()
+		val bounds = it.screen.getRectangle()
 
 		var hoveredComponent: InventoryButton? = null
-        for (button in getValidButtons()) {
+		for (button in getValidButtons(it.screen)) {
             val buttonBounds = button.getBounds(bounds)
             it.context.matrices.push()
             it.context.matrices.translate(buttonBounds.minX.toFloat(), buttonBounds.minY.toFloat(), 0F)

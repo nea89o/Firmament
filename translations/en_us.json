@@ -160,6 +160,8 @@
 	"firmament.config.inventory-buttons-config": "Inventory Buttons",
 	"firmament.config.inventory-buttons-config.hover-text": "Hover Tooltip",
 	"firmament.config.inventory-buttons-config.hover-text.description": "Hovering over inventory buttons will show the command they run.",
+	"firmament.config.inventory-buttons-config.only-inv": "Inventory Only",
+	"firmament.config.inventory-buttons-config.only-inv.description": "Only shows buttons while in the inventory",
 	"firmament.config.inventory-buttons-config.open-editor": "Open Editor",
 	"firmament.config.inventory-buttons-config.open-editor.description": "Click anywhere to create a new inventory button or to edit one. Hold SHIFT to grid align.",
 	"firmament.config.item-hotkeys": "Item Hotkeys",
