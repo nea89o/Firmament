@@ -146,7 +146,8 @@ object PickaxeAbility : FirmamentFeature {
 		} ?: return
 		val extra = it.item.extraAttributes
 		val fuel = extra.getInt("drill_fuel").getOrNull() ?: return
-		val percentage = fuel / maxFuel.toFloat()
+		var percentage = fuel / maxFuel.toFloat()
+		if (percentage > 1f) percentage = 1f
 		it.barOverride = DurabilityBarEvent.DurabilityBar(
 			lerp(
 				DyeColor.RED.toShedaniel(),
