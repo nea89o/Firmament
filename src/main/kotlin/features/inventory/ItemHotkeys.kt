@@ -10,6 +10,7 @@ import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.ItemCache.isBroken
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.asBazaarStock
 import moe.nea.firmament.util.focusedItemStack
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.SBItemUtil.getSearchName
@@ -28,7 +29,7 @@ object ItemHotkeys {
 		var item = event.screen.focusedItemStack ?: return
 		val skyblockId = item.skyBlockId ?: return
 		item = RepoManager.getNEUItem(skyblockId)?.asItemStack()?.takeIf { !it.isBroken } ?: item
-		if (HypixelStaticData.hasBazaarStock(skyblockId)) {
+		if (HypixelStaticData.hasBazaarStock(skyblockId.asBazaarStock)) {
 			MC.sendCommand("bz ${item.getSearchName()}")
 		} else if (HypixelStaticData.hasAuctionHouseOffers(skyblockId)) {
 			MC.sendCommand("ahs ${item.getSearchName()}")

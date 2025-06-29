@@ -253,7 +253,13 @@ object ItemCache : IReloadable {
 		isFlawless = true
 		if (TestUtil.isInTest) return
 		val newScope =
-			CoroutineScope(Firmament.coroutineScope.coroutineContext + SupervisorJob(Firmament.globalJob) + Dispatchers.Default)
+			CoroutineScope(
+				Firmament.coroutineScope.coroutineContext +
+					SupervisorJob(Firmament.globalJob) +
+					Dispatchers.Default.limitedParallelism(
+						(Runtime.getRuntime().availableProcessors() / 4).coerceAtLeast(1)
+					)
+			)
 		val items = repository.items?.items
 		newScope.launch {
 			val items = items ?: return@launch

@@ -14,6 +14,6 @@ public class SaveCapeToPlayerEntityRenderState {
 	@Inject(method = "updateRenderState(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/render/entity/state/PlayerEntityRenderState;F)V",
 		at = @At("TAIL"))
 	private void addCustomCape(AbstractClientPlayerEntity abstractClientPlayerEntity, PlayerEntityRenderState playerEntityRenderState, float f, CallbackInfo ci) {
-CustomCapes.addCapeData(abstractClientPlayerEntity, playerEntityRenderState);
+		CustomCapes.addCapeData(abstractClientPlayerEntity, playerEntityRenderState);
 	}
 }

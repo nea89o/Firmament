@@ -13,6 +13,7 @@ import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState
 import net.minecraft.client.util.BufferAllocator
+import net.minecraft.client.util.SkinTextures
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.MC
@@ -109,10 +110,12 @@ object CustomCapes {
 				110.seconds
 			)
 		),
-//		FURFSKY(
-//			"FurfSky",
-//			TexturedCapeRenderer(Firmament.identifier("textures/cape/fsr_static.png"))
-//		),
+
+		FURFSKY_STATIC(
+			"FurfSky",
+			TexturedCapeRenderer(Firmament.identifier("textures/cape/fsr_static.png"))
+		),
+
 		FIRMAMENT_STATIC(
 			"Firmament",
 			TexturedCapeRenderer(Firmament.identifier("textures/cape/firm_static.png"))
@@ -123,11 +126,15 @@ object CustomCapes {
 	}
 
 	val byId = AllCapes.entries.associateBy { it.cape.id }
-	val byUuid = listOf(
-		Devs.nea to AllCapes.FIRMAMENT_ANIMATED,
-		Devs.kath to AllCapes.FIRMAMENT_STATIC,
-		Devs.jani to AllCapes.FIRMAMENT_ANIMATED,
-	).flatMap { (dev, cape) -> dev.uuids.map { it to cape.cape } }.toMap()
+	val byUuid =
+		listOf(
+			listOf(
+				Devs.nea to AllCapes.FIRMAMENT_ANIMATED,
+				Devs.kath to AllCapes.FIRMAMENT_STATIC,
+				Devs.jani to AllCapes.FIRMAMENT_ANIMATED,
+			),
+			Devs.FurfSky.all.map { it to AllCapes.FURFSKY_STATIC },
+		).flatten().flatMap { (dev, cape) -> dev.uuids.map { it to cape.cape } }.toMap()
 
 	@JvmStatic
 	fun render(
@@ -157,7 +164,15 @@ object CustomCapes {
 			capeStorage.cape_firmament = null
 		} else {
 			capeStorage.cape_firmament = cape
-			playerEntityRenderState.capeVisible = true;
+			playerEntityRenderState.skinTextures = SkinTextures(
+				playerEntityRenderState.skinTextures.texture,
+				playerEntityRenderState.skinTextures.textureUrl,
+				Firmament.identifier("placeholder/fake_cape"),
+				playerEntityRenderState.skinTextures.elytraTexture,
+				playerEntityRenderState.skinTextures.model,
+				playerEntityRenderState.skinTextures.secure,
+			)
+			playerEntityRenderState.capeVisible = true
 		}
 	}
 

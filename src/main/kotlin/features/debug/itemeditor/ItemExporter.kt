@@ -26,6 +26,7 @@ import moe.nea.firmament.commands.thenExecute
 import moe.nea.firmament.commands.thenLiteral
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
+import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.repo.RepoDownloadManager
@@ -97,7 +98,7 @@ object ItemExporter {
 
 	@Subscribe
 	fun onCommand(event: CommandEvent.SubCommand) {
-		event.subcommand("dev") {
+		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
 			thenLiteral("reexportlore") {
 				thenArgument("itemid", StringArgumentType.string()) { itemid ->
 					suggestsList { RepoManager.neuRepo.items.items.keys }
