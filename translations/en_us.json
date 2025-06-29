@@ -387,6 +387,8 @@
 	"firmament.inventory-buttons.load-preset": "Load Preset",
 	"firmament.inventory-buttons.reset": "Reset buttons",
 	"firmament.inventory-buttons.save-preset": "Save Preset",
+	"firmament.inventory-buttons.simple-preset": "Simple Preset",
+	"firmament.inventory-buttons.all-warps-preset": "All Warps Preset",
 	"firmament.key.category": "Firmament",
 	"firmament.keybinding.external": "%s",
 	"firmament.modapi.event": "Received mod API event: %s",
