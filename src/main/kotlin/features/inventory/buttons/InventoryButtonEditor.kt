@@ -70,12 +70,24 @@ class InventoryButtonEditor(
 	override fun init() {
 		super.init()
 		addDrawableChild(
-			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.delete")) {
-				MC.sendChat(Text.literal("Why are you clicking me?"))
-			}
-				.position(lastGuiRect.minX - (lastGuiRect.width + 5), MC.window.scaledHeight - 25)
-				.width(lastGuiRect.width)
-				.build()
+			TextWidget(
+				lastGuiRect.minX,
+				25,
+				lastGuiRect.width,
+				9,
+				Text.translatable("firmament.inventory-buttons.delete"),
+				MC.font
+			).alignCenter()
+		)
+		addDrawableChild(
+			TextWidget(
+				lastGuiRect.minX,
+				40,
+				lastGuiRect.width,
+				9,
+				Text.translatable("firmament.inventory-buttons.info"),
+				MC.font
+			).alignCenter()
 		)
 		addDrawableChild(
 			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.reset")) {
@@ -83,16 +95,8 @@ class InventoryButtonEditor(
 				if (newButtons != null)
 					buttons = moveButtons(newButtons.map { it.copy(command = it.command?.removePrefix("/")) })
 			}
-				.position(lastGuiRect.minX, MC.window.scaledHeight - 25)
-				.width(lastGuiRect.width)
-				.build()
-		)
-		addDrawableChild(
-			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.info")) {
-				MC.sendChat(Text.literal("Why are you clicking me?"))
-			}
-				.position(lastGuiRect.minX + (lastGuiRect.width + 5), MC.window.scaledHeight - 25)
-				.width(lastGuiRect.width)
+				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 10)
+				.width(lastGuiRect.width - 20)
 				.build()
 		)
 		addDrawableChild(
@@ -102,7 +106,7 @@ class InventoryButtonEditor(
 				if (newButtons != null)
 					buttons = moveButtons(newButtons.map { it.copy(command = it.command?.removePrefix("/")) })
 			}
-				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 10)
+				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 35)
 				.width(lastGuiRect.width - 20)
 				.build()
 		)
@@ -110,7 +114,7 @@ class InventoryButtonEditor(
 			ButtonWidget.builder(Text.translatable("firmament.inventory-buttons.save-preset")) {
 				ClipboardUtils.setTextContent(InventoryButtonTemplates.saveTemplate(buttons))
 			}
-				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 35)
+				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 60)
 				.width(lastGuiRect.width - 20)
 				.build()
 		)
@@ -122,7 +126,7 @@ class InventoryButtonEditor(
 				if (newButtons != null)
 					buttons = moveButtons(newButtons.map { it.copy(command = it.command?.removePrefix("/")) })
 			}
-				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 60)
+				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 85)
 				.width(lastGuiRect.width - 20)
 				.build()
 		)
@@ -134,7 +138,7 @@ class InventoryButtonEditor(
 				if (newButtons != null)
 					buttons = moveButtons(newButtons.map { it.copy(command = it.command?.removePrefix("/")) })
 			}
-				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 85)
+				.position(lastGuiRect.minX + 10, lastGuiRect.minY + 110)
 				.width(lastGuiRect.width - 20)
 				.build()
 		)
