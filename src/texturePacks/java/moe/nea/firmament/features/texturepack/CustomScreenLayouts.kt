@@ -8,6 +8,7 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.render.RenderLayer
+import net.minecraft.registry.Registries
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
 import net.minecraft.screen.slot.Slot
@@ -49,11 +50,16 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 	@Serializable
 	data class Preds(
 		val label: StringMatcher,
+		@Serializable(with = IdentifierSerializer::class)
+		val screenType: Identifier? = null,
 	) {
 		fun matches(screen: Screen): Boolean {
 			// TODO: does this deserve the restriction to handled screen
 			val s = screen as? HandledScreen<*>? ?: return false
-			return label.matches(s.title)
+			val typeMatches = screenType == null || s.screenHandler.type.equals(Registries.SCREEN_HANDLER
+				.get(screenType));
+
+			return label.matches(s.title) && typeMatches
 		}
 	}
 
@@ -215,5 +221,4 @@ object CustomScreenLayouts : SinglePreparationResourceReloader<List<CustomScreen
 			}
 		}
 	}
-
 }

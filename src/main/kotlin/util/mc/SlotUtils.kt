@@ -1,5 +1,6 @@
 package moe.nea.firmament.util.mc
 
+import org.lwjgl.glfw.GLFW
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
@@ -10,7 +11,7 @@ object SlotUtils {
 		MC.interactionManager?.clickSlot(
 			handler.syncId,
 			this.id,
-			2,
+			GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
 			SlotActionType.CLONE,
 			MC.player
 		)
@@ -20,14 +21,25 @@ object SlotUtils {
 		MC.interactionManager?.clickSlot(
 			handler.syncId, this.id,
 			hotbarIndex, SlotActionType.SWAP,
-			MC.player)
+			MC.player
+		)
 	}
 
 	fun Slot.clickRightMouseButton(handler: ScreenHandler) {
 		MC.interactionManager?.clickSlot(
 			handler.syncId,
 			this.id,
-			1,
+			GLFW.GLFW_MOUSE_BUTTON_RIGHT,
+			SlotActionType.PICKUP,
+			MC.player
+		)
+	}
+
+	fun Slot.clickLeftMouseButton(handler: ScreenHandler) {
+		MC.interactionManager?.clickSlot(
+			handler.syncId,
+			this.id,
+			GLFW.GLFW_MOUSE_BUTTON_LEFT,
 			SlotActionType.PICKUP,
 			MC.player
 		)

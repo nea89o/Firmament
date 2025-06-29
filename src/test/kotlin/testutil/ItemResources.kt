@@ -1,8 +1,6 @@
 package moe.nea.firmament.test.testutil
 
 import com.mojang.datafixers.DSL
-import com.mojang.datafixers.DataFixUtils
-import com.mojang.datafixers.types.templates.Named
 import com.mojang.serialization.Dynamic
 import com.mojang.serialization.JsonOps
 import net.minecraft.SharedConstants
@@ -20,6 +18,7 @@ import net.minecraft.text.TextCodecs
 import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.test.FirmTestBootstrap
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.MCTabListAPI
 
 object ItemResources {
 	init {
@@ -36,11 +35,12 @@ object ItemResources {
 	fun loadSNbt(path: String): NbtCompound {
 		return StringNbtReader.readCompound(loadString(path))
 	}
+
 	fun getNbtOps(): RegistryOps<NbtElement> = MC.currentOrDefaultRegistries.getOps(NbtOps.INSTANCE)
 
 	fun tryMigrateNbt(
 		nbtCompound: NbtCompound,
-		typ: DSL.TypeReference,
+		typ: DSL.TypeReference?,
 	): NbtElement {
 		val source = nbtCompound.get("source", ExportedTestConstantMeta.CODEC)
 		nbtCompound.remove("source")
@@ -49,19 +49,31 @@ object ItemResources {
 				// Per 1.21.5 text components are wrapped in a string, which firmament unwrapped in the snbt files
 				NbtString.of(
 					NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, nbtCompound)
-						.toString())
+						.toString()
+				)
 			} else {
 				nbtCompound
 			}
-			return Schemas.getFixer()
-				.update(
-					typ,
-					Dynamic(NbtOps.INSTANCE, wrappedNbtSource),
-					source.get().dataVersion,
-					SharedConstants.getGameVersion().saveVersion.id
-				).value
+			if (typ != null) {
+				return Schemas.getFixer()
+					.update(
+						typ,
+						Dynamic(NbtOps.INSTANCE, wrappedNbtSource),
+						source.get().dataVersion,
+						SharedConstants.getGameVersion().saveVersion.id
+					).value
+			} else {
+				wrappedNbtSource
+			}
 		}
 		return nbtCompound
+	}
+
+	fun loadTablist(name: String): MCTabListAPI.CurrentTabList {
+		return MCTabListAPI.CurrentTabList.CODEC.parse(
+			getNbtOps(),
+			tryMigrateNbt(loadSNbt("testdata/tablist/$name.snbt"), null),
+		).getOrThrow { IllegalStateException("Could not load tablist '$name': $it") }
 	}
 
 	fun loadText(name: String): Text {
