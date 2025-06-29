@@ -30,6 +30,7 @@ import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.mining.PickaxeAbility
 import moe.nea.firmament.features.mining.PristineProfitTracker
+import moe.nea.firmament.features.misc.CustomCapes
 import moe.nea.firmament.features.misc.Hud
 import moe.nea.firmament.features.world.FairySouls
 import moe.nea.firmament.features.world.Waypoints
@@ -69,6 +70,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 			loadFeature(SaveCursorPosition)
 			loadFeature(PriceData)
 			loadFeature(Fixes)
+			loadFeature(CustomCapes)
 			loadFeature(Hud)
 			loadFeature(WardrobeKeybinds)
 			loadFeature(DianaWaypoints)

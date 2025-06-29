@@ -16,10 +16,22 @@ import net.minecraft.client.util.BufferAllocator
 import net.minecraft.client.util.SkinTextures
 import net.minecraft.util.Identifier
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.features.FirmamentFeature
+import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
 
-object CustomCapes {
+object CustomCapes : FirmamentFeature {
+	override val identifier: String
+		get() = "developer-capes"
+
+	object TConfig : ManagedConfig(identifier, Category.DEV) {
+		val showCapes by toggle("show-cape") { true }
+	}
+
+	override val config: ManagedConfig
+		get() = TConfig
+
 	interface CustomCapeRenderer {
 		fun replaceRender(
 			renderLayer: RenderLayer,
@@ -158,7 +170,7 @@ object CustomCapes {
 		player: AbstractClientPlayerEntity,
 		playerEntityRenderState: PlayerEntityRenderState
 	) {
-		val cape = byUuid[player.uuid]
+		val cape = if (TConfig.showCapes) byUuid[player.uuid] else null
 		val capeStorage = CapeStorage.cast(playerEntityRenderState)
 		if (cape == null) {
 			capeStorage.cape_firmament = null
