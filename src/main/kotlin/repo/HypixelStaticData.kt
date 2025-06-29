@@ -27,7 +27,7 @@ object HypixelStaticData {
 		private set
 	var avg7dlowestBin: Map<SkyblockId, Double> = mapOf()
 		private set
-	var bazaarData: Map<SkyblockId, BazaarData> = mapOf()
+	var bazaarData: Map<SkyblockId.BazaarStock, BazaarData> = mapOf()
 		private set
 	var collectionData: Map<String, CollectionSkillData> = mapOf()
 		private set
@@ -58,9 +58,10 @@ object HypixelStaticData {
 		val products: Map<SkyblockId.BazaarStock, BazaarData> = mapOf(),
 	)
 
-	fun getPriceOfItem(item: SkyblockId): Double? = bazaarData[item]?.quickStatus?.buyPrice ?: lowestBin[item]
 
-	fun hasBazaarStock(item: SkyblockId): Boolean {
+	fun getPriceOfItem(item: SkyblockId): Double? = bazaarData[SkyblockId.BazaarStock.fromSkyBlockId(item)]?.quickStatus?.buyPrice ?: lowestBin[item]
+
+	fun hasBazaarStock(item: SkyblockId.BazaarStock): Boolean {
 		return item in bazaarData
 	}
 
@@ -105,7 +106,7 @@ object HypixelStaticData {
 		if (!response.success) {
 			logger.warn("Retrieved unsuccessful bazaar data")
 		}
-		bazaarData = response.products.mapKeys { it.key.toRepoId() }
+		bazaarData = response.products
 	}
 
 	private suspend fun updateCollectionData() {

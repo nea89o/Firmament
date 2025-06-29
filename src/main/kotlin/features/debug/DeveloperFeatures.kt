@@ -25,6 +25,7 @@ import moe.nea.firmament.util.asm.AsmAnnotationUtil
 import moe.nea.firmament.util.iterate
 
 object DeveloperFeatures : FirmamentFeature {
+	val DEVELOPER_SUBCOMMAND: String = "dev"
 	override val identifier: String
 		get() = "developer"
 	override val config: TConfig
@@ -103,9 +104,12 @@ object DeveloperFeatures : FirmamentFeature {
 			MC.sendChat(Text.translatable("firmament.dev.resourcerebuild.start"))
 			val startTime = TimeMark.now()
 			process.toHandle().onExit().thenApply {
-				MC.sendChat(Text.stringifiedTranslatable(
-					"firmament.dev.resourcerebuild.done",
-					startTime.passedTime()))
+				MC.sendChat(
+					Text.stringifiedTranslatable(
+						"firmament.dev.resourcerebuild.done",
+						startTime.passedTime()
+					)
+				)
 				Unit
 			}
 		} else {

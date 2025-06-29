@@ -9,6 +9,8 @@ object StringUtil {
 		return string.replace(",", "").toInt()
 	}
 
+	fun String.title() = replaceFirstChar { it.titlecase() }
+
 	fun Iterable<String>.unwords() = joinToString(" ")
 	fun nextLexicographicStringOfSameLength(string: String): String {
 		val next = StringBuilder(string)
