@@ -141,7 +141,7 @@ object ChatLinks : FirmamentFeature {
 				val nextMatch = urlRegex.find(text, index)
 				val url = nextMatch?.groupValues[0]
 				val uri = runCatching { url?.let(::URI) }.getOrNull()
-				if (nextMatch == null || url == null) {
+				if (nextMatch == null || url == null || uri == null) {
 					s.append(Text.literal(text.substring(index, text.length)))
 					break
 				}
