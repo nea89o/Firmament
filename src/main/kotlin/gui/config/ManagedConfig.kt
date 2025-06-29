@@ -38,6 +38,7 @@ abstract class ManagedConfig(
 		MISC,
 		CHAT,
 		INVENTORY,
+		ITEMS,
 		MINING,
 		GARDEN,
 		EVENTS,
