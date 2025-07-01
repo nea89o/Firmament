@@ -35,6 +35,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.StringIdentifiable
 import net.minecraft.util.Util
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ChoiceHandler
 import moe.nea.firmament.gui.config.ClickHandler
@@ -407,6 +408,7 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 		val editor = MoulConfigEditor(ProcessedCategory.collect(categories), configObject)
 		if (search != null)
 			editor.search(search)
+		editor.setWide(AllConfigsGui.ConfigConfig.enableWideMC)
 		return GuiElementWrapper(editor) // TODO : add parent support
 	}
 

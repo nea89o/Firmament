@@ -79,6 +79,8 @@
 	"firmament.config.configconfig.enable-moulconfig.description": "Uses the MoulConfig config UI. Turn off to fall back to the built in config.",
 	"firmament.config.configconfig.enable-yacl": "Use YACL Config",
 	"firmament.config.configconfig.enable-yacl.description": "Uses the YACL config UI. Turn off to fall back to the built in config. Needs YACL to be installed separately.",
+	"firmament.config.configconfig.wide-moulconfig": "Wide MoulConfig",
+	"firmament.config.configconfig.wide-moulconfig.description": "Use a wider editor for MoulConfig",
 	"firmament.config.copy-chat": "Copy Chat",
 	"firmament.config.copy-chat.copy-chat": "Copy Chat",
 	"firmament.config.copy-chat.copy-chat.description": "Right click a message to copy",
