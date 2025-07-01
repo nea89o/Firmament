@@ -7,7 +7,7 @@ interface FirmamentConfigScreenProvider {
 	val key: String
 	val isEnabled: Boolean get() = true
 
-	fun open(parent: Screen?): Screen
+	fun open(search: String?, parent: Screen?): Screen
 
 	companion object : CompatLoader<FirmamentConfigScreenProvider>(FirmamentConfigScreenProvider::class) {
 		val providers by lazy {

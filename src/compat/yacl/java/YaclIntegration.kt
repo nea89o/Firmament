@@ -154,7 +154,7 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 	override val key: String
 		get() = "yacl"
 
-	override fun open(parent: Screen?): Screen {
+	override fun open(search: String?, parent: Screen?): Screen {
 		return object : YACLScreen(buildConfig(), parent) {
 			override fun setFocused(focused: Element?) {
 				if (this.focused is KeybindingWidget &&

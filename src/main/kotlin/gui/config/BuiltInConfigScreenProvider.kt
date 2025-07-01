@@ -8,7 +8,7 @@ class BuiltInConfigScreenProvider : FirmamentConfigScreenProvider {
     override val key: String
         get() = "builtin"
 
-    override fun open(parent: Screen?): Screen {
+    override fun open(search: String?, parent: Screen?): Screen {
         return AllConfigsGui.makeBuiltInScreen(parent)
     }
 }

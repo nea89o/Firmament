@@ -6,6 +6,6 @@ import moe.nea.firmament.gui.config.AllConfigsGui
 
 class FirmamentModMenuPlugin : ModMenuApi {
     override fun getModConfigScreenFactory(): ConfigScreenFactory<*> {
-        return ConfigScreenFactory { AllConfigsGui.makeScreen(it) }
+        return ConfigScreenFactory { AllConfigsGui.makeScreen(parent = it) }
     }
 }
