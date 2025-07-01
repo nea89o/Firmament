@@ -28,6 +28,7 @@ import moe.nea.firmament.features.inventory.SlotLocking
 import moe.nea.firmament.features.inventory.WardrobeKeybinds
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
+import moe.nea.firmament.features.items.EtherwarpOverlay
 import moe.nea.firmament.features.mining.PickaxeAbility
 import moe.nea.firmament.features.mining.PristineProfitTracker
 import moe.nea.firmament.features.misc.CustomCapes
@@ -72,6 +73,7 @@ object FeatureManager : DataHolder<FeatureManager.Config>(serializer(), "feature
 			loadFeature(Fixes)
 			loadFeature(CustomCapes)
 			loadFeature(Hud)
+			loadFeature(EtherwarpOverlay)
 			loadFeature(WardrobeKeybinds)
 			loadFeature(DianaWaypoints)
 			loadFeature(ItemRarityCosmetics)
