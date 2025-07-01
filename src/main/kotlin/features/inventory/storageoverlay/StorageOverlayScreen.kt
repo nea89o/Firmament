@@ -154,11 +154,14 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 
 	fun editPages() {
 		isExiting = true
-		val hs = MC.screen as? HandledScreen<*>
-		if (StorageBackingHandle.fromScreen(hs) is StorageBackingHandle.Overview) {
-			hs.customGui = null
-		} else {
-			MC.sendCommand("storage")
+		MC.instance.send {
+			val hs = MC.screen as? HandledScreen<*>
+			if (StorageBackingHandle.fromScreen(hs) is StorageBackingHandle.Overview) {
+				hs.customGui = null
+				hs.init(MC.instance, width, height)
+			} else {
+				MC.sendCommand("storage")
+			}
 		}
 	}
 
