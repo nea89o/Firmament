@@ -29,6 +29,7 @@ object EtherwarpOverlay : FirmamentFeature {
 	fun renderEtherwarpOverlay(event: WorldRenderLastEvent) {
 		if (!TConfig.etherwarpOverlay) return
 		val player = MC.player ?: return
+		if (!player.isSneaking) return
 		val world = player.world
 		val camera = MC.camera ?: return
 		val heldItem = MC.stackInHand
