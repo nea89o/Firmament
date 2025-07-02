@@ -52,8 +52,11 @@ object WardrobeKeybinds : FirmamentFeature {
 			val backPressed = event.matches(TConfig.changePageKeybind) || event.matches(TConfig.previousPage)
 			val nextPressed = event.matches(TConfig.changePageKeybind) || event.matches(TConfig.nextPage)
 
-			if (backPressed && previousSlot.stack.item == Items.ARROW) previousSlot.clickLeftMouseButton(handler)
-			if (nextPressed && nextSlot.stack.item == Items.ARROW) nextSlot.clickLeftMouseButton(handler)
+			if (backPressed && previousSlot.stack.item == Items.ARROW) {
+				previousSlot.clickLeftMouseButton(handler)
+			} else if (nextPressed && nextSlot.stack.item == Items.ARROW) {
+				nextSlot.clickLeftMouseButton(handler)
+			}
 		}
 
 
