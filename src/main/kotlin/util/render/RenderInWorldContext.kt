@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.FirmFormatters
+import moe.nea.firmament.util.IntUtil.toRGBA
 import moe.nea.firmament.util.MC
 
 @RenderContextDSL
@@ -204,37 +205,39 @@ class RenderInWorldContext private constructor(
 			}
 		}
 
-		private fun buildCube(matrix: Matrix4f, buf: VertexConsumer, color: Int) {
+		private fun buildCube(matrix: Matrix4f, buf: VertexConsumer, colorInt: Int) {
+			val (r, g, b, a) = colorInt.toRGBA()
+
 			// Y-
-			buf.vertex(matrix, 0F, 0F, 0F).color(color)
-			buf.vertex(matrix, 0F, 0F, 1F).color(color)
-			buf.vertex(matrix, 1F, 0F, 1F).color(color)
-			buf.vertex(matrix, 1F, 0F, 0F).color(color)
+			buf.vertex(matrix, 0F, 0F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 0F, 0F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 0F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 0F, 0F).color(r, g, b, a)
 			// Y+
-			buf.vertex(matrix, 0F, 1F, 0F).color(color)
-			buf.vertex(matrix, 1F, 1F, 0F).color(color)
-			buf.vertex(matrix, 1F, 1F, 1F).color(color)
-			buf.vertex(matrix, 0F, 1F, 1F).color(color)
+			buf.vertex(matrix, 0F, 1F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 1F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 1F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 0F, 1F, 1F).color(r, g, b, a)
 			// X-
-			buf.vertex(matrix, 0F, 0F, 0F).color(color)
-			buf.vertex(matrix, 0F, 0F, 1F).color(color)
-			buf.vertex(matrix, 0F, 1F, 1F).color(color)
-			buf.vertex(matrix, 0F, 1F, 0F).color(color)
+			buf.vertex(matrix, 0F, 0F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 0F, 0F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 0F, 1F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 0F, 1F, 0F).color(r, g, b, a)
 			// X+
-			buf.vertex(matrix, 1F, 0F, 0F).color(color)
-			buf.vertex(matrix, 1F, 1F, 0F).color(color)
-			buf.vertex(matrix, 1F, 1F, 1F).color(color)
-			buf.vertex(matrix, 1F, 0F, 1F).color(color)
+			buf.vertex(matrix, 1F, 0F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 1F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 1F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 0F, 1F).color(r, g, b, a)
 			// Z-
-			buf.vertex(matrix, 0F, 0F, 0F).color(color)
-			buf.vertex(matrix, 1F, 0F, 0F).color(color)
-			buf.vertex(matrix, 1F, 1F, 0F).color(color)
-			buf.vertex(matrix, 0F, 1F, 0F).color(color)
+			buf.vertex(matrix, 0F, 0F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 0F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 1F, 0F).color(r, g, b, a)
+			buf.vertex(matrix, 0F, 1F, 0F).color(r, g, b, a)
 			// Z+
-			buf.vertex(matrix, 0F, 0F, 1F).color(color)
-			buf.vertex(matrix, 0F, 1F, 1F).color(color)
-			buf.vertex(matrix, 1F, 1F, 1F).color(color)
-			buf.vertex(matrix, 1F, 0F, 1F).color(color)
+			buf.vertex(matrix, 0F, 0F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 0F, 1F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 1F, 1F).color(r, g, b, a)
+			buf.vertex(matrix, 1F, 0F, 1F).color(r, g, b, a)
 		}
 
 

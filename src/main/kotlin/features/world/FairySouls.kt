@@ -3,6 +3,7 @@
 package moe.nea.firmament.features.world
 
 import io.github.moulberry.repo.data.Coordinate
+import me.shedaniel.math.Color
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 import net.minecraft.text.Text
@@ -100,7 +101,7 @@ object FairySouls : FirmamentFeature {
         if (!TConfig.displaySouls) return
         renderInWorld(it) {
             currentMissingSouls.forEach {
-                block(it.blockPos, 0x80FFFF00.toInt())
+                block(it.blockPos, Color.ofRGBA(176, 0, 255, 128).color)
             }
             color(1f, 0f, 1f, 1f)
             currentLocationSouls.forEach {

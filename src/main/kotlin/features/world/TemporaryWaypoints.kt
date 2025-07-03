@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.world
 
+import me.shedaniel.math.Color
 import kotlin.compareTo
 import kotlin.text.clear
 import kotlin.time.Duration.Companion.seconds
@@ -38,7 +39,7 @@ object TemporaryWaypoints {
 		if (temporaryPlayerWaypointList.isEmpty()) return
 		RenderInWorldContext.renderInWorld(event) {
 			temporaryPlayerWaypointList.forEach { (_, waypoint) ->
-				block(waypoint.pos, 0xFFFFFF00.toInt())
+				block(waypoint.pos, Color.ofRGBA(255, 255, 0, 128).color)
 			}
 			temporaryPlayerWaypointList.forEach { (player, waypoint) ->
 				val skin =
