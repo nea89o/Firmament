@@ -57,13 +57,16 @@ object BonemerangOverlay : FirmamentFeature {
 	}
 
 
+	val throwableWeapons = listOf(
+		SkyBlockItems.BONE_BOOMERANG, SkyBlockItems.STARRED_BONE_BOOMERANG,
+		SkyBlockItems.TRIBAL_SPEAR,
+	)
+
+
 	@Subscribe
 	fun onEntityRender(event: EntityRenderTintEvent) {
 		if (!TConfig.highlightHitEntities) return
-		if (MC.stackInHand.skyBlockId !in listOf(
-				SkyBlockItems.BONE_BOOMERANG, SkyBlockItems.STARRED_BONE_BOOMERANG
-			)
-		) return
+		if (MC.stackInHand.skyBlockId !in throwableWeapons) return
 
 		val entities = getEntities()
 		if (entities.isEmpty()) return
@@ -80,10 +83,7 @@ object BonemerangOverlay : FirmamentFeature {
 	@Subscribe
 	fun onRenderHud(it: HudRenderEvent) {
 		if (!TConfig.bonemerangOverlay) return
-		if (MC.stackInHand.skyBlockId !in listOf(
-				SkyBlockItems.BONE_BOOMERANG, SkyBlockItems.STARRED_BONE_BOOMERANG
-			)
-		) return
+		if (MC.stackInHand.skyBlockId !in throwableWeapons) return
 
 		val entities = getEntities()
 

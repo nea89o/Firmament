@@ -18,4 +18,5 @@ object SkyBlockItems {
 	val ASPECT_OF_THE_END = SkyblockId("ASPECT_OF_THE_END")
 	val BONE_BOOMERANG = SkyblockId("BONE_BOOMERANG")
 	val STARRED_BONE_BOOMERANG = SkyblockId("STARRED_BONE_BOOMERANG")
+	val TRIBAL_SPEAR = SkyblockId("TRIBAL_SPEAR")
 }
