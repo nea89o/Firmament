@@ -13,6 +13,7 @@ import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.FirmFormatters.formatPercent
 import moe.nea.firmament.util.FirmFormatters.shortFormat
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.skyblock.Rarity
@@ -52,7 +53,7 @@ object PetFeatures : FirmamentFeature {
 
 	@Subscribe
 	fun onRenderHud(it: HudRenderEvent) {
-		if (!TConfig.petOverlay) return
+		if (!TConfig.petOverlay || !SBData.isOnSkyblock) return
 		val itemStack = petItemStack ?: return
 		val petData = petItemStack?.petData ?: return
 		val rarity = Rarity.fromNeuRepo(petData.tier)
