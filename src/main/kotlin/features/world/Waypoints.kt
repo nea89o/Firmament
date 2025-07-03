@@ -45,7 +45,7 @@ object Waypoints : FirmamentFeature {
 		RenderInWorldContext.renderInWorld(event) {
 			if (!w.isOrdered) {
 				w.waypoints.withIndex().forEach {
-					block(it.value.blockPos, 0x800050A0.toInt())
+					block(it.value.blockPos, Color.ofRGBA(0, 80, 160, 128).color)
 					if (TConfig.showIndex) withFacingThePlayer(it.value.blockPos.toCenterPos()) {
 						text(Text.literal(it.index.toString()))
 					}

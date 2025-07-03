@@ -39,6 +39,7 @@ object CustomRenderPipelines {
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
 			.withCull(false)
 			.withDepthWrite(false)
+			.withBlend(BlendFunction.TRANSLUCENT)
 			.build()
 
 	val CIRCLE_FILTER_TRANSLUCENT_GUI_TRIS =

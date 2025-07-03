@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.items
 
+import me.shedaniel.math.Color
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -43,7 +44,7 @@ object EtherwarpOverlay : FirmamentFeature {
 		if (!world.getBlockState(blockPos.up()).isAir) return
 		if (!world.getBlockState(blockPos.up(2)).isAir) return
 		RenderInWorldContext.renderInWorld(event) {
-			if (TConfig.cube) block(blockPos, 0xFFFFFF00.toInt())
+			if (TConfig.cube) block(blockPos, Color.ofRGBA(172, 0, 255, 60).color)
 			if (TConfig.wireframe) wireframeCube(blockPos, 10f)
 		}
 	}
