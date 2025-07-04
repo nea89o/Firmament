@@ -47,7 +47,10 @@ object BlockZapperOverlay : FirmamentFeature {
 		Blocks.TALL_GRASS,
 		Blocks.SUNFLOWER,
 		Blocks.FARMLAND,
-		Blocks.BREWING_STAND
+		Blocks.BREWING_STAND,
+		Blocks.SNOW,
+		Blocks.RED_MUSHROOM,
+		Blocks.BROWN_MUSHROOM,
 	)
 
 	private val zapperOffsets: List<BlockPos> = listOf(
@@ -119,12 +122,14 @@ object BlockZapperOverlay : FirmamentFeature {
 			}
 
 			RenderInWorldContext.renderInWorld(event) {
-				for (pos in zapperBlocks) {
-					block(pos, Color.ofRGBA(255, 0, 0, 60).color)
+				if (MC.player?.isSneaking ?: false) {
+					zapperBlocks.forEach {
+						block(it, Color.ofRGBA(255, 0, 0, 60).color)
+					}
+				} else {
+					sharedVoxelSurface(zapperBlocks, Color.ofRGBA(255, 0, 0, 60).color)
 				}
 			}
-
-
 		}
 	}
 }
