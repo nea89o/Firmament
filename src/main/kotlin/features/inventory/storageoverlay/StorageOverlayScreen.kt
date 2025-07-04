@@ -499,7 +499,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 				y + 3 + textRenderer.fontHeight,
 				PAGE_WIDTH,
 				inv.rows * SLOT_SIZE + 4,
-				0xFFFF00FF.toInt()
+				StorageOverlay.TConfig.outlineActiveStoragePageColour.getEffectiveColourRGB()
 			)
 		context.drawText(
 			textRenderer, Text.literal(name), x + 6, y + 3,
