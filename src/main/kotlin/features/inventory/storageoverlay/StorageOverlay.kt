@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.inventory.storageoverlay
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import java.util.SortedMap
 import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
@@ -28,6 +29,15 @@ object StorageOverlay : FirmamentFeature {
 	object TConfig : ManagedConfig(identifier, Category.INVENTORY) {
 		val alwaysReplace by toggle("always-replace") { true }
 		val outlineActiveStoragePage by toggle("outline-active-page") { false }
+		val outlineActiveStoragePageColour by colour("outline-active-page-colour") {
+			ChromaColour.fromRGB(
+				255,
+				255,
+				0,
+				0,
+				255
+			)
+		}
 		val columns by integer("rows", 1, 10) { 3 }
 		val height by integer("height", 80, 3000) { 3 * 18 * 6 }
 		val scrollSpeed by integer("scroll-speed", 1, 50) { 10 }
