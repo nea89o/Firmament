@@ -1,6 +1,7 @@
 package moe.nea.firmament.compat.moulconfig
 
 import com.google.auto.service.AutoService
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.Config
 import io.github.notenoughupdates.moulconfig.DescriptionRendereringBehaviour
 import io.github.notenoughupdates.moulconfig.Social
@@ -20,6 +21,7 @@ import io.github.notenoughupdates.moulconfig.gui.editors.ComponentEditor
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorAccordion
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorBoolean
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorButton
+import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorColour
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorDropdown
 import io.github.notenoughupdates.moulconfig.gui.editors.GuiOptionEditorText
 import io.github.notenoughupdates.moulconfig.observer.GetSetter
@@ -39,6 +41,7 @@ import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ChoiceHandler
 import moe.nea.firmament.gui.config.ClickHandler
+import moe.nea.firmament.gui.config.ColourHandler
 import moe.nea.firmament.gui.config.DurationHandler
 import moe.nea.firmament.gui.config.FirmamentConfigScreenProvider
 import moe.nea.firmament.gui.config.HudMeta
@@ -185,6 +188,26 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 					return any as String
 				}
 			}
+		}
+		register(ColourHandler::class.java) { handler, option, accordionId, configObject ->
+			object : ProcessedEditableOptionFirm<ChromaColour>(option, accordionId, configObject) {
+				override fun fromT(t: ChromaColour): Any {
+					return t
+				}
+
+				override fun toT(any: Any?): ChromaColour? {
+					return any as ChromaColour?
+				}
+
+				override fun createEditor(): GuiOptionEditor {
+					return GuiOptionEditorColour(this)
+				}
+
+				override fun getType(): Type? {
+					return ChromaColour::class.java
+				}
+			}
+
 		}
 		register(ClickHandler::class.java) { handler, option, categoryAccordionId, configObject ->
 			object : ProcessedEditableOptionFirm<Unit>(option, categoryAccordionId, configObject) {

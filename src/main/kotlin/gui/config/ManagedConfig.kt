@@ -1,6 +1,7 @@
 package moe.nea.firmament.gui.config
 
 import com.mojang.serialization.Codec
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import io.github.notenoughupdates.moulconfig.gui.CloseEventListener
 import io.github.notenoughupdates.moulconfig.gui.GuiComponentWrapper
 import io.github.notenoughupdates.moulconfig.gui.GuiContext
@@ -116,6 +117,10 @@ abstract class ManagedConfig(
 
 	protected fun toggle(propertyName: String, default: () -> Boolean): ManagedOption<Boolean> {
 		return option(propertyName, default, BooleanHandler(this))
+	}
+
+	protected fun colour(propertyName: String, default: ()-> ChromaColour) : ManagedOption<ChromaColour> {
+		return option(propertyName, default, ColourHandler(this))
 	}
 
 	protected fun <E> choice(

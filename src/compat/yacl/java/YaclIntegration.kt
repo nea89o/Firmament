@@ -9,6 +9,7 @@ import dev.isxander.yacl3.api.Option
 import dev.isxander.yacl3.api.OptionDescription
 import dev.isxander.yacl3.api.OptionGroup
 import dev.isxander.yacl3.api.YetAnotherConfigLib
+import dev.isxander.yacl3.api.controller.ColorControllerBuilder
 import dev.isxander.yacl3.api.controller.ControllerBuilder
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder
@@ -18,6 +19,8 @@ import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder
 import dev.isxander.yacl3.api.controller.ValueFormatter
 import dev.isxander.yacl3.gui.YACLScreen
 import dev.isxander.yacl3.gui.tab.ListHolderWidget
+import io.github.notenoughupdates.moulconfig.ChromaColour
+import java.awt.Color
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
@@ -27,6 +30,7 @@ import net.minecraft.text.Text
 import moe.nea.firmament.gui.config.BooleanHandler
 import moe.nea.firmament.gui.config.ChoiceHandler
 import moe.nea.firmament.gui.config.ClickHandler
+import moe.nea.firmament.gui.config.ColourHandler
 import moe.nea.firmament.gui.config.DurationHandler
 import moe.nea.firmament.gui.config.EnumRenderer
 import moe.nea.firmament.gui.config.FirmamentConfigScreenProvider
@@ -39,6 +43,8 @@ import moe.nea.firmament.gui.config.ManagedOption
 import moe.nea.firmament.gui.config.StringHandler
 import moe.nea.firmament.keybindings.SavedKeyBinding
 import moe.nea.firmament.util.FirmFormatters
+import moe.nea.firmament.util.getRGBAWithoutAnimation
+import moe.nea.firmament.util.toChromaWithoutAnimation
 
 
 @AutoService(FirmamentConfigScreenProvider::class)
@@ -56,20 +62,22 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 						OptionGroup.createBuilder()
 							.name(it.labelText)
 							.options(buildOptions(it.sortedOptions))
-							.build())
+							.build()
+					)
 				}
 			}
 			.build()
 	}
 
 	fun buildOptions(options: List<ManagedOption<*>>): Collection<Option<*>> =
-		options.map { buildOption(it) }
+		options.flatMap { buildOption(it) }
 
-	private fun <T : Any> buildOption(managedOption: ManagedOption<T>): Option<*> {
+	private fun <T : Any> buildOption(managedOption: ManagedOption<T>): Collection<Option<*>> {
 		val handler = managedOption.handler
-		val binding = Binding.generic(managedOption.default(),
-		                              managedOption::value,
-		                              { managedOption.value = it; managedOption.element.save() })
+		val binding = Binding.generic(
+			managedOption.default(),
+			managedOption::value,
+			{ managedOption.value = it; managedOption.element.save() })
 
 		fun <T> createDefaultBinding(function: (Option<T>) -> ControllerBuilder<T>): Option.Builder<T> {
 			return Option.createBuilder<T>()
@@ -78,30 +86,72 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 				.binding(binding as Binding<T>)
 				.controller { function(it) }
 		}
+
+		fun Option<out Any>.single() = listOf(this)
+		fun ButtonOption.Builder.single() = build().single()
+		fun Option.Builder<out Any>.single() = build().single()
 		when (handler) {
 			is ClickHandler -> return ButtonOption.createBuilder()
 				.name(managedOption.labelText)
 				.action { t, u ->
 					handler.runnable()
 				}
-				.build()
+				.single()
 
 			is HudMetaHandler -> return ButtonOption.createBuilder()
 				.name(managedOption.labelText)
 				.action { t, u ->
 					handler.openEditor(managedOption as ManagedOption<HudMeta>, t)
 				}
-				.build()
+				.single()
 
 			is ChoiceHandler<*> -> return createDefaultBinding {
 				createChoiceBinding(handler as ChoiceHandler<*>, managedOption as ManagedOption<*>, it as Option<*>)
-			}.build()
+			}.single()
 
-			is BooleanHandler -> return createDefaultBinding(TickBoxControllerBuilder::create).build()
-			is StringHandler -> return createDefaultBinding(StringControllerBuilder::create).build()
+			is ColourHandler -> {
+				managedOption as ManagedOption<ChromaColour>
+				val colorBinding =
+					Binding.generic(
+						managedOption.default().getRGBAWithoutAnimation(),
+						{ managedOption.value.getRGBAWithoutAnimation() },
+						{
+							managedOption.value =
+								it.toChromaWithoutAnimation(managedOption.value.timeForFullRotationInMillis)
+							managedOption.element.save()
+						})
+				val speedBinding =
+					Binding.generic(
+						managedOption.default().timeForFullRotationInMillis,
+						{ managedOption.value.timeForFullRotationInMillis },
+						{
+							managedOption.value = managedOption.value.copy(timeForFullRotationInMillis = it)
+							managedOption.element.save()
+						}
+					)
+
+				return listOf(
+					Option.createBuilder<Color>()
+						.name(managedOption.labelText)
+						.binding(colorBinding)
+						.controller {
+							ColorControllerBuilder.create(it)
+								.allowAlpha(true)
+						}
+						.build(),
+					Option.createBuilder<Int>()
+						.name(managedOption.labelText)
+						.binding(speedBinding)
+						.controller { IntegerSliderControllerBuilder.create(it).range(0, 60_000).step(10) }
+						.build(),
+				)
+			}
+
+			is BooleanHandler -> return createDefaultBinding(TickBoxControllerBuilder::create).single()
+			is StringHandler -> return createDefaultBinding(StringControllerBuilder::create).single()
 			is IntegerHandler -> return createDefaultBinding {
 				IntegerSliderControllerBuilder.create(it).range(handler.min, handler.max).step(1)
-			}.build()
+			}.single()
 
 			is DurationHandler -> return Option.createBuilder<Double>()
 				.name(managedOption.labelText)
@@ -112,13 +162,13 @@ class YaclIntegration : FirmamentConfigScreenProvider {
 						.step(0.1)
 						.range(handler.min.toDouble(DurationUnit.SECONDS), handler.max.toDouble(DurationUnit.SECONDS))
 				}
-				.build()
+				.single()
 
 			is KeyBindingHandler -> return createDefaultBinding {
 				KeybindingBuilder(it, managedOption as ManagedOption<SavedKeyBinding>)
-			}.build()
+			}.single()
 
-			else -> return LabelOption.create(Text.literal("This option is currently unhandled for this config menu. Please report this as a bug."))
+			else -> return listOf(LabelOption.create(Text.literal("This option is currently unhandled for this config menu. Please report this as a bug.")))
 		}
 	}
 

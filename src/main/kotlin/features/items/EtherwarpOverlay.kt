@@ -1,12 +1,13 @@
 package moe.nea.firmament.features.items
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import me.shedaniel.math.Color
+import net.minecraft.util.hit.BlockHitResult
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
 import moe.nea.firmament.util.MC
-import net.minecraft.util.hit.BlockHitResult
-import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.skyBlockId
@@ -19,6 +20,7 @@ object EtherwarpOverlay : FirmamentFeature {
 	object TConfig : ManagedConfig(identifier, Category.ITEMS) {
 		var etherwarpOverlay by toggle("etherwarp-overlay") { false }
 		var cube by toggle("cube") { true }
+		val cubeColour by colour("cube-colour") { ChromaColour.fromStaticRGB(172, 0, 255, 60) }
 		var wireframe by toggle("wireframe") { false }
 	}
 
@@ -44,7 +46,7 @@ object EtherwarpOverlay : FirmamentFeature {
 		if (!world.getBlockState(blockPos.up()).isAir) return
 		if (!world.getBlockState(blockPos.up(2)).isAir) return
 		RenderInWorldContext.renderInWorld(event) {
-			if (TConfig.cube) block(blockPos, Color.ofRGBA(172, 0, 255, 60).color)
+			if (TConfig.cube) block(blockPos, TConfig.cubeColour.getEffectiveColourRGB())
 			if (TConfig.wireframe) wireframeCube(blockPos, 10f)
 		}
 	}
