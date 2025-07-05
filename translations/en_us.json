@@ -209,6 +209,7 @@
 	"firmament.config.lore-timers.format.choice.american": "§9Ame§cri§fcan",
 	"firmament.config.lore-timers.format.choice.local": "System Time Format",
 	"firmament.config.lore-timers.format.choice.rfc": "RFC",
+	"firmament.config.lore-timers.format.choice.rfcprecise": "RFC (Milliseconds)",
 	"firmament.config.lore-timers.format.choice.socialist": "European-ish",
 	"firmament.config.lore-timers.format.description": "Choose the time format in which resolved timers are displayed.",
 	"firmament.config.lore-timers.show": "Show Lore Timers",

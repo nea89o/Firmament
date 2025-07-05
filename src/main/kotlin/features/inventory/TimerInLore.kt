@@ -47,6 +47,7 @@ object TimerInLore {
 				appendValue(ChronoField.SECOND_OF_MINUTE, 2)
 			}),
 		AMERICAN("EEEE, MMM d h:mm a yyyy"),
+		RFCPrecise(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss.SSS Z")),
 		;
 
 		constructor(block: DateTimeFormatterBuilder.() -> Unit)
