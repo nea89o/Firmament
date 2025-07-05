@@ -40,6 +40,8 @@ ncr = "Fabric-1.21.5-v2.12.0"
 # Update from https://modrinth.com/mod/female-gender/versions?l=fabric
 femalegender = "4.3.4+1.21.5"
 
+shadow = "8.3.8"
+
 # Update from https://modrinth.com/mod/explosive-enhancement/versions?l=fabric
 explosiveenhancement = "1.2.3-1.21.0"
 
@@ -135,7 +137,7 @@ femalegender = { module = "maven.modrinth:female-gender", version.ref = "femaleg
 jade = { module = "maven.modrinth:jade", version.ref = "jade" }
 yacl = { module = "dev.isxander:yet-another-config-lib", version.ref = "yacl" }
 basicMath = { module = "me.shedaniel.cloth:basic-math", version.ref = "basicMath" }
-
+shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 classTransform-mixinsTranslator = { module = "net.lenni0451.classtransform:mixinstranslator", version.ref = "classtransform" }
 classTransform-core = { module = "net.lenni0451.classtransform:core", version.ref = "classtransform" }
 
@@ -162,5 +164,4 @@ kotlin_plugin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization"
 kotlin_plugin_powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 kotlin_plugin_ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin_ksp" }
 loom = { id = "dev.architectury.loom", version.ref = "loom" }
-shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 mcAutoTranslations = { id = "moe.nea.mc-auto-translations", version.ref = "mcAutoTranslations" }

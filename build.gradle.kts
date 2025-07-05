@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.common.hash.Hashing
 import com.google.devtools.ksp.gradle.KspAATask
 import com.google.gson.Gson
@@ -29,7 +30,6 @@ plugins {
 	//	alias(libs.plugins.loom)
 	// TODO: use arch loom once they update to 1.8
 	id("fabric-loom") version "1.10.1"
-	alias(libs.plugins.shadow)
 	id("moe.nea.licenseextractificator")
 	alias(libs.plugins.mcAutoTranslations)
 }
@@ -130,6 +130,9 @@ val collectTranslations by tasks.registering(CollectTranslations::class) {
 	this.classes.from(sourceSets.main.get().kotlin.classesDirectory)
 }
 
+val shadowJar = tasks.register("shadowJar", ShadowJar::class)
+val mergedSourceSetsJar = tasks.register("mergedSourceSetsJar", ShadowJar::class)
+
 val compatSourceSets: MutableSet<SourceSet> = mutableSetOf()
 fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabled: Boolean = true): SourceSet {
 	val ss = sourceSets.create(name) {
@@ -178,7 +181,7 @@ fun createIsolatedSourceSet(name: String, path: String = "compat/$name", isEnabl
 		(ss.implementationConfigurationName)(project.files(tasks.compileKotlin.map { it.destinationDirectory }))
 		(ss.implementationConfigurationName)(project.files(tasks.compileJava.map { it.destinationDirectory }))
 	}
-	tasks.shadowJar {
+	mergedSourceSetsJar.configure {
 		from(ss.output)
 	}
 	// TODO: figure out why inheritances are not being respected by tiny kotlin names
@@ -268,8 +271,7 @@ dependencies {
 	nonModImplentation("com.google.auto.service:auto-service-annotations:1.1.1")
 	ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
 	include(libs.manninghamMills)
-	include(libs.moulconfig)
-
+	shadowMe(libs.moulconfig)
 
 	annotationProcessor(libs.mixinextras)
 	nonModImplentation(libs.mixinextras)
@@ -437,21 +439,32 @@ tasks.jar {
 	destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 	archiveClassifier.set("slim")
 }
-
-tasks.shadowJar {
-	configurations = listOf(shadowMe)
-	archiveClassifier.set("dev")
-	relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
+mergedSourceSetsJar.configure {
+	from(zipTree(tasks.jar.flatMap { it.archiveFile }))
 	destinationDirectory.set(layout.buildDirectory.dir("badjars"))
+	archiveClassifier.set("merged-source-sets")
 	mergeServiceFiles()
+}
+shadowJar.configure {
+	from(zipTree(tasks.remapJar.flatMap { it.archiveFile }))
+	configurations = listOf(shadowMe)
+	archiveClassifier.set("")
+	relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
+	relocate("io.github.notenoughupdates.moulconfig", "moe.nea.firmament.deps.moulconfig")
+	mergeServiceFiles()
+	transform<FabricModTransform>()
 }
 
 tasks.remapJar {
 //	injectAccessWidener.set(true)
-	inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
-	dependsOn(tasks.shadowJar)
-	archiveClassifier.set("")
+	inputFile.set(mergedSourceSetsJar.flatMap { it.archiveFile })
+	dependsOn(mergedSourceSetsJar)
+	destinationDirectory.set(layout.buildDirectory.dir("badjars"))
+	archiveClassifier.set("remapped")
 }
+
+tasks.assemble { dependsOn(shadowJar) }
+
 
 tasks.processResources {
 	val replacements = listOf(
