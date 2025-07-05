@@ -251,10 +251,11 @@ val ItemStack.skyBlockId: SkyblockId?
 				val potionName = extraAttributes.getString("potion_name").getOrNull()
 				val potionLevel = extraAttributes.getInt("potion_level").getOrNull()
 				val potionType = extraAttributes.getString("potion_type").getOrNull()
+				fun String.potionNormalize() = uppercase().replace(" ", "_")
 				when {
-					potionName != null -> SkyblockId("POTION_${potionName.uppercase()};$potionLevel")
-					potionData != null -> SkyblockId("POTION_${potionData.uppercase()};$potionLevel")
-					potionType != null -> SkyblockId("POTION_${potionType.uppercase()}")
+					potionName != null -> SkyblockId("POTION_${potionName.potionNormalize()};$potionLevel")
+					potionData != null -> SkyblockId("POTION_${potionData.potionNormalize()};$potionLevel")
+					potionType != null -> SkyblockId("POTION_${potionType.potionNormalize()}")
 					else -> SkyblockId("WATER_BOTTLE")
 				}
 			}

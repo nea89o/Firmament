@@ -7,11 +7,12 @@ import kotlinx.serialization.json.put
 import kotlin.concurrent.thread
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtByte
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtInt
+import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtOps
-import net.minecraft.nbt.NbtPrimitive
 import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import net.minecraft.util.Unit
@@ -135,6 +136,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		legacyNbt.put("HideFlags", NbtInt.of(254))
 		copyUnbreakable()
 		copyItemModel()
+		copyPotion()
 		copyExtraAttributes()
 		copyLegacySkullNbt()
 		copyDisplay()
@@ -142,6 +144,24 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		copyEnchantments()
 		copyEnchantGlint()
 		// TODO: copyDisplay
+	}
+
+	private fun copyPotion() {
+		val effects = itemStack.get(DataComponentTypes.POTION_CONTENTS) ?: return
+		legacyNbt.put("CustomPotionEffects", NbtList().also {
+			effects.effects.forEach { effect ->
+				val effectId = effect.effectType.key.get().value.path
+				val duration = effect.duration
+				val legacyId = LegacyItemData.effectList[effectId]!!
+
+				it.add(NbtCompound().apply {
+					put("Ambient", NbtByte.of(false))
+					put("Duration", NbtInt.of(duration))
+					put("Id", NbtByte.of(legacyId.id.toByte()))
+					put("Amplifier", NbtByte.of(effect.amplifier.toByte()))
+				})
+			}
+		})
 	}
 
 	fun NbtCompound.getOrPutCompound(name: String): NbtCompound {

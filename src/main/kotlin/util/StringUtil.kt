@@ -5,6 +5,12 @@ object StringUtil {
 		return splitToSequence(" ") // TODO: better boundaries
 	}
 
+	fun String.camelWords(): Sequence<String> {
+		return splitToSequence(camelWordStart)
+	}
+
+	private val camelWordStart = Regex("((?<=[a-z])(?=[A-Z]))| ")
+
 	fun parseIntWithComma(string: String): Int {
 		return string.replace(",", "").toInt()
 	}

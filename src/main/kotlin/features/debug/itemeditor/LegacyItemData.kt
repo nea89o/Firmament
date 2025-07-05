@@ -9,6 +9,7 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.StringUtil.camelWords
 
 /**
  * Load data based on [prismarine.js' 1.8 item data](https://github.com/PrismarineJS/minecraft-data/blob/master/data/pc/1.8/items.json)
@@ -58,6 +59,7 @@ object LegacyItemData {
 	val enchantmentLut = enchantmentData.associateBy { Identifier.ofVanilla(it.name) }
 
 	val itemDat = getLegacyData<List<ItemData>>("items")
+
 	@OptIn(ExpensiveItemCacheApi::class) // This is fine, we get loaded in a thread.
 	val itemLut = itemDat.flatMap { item ->
 		item.allVariants().map { legacyItemType ->
@@ -72,4 +74,16 @@ object LegacyItemData {
 		}
 	}.toMap()
 
+	@Serializable
+	data class LegacyEffect(
+		val id: Int,
+		val name: String,
+		val displayName: String,
+		val type: String
+	)
+
+	val effectList = getLegacyData<List<LegacyEffect>>("effects")
+		.associateBy {
+			it.name.camelWords().map { it.trim().lowercase() }.joinToString("_")
+		}
 }
