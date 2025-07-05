@@ -48,11 +48,27 @@ object ItemExporter {
 
 	fun exportItem(itemStack: ItemStack): Text {
 		val exporter = LegacyItemExporter.createExporter(itemStack)
-		val json = exporter.exportJson()
-		val jsonFormatted = Firmament.twoSpaceJson.encodeToString(json)
+		var json = exporter.exportJson()
 		val fileName = json.jsonObject["internalname"]!!.jsonPrimitive.content
 		val itemFile = RepoDownloadManager.repoSavedLocation.resolve("items").resolve("${fileName}.json")
 		itemFile.createParentDirectories()
+		if (itemFile.exists()) {
+			val existing = try {
+				Firmament.json.decodeFromString<JsonObject>(itemFile.readText())
+			} catch (ex: Exception) {
+				ex.printStackTrace()
+				JsonObject(mapOf())
+			}
+			val mut = json.jsonObject.toMutableMap()
+			for (prop in existing) {
+				if (prop.key !in mut || mut[prop.key]!!.let {
+						(it is JsonPrimitive && (it.content.isEmpty() || it.content == "0")) || (it is JsonArray && it.isEmpty()) || (it is JsonObject && it.isEmpty())
+					})
+					mut[prop.key] = prop.value
+			}
+			json = JsonObject(mut)
+		}
+		val jsonFormatted = Firmament.twoSpaceJson.encodeToString(json)
 		itemFile.writeText(jsonFormatted)
 		val overlayFile = RepoDownloadManager.repoSavedLocation.resolve("itemsOverlay")
 			.resolve(ExportedTestConstantMeta.current.dataVersion.toString())
