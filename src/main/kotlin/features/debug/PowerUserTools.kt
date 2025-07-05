@@ -60,6 +60,7 @@ object PowerUserTools : FirmamentFeature {
 		val exportItemStackToRepo by keyBindingWithDefaultUnbound("export-item-stack")
 		val exportUIRecipes by keyBindingWithDefaultUnbound("export-recipe")
 		val exportNpcLocation by keyBindingWithDefaultUnbound("export-npc-location")
+		val highlightNonOverlayItems by toggle("highlight-non-overlay") { false }
 	}
 
 	override val config

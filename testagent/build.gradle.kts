@@ -1,6 +1,6 @@
 plugins {
 	java
-	alias(libs.plugins.shadow)
+	id("com.gradleup.shadow")
 }
 dependencies {
 	implementation(libs.asm)

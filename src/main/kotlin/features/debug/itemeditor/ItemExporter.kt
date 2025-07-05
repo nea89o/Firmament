@@ -25,6 +25,7 @@ import moe.nea.firmament.commands.thenExecute
 import moe.nea.firmament.commands.thenLiteral
 import moe.nea.firmament.events.CommandEvent
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
+import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.features.debug.PowerUserTools
@@ -39,6 +40,7 @@ import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.toNbtList
+import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.setSkyBlockId
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.tr
@@ -46,6 +48,7 @@ import moe.nea.firmament.util.tr
 object ItemExporter {
 
 	fun exportItem(itemStack: ItemStack): Text {
+		nonOverlayCache.clear()
 		val exporter = LegacyItemExporter.createExporter(itemStack)
 		var json = exporter.exportJson()
 		val fileName = json.jsonObject["internalname"]!!.jsonPrimitive.content
@@ -202,6 +205,27 @@ object ItemExporter {
 			val itemStack = event.screen.focusedItemStack ?: return
 			PowerUserTools.lastCopiedStack = (itemStack to exportItem(itemStack))
 		}
+	}
+
+	val nonOverlayCache = mutableMapOf<SkyblockId, Boolean>()
+
+	@Subscribe
+	fun onRender(event: SlotRenderEvents.Before) {
+		if (!PowerUserTools.TConfig.highlightNonOverlayItems) {
+			return
+		}
+		val stack = event.slot.stack ?: return
+		val isExported = nonOverlayCache.getOrPut(stack.skyBlockId ?: return) {
+			RepoDownloadManager.repoSavedLocation.resolve("itemsOverlay")
+				.resolve(ExportedTestConstantMeta.current.dataVersion.toString())
+				.resolve("${stack.skyBlockId}.snbt")
+				.exists()
+		}
+		if (!isExported)
+			event.context.drawGuiTexture(
+				Firmament.identifier("selected_pet_background"),
+				event.slot.x, event.slot.y, 16, 16,
+			)
 	}
 
 	fun exportStub(skyblockId: SkyblockId, title: String, extra: (ItemStack) -> Unit = {}) {
