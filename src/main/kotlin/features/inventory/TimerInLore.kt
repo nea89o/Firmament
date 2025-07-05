@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.inventory
 
+import java.util.Locale
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -29,6 +30,7 @@ object TimerInLore {
 
 	enum class TimerFormat(val formatter: DateTimeFormatter) : StringIdentifiable {
 		RFC(DateTimeFormatter.RFC_1123_DATE_TIME),
+		RFCPrecise(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss.SSS 'GMT''", Locale.ENGLISH).withZone(ZoneId.of("GMT"))),
 		LOCAL(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)),
 		SOCIALIST(
 			{

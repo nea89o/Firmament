@@ -41,6 +41,7 @@ import moe.nea.firmament.util.mc.iterableArmorItems
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.tr
+import moe.nea.firmament.util.grey
 
 object PowerUserTools : FirmamentFeature {
 	override val identifier: String
@@ -227,7 +228,7 @@ object PowerUserTools : FirmamentFeature {
 	fun addItemId(it: ItemTooltipEvent) {
 		if (TConfig.showItemIds) {
 			val id = it.stack.skyBlockId ?: return
-			it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.skyblockid", id.neuItem))
+			it.lines.add(Text.stringifiedTranslatable("firmament.tooltip.skyblockid", id.neuItem).grey())
 		}
 		val (item, text) = lastCopiedStack ?: return
 		if (!ItemStack.areEqual(item, it.stack)) {
