@@ -11,6 +11,7 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtInt
 import net.minecraft.nbt.NbtOps
+import net.minecraft.nbt.NbtPrimitive
 import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import net.minecraft.util.Unit
@@ -36,8 +37,9 @@ import moe.nea.firmament.util.unformattedString
 
 class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	init {
-	    require(!itemStack.isEmpty)
+		require(!itemStack.isEmpty)
 	}
+
 	var lore = itemStack.loreAccordingToNbt
 	var name = itemStack.displayNameAccordingToNbt
 	val extraAttribs = itemStack.extraAttributes.copy()
@@ -136,9 +138,21 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		copyExtraAttributes()
 		copyLegacySkullNbt()
 		copyDisplay()
+		copyColour()
 		copyEnchantments()
 		copyEnchantGlint()
 		// TODO: copyDisplay
+	}
+
+	fun NbtCompound.getOrPutCompound(name: String): NbtCompound {
+		val compound = getCompoundOrEmpty(name)
+		put(name, compound)
+		return compound
+	}
+
+	private fun copyColour() {
+		val leatherTint = itemStack.get(DataComponentTypes.DYED_COLOR) ?: return
+		legacyNbt.getOrPutCompound("display").put("color", NbtInt.of(leatherTint.rgb))
 	}
 
 	private fun copyItemModel() {
@@ -147,10 +161,10 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	private fun copyDisplay() {
-		legacyNbt.put("display", NbtCompound().apply {
+		legacyNbt.getOrPutCompound("display").apply {
 			put("Lore", lore.map { NbtString.of(it.getLegacyFormatString(trimmed = true)) }.toNbtList())
 			putString("Name", name.getLegacyFormatString(trimmed = true))
-		})
+		}
 	}
 
 	fun exportModernSnbt(): NbtElement {
