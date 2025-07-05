@@ -31,6 +31,7 @@ enum class Rarity(vararg altNames: String) {
 	SUPREME,
 	SPECIAL,
 	VERY_SPECIAL,
+	ULTIMATE,
 	UNKNOWN
 	;
 
@@ -64,6 +65,7 @@ enum class Rarity(vararg altNames: String) {
 			Rarity.SPECIAL to Formatting.RED,
 			Rarity.VERY_SPECIAL to Formatting.RED,
 			Rarity.SUPREME to Formatting.DARK_RED,
+			Rarity.ULTIMATE to Formatting.DARK_RED,
 		)
 		val byName = entries.flatMap { en -> en.names.map { it to en } }.toMap()
 		val fromNeuRepo = entries.associateBy { it.neuRepoRarity }
