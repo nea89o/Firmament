@@ -1,6 +1,5 @@
 package moe.nea.firmament.features.debug.itemeditor
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -19,8 +18,8 @@ import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.commands.RestArgumentType
 import moe.nea.firmament.commands.get
-import moe.nea.firmament.commands.suggestsList
 import moe.nea.firmament.commands.thenArgument
 import moe.nea.firmament.commands.thenExecute
 import moe.nea.firmament.commands.thenLiteral
@@ -116,25 +115,42 @@ object ItemExporter {
 	fun onCommand(event: CommandEvent.SubCommand) {
 		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
 			thenLiteral("reexportlore") {
-				thenArgument("itemid", StringArgumentType.string()) { itemid ->
-					suggestsList { RepoManager.neuRepo.items.items.keys }
+				thenArgument("itemid", RestArgumentType) { itemid ->
+					suggests { ctx, builder ->
+						val spaceIndex = builder.remaining.lastIndexOf(" ")
+						val (before, after) =
+							if (spaceIndex < 0) Pair("", builder.remaining)
+							else Pair(
+								builder.remaining.substring(0, spaceIndex + 1),
+								builder.remaining.substring(spaceIndex + 1)
+							)
+						RepoManager.neuRepo.items.items.keys
+							.asSequence()
+							.filter { it.startsWith(after, ignoreCase = true) }
+							.forEach {
+								builder.suggest(before + it)
+							}
+
+						builder.buildFuture()
+					}
 					thenExecute {
-						val itemid = SkyblockId(get(itemid))
-						if (pathFor(itemid).notExists()) {
+						for (itemid in get(itemid).split(" ").map { SkyblockId(it) }) {
+							if (pathFor(itemid).notExists()) {
+								MC.sendChat(
+									tr(
+										"firmament.repo.export.relore.fail",
+										"Could not find json file to relore for ${itemid}"
+									)
+								)
+							}
+							fixLoreNbtFor(itemid)
 							MC.sendChat(
 								tr(
-									"firmament.repo.export.relore.fail",
-									"Could not find json file to relore for ${itemid}"
+									"firmament.repo.export.relore",
+									"Updated lore / display name for $itemid"
 								)
 							)
 						}
-						fixLoreNbtFor(itemid)
-						MC.sendChat(
-							tr(
-								"firmament.repo.export.relore",
-								"Updated lore / display name for $itemid"
-							)
-						)
 					}
 				}
 				thenLiteral("all") {
