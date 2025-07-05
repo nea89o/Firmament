@@ -113,11 +113,3 @@ class BarComponent(
 fun Identifier.toMoulConfig(): MyResourceLocation {
 	return MyResourceLocation(this.namespace, this.path)
 }
-
-fun RenderContext.color(color: Color) {
-	color(color.red, color.green, color.blue, color.alpha)
-}
-
-fun RenderContext.color(red: Int, green: Int, blue: Int, alpha: Int) {
-	color(red / 255f, green / 255f, blue / 255f, alpha / 255f)
-}

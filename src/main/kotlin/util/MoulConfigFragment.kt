@@ -35,7 +35,7 @@ class MoulConfigFragment(
         m.translate(position.x.toFloat(), position.y.toFloat(), 0F)
         context.root.render(ctx)
         m.pop()
-        ctx.renderContext.doDrawTooltip()
+        ctx.renderContext.renderExtraLayers()
     }
 
     override fun close() {

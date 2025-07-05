@@ -74,7 +74,7 @@ open class FirmButtonComponent(
                 getBackground(context),
                 0f, 0f, context.width, context.height
             )
-        context.renderContext.translate(insets.toFloat(), insets.toFloat(), 0f)
+        context.renderContext.translate(insets.toFloat(), insets.toFloat())
         element.render(getChildContext(context))
         context.renderContext.popMatrix()
     }
