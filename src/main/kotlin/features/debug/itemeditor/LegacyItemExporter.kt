@@ -173,7 +173,10 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	private fun copyColour() {
-		if (!itemStack.isIn(ItemTags.DYEABLE)) return
+		if (!itemStack.isIn(ItemTags.DYEABLE)) {
+			itemStack.remove(DataComponentTypes.DYED_COLOR)
+			return
+		}
 		val leatherTint = itemStack.componentChanges.get(DataComponentTypes.DYED_COLOR)?.getOrNull() ?: return
 		legacyNbt.getOrPutCompound("display").put("color", NbtInt.of(leatherTint.rgb))
 	}

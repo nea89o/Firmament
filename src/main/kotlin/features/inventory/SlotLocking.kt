@@ -4,7 +4,6 @@ package moe.nea.firmament.features.inventory
 
 import java.util.UUID
 import org.lwjgl.glfw.GLFW
-import util.render.CustomRenderLayers
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -19,9 +18,8 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.serializer
 import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderLayers
-import net.minecraft.client.render.TexturedRenderLayers
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.item.ItemStack
 import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
@@ -44,14 +42,20 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
+import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
+import moe.nea.firmament.util.lime
 import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
 import moe.nea.firmament.util.mc.SlotUtils.swapWithHotBar
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.red
 import moe.nea.firmament.util.render.drawLine
+import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.DungeonUtil
+import moe.nea.firmament.util.skyblock.SkyBlockItems
 import moe.nea.firmament.util.skyblockUUID
+import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 
 object SlotLocking : FirmamentFeature {
@@ -132,6 +136,7 @@ object SlotLocking : FirmamentFeature {
 		val slotBindRequireShift by toggle("require-quick-move") { true }
 		val slotRenderLines by choice("bind-render") { SlotRenderLinesMode.ONLY_BOXES }
 		val allowMultiBinding by toggle("multi-bind") { true } // TODO: filter based on this option
+		val protectAllHuntingBoxes by toggle("hunting-box") { false }
 		val allowDroppingInDungeons by toggle("drop-in-dungeons") { true }
 	}
 
@@ -193,10 +198,12 @@ object SlotLocking : FirmamentFeature {
 		var anyBlocked = false
 		for (i in 0 until event.slot.index) {
 			val stack = inv.getStack(i)
-			if (IsSlotProtectedEvent.shouldBlockInteraction(null,
-			                                                SlotActionType.THROW,
-			                                                IsSlotProtectedEvent.MoveOrigin.SALVAGE,
-			                                                stack)
+			if (IsSlotProtectedEvent.shouldBlockInteraction(
+					null,
+					SlotActionType.THROW,
+					IsSlotProtectedEvent.MoveOrigin.SALVAGE,
+					stack
+				)
 			)
 				anyBlocked = true
 		}
@@ -219,10 +226,18 @@ object SlotLocking : FirmamentFeature {
 			&& doesNotDeleteItem
 		) return
 		val stack = event.itemStack ?: return
+		if (TConfig.protectAllHuntingBoxes && (stack.isHuntingBox())) {
+			event.protect()
+			return
+		}
 		val uuid = stack.skyblockUUID ?: return
 		if (uuid in (lockedUUIDs ?: return)) {
 			event.protect()
 		}
+	}
+
+	fun ItemStack.isHuntingBox(): Boolean {
+		return skyBlockId == SkyBlockItems.HUNTING_TOOLKIT || extraAttributes.get("tool_kit") != null
 	}
 
 	@Subscribe
@@ -271,6 +286,21 @@ object SlotLocking : FirmamentFeature {
 
 		val slot = inventory.focusedSlot_Firmament ?: return
 		val stack = slot.stack ?: return
+		if (stack.isHuntingBox()) {
+			MC.sendChat(
+				tr(
+					"firmament.slot-locking.hunting-box-unbindable-hint",
+					"The hunting box cannot be UUID bound reliably. It changes its own UUID frequently when switching tools. "
+				).red().append(
+					tr(
+						"firmament.slot-locking.hunting-box-unbindable-hint.solution",
+						"Use the Firmament config option for locking all hunting boxes instead."
+					).lime()
+				)
+			)
+			CommonSoundEffects.playFailure()
+			return
+		}
 		val uuid = stack.skyblockUUID ?: return
 		val lockedUUIDs = lockedUUIDs ?: return
 		if (uuid in lockedUUIDs) {
@@ -350,12 +380,16 @@ object SlotLocking : FirmamentFeature {
 					hotX + sx, hotY + sy,
 					color(anyHovered)
 				)
-			event.context.drawBorder(hotbarSlot.x + sx,
-			                         hotbarSlot.y + sy,
-			                         16, 16, color(hotbarSlot in highlitSlots).color)
-			event.context.drawBorder(inventorySlot.x + sx,
-			                         inventorySlot.y + sy,
-			                         16, 16, color(inventorySlot in highlitSlots).color)
+			event.context.drawBorder(
+				hotbarSlot.x + sx,
+				hotbarSlot.y + sy,
+				16, 16, color(hotbarSlot in highlitSlots).color
+			)
+			event.context.drawBorder(
+				inventorySlot.x + sx,
+				inventorySlot.y + sy,
+				16, 16, color(inventorySlot in highlitSlots).color
+			)
 		}
 	}
 
@@ -383,9 +417,11 @@ object SlotLocking : FirmamentFeature {
 				hovX + sx, hovY + sy,
 				me.shedaniel.math.Color.ofOpaque(0x00FF00)
 			)
-			event.context.drawBorder(hoveredSlot.x + sx,
-			                         hoveredSlot.y + sy,
-			                         16, 16, 0xFF00FF00u.toInt())
+			event.context.drawBorder(
+				hoveredSlot.x + sx,
+				hoveredSlot.y + sy,
+				16, 16, 0xFF00FF00u.toInt()
+			)
 		}
 	}
 
