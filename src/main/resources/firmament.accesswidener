@@ -16,6 +16,11 @@ accessible method net/minecraft/entity/decoration/ArmorStandEntity setSmall (Z)V
 accessible method net/minecraft/resource/NamespaceResourceManager loadMetadata (Lnet/minecraft/resource/InputSupplier;)Lnet/minecraft/resource/metadata/ResourceMetadata;
 accessible method net/minecraft/client/gui/DrawContext drawTexturedQuad (Ljava/util/function/Function;Lnet/minecraft/util/Identifier;IIIIFFFFI)V
 
+accessible class net/minecraft/client/render/model/BlockStatesLoader$LoadedBlockStateDefinition
+accessible field net/minecraft/client/render/model/BlockStatesLoader FINDER Lnet/minecraft/resource/ResourceFinder;
+accessible method net/minecraft/client/render/model/BlockStatesLoader$LoadedBlockStateDefinition <init> (Ljava/lang/String;Lnet/minecraft/client/render/model/json/BlockModelDefinition;)V
+accessible method net/minecraft/client/render/model/BlockStatesLoader combine (Lnet/minecraft/util/Identifier;Lnet/minecraft/state/StateManager;Ljava/util/List;)Lnet/minecraft/client/render/model/BlockStatesLoader$LoadedModels;
+
 mutable field net/minecraft/screen/slot/Slot x I
 mutable field net/minecraft/screen/slot/Slot y I
 

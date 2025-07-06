@@ -809,6 +809,11 @@ which block models are replaced under which conditions:
 }
 ```
 
+The referenced `block` can either be a regular json block model (like the ones in `assets/minecraft/blocks/`), or it can
+reference a blockstates json like in `assets/<namespace>/blockstates/<path>.json`. The blockstates.json is prefered and
+needs to match the vanilla format, so it is best to copy over the vanilla blockstates.json for the block you are editing
+and replace all block model paths with your own custom block models.
+
 | Field                   | Required | Description                                                                                                                                                                                                                                                     |
 |-------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `modes`                 | yes      | A list of `/locraw` mode names.                                                                                                                                                                                                                                 |

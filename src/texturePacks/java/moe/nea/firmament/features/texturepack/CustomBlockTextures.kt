@@ -2,6 +2,9 @@
 
 package moe.nea.firmament.features.texturepack
 
+import com.google.gson.JsonParseException
+import com.google.gson.JsonParser
+import com.mojang.serialization.JsonOps
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import java.util.function.Function
@@ -21,15 +24,21 @@ import kotlinx.serialization.serializer
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
 import net.minecraft.client.render.model.Baker
 import net.minecraft.client.render.model.BlockStateModel
+import net.minecraft.client.render.model.BlockStatesLoader
 import net.minecraft.client.render.model.ReferencedModelsCollector
 import net.minecraft.client.render.model.SimpleBlockStateModel
+import net.minecraft.client.render.model.json.BlockModelDefinition
 import net.minecraft.client.render.model.json.ModelVariant
+import net.minecraft.registry.Registries
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
+import net.minecraft.resource.Resource
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.SinglePreparationResourceReloader
+import net.minecraft.state.StateManager
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.profiler.Profiler
@@ -41,6 +50,7 @@ import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 import moe.nea.firmament.features.texturepack.CustomBlockTextures.createBakedModels
 import moe.nea.firmament.features.texturepack.CustomGlobalTextures.logger
+import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.IdentifierSerializer
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
@@ -62,12 +72,28 @@ object CustomBlockTextures {
 		val block: Identifier,
 		val sound: Identifier?,
 	) {
+		fun replace(block: BlockState): BlockStateModel? {
+			blockStateMap?.let { return it[block] }
+			return blockModel
+		}
+
+		@Transient
+		lateinit var overridingBlock: Block
 
 		@Transient
 		val blockModelIdentifier get() = block.withPrefixedPath("block/")
 
 		/**
-		 * Guaranteed to be set after [BakedReplacements.modelBakingFuture] is complete.
+		 * Guaranteed to be set after [BakedReplacements.modelBakingFuture] is complete, if [unbakedBlockStateMap] is set.
+		 */
+		@Transient
+		var blockStateMap: Map<BlockState, BlockStateModel>? = null
+
+		@Transient
+		var unbakedBlockStateMap: Map<BlockState, BlockStateModel.UnbakedGrouped>? = null
+
+		/**
+		 * Guaranteed to be set after [BakedReplacements.modelBakingFuture] is complete. Prefer [blockStateMap] if present.
 		 */
 		@Transient
 		lateinit var blockModel: BlockStateModel
@@ -139,7 +165,15 @@ object CustomBlockTextures {
 
 	data class LocationReplacements(
 		val lookup: Map<Block, List<BlockReplacement>>
-	)
+	) {
+		init {
+			lookup.forEach { (block, replacements) ->
+				for (replacement in replacements) {
+					replacement.replacement.overridingBlock = block
+				}
+			}
+		}
+	}
 
 	data class BlockReplacement(
 		val checks: List<Area>?,
@@ -213,7 +247,10 @@ object CustomBlockTextures {
 
 	@JvmStatic
 	fun getReplacementModel(block: BlockState, blockPos: BlockPos?): BlockStateModel? {
-		return getReplacement(block, blockPos)?.blockModel
+		if (block.block == Blocks.SMOOTH_SANDSTONE_STAIRS) {
+			println("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEWOOOOOOOOOOOOOOOOOOOOOOOOOO")
+		}
+		return getReplacement(block, blockPos)?.replace(block)
 	}
 
 	@JvmStatic
@@ -236,8 +273,12 @@ object CustomBlockTextures {
 	}
 
 	@Volatile
-	var preparationFuture: CompletableFuture<BakedReplacements> = CompletableFuture.completedFuture(BakedReplacements(
-		mapOf()))
+	@get:JvmStatic
+	var preparationFuture: CompletableFuture<BakedReplacements> = CompletableFuture.completedFuture(
+		BakedReplacements(
+			mapOf()
+		)
+	)
 
 	val insideFallbackCall = ThreadLocal.withInitial { 0 }
 
@@ -257,7 +298,8 @@ object CustomBlockTextures {
 	fun onEarlyReload(event: EarlyResourceReloadEvent) {
 		preparationFuture = CompletableFuture
 			.supplyAsync(
-				{ prepare(event.resourceManager) }, event.preparationExecutor)
+				{ prepare(event.resourceManager) }, event.preparationExecutor
+			)
 	}
 
 	private fun prepare(manager: ResourceManager): BakedReplacements {
@@ -295,7 +337,7 @@ object CustomBlockTextures {
 	@Subscribe
 	fun onStart(event: FinalizeResourceManagerEvent) {
 		event.resourceManager.registerReloader(object :
-			                                       SinglePreparationResourceReloader<BakedReplacements>() {
+			SinglePreparationResourceReloader<BakedReplacements>() {
 			override fun prepare(manager: ResourceManager, profiler: Profiler): BakedReplacements {
 				return preparationFuture.join().also {
 					it.modelBakingFuture.join()
@@ -328,12 +370,28 @@ object CustomBlockTextures {
 	@JvmStatic
 	fun collectExtraModels(modelsCollector: ReferencedModelsCollector) {
 		preparationFuture.join().collectAllReplacements()
-			.forEach { modelsCollector.resolve(simpleBlockModel(it.blockModelIdentifier)) }
+			.forEach {
+				modelsCollector.resolve(simpleBlockModel(it.blockModelIdentifier))
+				it.unbakedBlockStateMap?.values?.forEach {
+					modelsCollector.resolve(it)
+				}
+			}
 	}
 
 	@JvmStatic
 	fun createBakedModels(baker: Baker, executor: Executor): CompletableFuture<Void?> {
 		return preparationFuture.thenComposeAsync(Function { replacements ->
+			val allBlockStates = CompletableFuture.allOf(
+				*replacements.collectAllReplacements().filter { it.unbakedBlockStateMap != null }.map {
+					CompletableFuture.supplyAsync({
+						it.blockStateMap = it.unbakedBlockStateMap
+							?.map {
+								it.key to it.value.bake(it.key, baker)
+							}
+							?.toMap()
+					}, executor)
+				}.toList().toTypedArray()
+			)
 			val byModel = replacements.collectAllReplacements().groupBy { it.blockModelIdentifier }
 			val modelBakingTask = AsyncHelper.mapValues(byModel, { blockId, replacements ->
 				val unbakedModel = SimpleBlockStateModel.Unbaked(
@@ -344,7 +402,55 @@ object CustomBlockTextures {
 					it.blockModel = baked
 				}
 			}, executor)
-			modelBakingTask.thenAcceptAsync { replacements.modelBakingFuture.complete(Unit) }
+			modelBakingTask.thenComposeAsync {
+				allBlockStates
+			}.thenAcceptAsync {
+				replacements.modelBakingFuture.complete(Unit)
+			}
 		}, executor)
+	}
+
+	@JvmStatic
+	fun collectExtraBlockStateMaps(
+		extra: BakedReplacements,
+		original: Map<Identifier, List<Resource>>,
+		stateManagers: Function<Identifier, StateManager<Block, BlockState>?>
+	) {
+		extra.collectAllReplacements().forEach {
+			val blockId = Registries.BLOCK.getKey(it.overridingBlock).getOrNull()?.value ?: return@forEach
+			val allModels = mutableListOf<BlockStatesLoader.LoadedBlockStateDefinition>()
+			val stateManager = stateManagers.apply(blockId) ?: return@forEach
+			for (resource in original[BlockStatesLoader.FINDER.toResourcePath(it.block)] ?: return@forEach) {
+				try {
+					resource.reader.use { reader ->
+						val jsonElement = JsonParser.parseReader(reader)
+						val blockModelDefinition =
+							BlockModelDefinition.CODEC.parse(JsonOps.INSTANCE, jsonElement)
+								.getOrThrow { msg: String? -> JsonParseException(msg) }
+						allModels.add(
+							BlockStatesLoader.LoadedBlockStateDefinition(
+								resource.getPackId(),
+								blockModelDefinition
+							)
+						)
+					}
+				} catch (exception: Exception) {
+					ErrorUtil.softError(
+						"Failed to load custom blockstate definition ${it.block} from pack ${resource.packId}",
+						exception
+					)
+				}
+			}
+
+			try {
+				it.unbakedBlockStateMap = BlockStatesLoader.combine(
+					blockId,
+					stateManager,
+					allModels
+				).models
+			} catch (exception: Exception) {
+				ErrorUtil.softError("Failed to combine custom blockstate definitions for ${it.block}", exception)
+			}
+		}
 	}
 }
