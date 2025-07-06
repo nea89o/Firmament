@@ -61,6 +61,7 @@ object PowerUserTools : FirmamentFeature {
 		val exportUIRecipes by keyBindingWithDefaultUnbound("export-recipe")
 		val exportNpcLocation by keyBindingWithDefaultUnbound("export-npc-location")
 		val highlightNonOverlayItems by toggle("highlight-non-overlay") { false }
+		val dontHighlightSemicolonItems by toggle("dont-highlight-semicolon-items") { false }
 	}
 
 	override val config

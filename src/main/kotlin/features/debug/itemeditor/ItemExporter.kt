@@ -215,6 +215,8 @@ object ItemExporter {
 			return
 		}
 		val stack = event.slot.stack ?: return
+		val id = event.slot.stack.skyBlockId?.neuItem
+		if (PowerUserTools.TConfig.dontHighlightSemicolonItems && id != null && id.contains(";")) return
 		val isExported = nonOverlayCache.getOrPut(stack.skyBlockId ?: return) {
 			RepoDownloadManager.repoSavedLocation.resolve("itemsOverlay")
 				.resolve(ExportedTestConstantMeta.current.dataVersion.toString())
