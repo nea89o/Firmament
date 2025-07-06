@@ -6,8 +6,8 @@
 .properties
 /.gradle
 /build/
-/buildSrc/.gradle
-/buildSrc/build/
+/build-logic/.gradle
+/build-logic/build/
 /*/build
 .kotlin
 

@@ -163,5 +163,6 @@ kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin_plugin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin_plugin_powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 kotlin_plugin_ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin_ksp" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 loom = { id = "dev.architectury.loom", version.ref = "loom" }
 mcAutoTranslations = { id = "moe.nea.mc-auto-translations", version.ref = "mcAutoTranslations" }

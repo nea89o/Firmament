@@ -24,7 +24,7 @@ jobs:
             -   uses: ./.github/composite/gradle
             -   name: Build with gradle
                 run: |
-                    ./gradlew remapJar --scan
+                    ./gradlew assemble --scan
             -   name: Move build artifact around and print check sum
                 run: |
                     rm -f build/libs/*sources*.jar
