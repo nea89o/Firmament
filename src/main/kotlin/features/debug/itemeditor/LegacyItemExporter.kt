@@ -15,6 +15,7 @@ import net.minecraft.nbt.NbtInt
 import net.minecraft.nbt.NbtList
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.NbtString
+import net.minecraft.registry.tag.ItemTags
 import net.minecraft.text.Text
 import net.minecraft.util.Unit
 import moe.nea.firmament.Firmament
@@ -172,6 +173,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	private fun copyColour() {
+		if (!itemStack.isIn(ItemTags.DYEABLE)) return
 		val leatherTint = itemStack.componentChanges.get(DataComponentTypes.DYED_COLOR)?.getOrNull() ?: return
 		legacyNbt.getOrPutCompound("display").put("color", NbtInt.of(leatherTint.rgb))
 	}
