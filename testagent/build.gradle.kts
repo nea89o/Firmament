@@ -1,5 +1,6 @@
 plugins {
 	java
+	id("firmament.common")
 	id("com.gradleup.shadow")
 }
 dependencies {

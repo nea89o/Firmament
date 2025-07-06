@@ -1,12 +1,9 @@
-
 plugins {
     kotlin("jvm")
     id("com.google.devtools.ksp")
+	id("firmament.common")
 }
 
-repositories {
-    mavenCentral()
-}
 dependencies {
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
     implementation("com.google.auto.service:auto-service-annotations:1.1.1")

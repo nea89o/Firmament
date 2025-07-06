@@ -1,6 +1,7 @@
 plugins {
 	java
 	idea
+	id("firmament.common")
 }
 dependencies {
 	implementation("net.fabricmc:stitch:0.6.2")
