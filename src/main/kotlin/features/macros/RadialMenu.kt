@@ -36,7 +36,11 @@ object RadialMenuViewer {
 
 	var activeMenu: RadialMenu? = null
 		set(value) {
-			field = value
+			if (value?.options.isNullOrEmpty()) {
+				field = null
+			} else {
+				field = value
+			}
 			delta = Vector2f(0F, 0F)
 		}
 	var delta = Vector2f(0F, 0F)
