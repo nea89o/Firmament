@@ -159,7 +159,7 @@
 	"firmament.config.fixes.hide-mob-effects": "Hide Potion Effects",
 	"firmament.config.fixes.hide-mob-effects.description": "Hide Potion effects on the right side of your player inventory.",
 	"firmament.config.fixes.hide-potion-effects-hud": "Hide Potion Effects HUD",
-	"firmament.config.fixes.hide-potion-effects-hud.description": "Hides the potion effects HUd in the top right.",
+	"firmament.config.fixes.hide-potion-effects-hud.description": "Hides the potion effects HUD in the top right.",
 	"firmament.config.fixes.hide-recipe-book": "No Recipe Book",
 	"firmament.config.fixes.hide-recipe-book.description": "Remove the recipe book from your inventory",
 	"firmament.config.fixes.hide-slot-highlights": "Hide Slot Highlights",
