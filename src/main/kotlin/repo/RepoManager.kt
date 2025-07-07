@@ -7,7 +7,10 @@ import io.github.moulberry.repo.data.NEURecipe
 import io.github.moulberry.repo.data.Rarity
 import java.nio.file.Path
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.minecraft.client.MinecraftClient
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket
 import net.minecraft.recipe.display.CuttingRecipeDisplay
@@ -39,7 +42,9 @@ object RepoManager {
 		val disableItemGroups by toggle("disable-item-groups") { true }
 		val reload by button("reload") {
 			save()
-			RepoManager.reload()
+			Firmament.coroutineScope.launch {
+				RepoManager.reload()
+			}
 		}
 		val redownload by button("redownload") {
 			save()
@@ -131,16 +136,12 @@ object RepoManager {
 
 	fun reloadForTest(from: Path) {
 		neuRepo = makeNEURepository(from)
-		reload()
+		GlobalScope.launch {
+			reload()
+		}
 	}
 
-	fun reload() {
-		if (!TestUtil.isInTest && !MC.instance.isOnThread) {
-			MC.instance.send {
-				reload()
-			}
-			return
-		}
+	suspend fun reload() = withContext(Dispatchers.Default) {
 		try {
 			logger.info("Repo reload started.")
 			neuRepo.reload()
@@ -168,7 +169,9 @@ object RepoManager {
 		if (Config.autoUpdate) {
 			launchAsyncUpdate()
 		} else {
-			reload()
+			Firmament.coroutineScope.launch {
+				reload()
+			}
 		}
 	}
 
