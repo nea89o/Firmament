@@ -196,10 +196,17 @@ object ItemCache : IReloadable {
 	}
 
 	@ExpensiveItemCacheApi
-	fun NEUItem?.asItemStack(idHint: SkyblockId? = null, loreReplacements: Map<String, String>? = null): ItemStack {
+	fun NEUItem?.asItemStack(
+		idHint: SkyblockId? = null,
+		loreReplacements: Map<String, String>? = null,
+		isCacheRebuild: Boolean = false
+	): ItemStack {
 		if (this == null) return brokenItemStack(null, idHint)
 		var s = cache[this.skyblockItemId]
 		if (s == null) {
+			if (!isCacheRebuild) {
+				println("NON CACHE REBUILD DETECT! PREPARE TO BE TERMINATED!")
+			}
 			s = asItemStackNow()
 			cache[this.skyblockItemId] = s
 		}
@@ -266,7 +273,7 @@ object ItemCache : IReloadable {
 			items.values.chunked(500).map { chunk ->
 				async {
 					chunk.forEach {
-						it.asItemStack() // Rebuild cache
+						it.asItemStack(isCacheRebuild = true) // Rebuild cache
 					}
 				}
 			}.awaitAll()
