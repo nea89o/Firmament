@@ -247,9 +247,6 @@ object CustomBlockTextures {
 
 	@JvmStatic
 	fun getReplacementModel(block: BlockState, blockPos: BlockPos?): BlockStateModel? {
-		if (block.block == Blocks.SMOOTH_SANDSTONE_STAIRS) {
-			println("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEWOOOOOOOOOOOOOOOOOOOOOOOOOO")
-		}
 		return getReplacement(block, blockPos)?.replace(block)
 	}
 
