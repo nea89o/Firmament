@@ -19,6 +19,7 @@ object EtherwarpOverlay : FirmamentFeature {
 
 	object TConfig : ManagedConfig(identifier, Category.ITEMS) {
 		var etherwarpOverlay by toggle("etherwarp-overlay") { false }
+		var onlyShowWhileSneaking by toggle("only-show-while-sneaking") { true }
 		var cube by toggle("cube") { true }
 		val cubeColour by colour("cube-colour") { ChromaColour.fromStaticRGB(172, 0, 255, 60) }
 		var wireframe by toggle("wireframe") { false }
@@ -32,7 +33,7 @@ object EtherwarpOverlay : FirmamentFeature {
 	fun renderEtherwarpOverlay(event: WorldRenderLastEvent) {
 		if (!TConfig.etherwarpOverlay) return
 		val player = MC.player ?: return
-		if (!player.isSneaking) return
+		if (TConfig.onlyShowWhileSneaking && !player.isSneaking) return
 		val world = player.world
 		val camera = MC.camera ?: return
 		val heldItem = MC.stackInHand

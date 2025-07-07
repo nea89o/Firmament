@@ -135,6 +135,8 @@
 	"firmament.config.etherwarp-overlay.cube.description": "Displays a full cube on the block",
 	"firmament.config.etherwarp-overlay.etherwarp-overlay": "Etherwarp Overlay",
 	"firmament.config.etherwarp-overlay.etherwarp-overlay.description": "Display an overlay that tells you what block you will warp to.",
+	"firmament.config.etherwarp-overlay.only-show-while-sneaking": "Only show while sneaking",
+	"firmament.config.etherwarp-overlay.only-show-while-sneaking.description": "Displays the Etherwarp overlay only while sneaking.",
 	"firmament.config.etherwarp-overlay.wireframe": "Outline",
 	"firmament.config.etherwarp-overlay.wireframe.description": "Displays a full outline on the block",
 	"firmament.config.fairy-souls": "Fairy Souls",
