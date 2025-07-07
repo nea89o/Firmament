@@ -41,6 +41,7 @@ import moe.nea.firmament.util.unformattedString
 class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	init {
 		require(!itemStack.isEmpty)
+		itemStack.count = 1
 	}
 
 	var lore = itemStack.loreAccordingToNbt
