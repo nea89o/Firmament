@@ -61,6 +61,9 @@ object RepoManager {
 		RENDER_AND_TEXT("text"),
 		;
 
+		fun rendersPerfectText() = this == RENDER_AND_TEXT
+		fun rendersPerfectVisuals() = this == RENDER || this == RENDER_AND_TEXT
+
 		override fun asString(): String? = label
 	}
 

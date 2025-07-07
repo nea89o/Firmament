@@ -46,7 +46,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	@OptIn(ExpensiveItemCacheApi::class)
 	override fun asFormattedText(entry: EntryStack<SBItemStack>, value: SBItemStack): Text {
 		val neuItem = entry.value.neuItem
-		return if (RepoManager.Config.perfectRenders < RepoManager.PerfectRender.RENDER_AND_TEXT || entry.value.isWarm() || neuItem == null) {
+		return if (!RepoManager.Config.perfectRenders.rendersPerfectText() || entry.value.isWarm() || neuItem == null) {
 			VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack())
 		} else {
 			Text.literal(neuItem.displayName)
