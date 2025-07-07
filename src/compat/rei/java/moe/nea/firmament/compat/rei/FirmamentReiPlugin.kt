@@ -55,6 +55,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 
 	@OptIn(ExpensiveItemCacheApi::class)
 	override fun registerTransferHandlers(registry: TransferHandlerRegistry) {
+		if (!RepoManager.shouldLoadREI()) return
 		registry.register(TransferHandler { context ->
 			val screen = context.containerScreen
 			val display = context.display
@@ -64,8 +65,11 @@ class FirmamentReiPlugin : REIClientPlugin {
 			val neuItem = RepoManager.getNEUItem(SkyblockId(recipe.output.itemId))
 				?: error("Could not find neu item ${recipe.output.itemId} which is used in a recipe output")
 			val useSuperCraft = context.isStackedCrafting || RepoManager.Config.alwaysSuperCraft
-			if (neuItem.isVanilla && useSuperCraft) return@TransferHandler TransferHandler.Result.createFailed(Text.translatable(
-				"firmament.recipe.novanilla"))
+			if (neuItem.isVanilla && useSuperCraft) return@TransferHandler TransferHandler.Result.createFailed(
+				Text.translatable(
+					"firmament.recipe.novanilla"
+				)
+			)
 			var shouldReturn = true
 			if (context.isActuallyCrafting && !useSuperCraft) {
 				val craftingScreen = (screen as? GenericContainerScreen)
@@ -85,13 +89,16 @@ class FirmamentReiPlugin : REIClientPlugin {
 	}
 
 
-	val generics = listOf<GenericREIRecipeCategory<*>>( // Order matters: The order in here is the order in which they show up in REI
+	val generics = listOf<GenericREIRecipeCategory<*>>(
+		// Order matters: The order in here is the order in which they show up in REI
 		GenericREIRecipeCategory(SBCraftingRecipeRenderer),
 		GenericREIRecipeCategory(SBForgeRecipeRenderer),
 		GenericREIRecipeCategory(SBEssenceUpgradeRecipeRenderer),
 	)
 
 	override fun registerCategories(registry: CategoryRegistry) {
+		if (!RepoManager.shouldLoadREI()) return
+
 		registry.add(generics)
 		registry.add(SBMobDropRecipe.Category)
 		registry.add(SBKatRecipe.Category)
@@ -105,6 +112,8 @@ class FirmamentReiPlugin : REIClientPlugin {
 	}
 
 	override fun registerDisplays(registry: DisplayRegistry) {
+		if (!RepoManager.shouldLoadREI()) return
+
 		generics.forEach {
 			it.registerDynamicGenerator(registry)
 		}
@@ -114,16 +123,21 @@ class FirmamentReiPlugin : REIClientPlugin {
 		)
 		registry.registerDisplayGenerator(
 			SBMobDropRecipe.Category.categoryIdentifier,
-			SkyblockMobDropRecipeDynamicGenerator)
+			SkyblockMobDropRecipeDynamicGenerator
+		)
 		registry.registerDisplayGenerator(
 			SBShopRecipe.Category.categoryIdentifier,
-			SkyblockShopRecipeDynamicGenerator)
+			SkyblockShopRecipeDynamicGenerator
+		)
 		registry.registerDisplayGenerator(
 			SBKatRecipe.Category.categoryIdentifier,
-			SkyblockKatRecipeDynamicGenerator)
+			SkyblockKatRecipeDynamicGenerator
+		)
 	}
 
 	override fun registerCollapsibleEntries(registry: CollapsibleEntryRegistry) {
+		if (!RepoManager.shouldLoadREI()) return
+
 		if (!RepoManager.Config.disableItemGroups)
 			RepoManager.neuRepo.constants.parents.parents
 				.forEach { (parent, children) ->
@@ -148,6 +162,8 @@ class FirmamentReiPlugin : REIClientPlugin {
 	}
 
 	override fun registerEntries(registry: EntryRegistry) {
+		if (!RepoManager.shouldLoadREI()) return
+
 		registry.removeEntryIf { true }
 		RepoManager.neuRepo.items?.items?.values?.forEach { neuItem ->
 			registry.addEntry(SBItemEntryDefinition.getEntry(neuItem.skyblockId))

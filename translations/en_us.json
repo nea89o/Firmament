@@ -306,6 +306,8 @@
 	"firmament.config.repo.branch.hint": "dangerous",
 	"firmament.config.repo.disable-item-groups": "Disable Item Groups",
 	"firmament.config.repo.disable-item-groups.description": "Disabling item groups can increase performance, but will no longer collect similar items (like minions, enchantments) together.",
+	"firmament.config.repo.enable-rei": "Enable REI",
+	"firmament.config.repo.enable-rei.description": "REI is required for viewing Firmaments item list. If you want to use another item list provider like SkyBlockers, you can turn it off here. Without other mods this will make you revert back to the vanilla item list.",
 	"firmament.config.repo.enable-super-craft": "Always use Super Craft",
 	"firmament.config.repo.enable-super-craft.description": "Always use super craft when clicking the craft button in REI, instead of just when holding shift.",
 	"firmament.config.repo.perfect-renders": "Perfect Render",

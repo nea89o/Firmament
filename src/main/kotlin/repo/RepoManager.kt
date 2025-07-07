@@ -35,7 +35,7 @@ object RepoManager {
 			branch = "master"
 			save()
 		}
-
+		val enableREI by toggle("enable-rei") { true }
 		val disableItemGroups by toggle("disable-item-groups") { true }
 		val reload by button("reload") {
 			save()
@@ -196,4 +196,6 @@ object RepoManager {
 	fun getRepoRef(): String {
 		return "${Config.username}/${Config.reponame}#${Config.branch}"
 	}
+
+	fun shouldLoadREI(): Boolean = Config.enableREI
 }
