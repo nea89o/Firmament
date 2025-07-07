@@ -8,7 +8,6 @@ import io.github.moulberry.repo.data.Rarity
 import java.nio.file.Path
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.minecraft.client.MinecraftClient
@@ -139,12 +138,17 @@ object RepoManager {
 
 	fun reloadForTest(from: Path) {
 		neuRepo = makeNEURepository(from)
-		GlobalScope.launch {
-			reload()
+		reloadSync()
+	}
+
+
+	suspend fun reload() {
+		withContext(Dispatchers.IO) {
+			reloadSync()
 		}
 	}
 
-	suspend fun reload() = withContext(Dispatchers.Default) {
+	fun reloadSync() {
 		try {
 			logger.info("Repo reload started.")
 			neuRepo.reload()
