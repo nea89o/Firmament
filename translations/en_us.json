@@ -373,6 +373,8 @@
 	"firmament.config.storage-overlay.outline-active-page.description": "Put a border around the selected storage page in the storage overlay.",
 	"firmament.config.storage-overlay.padding": "Padding",
 	"firmament.config.storage-overlay.padding.description": "Padding inside of the storage overview.",
+	"firmament.config.storage-overlay.retain-scroll": "Retain Scroll Position",
+	"firmament.config.storage-overlay.retain-scroll.description": "Retain scroll position when closing storage overlay and overview.",
 	"firmament.config.storage-overlay.rows": "Columns",
 	"firmament.config.storage-overlay.rows.description": "Max columns used by the storage overlay and overview.",
 	"firmament.config.storage-overlay.scroll-speed": "Scroll Speed",

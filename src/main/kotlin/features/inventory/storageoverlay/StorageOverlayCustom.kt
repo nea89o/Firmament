@@ -18,6 +18,7 @@ class StorageOverlayCustom(
 ) : CustomGui() {
 	override fun onVoluntaryExit(): Boolean {
 		overview.isExiting = true
+		StorageOverlayScreen.resetScroll()
 		return super.onVoluntaryExit()
 	}
 
