@@ -60,10 +60,16 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		val CONTROL_WIDTH = 70
 		val CONTROL_BACKGROUND_WIDTH = CONTROL_WIDTH + CONTROL_X_INSET + 1
 		val CONTROL_HEIGHT = 50
+
+		var scroll: Float = 0F
+		var lastRenderedInnerHeight = 0
+
+		fun resetScroll() {
+			if (!StorageOverlay.TConfig.retainScroll) scroll = 0F
+		}
 	}
 
 	var isExiting: Boolean = false
-	var scroll: Float = 0F
 	var pageWidthCount = StorageOverlay.TConfig.columns
 
 	inner class Measurements {
@@ -86,7 +92,6 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 
 	var measurements = Measurements()
 
-	var lastRenderedInnerHeight = 0
 	public override fun init() {
 		super.init()
 		pageWidthCount = StorageOverlay.TConfig.columns
@@ -123,6 +128,7 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 
 	override fun close() {
 		isExiting = true
+		resetScroll()
 		super.close()
 	}
 

@@ -22,13 +22,23 @@ class StorageOverviewScreen() : Screen(Text.empty()) {
             Items.GRAY_DYE
         )
         val pageWidth get() = 19 * 9
+
+		var scroll = 0
+		var lastRenderedHeight = 0
     }
 
     val content = StorageOverlay.Data.data ?: StorageData()
     var isClosing = false
 
-    var scroll = 0
-    var lastRenderedHeight = 0
+	override fun init() {
+		super.init()
+		scroll = scroll.coerceAtMost(getMaxScroll()).coerceAtLeast(0)
+	}
+
+	override fun close() {
+		if (!StorageOverlay.TConfig.retainScroll) scroll = 0
+		super.close()
+	}
 
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         super.render(context, mouseX, mouseY, delta)
@@ -88,9 +98,11 @@ class StorageOverviewScreen() : Screen(Text.empty()) {
     ): Boolean {
         scroll =
             (scroll + StorageOverlay.adjustScrollSpeed(verticalAmount)).toInt()
-                .coerceAtMost(lastRenderedHeight - height + 2 * StorageOverlay.config.margin).coerceAtLeast(0)
+                .coerceAtMost(getMaxScroll()).coerceAtLeast(0)
         return true
     }
+
+	private fun getMaxScroll() = lastRenderedHeight - height + 2 * StorageOverlay.config.margin
 
     private fun renderStoragePage(context: DrawContext, page: StorageData.StorageInventory, mouseX: Int, mouseY: Int) {
         context.drawText(MC.font, page.title, 2, 2, -1, true)
