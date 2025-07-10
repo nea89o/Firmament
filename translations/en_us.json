@@ -363,6 +363,8 @@
 	"firmament.config.storage-overlay.block-item-scrolling.description": "Disables scrolling the storage overlay screen while you are hovering over an item. Useful if you have a tooltip scrolling mod.",
 	"firmament.config.storage-overlay.height": "Storage Height",
 	"firmament.config.storage-overlay.height.description": "The height of the scrollable storage panel.",
+	"firmament.config.storage-overlay.highlight-search-results": "Highlight Search Results",
+	"firmament.config.storage-overlay.highlight-search-results.description": "Highlight the search results in the ender chest overlay.",
 	"firmament.config.storage-overlay.inverse-scroll": "Invert Scroll",
 	"firmament.config.storage-overlay.inverse-scroll.description": "Invert the mouse wheel scrolling in Firmament's storage overlay.",
 	"firmament.config.storage-overlay.margin": "Margin",

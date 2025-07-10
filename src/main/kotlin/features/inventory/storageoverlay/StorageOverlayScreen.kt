@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
+import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.gui.EmptyComponent
 import moe.nea.firmament.gui.FirmButtonComponent

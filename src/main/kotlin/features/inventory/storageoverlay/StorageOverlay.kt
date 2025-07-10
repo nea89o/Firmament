@@ -11,6 +11,7 @@ import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.events.SlotClickEvent
+import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.FirmamentFeature
 import moe.nea.firmament.gui.config.ManagedConfig
@@ -45,7 +46,23 @@ object StorageOverlay : FirmamentFeature {
 		val padding by integer("padding", 1, 20) { 5 }
 		val margin by integer("margin", 1, 60) { 20 }
 		val itemsBlockScrolling by toggle("block-item-scrolling") { true }
+		val highlightSearchResults by toggle("highlight-search-results") { true }
 	}
+
+	@Subscribe
+	fun highlightSlots(event: SlotRenderEvents.Before) {
+		if (!TConfig.highlightSearchResults) return
+		val storageOverlayScreen =
+			(MC.screen as? StorageOverlayScreen)
+				?: (MC.handledScreen?.customGui as? StorageOverlayCustom)?.overview
+				?: return
+		val stack = event.slot.stack ?: return
+		val search = storageOverlayScreen.searchText.get().takeIf { it.isNotBlank() } ?: return
+		if (storageOverlayScreen.matchesSearch(stack, search)) {
+			event.context.fill(event.slot.x, event.slot.y, event.slot.x + 16, event.slot.y + 16, 0xFF00B000.toInt())
+		}
+	}
+
 
 	fun adjustScrollSpeed(amount: Double): Double {
 		return amount * TConfig.scrollSpeed * (if (TConfig.inverseScroll) 1 else -1)
