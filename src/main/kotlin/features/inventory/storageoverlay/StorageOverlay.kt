@@ -48,6 +48,15 @@ object StorageOverlay : FirmamentFeature {
 		val margin by integer("margin", 1, 60) { 20 }
 		val itemsBlockScrolling by toggle("block-item-scrolling") { true }
 		val highlightSearchResults by toggle("highlight-search-results") { true }
+		val highlightSearchResultsColour by colour("highlight-search-results-colour") {
+			ChromaColour.fromRGB(
+				0,
+				176,
+				0,
+				0,
+				255
+			)
+		}
 	}
 
 	@Subscribe
@@ -60,7 +69,13 @@ object StorageOverlay : FirmamentFeature {
 		val stack = event.slot.stack ?: return
 		val search = storageOverlayScreen.searchText.get().takeIf { it.isNotBlank() } ?: return
 		if (storageOverlayScreen.matchesSearch(stack, search)) {
-			event.context.fill(event.slot.x, event.slot.y, event.slot.x + 16, event.slot.y + 16, 0xFF00B000.toInt())
+			event.context.fill(
+				event.slot.x,
+				event.slot.y,
+				event.slot.x + 16,
+				event.slot.y + 16,
+				TConfig.highlightSearchResultsColour.getEffectiveColourRGB()
+			)
 		}
 	}
 

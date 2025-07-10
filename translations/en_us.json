@@ -364,6 +364,8 @@
 	"firmament.config.storage-overlay.height": "Storage Height",
 	"firmament.config.storage-overlay.height.description": "The height of the scrollable storage panel.",
 	"firmament.config.storage-overlay.highlight-search-results": "Highlight Search Results",
+	"firmament.config.storage-overlay.highlight-search-results-colour": "Highlight Search Colour",
+	"firmament.config.storage-overlay.highlight-search-results-colour.description": "Change the colour of the highlighted search result.",
 	"firmament.config.storage-overlay.highlight-search-results.description": "Highlight the search results in the ender chest overlay.",
 	"firmament.config.storage-overlay.inverse-scroll": "Invert Scroll",
 	"firmament.config.storage-overlay.inverse-scroll.description": "Invert the mouse wheel scrolling in Firmament's storage overlay.",
