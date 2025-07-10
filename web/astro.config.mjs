@@ -5,5 +5,8 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind()]
+  integrations: [tailwind()],
+  redirects: {
+	"/discord": "https://discord.com/invite/64pFP94AWA",
+  },
 });
