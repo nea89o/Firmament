@@ -22,7 +22,7 @@ import moe.nea.firmament.util.unformattedString
 
 object TimerInLore {
 	object TConfig : ManagedConfig("lore-timers", Category.INVENTORY) {
-		val showTimers by toggle("show") { true }
+		val showTimers by toggle("show") { false }
 		val showCreationTimestamp by toggle("show-creation") { true }
 		val timerFormat by choice("format") { TimerFormat.SOCIALIST }
 	}

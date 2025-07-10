@@ -208,7 +208,7 @@
 	"firmament.config.jade-integration.progress.description": "Show the custom mining progress in Jade, when in a world with mining fatigue.",
 	"firmament.config.lore-timers": "Item Timestamps",
 	"firmament.config.lore-timers.format": "Time Format",
-	"firmament.config.lore-timers.format.choice.american": "§9Ame§cri§fcan",
+	"firmament.config.lore-timers.format.choice.american": "§9Free§cee§ftime",
 	"firmament.config.lore-timers.format.choice.local": "System Time Format",
 	"firmament.config.lore-timers.format.choice.rfc": "RFC",
 	"firmament.config.lore-timers.format.choice.rfcprecise": "RFC (Milliseconds)",
