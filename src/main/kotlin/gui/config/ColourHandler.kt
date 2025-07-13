@@ -34,7 +34,7 @@ class ColourHandler(val config: ManagedConfig) :
 			delegate.timeForFullRotationInMillis
 		)
 
-		fun into(): ChromaColour = ChromaColour(hue, saturation, brightness, alpha, timeForFullRotationInMillis)
+		fun into(): ChromaColour = ChromaColour(hue, saturation, brightness, timeForFullRotationInMillis, alpha)
 	}
 
 	object ChromaSerializer : KSerializer<ChromaColour> {
