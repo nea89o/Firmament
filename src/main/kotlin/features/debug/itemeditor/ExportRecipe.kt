@@ -185,7 +185,7 @@ object ExportRecipe {
 	}
 
 	fun generateName(name: String): SkyblockId {
-		return SkyblockId(name.uppercase().replace(" ", "_").replace("(", "").replace(")", ""))
+		return SkyblockId(name.uppercase().replace(" ", "_").replace(Regex("[^A-Z_]+"), ""))
 	}
 
 	fun findStackableItemByName(name: String, fallbackToGenerated: Boolean = false): Pair<SkyblockId, Double>? {
