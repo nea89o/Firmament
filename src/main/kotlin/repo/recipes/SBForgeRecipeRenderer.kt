@@ -1,7 +1,6 @@
 package moe.nea.firmament.repo.recipes
 
 import io.github.moulberry.repo.NEURepository
-import io.github.moulberry.repo.data.NEUCraftingRecipe
 import io.github.moulberry.repo.data.NEUForgeRecipe
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
@@ -24,13 +23,28 @@ object SBForgeRecipeRenderer : GenericRecipeRenderer<NEUForgeRecipe> {
 		mainItem: SBItemStack?,
 	) {
 		val arrow = layouter.createArrow(bounds.minX + 90, bounds.minY + 54 - 18 / 2)
-		layouter.createTooltip(
-			arrow,
-			Text.stringifiedTranslatable(
+		val tooltip = Text.empty()
+			.append(Text.stringifiedTranslatable(
 				"firmament.recipe.forge.time",
-				recipe.duration.seconds
-			)
-		)
+				recipe.duration.seconds,
+			))
+
+		if (recipe.extraText != null && recipe.extraText!!.isNotBlank()) {
+			val parts = recipe.extraText!!.split(' ')
+
+			if (parts.size >= 3) {
+				val requirement = parts.drop(1).joinToString(separator = " ")
+
+				tooltip
+					.append(Text.of("\n"))
+					.append(Text.stringifiedTranslatable(
+						"firmament.recipe.requirement",
+						requirement,
+					))
+			}
+		}
+
+		layouter.createTooltip(arrow, tooltip)
 
 		val ingredientsCenter = Point(bounds.minX + 49 - 8, bounds.minY + 54 - 8)
 		layouter.createFire(ingredientsCenter, 25)

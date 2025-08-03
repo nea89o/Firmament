@@ -486,6 +486,7 @@
 	"firmament.quick-commands.join.unknown": "Could not find instance for %s",
 	"firmament.quick-commands.join.unknown-catacombs": "Unknown catacombs floor %s",
 	"firmament.quick-commands.join.unknown-kuudra": "Unknown kuudra floor %s",
+	"firmament.recipe.requirement": "Requires: %s",
 	"firmament.recipe.forge.time": "Forging Time: %s",
 	"firmament.recipe.mobs.coins": "§eCoins: %s",
 	"firmament.recipe.mobs.combat": "§bCombat Experience: %s",

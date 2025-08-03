@@ -20,7 +20,24 @@ object SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
 		mainItem: SBItemStack?,
 	) {
 		val point = Point(bounds.centerX - 58, bounds.centerY - 27)
-		layouter.createArrow(point.x + 60, point.y + 18)
+		val arrow = layouter.createArrow(point.x + 60, point.y + 18)
+
+		if (recipe.extraText != null && recipe.extraText!!.isNotBlank()) {
+			val parts = recipe.extraText!!.split(' ')
+
+			if (parts.size >= 3) {
+				val requirement = parts.drop(1).joinToString(separator = " ")
+
+				layouter.createTooltip(
+					arrow,
+					Text.stringifiedTranslatable(
+						"firmament.recipe.requirement",
+						requirement
+					)
+				)
+			}
+		}
+
 		for (i in 0 until 3) {
 			for (j in 0 until 3) {
 				val item = recipe.inputs[i + j * 3]
