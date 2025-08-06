@@ -88,13 +88,13 @@ object PriceData : FirmamentFeature {
 			it.lines.add(multiplierText)
 			it.lines.add(
 				formatPrice(
-					tr("firmament.tooltip.bazaar.sell-order", "Bazaar Sell Order"),
+					tr("firmament.tooltip.bazaar.buy-order", "Bazaar Buy Order"),
 					bazaarData.quickStatus.sellPrice * multiplier
 				)
 			)
 			it.lines.add(
 				formatPrice(
-					tr("firmament.tooltip.bazaar.buy-order", "Bazaar Buy Order"),
+					tr("firmament.tooltip.bazaar.sell-order", "Bazaar Sell Order"),
 					bazaarData.quickStatus.buyPrice * multiplier
 				)
 			)
