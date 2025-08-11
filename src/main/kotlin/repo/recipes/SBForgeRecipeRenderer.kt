@@ -30,18 +30,9 @@ object SBForgeRecipeRenderer : GenericRecipeRenderer<NEUForgeRecipe> {
 			))
 
 		if (recipe.extraText != null && recipe.extraText!!.isNotBlank()) {
-			val parts = recipe.extraText!!.split(' ')
-
-			if (parts.size >= 3) {
-				val requirement = parts.drop(1).joinToString(separator = " ")
-
-				tooltip
-					.append(Text.of("\n"))
-					.append(Text.stringifiedTranslatable(
-						"firmament.recipe.requirement",
-						requirement,
-					))
-			}
+			tooltip
+				.append(Text.of("\n"))
+				.append(Text.of(recipe.extraText))
 		}
 
 		layouter.createTooltip(arrow, tooltip)
