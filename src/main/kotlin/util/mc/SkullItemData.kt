@@ -5,9 +5,8 @@ package moe.nea.firmament.util.mc
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
+import java.time.Instant
 import java.util.UUID
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import net.minecraft.component.DataComponentTypes
@@ -32,7 +31,7 @@ data class MinecraftTexturesPayloadKt(
     val profileId: UUID? = null,
     val profileName: String? = null,
     val isPublic: Boolean = true,
-    val timestamp: Instant = Clock.System.now(),
+    val timestamp: Instant = Instant.now(),
 )
 
 fun GameProfile.setTextures(textures: MinecraftTexturesPayloadKt) {
