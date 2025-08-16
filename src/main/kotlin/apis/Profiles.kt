@@ -6,7 +6,7 @@ package moe.nea.firmament.apis
 
 import io.github.moulberry.repo.constants.Leveling
 import io.github.moulberry.repo.data.Rarity
-import kotlinx.datetime.Instant
+import java.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
