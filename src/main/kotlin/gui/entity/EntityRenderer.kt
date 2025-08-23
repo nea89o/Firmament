@@ -76,6 +76,7 @@ object EntityRenderer {
 		"Pufferfish" to t(EntityType.PUFFERFISH),
 		"Rabbit" to t(EntityType.RABBIT),
 		"Salmom" to t(EntityType.SALMON),
+		"Salmon" to t(EntityType.SALMON),
 		"Sheep" to t(EntityType.SHEEP),
 		"Shulker" to t(EntityType.SHULKER),
 		"Silverfish" to t(EntityType.SILVERFISH),
