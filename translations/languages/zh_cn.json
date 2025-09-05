@@ -1,4 +1,6 @@
 {
+	"config.jade.plugin_firmament.custom_mining_hardness": "Firmament挖掘硬度",
+	"config.jade.plugin_firmament.toolprovider": "Firmament工具提供者",
 	"firmament.carnival.tutorial.minesweeper": "§e点击这里查看这个小游戏的教程！",
 	"firmament.command.toggle.no-config-found": "找不到配置%s",
 	"firmament.command.toggle.no-property-found": "找不到属性%s",

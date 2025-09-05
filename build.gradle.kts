@@ -437,6 +437,9 @@ tasks.processResources {
 	from(collectTranslations) {
 		into("assets/firmament/lang")
 	}
+	from(project.files("translations/languages/")) {
+		into("assets/firmament/lang")
+	}
 }
 
 tasks.scanLicenses {
