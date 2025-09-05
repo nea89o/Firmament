@@ -206,15 +206,21 @@ fun ItemStack.setSkyBlockId(skyblockId: SkyblockId): ItemStack {
 }
 
 private val STORED_REGEX = "Stored: ($SHORT_NUMBER_FORMAT)/.+".toPattern()
-private val AMOUNT_REGEX = "(?:Offer amount|Amount|Order amount): ($SHORT_NUMBER_FORMAT)x".toPattern()
+private val COMPOST_REGEX = "Compost Available: ($SHORT_NUMBER_FORMAT)".toPattern()
+private val GEMSTONE_SACK_REGEX = " Amount: ($SHORT_NUMBER_FORMAT)".toPattern()
+private val AMOUNT_REGEX = ".*(?:Offer amount|Amount|Order amount): ($SHORT_NUMBER_FORMAT)x".toPattern()
 fun ItemStack.getLogicalStackSize(): Long {
 	return loreAccordingToNbt.firstNotNullOfOrNull {
 		val string = it.unformattedString
-		STORED_REGEX.useMatch(string) {
+		GEMSTONE_SACK_REGEX.useMatch(string) {
+			parseShortNumber(group(1)).toLong()
+		} ?: STORED_REGEX.useMatch(string) {
 			parseShortNumber(group(1)).toLong()
 		} ?: AMOUNT_REGEX.useMatch(string) {
 			parseShortNumber(group(1)).toLong()
-		}
+		} ?: COMPOST_REGEX.useMatch(string) {
+		parseShortNumber(group(1)).toLong()
+	}
 	} ?: count.toLong()
 }
 
