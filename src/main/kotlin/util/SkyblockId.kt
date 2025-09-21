@@ -37,6 +37,7 @@ import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.skyblock.isBazaarUi
+import moe.nea.firmament.util.skyblock.isDyeCompendium
 import moe.nea.firmament.util.skyblock.isExperimentationRngMeter
 import moe.nea.firmament.util.skyblock.isSuperPairs
 
@@ -233,7 +234,7 @@ val ItemStack.rawSkyBlockId: String? get() = extraAttributes.getString("id").get
 
 fun ItemStack.guessContextualSkyBlockId(): SkyblockId? {
 	val screen = MC.screen
-	if (screen?.isBazaarUi() == true) {
+	if (screen?.isBazaarUi() == true || screen?.isDyeCompendium() == true) {
 		val name = displayNameAccordingToNbt.unformattedString
 			.replaceFirst("SELL ", "")
 			.replaceFirst("BUY ", "")
