@@ -49,6 +49,7 @@ import moe.nea.firmament.features.FeatureManager
 import moe.nea.firmament.gui.config.storage.FirmamentConfigLoader
 import moe.nea.firmament.repo.HypixelStaticData
 import moe.nea.firmament.repo.RepoManager
+import moe.nea.firmament.util.IrisCompat
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.mc.InitLevel
@@ -169,8 +170,8 @@ object Firmament {
 			tr("firmament.resourcepack.transparentoverlay", "Transparent Firmament Overlay"),
 			ResourcePackActivationType.NORMAL
 		)
+		IrisCompat.assignPipelines()
 	}
-
 
 	fun identifier(path: String) = Identifier.of(MOD_ID, path)
 	inline fun <reified T : Any> tryDecodeJsonFromStream(inputStream: InputStream): Result<T> {
