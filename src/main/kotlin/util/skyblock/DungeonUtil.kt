@@ -7,7 +7,7 @@ import moe.nea.firmament.util.TIME_PATTERN
 
 object DungeonUtil {
 	val isInDungeonIsland get() = SBData.skyblockLocation == SkyBlockIsland.DUNGEON
-	private val timeElapsedRegex = "Time Elapsed: $TIME_PATTERN".toRegex()
+	private val timeElapsedRegex = "Time Elapsed: (?:$TIME_PATTERN\\s*)+".toRegex()
 	val isInActiveDungeon get() = isInDungeonIsland && ScoreboardUtil.simplifiedScoreboardLines.any { it.matches(
 		timeElapsedRegex) }
 
@@ -21,7 +21,7 @@ object DungeonUtil {
 ' §7♲ §7Ironman'
 '       '
 'Keys: §c■ §c✗ §8■ §a1x'
-'Time Elapsed: §a46s'
+'Time Elapsed: §a1m 46s'
 'Cleared: §660% §8(105)'
 '           '
 '§e[B] §b151_Dragon §e2,062§c❤'
