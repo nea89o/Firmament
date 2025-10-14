@@ -262,6 +262,8 @@
 	"firmament.config.pickaxe-info.ability-cooldown.description": "Show a cooldown on your cross-hair for your pickaxe ability.",
 	"firmament.config.pickaxe-info.ability-scale": "Ability Cooldown Scale",
 	"firmament.config.pickaxe-info.ability-scale.description": "Resize the cooldown around your cross-hair for your pickaxe ability.",
+	"firmament.config.pickaxe-info.ability-colour": "Ability Cooldown Colour",
+	"firmament.config.pickaxe-info.ability-colour.description": "Color of the cooldown indicator around the cross-hair.",
 	"firmament.config.pickaxe-info.block-on-dynamic": "Block on Private Island",
 	"firmament.config.pickaxe-info.block-on-dynamic.choice.always": "Always Block",
 	"firmament.config.pickaxe-info.block-on-dynamic.choice.never": "Never Block",

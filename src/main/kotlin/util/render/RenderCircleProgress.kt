@@ -153,12 +153,14 @@ object RenderCircleProgress {
 		u2: Float,
 		v1: Float,
 		v2: Float,
+		color: Int = -1
 	) {
 		renderCircularSlice(
 			drawContext,
 			CustomRenderLayers.GUI_TEXTURED_NO_DEPTH_TRIS.apply(texture),
 			u1, u2, v1, v2,
-			(-τ / 4).toFloat()..(progress * τ - τ / 4).toFloat()
+			(-τ / 4).toFloat()..(progress * τ - τ / 4).toFloat(),
+			color = color
 		)
 	}
 }

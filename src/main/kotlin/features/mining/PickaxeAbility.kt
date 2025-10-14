@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.mining
 
+import io.github.notenoughupdates.moulconfig.ChromaColour
 import java.util.regex.Pattern
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration
@@ -68,6 +69,7 @@ object PickaxeAbility {
 		val disableInDungeons by toggle("disable-in-dungeons") { true }
 		val showOnTools by choice("show-on-tools") { ShowOnTools.PICKAXES_AND_DRILLS }
 		val cooldownScale by integer("ability-scale", 16, 64) { 16 }
+		val cooldownColour by colour("ability-colour") { ChromaColour.fromStaticRGB(187, 54, 44, 128)  }
 		val cooldownReadyToast by toggle("ability-cooldown-toast") { false }
 		val drillFuelBar by toggle("fuel-bar") { true }
 		val blockOnPrivateIsland by choice(
@@ -262,7 +264,8 @@ object PickaxeAbility {
 		RenderCircleProgress.renderCircle(
 			event.context, Identifier.of("firmament", "textures/gui/circle.png"),
 			getCooldownPercentage(ability.name, ability.cooldown).toFloat(),
-			0f, 1f, 0f, 1f
+			0f, 1f, 0f, 1f,
+			color = TConfig.cooldownColour.getEffectiveColourRGB()
 		)
 		event.context.matrices.popMatrix()
 	}
