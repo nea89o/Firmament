@@ -6,18 +6,13 @@ import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.unformattedString
 
-
 fun Screen.isBazaarUi(): Boolean {
 	if (this !is GenericContainerScreen) return false
-	return (
-		this.screenHandler.stacks[this.screenHandler.rows * 9 - 4]
-			.displayNameAccordingToNbt
-			.unformattedString == "Manage Orders"
-			|| this.screenHandler.stacks[this.screenHandler.rows * 9 - 5]
-			.loreAccordingToNbt
-			.any {
-				it.unformattedString == "To Bazaar"
-			})
+	val screenHandler = this.screenHandler ?: return false
+	val desiredItemSlot = screenHandler.rows * 9 - 4
+	val desiredItem = screenHandler.inventory.getStack(desiredItemSlot)
+	return (desiredItem.displayNameAccordingToNbt.unformattedString == "Manage Orders" ||
+		desiredItem.loreAccordingToNbt.any { it.unformattedString == "To Bazaar" })
 }
 
 fun Screen.isEnchantmentGuide(): Boolean {
