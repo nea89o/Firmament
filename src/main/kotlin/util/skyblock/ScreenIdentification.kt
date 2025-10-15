@@ -9,10 +9,10 @@ import moe.nea.firmament.util.unformattedString
 fun Screen.isBazaarUi(): Boolean {
 	if (this !is GenericContainerScreen) return false
 	val screenHandler = this.screenHandler ?: return false
-	val desiredItemSlot = screenHandler.rows * 9 - 4
-	val desiredItem = screenHandler.inventory.getStack(desiredItemSlot)
-	return (desiredItem.displayNameAccordingToNbt.unformattedString == "Manage Orders" ||
-		desiredItem.loreAccordingToNbt.any { it.unformattedString == "To Bazaar" })
+	val manageOrderStack = screenHandler.inventory.getStack(screenHandler.rows * 9 - 4)
+	if (manageOrderStack.displayNameAccordingToNbt.unformattedString == "Manage Orders") return true
+	val toBazaarStack = screenHandler.inventory.getStack(screenHandler.rows * 9 - 5)
+	return toBazaarStack.loreAccordingToNbt.any { it.unformattedString == "To Bazaar" }
 }
 
 fun Screen.isEnchantmentGuide(): Boolean {
