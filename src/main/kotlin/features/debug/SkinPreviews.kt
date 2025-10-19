@@ -52,7 +52,7 @@ object SkinPreviews {
 		val shortened = animation.shortenCycle()
 		if (shortened.size <= (animation.size / 2).coerceAtLeast(1) && lastDiscard.passedTime() > 2.seconds) {
 			val tickEstimation = (lastDiscard.passedTime() / animation.size).toTicks()
-			val skinName = if (skinColor != null) "${skinId}_${skinColor?.uppercase()}" else skinId!!
+			val skinName = if (skinColor != null) "${skinId}_${skinColor?.replace(" ", "_")?.uppercase()}" else skinId!!
 			val json =
 				buildJsonObject {
 					put("ticks", tickEstimation)
