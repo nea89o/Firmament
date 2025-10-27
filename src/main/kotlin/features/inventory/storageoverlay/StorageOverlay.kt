@@ -113,9 +113,9 @@ object StorageOverlay {
 			?: ((it.old as? HandledScreen<*>)?.customGui as? StorageOverlayCustom)?.overview
 		var storageOverviewScreen = it.old as? StorageOverviewScreen
 		val screen = it.new as? GenericContainerScreen
+		rememberContent(currentHandler)
 		val oldHandler = currentHandler
 		currentHandler = StorageBackingHandle.fromScreen(screen)
-		rememberContent(currentHandler)
 		if (storageOverviewScreen != null && oldHandler is StorageBackingHandle.HasBackingScreen) {
 			val player = MC.player
 			assert(player != null)
