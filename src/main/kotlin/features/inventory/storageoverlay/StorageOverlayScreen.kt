@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.slot.Slot
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.gui.EmptyComponent
@@ -292,10 +293,13 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 				rect.y,
 				page, inventory,
 				if (excluding == page) slots else null,
-				slotOffset
+				slotOffset,
+				mouseX,
+				mouseY
 			)
 		}
 		context.disableScissor()
+
 	}
 
 
@@ -482,6 +486,8 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 		inventory: StorageData.StorageInventory,
 		slots: List<Slot>?,
 		slotOffset: Point,
+		mouseX: Int,
+		mouseY: Int,
 	): Int {
 		val inv = inventory.inventory
 		if (inv == null) {
@@ -527,6 +533,15 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 				context.drawItem(stack, slotX, slotY)
 				context.drawStackOverlay(textRenderer, stack, slotX, slotY)
 				SlotRenderEvents.After.publish(SlotRenderEvents.After(context, fakeSlot))
+				if (StorageOverlay.TConfig.showInactivePageTooltips && !stack.isEmpty && mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
+					try {
+						context.drawItemTooltip(textRenderer, stack, mouseX, mouseY)
+					} catch (e: IllegalStateException) {
+						context.drawTooltip(textRenderer, listOf(Text.of(Formatting.RED.toString() +
+							"Error Getting Tooltip!"), Text.of(Formatting.YELLOW.toString() +
+							"Open page to fix" + Formatting.RESET)), mouseX, mouseY)
+					}
+				}
 			} else {
 				val slot = slots[index]
 				slot.x = slotX - slotOffset.x

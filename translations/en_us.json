@@ -411,6 +411,8 @@
 	"firmament.config.storage-overlay.outline-active-page-colour": "Outline Colour",
 	"firmament.config.storage-overlay.outline-active-page-colour.description": "Change the colour of the border around your selected storage page.",
 	"firmament.config.storage-overlay.outline-active-page.description": "Put a border around the selected storage page in the storage overlay.",
+	"firmament.config.storage-overlay.inactive-page-tooltips": "Inactive Page Tooltips",
+	"firmament.config.storage-overlay.inactive-page-tooltips.description": "Show item tooltips when hovering over items on pages other than the active one.",
 	"firmament.config.storage-overlay.padding": "Padding",
 	"firmament.config.storage-overlay.padding.description": "Padding inside of the storage overview.",
 	"firmament.config.storage-overlay.retain-scroll": "Retain Scroll Position",

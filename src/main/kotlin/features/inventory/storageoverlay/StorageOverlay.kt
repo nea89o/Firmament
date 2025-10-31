@@ -43,6 +43,7 @@ object StorageOverlay {
 				255
 			)
 		}
+		val showInactivePageTooltips by toggle("inactive-page-tooltips") { false }
 		val columns by integer("rows", 1, 10) { 3 }
 		val height by integer("height", 80, 3000) { 3 * 18 * 6 }
 		val retainScroll by toggle("retain-scroll") { true }
