@@ -533,7 +533,11 @@ class StorageOverlayScreen : Screen(Text.literal("")) {
 				context.drawItem(stack, slotX, slotY)
 				context.drawStackOverlay(textRenderer, stack, slotX, slotY)
 				SlotRenderEvents.After.publish(SlotRenderEvents.After(context, fakeSlot))
-				if (StorageOverlay.TConfig.showInactivePageTooltips && !stack.isEmpty && mouseX >= slotX && mouseY >= slotY && mouseX <= slotX + 16 && mouseY <= slotY + 16) {
+				val rect = getScrollPanelInner()
+				if (StorageOverlay.TConfig.showInactivePageTooltips && !stack.isEmpty &&
+					mouseX >= slotX && mouseY >= slotY &&
+					mouseX <= slotX + 16 && mouseY <= slotY + 16 &&
+					mouseY >= rect.minY && mouseY <= rect.maxY) {
 					try {
 						context.drawItemTooltip(textRenderer, stack, mouseX, mouseY)
 					} catch (e: IllegalStateException) {
