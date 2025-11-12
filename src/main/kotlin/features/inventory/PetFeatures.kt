@@ -11,6 +11,7 @@ import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.events.ProcessChatEvent
+import moe.nea.firmament.events.ProfileSwitchEvent
 import moe.nea.firmament.events.SlotClickEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.jarvis.JarvisIntegration
@@ -74,6 +75,14 @@ object PetFeatures {
 	private var tempChatPet: ParsedPet? = null
 
 	@Subscribe
+	fun onProfileSwitch(event: ProfileSwitchEvent) {
+		petMap.clear()
+		currentPetUUID = ""
+		tempTabPet = null
+		tempChatPet = null
+	}
+
+	@Subscribe
 	fun onSlotRender(event: SlotRenderEvents.Before) {
 		// Cache pets
 		petMenuTitle.useMatch(MC.screenName ?: return) {
@@ -120,7 +129,6 @@ object PetFeatures {
 
 	@Subscribe
 	fun onChatEvent(event: ProcessChatEvent) {
-		println("^^^" + event.text.formattedString() + "$$$")
 		// Handle AutoPet
 		var matcher = autopetPattern.matcher(event.text.formattedString())
 		if (matcher.matches()) {
