@@ -258,7 +258,7 @@
 	"firmament.config.pets.pet-overlay-hud-style.choice.plain_background": "Plain With Background",
 	"firmament.config.pets.pet-overlay-hud-style.choice.plain_no_background": "Plain No Background",
 	"firmament.config.pets.pet-overlay-hud-style.description": "Determines the style of the Pet Info Hud.",
-	"firmament.config.pets.pet-overlay-hud.description": "A HUD showing information about your currently active pet.Make sure the pet widget is enabled and visible in /tablist for full accuracy.",
+	"firmament.config.pets.pet-overlay-hud.description": "A HUD showing information about your currently active pet. Make sure the pet widget is enabled and visible in /tablist for full accuracy.",
 	"firmament.config.pets.pet-overlay.description": "Shows current active pet and pet exp on screen.",
 	"firmament.config.pickaxe-info": "Pickaxes & Drills",
 	"firmament.config.pickaxe-info.ability-colour": "Ability Cooldown Colour",
