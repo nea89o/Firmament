@@ -25,6 +25,7 @@ object Fixes {
 		val autoSprintUnderWater by toggle("auto-sprint-underwater") { true }
 		val autoSprintHud by position("auto-sprint-hud", 80, 10) { Vector2i() }
 		val peekChat by keyBindingWithDefaultUnbound("peek-chat")
+		val peekChatScroll by toggle("peek-chat-scroll") { false }
 		val hidePotionEffects by toggle("hide-mob-effects") { false }
 		val hidePotionEffectsHud by toggle("hide-potion-effects-hud") { false }
 		val noHurtCam by toggle("disable-hurt-cam") { false }
@@ -76,5 +77,9 @@ object Fixes {
 
 	fun shouldPeekChat(): Boolean {
 		return TConfig.peekChat.isPressed(atLeast = true)
+	}
+
+	fun shouldScrollPeekedChat(): Boolean {
+		return TConfig.peekChatScroll
 	}
 }

@@ -182,6 +182,8 @@
 	"firmament.config.fixes.hide-slot-highlights": "Hide Slot Highlights",
 	"firmament.config.fixes.hide-slot-highlights.description": "Hide slot highlights for items with disabled tooltip. This makes /sbmenu look nicer with smooth texture packs.",
 	"firmament.config.fixes.peek-chat": "Peek Chat",
+	"firmament.config.fixes.peek-chat-scroll": "Scroll Peeked Chat",
+	"firmament.config.fixes.peek-chat-scroll.description": "Allow scrolling chat while peeking.",
 	"firmament.config.fixes.peek-chat.description": "Hold this keybinding to view the chat as if you have it opened, but while still being able to control your character.",
 	"firmament.config.fixes.player-skins": "Fix unsigned Player Skins",
 	"firmament.config.fixes.player-skins.description": "Mark all player skins as signed, preventing console spam, and some rendering issues.",
