@@ -580,5 +580,10 @@
 	"firmament.warp-util.mark-excluded": "Firmament: Tried to warp to %s, but it was not unlocked. I will avoid warping there again.",
 	"firmament.warp-util.no-warp-found": "Could not find an unlocked warp in %s",
 	"firmament.waypoint.temporary": "Temporary Waypoint: %s",
+	"key.category.firmament.dev": "Firmament > Dev",
+	"key.category.firmament.events": "Firmament > Events",
+	"key.category.firmament.inventory": "Firmament > Inventory",
+	"key.category.firmament.items": "Firmament > Items",
+	"key.category.firmament.misc": "Firmament > Misc",
 	"zzzzzzzzz.lastentry": "Here so every real firmament entry has a trailing ,"
 }

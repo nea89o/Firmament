@@ -12,7 +12,7 @@ object FirmamentKeyBindings {
 			name,
 			InputUtil.Type.KEYSYM,
 			-1,
-			"firmament.key.category"
+			"key.category.firmament." + config.element.category.name.lowercase()
 		)
 		if (!TestUtil.isInTest) {
 			KeyBindingHelper.registerKeyBinding(vanillaKeyBinding)
