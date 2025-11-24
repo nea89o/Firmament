@@ -529,6 +529,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 			PAGE_SLOTS_WIDTH,
 			inv.rows * SLOT_SIZE
 		)
+		val scrollPanel = getScrollPanelInner()
 		inv.stacks.forEachIndexed { index, stack ->
 			val slotX = (index % 9) * SLOT_SIZE + x + 3
 			val slotY = (index / 9) * SLOT_SIZE + y + 5 + font.lineHeight + 1
@@ -538,11 +539,10 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 				context.renderItem(stack, slotX, slotY)
 				context.renderItemDecorations(font, stack, slotX, slotY)
 				SlotRenderEvents.After.publish(SlotRenderEvents.After(context, fakeSlot))
-				val rect = getScrollPanelInner()
 				if (StorageOverlay.TConfig.showInactivePageTooltips && !stack.isEmpty &&
 					mouseX >= slotX && mouseY >= slotY &&
 					mouseX <= slotX + 16 && mouseY <= slotY + 16 &&
-					mouseY >= rect.minY && mouseY <= rect.maxY) {
+					scrollPanel.contains(mouseX, mouseY)) {
 					try {
 						context.setTooltipForNextFrame(font, stack, mouseX, mouseY)
 					} catch (e: IllegalStateException) {
