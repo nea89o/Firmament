@@ -139,6 +139,7 @@ object CustomCapes {
 				Devs.nea to AllCapes.UNPLEASANT_GRADIENT,
 				Devs.kath to AllCapes.FIRMAMENT_STATIC,
 				Devs.jani to AllCapes.FIRMAMENT_ANIMATED,
+				Devs.nat to AllCapes.FIRMAMENT_ANIMATED,
 				Devs.HPlus.ic22487 to AllCapes.HYPIXEL_PLUS,
 			),
 			Devs.FurfSky.all.map { it to AllCapes.FURFSKY_STATIC },
