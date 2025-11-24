@@ -13,6 +13,7 @@ object Devs {
 	val nea = Dev("d3cb85e2-3075-48a1-b213-a9bfb62360c1", "842204e6-6880-487b-ae5a-0595394f9948")
 	val kath = Dev("add71246-c46e-455c-8345-c129ea6f146c", "b491990d-53fd-4c5f-a61e-19d58cc7eddf")
 	val jani = Dev("8a9f1841-48e9-48ed-b14f-76a124e6c9df")
+	val nat = Dev("168300e6-4e74-4a6d-89a0-7b7cf8ad6a7d", "06914e9d-7bc2-4cb7-b112-62c4cc958d96")
 
 	object FurfSky {
 		val smolegit = Dev("02b38b96-eb19-405a-b319-d6bc00b26ab3")
