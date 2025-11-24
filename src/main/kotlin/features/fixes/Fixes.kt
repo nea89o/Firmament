@@ -23,6 +23,7 @@ object Fixes {
 		var autoSprint by toggle("auto-sprint") { false }
 		val autoSprintKeyBinding by keyBindingWithDefaultUnbound("auto-sprint-keybinding")
 		val autoSprintUnderWater by toggle("auto-sprint-underwater") { true }
+		var autoSprintHudToggle by toggle("auto-sprint-hud-toggle") { true }
 		val autoSprintHud by position("auto-sprint-hud", 80, 10) { Vector2i() }
 		val peekChat by keyBindingWithDefaultUnbound("peek-chat")
 		val peekChatScroll by toggle("peek-chat-scroll") { false }
@@ -48,7 +49,7 @@ object Fixes {
 
 	@Subscribe
 	fun onRenderHud(it: HudRenderEvent) {
-		if (!TConfig.autoSprintKeyBinding.isBound) return
+		if (!TConfig.autoSprintKeyBinding.isBound || !TConfig.autoSprintHudToggle) return
 		it.context.pose().pushMatrix()
 		TConfig.autoSprintHud.applyTransformations(it.context.pose())
 		it.context.drawString(
