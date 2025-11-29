@@ -28,13 +28,13 @@ public abstract class CustomCapeFeatureRenderer extends RenderLayer<AvatarRender
 		super(context);
 	}
 
-	@WrapOperation(
-		method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V")
-	)
-	private void onRender(SubmitNodeCollector instance, Model model, Object o, PoseStack matrixStack, RenderType renderLayer, int light, int overlay, int outlineColor, ModelFeatureRenderer.CrumblingOverlay crumblingOverlayCommand, Operation<Void> original,
-                          @Local(argsOnly = true) AvatarRenderState playerEntityRenderState, @Local PlayerSkin skinTextures) {
-		// TODO: 1.21.10 custom capes by pre rendering the texture id. this is more viable on this version i am fairly sure, without clogging up all of the cached image render layers
+//	@WrapOperation(
+//		method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V",
+//		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V")
+//	)
+//	private void onRender(SubmitNodeCollector instance, Model model, Object o, PoseStack matrixStack, RenderType renderLayer, int light, int overlay, int outlineColor, ModelFeatureRenderer.CrumblingOverlay crumblingOverlayCommand, Operation<Void> original,
+//                          @Local(argsOnly = true) AvatarRenderState playerEntityRenderState, @Local PlayerSkin skinTextures) {
+//		// TODO: 1.21.10 custom capes by pre rendering the texture id. this is more viable on this version i am fairly sure, without clogging up all of the cached image render layers
 //		CustomCapes.render(
 //			playerEntityRenderState,
 //			vertexConsumer,
@@ -45,5 +45,5 @@ public abstract class CustomCapeFeatureRenderer extends RenderLayer<AvatarRender
 //				original.call(instance, matrixStack, updatedConsumer, light, overlay, outlineColor);
 //				return Unit.INSTANCE;
 //			});
-	}
+//	}
 }
