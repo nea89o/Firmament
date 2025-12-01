@@ -76,10 +76,14 @@ object HypixelStaticData {
 			updateCollectionData()
 		}
 		Firmament.coroutineScope.launch {
-			while (true) {
-				logger.info("Updating NEU prices")
-				fetchPricesFromMoulberry()
-				delay(5.minutes)
+			try {
+				while (true) {
+					logger.info("Updating NEU prices")
+					fetchPricesFromMoulberry()
+					delay(5.minutes)
+				}
+			} catch (ex: Exception) {
+				ex.printStackTrace();
 			}
 		}
 		Firmament.coroutineScope.launch {
