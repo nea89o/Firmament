@@ -102,4 +102,4 @@ jobs:
                     WEBHOOK: ${{ secrets.CONFIDENTIAL_WEBHOOK }}
                     REPO: ${{ github.repository }}
                 run: |
-                    curl -X POST "$WEBHOOK" --data "$(jq -n --arg r "$REPO" --arg v "${GITHUB_REF#refs/tags/}" --arg a "$WEBHOOK" '{"content": ("Created release preview, ready for publishing." + $v+"\n\nSee the draft at https://github.com/"+$r+"/releases/"), "username": $a, "avatar_url": ("https://github.com/" + $a + ".png")}')" -H 'content-type: application/json'
+                    curl -X POST "$WEBHOOK" --data "$(jq -n --arg r "$REPO" --arg v "${GITHUB_REF#refs/tags/}" --arg a "$ACTOR" '{"content": ("Created release preview, ready for publishing." + $v+"\n\nSee the draft at https://github.com/"+$r+"/releases/"), "username": $a, "avatar_url": ("https://github.com/" + $a + ".png")}')" -H 'content-type: application/json'
