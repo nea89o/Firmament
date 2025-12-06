@@ -32,7 +32,7 @@ object AncestralSpadeSolver {
 	fun isEnabled() =
 		DianaWaypoints.TConfig.ancestralSpadeSolver
 			&& SBData.skyblockLocation == SkyBlockIsland.HUB
-			&& MC.player?.inventory?.containsAny { it.skyBlockId == SkyBlockItems.ANCESTRAL_SPADE } == true // TODO: add a reactive property here
+			&& MC.player?.inventory?.containsAny { it.skyBlockId == SkyBlockItems.ANCESTRAL_SPADE || it.skyBlockId == SkyBlockItems.ARCHAIC_SPADE || it.skyBlockId == SkyBlockItems.DEIFIC_SPADE } == true // TODO: add a reactive property here
 
 	@Subscribe
 	fun onKeyBind(event: WorldKeyboardEvent) {
