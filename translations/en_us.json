@@ -396,6 +396,8 @@
 	"firmament.config.slot-locking.hunting-box": "Protect Hunting Box",
 	"firmament.config.slot-locking.hunting-box.description": "The Hunting Box frequently changes its UUID, and as such cannot be reliably protected using UUID locking. Instead this option can be used to block from dropping any Hunting Box.",
 	"firmament.config.slot-locking.lock": "Lock Slot",
+	"firmament.config.slot-locking.lock-bind": "Lock Bound Slots",
+	"firmament.config.slot-locking.lock-bind.description": "Prevent moving bound slots, except for slot quick moving.",
 	"firmament.config.slot-locking.lock-uuid": "Lock UUID (Lock Item)",
 	"firmament.config.slot-locking.lock-uuid.description": "Lock a SkyBlock item by it's UUID. This blocks a specific item from being dropped/sold, but still allows moving it around.",
 	"firmament.config.slot-locking.lock.description": "Lock a slot, preventing any item from being moved from, dropped from, or placed into this slot.",

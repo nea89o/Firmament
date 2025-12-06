@@ -21,8 +21,10 @@ data class IsSlotProtectedEvent(
 	val itemStack get() = itemStackOverride ?: slot!!.stack
 
 	fun protect() {
+		if (!isProtected) {
+			silent = false
+		}
 		isProtected = true
-		silent = false
 	}
 
 	fun protectSilent() {
@@ -55,7 +57,7 @@ data class IsSlotProtectedEvent(
 					            .red()
 					            .append(tr("firmament.protectitem.hoverhint", "Hover for more info.").grey())
 					            .hover(tr("firmament.protectitem.hint",
-					                      "To unlock this item use the Lock Slot or Lock Item keybind from Firmament while hovering over this item.")))
+					                      "To unlock this item use the Lock Slot or Lock Item keybind from Firmament while hovering over this item. If this is a bound slot, you can use disable the Lock Bound Slots setting.")))
 				CommonSoundEffects.playFailure()
 			}
 			return event.isProtected
