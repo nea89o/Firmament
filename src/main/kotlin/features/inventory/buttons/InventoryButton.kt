@@ -50,33 +50,40 @@ data class InventoryButton(
 		val dimensions = Dimension(18, 18)
 		val gap = 2
 		val bigDimension = Dimension(dimensions.width * 2 + gap, dimensions.height * 2 + gap)
-		val getItemForName = ::getItemForName0.memoize(1024)
+		val getCustomItem = ::getCustomItem0.memoize(500)
+
+
+
+		fun getCustomItem0(icon: String): ItemStack? {
+			when {
+				icon.startsWith("skull:") -> {
+					return createSkullItem(
+						arbitraryUUID,
+						"https://textures.minecraft.net/texture/${icon.substring("skull:".length)}"
+					)
+				}
+
+				else -> {
+					val giveSyntaxItem = if (icon.startsWith("/give") || icon.startsWith("give"))
+						icon.split(" ", limit = 3).getOrNull(2) ?: icon
+					else icon
+					val componentItem =
+						runCatching {
+							itemStackParser.parse(StringReader(giveSyntaxItem)).createStack(1, false)
+						}.getOrNull()
+					return componentItem
+				}
+			}
+		}
 
 		@OptIn(ExpensiveItemCacheApi::class)
-		fun getItemForName0(icon: String): ItemStack {
+		fun getItemForName(icon: String): ItemStack {
 			val repoItem = RepoManager.getNEUItem(SkyblockId(icon))
 			var itemStack = repoItem.asItemStack(idHint = SkyblockId(icon))
 			if (repoItem == null) {
-				when {
-					icon.startsWith("skull:") -> {
-						itemStack = createSkullItem(
-							arbitraryUUID,
-							"https://textures.minecraft.net/texture/${icon.substring("skull:".length)}"
-						)
-					}
-
-					else -> {
-						val giveSyntaxItem = if (icon.startsWith("/give") || icon.startsWith("give"))
-							icon.split(" ", limit = 3).getOrNull(2) ?: icon
-						else icon
-						val componentItem =
-							runCatching {
-								itemStackParser.parse(StringReader(giveSyntaxItem)).createStack(1, false)
-							}.getOrNull()
-						if (componentItem != null)
-							itemStack = componentItem
-					}
-				}
+				val customItem = getCustomItem(icon)
+				if (customItem != null)
+					itemStack = customItem
 			}
 			if (itemStack.item == Items.PAINTING)
 				ErrorUtil.logError("created broken itemstack for inventory button $icon: $itemStack")
