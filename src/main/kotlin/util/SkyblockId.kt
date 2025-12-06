@@ -243,10 +243,23 @@ fun ItemStack.guessContextualSkyBlockId(): SkyblockId? {
 		}
 		return ItemNameLookup.guessItemByName(name, false)
 	}
-	if (screen != null && (screenType == ScreenType.EXPERIMENTATION_RNG_METER || screenType == ScreenType.SUPER_PAIRS || screenType == ScreenType.ENCHANTMENT_GUIDE)) {
+	if (screenType == ScreenType.EXPERIMENTATION_RNG_METER
+			|| screenType == ScreenType.ENCHANTMENT_GUIDE
+	) {
 		val name = displayNameAccordingToNbt.unformattedString
 		return RepoManager.enchantedBookCache.byName[name]
 			?: ItemNameLookup.guessItemByName(name, false)
+	}
+	if (screenType == ScreenType.SUPER_PAIRS) {
+		val name = loreAccordingToNbt.iterator()
+			.asSequence()
+			.dropWhile { !it.unformattedString.isBlank() }
+			.drop(1)
+			.firstOrNull()
+			?.unformattedString ?: displayNameAccordingToNbt.unformattedString
+		return RepoManager.enchantedBookCache.byName[name]
+			?: ItemNameLookup.guessItemByName(name, false)
+
 	}
 	return null
 }
