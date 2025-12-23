@@ -89,6 +89,7 @@ object TimerInLore {
 		TIMEREMAININGS("Time Remaining:", "Ends at"),
 		COOLDOWN("Cooldown:", "Come back at"),
 		ONCOOLDOWN("On cooldown:", "Available at"),
+		GREENHOUSENEXTSTAGE("Next Stage:", "Next stage at"),
 		EVENTENDING("Event ends in:", "Ends at");
 	}
 
