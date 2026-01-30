@@ -91,6 +91,8 @@ object TimerInLore {
 		ONCOOLDOWN("On cooldown:", "Available at"),
 		EVENTENDING("Event ends in:", "Ends at"),
 		GREENHOUSE_GROWTH_STAGE("Next Stage:", "Come back at"),
+		GREENHOUSE_DECAY("Decay", "Decays at"),
+		GREENHOUSE_WATER_LEVEL("Lasts for:", "Water until"),
 		;
 	}
 
