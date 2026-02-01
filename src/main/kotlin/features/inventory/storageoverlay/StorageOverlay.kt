@@ -62,6 +62,7 @@ object StorageOverlay {
 				255
 			)
 		}
+		val autoFocusSearch by toggle("auto-focus-search") { true }
 	}
 
 	@Subscribe

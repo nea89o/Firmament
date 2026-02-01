@@ -431,6 +431,8 @@
 	"firmament.config.storage-overlay.rows.description": "Max columns used by the storage overlay and overview.",
 	"firmament.config.storage-overlay.scroll-speed": "Scroll Speed",
 	"firmament.config.storage-overlay.scroll-speed.description": "Scroll speed inside of the storage overlay and overview.",
+	"firmament.config.storage-overlay.auto-focus-search": "Auto Focus Search",
+	"firmament.config.storage-overlay.auto-focus-search.description": "Automatically focus the search field when opening the storage overlay.",
 	"firmament.config.wardrobe-keybinds": "Wardrobe Keybinds",
 	"firmament.config.wardrobe-keybinds.allow-unequipping": "Allow unequipping",
 	"firmament.config.wardrobe-keybinds.allow-unequipping.description": "Allow unequipping items via wardrobe hotkeys.",
