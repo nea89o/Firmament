@@ -223,7 +223,6 @@ object EtherwarpOverlay {
 			end,
 		)
 		if (hitResult !is EtherwarpBlockHit.BlockHit) {
-			// no hit -> smoothly return to normal FOV
 			targetFovMult = 1.0f
 			return
 		}
@@ -245,7 +244,6 @@ object EtherwarpOverlay {
 				EtherwarpResult.SUCCESS
 		}
 
-		// Update render overlay
 		RenderInWorldContext.renderInWorld(event) {
 			if (TConfig.cube)
 				block(
@@ -260,7 +258,6 @@ object EtherwarpOverlay {
 			}
 		}
 
-		// Update target FOV only for Etherwarp success; if fail, revert to normal smoothly
 		if (success == EtherwarpResult.SUCCESS) {
 			val hitCenter = hitResult.accuratePos ?: blockPos.center
 			val dist = playerEyePos.distanceTo(hitCenter)
@@ -269,7 +266,6 @@ object EtherwarpOverlay {
 			if (newTarget < 0.25f) newTarget = 0.25f
 			targetFovMult = newTarget
 		} else {
-			// not successful -> smoothly return to normal FOV
 			targetFovMult = 1.0f
 		}
 	}
