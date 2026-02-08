@@ -4,9 +4,9 @@ import io.github.notenoughupdates.moulconfig.observer.ObservableList
 import io.github.notenoughupdates.moulconfig.xml.Bind
 import org.joml.Vector2i
 import kotlin.time.Duration.Companion.seconds
-import net.minecraft.world.entity.animal.Pig
 import net.minecraft.network.chat.Component
 import net.minecraft.core.BlockPos
+import net.minecraft.world.entity.animal.pig.Pig
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.EntityInteractionEvent
 import moe.nea.firmament.events.ProcessChatEvent

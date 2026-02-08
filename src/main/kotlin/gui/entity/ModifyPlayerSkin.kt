@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.PlayerModelPart
 import net.minecraft.world.entity.player.PlayerModelType
 import net.minecraft.world.entity.player.PlayerSkin
 import net.minecraft.core.ClientAsset
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 object ModifyPlayerSkin : EntityModifier {
 	val playerModelPartIndex = PlayerModelPart.entries.associateBy { it.id }
@@ -21,12 +21,12 @@ object ModifyPlayerSkin : EntityModifier {
 		var capeTexture = entity.skinTextures.cape
 		var model = entity.skinTextures.model
 		var bodyTexture = entity.skinTextures.body
-		fun mkTexAsset(id: ResourceLocation) = ClientAsset.ResourceTexture(id, id)
+		fun mkTexAsset(id: Identifier) = ClientAsset.ResourceTexture(id, id)
 		info["cape"]?.let {
-			capeTexture = mkTexAsset(ResourceLocation.parse(it.asString))
+			capeTexture = mkTexAsset(Identifier.parse(it.asString))
 		}
 		info["skin"]?.let {
-			bodyTexture = mkTexAsset(ResourceLocation.parse(it.asString))
+			bodyTexture = mkTexAsset(Identifier.parse(it.asString))
 		}
 		info["slim"]?.let {
 			model = if (it.asBoolean) PlayerModelType.SLIM else PlayerModelType.WIDE

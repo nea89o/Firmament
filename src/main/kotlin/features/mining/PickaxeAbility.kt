@@ -7,7 +7,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.toasts.SystemToast
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.StringRepresentable
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.item.DyeColor
@@ -52,7 +52,7 @@ object PickaxeAbility {
 		DRILLS("drills", ItemType.DRILL),
 		;
 
-		override fun getSerializedName(): String? {
+		override fun getSerializedName(): String {
 			return label
 		}
 
@@ -220,7 +220,7 @@ object PickaxeAbility {
 		event.context.pose().translate(MC.window.guiScaledWidth / 2F, MC.window.guiScaledHeight / 2F)
 		event.context.pose().scale(TConfig.cooldownScale.toFloat(), TConfig.cooldownScale.toFloat())
 		RenderCircleProgress.renderCircle(
-			event.context, ResourceLocation.fromNamespaceAndPath("firmament", "textures/gui/circle.png"),
+			event.context, Identifier.fromNamespaceAndPath("firmament", "textures/gui/circle.png"),
 			getCooldownPercentage(ability.name, ability.cooldown).toFloat(),
 			0f, 1f, 0f, 1f,
 			color = TConfig.cooldownColour.getEffectiveColourRGB()

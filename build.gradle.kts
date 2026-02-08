@@ -7,7 +7,6 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.google.common.hash.Hashing
 import com.google.devtools.ksp.gradle.KspAATask
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -515,8 +514,8 @@ fun patchRenderDoc(
 ): JavaLauncher {
 	val wrappedJavaExecutable = javaLauncher.executablePath.asFile.absolutePath
 	require("\"" !in wrappedJavaExecutable)
-	val hashBytes = Hashing.sha256().hashString(wrappedJavaExecutable, StandardCharsets.UTF_8)
-	val hash = Base64.getUrlEncoder().encodeToString(hashBytes.asBytes())
+	val hashBytes = wrappedJavaExecutable.encodeToByteArray()
+	val hash = Base64.getUrlEncoder().encodeToString(hashBytes)
 		.replace("=", "")
 	val wrapperJavaRoot = rootProject.layout.buildDirectory
 		.dir("binaries/renderdoc-wrapped-java/$hash/")

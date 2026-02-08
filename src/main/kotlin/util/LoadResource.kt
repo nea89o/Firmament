@@ -4,11 +4,11 @@ package moe.nea.firmament.util
 import java.io.InputStream
 import kotlin.io.path.inputStream
 import kotlin.jvm.optionals.getOrNull
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.repo.RepoDownloadManager
 
 
-fun ResourceLocation.openFirmamentResource(): InputStream {
+fun Identifier.openFirmamentResource(): InputStream {
     val resource = MC.resourceManager.getResource(this).getOrNull()
     if (resource == null) {
         if (namespace == "neurepo")

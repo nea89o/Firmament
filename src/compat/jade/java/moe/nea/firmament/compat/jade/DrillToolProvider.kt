@@ -13,7 +13,7 @@ import snownee.jade.gui.JadeLinearLayout
 import snownee.jade.impl.ui.ItemStackElement
 import snownee.jade.impl.ui.TextElementImpl
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
@@ -25,7 +25,7 @@ class DrillToolProvider : IBlockComponentProvider {
 	override fun appendTooltip(
 		tooltip: ITooltip,
 		accessor: BlockAccessor,
-		p2: IPluginConfig?
+		p2: IPluginConfig
 	) {
 		val customBlock = CustomFakeBlockProvider.getCustomBlock(accessor) ?: return
 		val tool = RepoManager.miningData.getToolsThatCanBreak(customBlock.breakingPower).firstOrNull()
@@ -66,7 +66,7 @@ class DrillToolProvider : IBlockComponentProvider {
 	private val CHECK: Component = Component.literal("✔")
 	private val X: Component = Component.literal("✕")
 
-	override fun getUid(): ResourceLocation {
+	override fun getUid(): Identifier {
 		return Firmament.identifier("toolprovider")
 	}
 }

@@ -90,7 +90,7 @@ object InventoryButtons {
 				if (lastMouseMove.passedTime() > 0.6.seconds && lastHoveredComponent === button) {
 					it.context.setComponentTooltipForNextFrame(
 						MC.font,
-						listOf(Component.literal(button.command).gold()),
+						listOf(Component.literal(button.command ?: "").gold()),
 						buttonBounds.minX - 15,
 						buttonBounds.maxY + 20,
 					)

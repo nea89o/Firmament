@@ -10,11 +10,7 @@ import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
 
 class CustomFakeBlockProvider(val registration: IWailaClientRegistration) : JadeRayTraceCallback {
 
-	override fun onRayTrace(
-		hitResult: HitResult,
-		accessor: Accessor<*>?,
-		originalAccessor: Accessor<*>?
-	): Accessor<*>? {
+	override fun onRayTrace(hitResult: HitResult, accessor: Accessor<*>, originalAccessor: Accessor<*>): Accessor<*>?{
 		if (!JadeIntegration.TConfig.blockDetection) return accessor
 		if (accessor !is BlockAccessor) return accessor
 		val customBlock = JadeIntegration.customBlocks[accessor.block] ?: return accessor

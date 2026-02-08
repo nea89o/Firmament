@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.MissingItemModel;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,7 +23,7 @@ import java.util.function.Function;
 public class ReplaceItemModelPatch implements IntrospectableItemModelManager {
 	@Shadow
 	@Final
-	private Function<ResourceLocation, ItemModel> modelGetter;
+	private Function<Identifier, ItemModel> modelGetter;
 
 	@WrapOperation(
 		method = "appendItemLayers",
@@ -37,7 +37,7 @@ public class ReplaceItemModelPatch implements IntrospectableItemModelManager {
 	}
 
 	@Override
-	public boolean hasModel_firmament(@NotNull ResourceLocation identifier) {
+	public boolean hasModel_firmament(@NotNull Identifier identifier) {
 		return !(modelGetter.apply(identifier) instanceof MissingItemModel);
 	}
 }

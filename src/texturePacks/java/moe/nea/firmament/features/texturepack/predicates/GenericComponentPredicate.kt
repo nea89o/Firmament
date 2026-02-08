@@ -11,18 +11,18 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.nbt.NbtOps
 import net.minecraft.resources.ResourceKey
 import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.mc.NbtPrism
 import moe.nea.firmament.util.mc.unsafeNbt
 
-data class GenericComponentPredicate<T>(
-    val componentType: DataComponentType<T>,
-    val codec: Codec<T>,
-    val path: NbtPrism,
-    val matcher: NbtMatcher,
+data class GenericComponentPredicate<T : Any>(
+	val componentType: DataComponentType<T>,
+	val codec: Codec<T>,
+	val path: NbtPrism,
+	val matcher: NbtMatcher,
 ) : FirmamentModelPredicate {
 	constructor(componentType: DataComponentType<T>, path: NbtPrism, matcher: NbtMatcher)
 		: this(componentType, componentType.codecOrThrow(), path, matcher)
@@ -49,7 +49,7 @@ data class GenericComponentPredicate<T>(
 				.getOrThrow(
 					ResourceKey.create(
 						Registries.DATA_COMPONENT_TYPE,
-						ResourceLocation.parse(jsonElement.get("component").asString)
+						Identifier.parse(jsonElement.get("component").asString)
 					)
 				).value()
 			return GenericComponentPredicate(component, prism, matcher)

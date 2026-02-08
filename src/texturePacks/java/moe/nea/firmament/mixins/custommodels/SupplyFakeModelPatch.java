@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.PackResources;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,12 +48,12 @@ public class SupplyFakeModelPatch {
 	@Unique
 	private static ClientItemInfoLoader.LoadedClientInfos supplyExtraModels(ResourceManager resourceManager, ClientItemInfoLoader.LoadedClientInfos oldModels) {
 		if (!CustomSkyBlockTextures.TConfig.INSTANCE.getEnableLegacyMinecraftCompat()) return oldModels;
-		Map<ResourceLocation, ClientItem> newModels = new HashMap<>(oldModels.contents());
+		Map<Identifier, ClientItem> newModels = new HashMap<>(oldModels.contents());
 		var resources = resourceManager.listResources(
 			"models/item",
 			id -> (id.getNamespace().equals("firmskyblock") || id.getNamespace().equals("cittofirmgenerated"))
 				      && id.getPath().endsWith(".json"));
-		for (Map.Entry<ResourceLocation, Resource> model : resources.entrySet()) {
+		for (Map.Entry<Identifier, Resource> model : resources.entrySet()) {
 			var resource = model.getValue();
 			var itemModelId = model.getKey().withPath(it -> it.substring("models/item/".length(), it.length() - ".json".length()));
 			var genericModelId = itemModelId.withPrefix("item/");
@@ -74,7 +74,7 @@ public class SupplyFakeModelPatch {
 			                   .orElse(true)) {
 				newModels.put(itemModelId, new ClientItem(
 					unbakedModel,
-					new ClientItem.Properties(true, true)
+					new ClientItem.Properties(true, true, 1F)
 				));
 			}
 		}

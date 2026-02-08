@@ -157,7 +157,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		val effects = itemStack.get(DataComponents.POTION_CONTENTS) ?: return
 		legacyNbt.put("CustomPotionEffects", ListTag().also {
 			effects.allEffects.forEach { effect ->
-				val effectId = effect.effect.unwrapKey().get().location().path
+				val effectId = effect.effect.unwrapKey().get().identifier().path
 				val duration = effect.duration
 				val legacyId = LegacyItemData.effectList[effectId]!!
 
@@ -268,7 +268,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		val enchTag = legacyNbt.getListOrEmpty("ench")
 		legacyNbt.put("ench", enchTag)
 		enchantments.entrySet().forEach { entry ->
-			val id = entry.key.unwrapKey().get().location()
+			val id = entry.key.unwrapKey().get().identifier()
 			val legacyId = LegacyItemData.enchantmentLut[id]
 			if (legacyId == null) {
 				warnings.add("Could not find legacy enchantment id for ${id}")

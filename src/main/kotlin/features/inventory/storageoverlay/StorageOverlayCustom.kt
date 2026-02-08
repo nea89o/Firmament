@@ -41,7 +41,7 @@ class StorageOverlayCustom(
 	}
 
 	override fun onInit() {
-		overview.init(Minecraft.getInstance(), screen.width, screen.height)
+		overview.init(screen.width, screen.height)
 		overview.init()
 		screen.castAccessor()
 		screen.x_Firmament = overview.measurements.x

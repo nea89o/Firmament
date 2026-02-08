@@ -25,7 +25,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.codec.ByteBufCodecs
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache.asItemStack
@@ -50,7 +50,7 @@ import moe.nea.firmament.util.skyblock.ScreenType
 @Serializable
 value class SkyblockId(val neuItem: String) : Comparable<SkyblockId> {
 	val identifier
-		get() = ResourceLocation.fromNamespaceAndPath(
+		get() = Identifier.fromNamespaceAndPath(
 			"skyblockitem",
 			neuItem.lowercase().replace(";", "__")
 				.replace(":", "___")

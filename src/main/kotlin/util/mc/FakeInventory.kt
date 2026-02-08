@@ -29,13 +29,13 @@ class FakeInventory(val stack: ItemStack) : Container {
 		return ItemStack.EMPTY
 	}
 
-	override fun setItem(slot: Int, stack: ItemStack?) {
+	override fun setItem(slot: Int, stack: ItemStack) {
 	}
 
 	override fun setChanged() {
 	}
 
-	override fun stillValid(player: Player?): Boolean {
+	override fun stillValid(player: Player): Boolean {
 		return true
 	}
 }

@@ -35,13 +35,13 @@ public abstract class WorldRenderLastEventPatch {
 	private int ticks;
 
 	@Inject(method = "method_62214", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V", shift = At.Shift.AFTER))
-	public void onWorldRenderLast(GpuBufferSlice gpuBufferSlice, LevelRenderState worldRenderState, ProfilerFiller profiler, Matrix4f matrix4f, ResourceHandle handle, ResourceHandle handle2, boolean bl, Frustum frustum, ResourceHandle handle3, ResourceHandle handle4, CallbackInfo ci) {
+	public void onWorldRenderLast(GpuBufferSlice gpuBufferSlice, LevelRenderState levelRenderState, ProfilerFiller profilerFiller, Matrix4f matrix4f, ResourceHandle resourceHandle, ResourceHandle resourceHandle2, boolean bl, ResourceHandle resourceHandle3, ResourceHandle resourceHandle4, CallbackInfo ci) {
 		var imm = this.renderBuffers.bufferSource();
 		var stack = new PoseStack();
 		// TODO: pre-cancel this event if F1 is active
 		var event = new WorldRenderLastEvent(
 			stack, ticks,
-			worldRenderState.cameraRenderState,
+			levelRenderState.cameraRenderState,
 			imm
 		);
 		WorldRenderLastEvent.Companion.publish(event);

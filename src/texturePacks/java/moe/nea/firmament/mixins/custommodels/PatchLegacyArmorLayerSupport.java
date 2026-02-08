@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PatchLegacyArmorLayerSupport {
 	@Inject(method = "get", at = @At(value = "HEAD"), cancellable = true)
 	private void patchModelLayers(ResourceKey<EquipmentAsset> assetKey, CallbackInfoReturnable<EquipmentClientInfo> cir) {
-		var modelOverride = CustomGlobalArmorOverrides.overrideArmorLayer(assetKey.location());
+		var modelOverride = CustomGlobalArmorOverrides.overrideArmorLayer(assetKey.identifier());
 		if (modelOverride != null)
 			cir.setReturnValue(modelOverride);
 	}

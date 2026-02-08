@@ -18,7 +18,8 @@ import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.MeshData
 import net.minecraft.client.renderer.texture.AbstractTexture
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
-import net.minecraft.resources.ResourceLocation
+import org.joml.Matrix4f
+import net.minecraft.resources.Identifier
 import net.minecraft.util.Mth
 import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
@@ -45,12 +46,12 @@ class CustomRenderPassHelper(
 		}
 	}
 
-	fun bindSampler(name: String, texture: ResourceLocation) {
+	fun bindSampler(name: String, texture: Identifier) {
 		bindSampler(name, MC.textureManager.getTexture(texture))
 	}
 
 	fun bindSampler(name: String, texture: AbstractTexture) {
-		queueAction { it.bindSampler(name, texture.textureView) }
+		queueAction { it.bindTexture(name, texture.textureView, texture.sampler) }
 	}
 
 
@@ -69,8 +70,7 @@ class CustomRenderPassHelper(
 					RenderSystem.getModelViewMatrix(),
 					Vector4f(1.0F, 1.0F, 1.0F, 1.0F),
 					Vector3f(), // TODO: 1.21.10
-					RenderSystem.getTextureMatrix(),
-					RenderSystem.getShaderLineWidth()
+					Matrix4f()
 				)
 		)
 	}

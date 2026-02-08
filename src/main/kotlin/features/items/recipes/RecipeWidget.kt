@@ -11,7 +11,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle
 import moe.nea.firmament.util.mc.asScreenRectangle
 
 abstract class RecipeWidget : GuiEventListener, Renderable, NarratableEntry {
-	override fun narrationPriority(): NarratableEntry.NarrationPriority? {
+	override fun narrationPriority(): NarratableEntry.NarrationPriority {
 		return NarratableEntry.NarrationPriority.NONE// I am so sorry
 	}
 

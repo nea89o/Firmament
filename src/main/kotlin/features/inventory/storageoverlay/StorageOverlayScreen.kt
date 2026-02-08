@@ -26,7 +26,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.inventory.Slot
 import net.minecraft.network.chat.Component
 import net.minecraft.ChatFormatting
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.gui.EmptyComponent
 import moe.nea.firmament.gui.FirmButtonComponent
@@ -41,6 +41,7 @@ import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.mc.FakeSlot
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.render.drawAlignedBox
 import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.render.enableScissorWithoutTranslation
 import moe.nea.firmament.util.tr
@@ -130,12 +131,12 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 
 	fun getMaxScroll() = lastRenderedInnerHeight.toFloat() - getScrollPanelInner().height
 
-	val playerInventorySprite = ResourceLocation.parse("firmament:storageoverlay/player_inventory")
-	val upperBackgroundSprite = ResourceLocation.parse("firmament:storageoverlay/upper_background")
-	val slotRowSprite = ResourceLocation.parse("firmament:storageoverlay/storage_row")
-	val scrollbarBackground = ResourceLocation.parse("firmament:storageoverlay/scroll_bar_background")
-	val scrollbarKnob = ResourceLocation.parse("firmament:storageoverlay/scroll_bar_knob")
-	val controllerBackground = ResourceLocation.parse("firmament:storageoverlay/storage_controls")
+	val playerInventorySprite = Identifier.parse("firmament:storageoverlay/player_inventory")
+	val upperBackgroundSprite = Identifier.parse("firmament:storageoverlay/upper_background")
+	val slotRowSprite = Identifier.parse("firmament:storageoverlay/storage_row")
+	val scrollbarBackground = Identifier.parse("firmament:storageoverlay/scroll_bar_background")
+	val scrollbarKnob = Identifier.parse("firmament:storageoverlay/scroll_bar_knob")
+	val controllerBackground = Identifier.parse("firmament:storageoverlay/storage_controls")
 
 	override fun onClose() {
 		isExiting = true
@@ -176,7 +177,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 			val hs = MC.screen as? AbstractContainerScreen<*>
 			if (StorageBackingHandle.fromScreen(hs) is StorageBackingHandle.Overview) {
 				hs.customGui = null
-				hs.init(MC.instance, width, height)
+				hs.init(width, height)
 			} else {
 				MC.sendCommand("storage")
 			}
@@ -521,7 +522,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 		val name = inventory.title
 		val pageHeight = inv.rows * SLOT_SIZE + 8 + font.lineHeight
 		if (slots != null && StorageOverlay.TConfig.outlineActiveStoragePage)
-			context.submitOutline(
+			context.drawAlignedBox(
 				x,
 				y + 3 + font.lineHeight,
 				PAGE_WIDTH,

@@ -2,11 +2,11 @@ package moe.nea.firmament.gui.entity
 
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
+import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.EntitySpawnReason
-import net.minecraft.world.entity.animal.horse.AbstractHorse
+import net.minecraft.world.entity.animal.equine.AbstractHorse
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import moe.nea.firmament.gui.entity.EntityRenderer.fakeWorld

@@ -38,9 +38,8 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.StringRepresentable
-import net.minecraft.Util
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
@@ -356,7 +355,7 @@ class MCConfigEditorIntegration : FirmamentConfigScreenProvider {
 			return DescriptionRendereringBehaviour.EXPAND_PANEL
 		}
 
-		fun mkSocial(name: String, identifier: ResourceLocation, link: String) = object : Social() {
+		fun mkSocial(name: String, identifier: Identifier, link: String) = object : Social() {
 			override fun onClick() {
 				MC.openUrl(link)
 			}

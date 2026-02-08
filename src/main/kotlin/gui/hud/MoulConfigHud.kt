@@ -54,7 +54,7 @@ abstract class MoulConfigHud(
 		}
 		FinalizeResourceManagerEvent.subscribe("MoulConfigHud:finalizeResourceManager") {
 			MC.resourceManager.registerReloadListener(object : ResourceManagerReloadListener {
-				override fun onResourceManagerReload(manager: ResourceManager?) {
+				override fun onResourceManagerReload(manager: ResourceManager) {
 					fragment = null
 				}
 			})

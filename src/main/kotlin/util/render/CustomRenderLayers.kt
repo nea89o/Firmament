@@ -7,11 +7,11 @@ import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import java.util.function.Function
 import net.minecraft.client.renderer.RenderPipelines
 import com.mojang.blaze3d.shaders.UniformType
-import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.RenderStateShard
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.Util
+import net.minecraft.client.renderer.rendertype.RenderSetup
+import net.minecraft.client.renderer.rendertype.RenderType
+import net.minecraft.resources.Identifier
+import net.minecraft.util.Util
 import moe.nea.firmament.Firmament
 
 object CustomRenderPipelines {
@@ -61,45 +61,41 @@ object CustomRenderPipelines {
 }
 
 object CustomRenderLayers {
-	inline fun memoizeTextured(crossinline func: (ResourceLocation) -> RenderType.CompositeRenderType) = memoize(func)
-	inline fun <T, R> memoize(crossinline func: (T) -> R): Function<T, R> {
+	inline fun memoizeTextured(crossinline func: (Identifier) -> RenderType) = memoize(func)
+	inline fun <T : Any, R : Any> memoize(crossinline func: (T) -> R): Function<T, R> {
 		return Util.memoize { it: T -> func(it) }
 	}
 
 	val GUI_TEXTURED_NO_DEPTH_TRIS = memoizeTextured { texture ->
 		RenderType.create(
 			"firmament_gui_textured_overlay_tris",
-			RenderType.TRANSIENT_BUFFER_SIZE,
-			CustomRenderPipelines.GUI_TEXTURED_NO_DEPTH_TRIS,
-			RenderType.CompositeState.builder().setTextureState(
-				RenderStateShard.TextureStateShard(texture, false)
-			)
-				.createCompositeState(false)
+			RenderSetup.builder(CustomRenderPipelines.GUI_TEXTURED_NO_DEPTH_TRIS)
+				.bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
+				.withTexture("Sampler0", texture)
+				.createRenderSetup()
 		)
 	}
-	val LINES = RenderType.create(
-		"firmament_lines",
-		RenderType.TRANSIENT_BUFFER_SIZE,
-		CustomRenderPipelines.OMNIPRESENT_LINES,
-		RenderType.CompositeState.builder() // TODO: accept linewidth here
-			.createCompositeState(false)
-	)
+
+	//	val LINES = RenderType.create(
+//		"firmament_lines",
+//		RenderType.TRANSIENT_BUFFER_SIZE,
+//		CustomRenderPipelines.OMNIPRESENT_LINES,
+//		RenderType.CompositeState.builder() // TODO: accept linewidth here
+//			.createCompositeState(false)
+//	)
 	val COLORED_QUADS = RenderType.create(
 		"firmament_quads",
-		RenderType.TRANSIENT_BUFFER_SIZE,
-		false, true,
-		CustomRenderPipelines.COLORED_OMNIPRESENT_QUADS,
-		RenderType.CompositeState.builder()
-			.setLightmapState(RenderStateShard.NO_LIGHTMAP)
-			.createCompositeState(false)
+		RenderSetup
+			.builder(CustomRenderPipelines.COLORED_OMNIPRESENT_QUADS)
+			.bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
+			.createRenderSetup()
 	)
 
 	val TRANSLUCENT_CIRCLE_GUI =
 		RenderType.create(
-			"firmament_circle_gui",
-			RenderType.TRANSIENT_BUFFER_SIZE,
-			CustomRenderPipelines.CIRCLE_FILTER_TRANSLUCENT_GUI_TRIS,
-			RenderType.CompositeState.builder()
-				.createCompositeState(false)
+			"firmament_translucent_circle_gui",
+			RenderSetup.builder(CustomRenderPipelines.CIRCLE_FILTER_TRANSLUCENT_GUI_TRIS)
+				.bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
+				.createRenderSetup()
 		)
 }

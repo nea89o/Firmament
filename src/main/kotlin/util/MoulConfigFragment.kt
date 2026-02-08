@@ -13,7 +13,7 @@ class MoulConfigFragment(
 	val dismiss: () -> Unit
 ) : MoulConfigScreenComponent(Component.empty(), context, null) {
 	init {
-		this.init(MC.instance, MC.screen!!.width, MC.screen!!.height)
+		this.init(MC.screen!!.width, MC.screen!!.height)
 	}
 
 	override fun createContext(drawContext: GuiGraphics?): GuiImmediateContext {

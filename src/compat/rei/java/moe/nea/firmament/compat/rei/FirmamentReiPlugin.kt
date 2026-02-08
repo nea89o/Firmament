@@ -20,7 +20,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionResult
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.compat.rei.recipes.GenericREIRecipeCategory
 import moe.nea.firmament.compat.rei.recipes.SBKatRecipe
 import moe.nea.firmament.compat.rei.recipes.SBMobDropRecipe
@@ -51,7 +51,7 @@ class FirmamentReiPlugin : REIClientPlugin {
 			return EntryStack.of(VanillaEntryTypes.ITEM, value.asImmutableItemStack())
 		}
 
-		val SKYBLOCK_ITEM_TYPE_ID = ResourceLocation.fromNamespaceAndPath("firmament", "skyblockitems")
+		val SKYBLOCK_ITEM_TYPE_ID = Identifier.fromNamespaceAndPath("firmament", "skyblockitems")
 	}
 
 	@OptIn(ExpensiveItemCacheApi::class)

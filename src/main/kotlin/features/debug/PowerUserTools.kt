@@ -2,22 +2,22 @@ package moe.nea.firmament.features.debug
 
 import com.mojang.serialization.JsonOps
 import kotlin.jvm.optionals.getOrNull
-import net.minecraft.world.level.block.SkullBlock
-import net.minecraft.world.level.block.entity.SkullBlockEntity
+import net.minecraft.advancements.criterion.NbtPredicate
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.component.ResolvableProfile
+import net.minecraft.nbt.ListTag
+import net.minecraft.nbt.NbtOps
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
+import net.minecraft.resources.Identifier
+import net.minecraft.world.Nameable
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.nbt.ListTag
-import net.minecraft.nbt.NbtOps
-import net.minecraft.advancements.critereon.NbtPredicate
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.ComponentSerialization
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.Nameable
+import net.minecraft.world.item.component.ResolvableProfile
+import net.minecraft.world.level.block.SkullBlock
+import net.minecraft.world.level.block.entity.SkullBlockEntity
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
@@ -138,7 +138,7 @@ object PowerUserTools {
 	}
 
 	// TODO: leak this through some other way, maybe.
-	lateinit var getSkullId: (profile: ResolvableProfile) -> ResourceLocation?
+	lateinit var getSkullId: (profile: ResolvableProfile) -> Identifier?
 
 	@Subscribe
 	fun copyInventoryInfo(it: HandledScreenKeyPressedEvent) {
@@ -155,7 +155,7 @@ object PowerUserTools {
 				Pair(item, Component.translatableEscape("firmament.tooltip.copied.skyblockid", sbId.neuItem))
 		} else if (it.matches(TConfig.copyTexturePackId)) {
 			val model = CustomItemModelEvent.getModelIdentifier0(item, object : IntrospectableItemModelManager {
-				override fun hasModel_firmament(identifier: ResourceLocation): Boolean {
+				override fun hasModel_firmament(identifier: Identifier): Boolean {
 					return true
 				}
 			}).getOrNull() // TODO: remove global texture overrides, maybe

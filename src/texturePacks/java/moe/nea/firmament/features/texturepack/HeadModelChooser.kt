@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.entity.ItemOwner
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 object HeadModelChooser {
 	val IS_CHOOSING_HEAD_MODEL = ThreadLocal.withInitial { false }
@@ -22,7 +22,8 @@ object HeadModelChooser {
 	interface HasExplicitHeadModelMarker {
 		fun markExplicitHead_Firmament()
 		fun isExplicitHeadModel_Firmament(): Boolean
-		companion object{
+
+		companion object {
 			@JvmStatic
 			fun cast(state: ItemStackRenderState) = state as HasExplicitHeadModelMarker
 		}
@@ -31,13 +32,13 @@ object HeadModelChooser {
 	data class Baked(val head: ItemModel, val regular: ItemModel) : ItemModel {
 
 		override fun update(
-            state: ItemStackRenderState,
-            stack: ItemStack?,
-            resolver: ItemModelResolver?,
-            displayContext: ItemDisplayContext,
-            world: ClientLevel?,
-            heldItemContext: ItemOwner?,
-            seed: Int
+			state: ItemStackRenderState,
+			stack: ItemStack,
+			resolver: ItemModelResolver,
+			displayContext: ItemDisplayContext,
+			world: ClientLevel?,
+			heldItemContext: ItemOwner?,
+			seed: Int
 		) {
 			val instance =
 				if (IS_CHOOSING_HEAD_MODEL.get()) {
@@ -51,8 +52,8 @@ object HeadModelChooser {
 	}
 
 	data class Unbaked(
-        val head: ItemModel.Unbaked,
-        val regular: ItemModel.Unbaked,
+		val head: ItemModel.Unbaked,
+		val regular: ItemModel.Unbaked,
 	) : ItemModel.Unbaked {
 		override fun type(): MapCodec<out ItemModel.Unbaked> {
 			return CODEC
@@ -75,7 +76,7 @@ object HeadModelChooser {
 			fun fromLegacyJson(jsonObject: JsonObject, unbakedModel: ItemModel.Unbaked): ItemModel.Unbaked {
 				val model = jsonObject["firmament:head_model"] ?: return unbakedModel
 				val modelUrl = model.asJsonPrimitive.asString
-				val headModel = BlockModelWrapper.Unbaked(ResourceLocation.parse(modelUrl), listOf())
+				val headModel = BlockModelWrapper.Unbaked(Identifier.parse(modelUrl), listOf())
 				return Unbaked(headModel, unbakedModel)
 			}
 

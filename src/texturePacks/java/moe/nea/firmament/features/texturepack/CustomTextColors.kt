@@ -7,14 +7,15 @@ import kotlin.jvm.optionals.getOrNull
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.profiling.ProfilerFiller
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
 import moe.nea.firmament.util.collections.WeakCache
+import moe.nea.firmament.util.intoOptional
 
-object CustomTextColors : SimplePreparableReloadListener<CustomTextColors.TextOverrides?>() {
+object CustomTextColors : SimplePreparableReloadListener<Optional<CustomTextColors.TextOverrides>>() {
 	@Serializable
 	data class TextOverrides(
 		val defaultColor: Int,
@@ -58,23 +59,23 @@ object CustomTextColors : SimplePreparableReloadListener<CustomTextColors.TextOv
 	override fun prepare(
         manager: ResourceManager,
         profiler: ProfilerFiller
-	): TextOverrides? {
-		val resource = manager.getResource(ResourceLocation.fromNamespaceAndPath("firmskyblock", "overrides/text_colors.json")).getOrNull()
-			?: return null
+	): Optional<TextOverrides> {
+		val resource = manager.getResource(Identifier.fromNamespaceAndPath("firmskyblock", "overrides/text_colors.json")).getOrNull()
+			?: return Optional.empty()
 		return Firmament.tryDecodeJsonFromStream<TextOverrides>(resource.open())
 			.getOrElse {
 				Firmament.logger.error("Could not parse text_colors.json", it)
 				null
-			}
+			}.intoOptional()
 	}
 
 	var textOverrides: TextOverrides? = null
 
 	override fun apply(
-        prepared: TextOverrides?,
+        prepared: Optional<TextOverrides>,
         manager: ResourceManager,
         profiler: ProfilerFiller
 	) {
-		textOverrides = prepared
+		textOverrides = prepared.getOrNull()
 	}
 }

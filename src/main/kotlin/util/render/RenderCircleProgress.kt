@@ -5,11 +5,11 @@ import util.render.CustomRenderLayers
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import com.mojang.blaze3d.vertex.BufferBuilder
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.MultiBufferSource
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.client.renderer.rendertype.RenderType
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.collections.nonNegligibleSubSectionsAlignedWith
 import moe.nea.firmament.util.math.Projections
@@ -23,7 +23,7 @@ object RenderCircleProgress {
 		override val x2: Int,
 		override val y1: Int,
 		override val y2: Int,
-		val layer: RenderType.CompositeRenderType,
+		val layer: RenderType,
 		val u1: Float,
 		val u2: Float,
 		val v1: Float,
@@ -98,7 +98,7 @@ object RenderCircleProgress {
 					).use { renderPass ->
 						renderPass.uploadVertices(buffer)
 						renderPass.setAllDefaultUniforms()
-						renderPass.setPipeline(state.layer.renderPipeline)
+						renderPass.setPipeline(state.layer.pipeline())
 						renderPass.setUniform("CutoutRadius", 4) {
 							it.putFloat(state.innerCutoutRadius)
 						}
@@ -120,7 +120,7 @@ object RenderCircleProgress {
 
 	fun renderCircularSlice(
 		drawContext: GuiGraphics,
-		layer: RenderType.CompositeRenderType,
+		layer: RenderType,
 		u1: Float,
 		u2: Float,
 		v1: Float,
@@ -148,7 +148,7 @@ object RenderCircleProgress {
 
 	fun renderCircle(
 		drawContext: GuiGraphics,
-		texture: ResourceLocation,
+		texture: Identifier,
 		progress: Float,
 		u1: Float,
 		u2: Float,

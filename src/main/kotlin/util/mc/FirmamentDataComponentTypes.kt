@@ -17,7 +17,7 @@ object FirmamentDataComponentTypes {
 	fun init(event: ClientInitEvent) {
 	}
 
-	private fun <T> register(
+	private fun <T : Any> register(
 		id: String,
 		builderOperator: (DataComponentType.Builder<T>) -> Unit
 	): DataComponentType<T> {
@@ -29,20 +29,19 @@ object FirmamentDataComponentTypes {
 		)
 	}
 
-	fun <T> errorCodec(message: String): StreamCodec<in ByteBuf, T> =
+	fun <T : Any> errorCodec(message: String): StreamCodec<in ByteBuf, T> =
 		object : StreamCodec<ByteBuf, T> {
-			override fun decode(buf: ByteBuf?): T? {
+			override fun decode(buf: ByteBuf): T {
 				error(message)
 			}
 
-			override fun encode(buf: ByteBuf?, value: T?) {
+			override fun encode(buf: ByteBuf, value: T) {
 				error(message)
 			}
 		}
 
-	fun <T, B : DataComponentType.Builder<T>> B.neverEncode(message: String = "This element should never be encoded or decoded"): B {
+	fun <T : Any, B : DataComponentType.Builder<T>> B.neverEncode(message: String = "This element should never be encoded or decoded"): B {
 		networkSynchronized(errorCodec(message))
-		persistent(null)
 		return this
 	}
 

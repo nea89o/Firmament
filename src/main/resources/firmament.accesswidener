@@ -1,42 +1,30 @@
 accessWidener   v2  named
-accessible class net/minecraft/client/renderer/RenderType$CompositeRenderType
-accessible class net/minecraft/client/renderer/RenderType$CompositeState
 accessible class net/minecraft/client/gui/Font$PreparedTextBuilder
 
 accessible field net/minecraft/client/gui/Gui SCORE_DISPLAY_ORDER Ljava/util/Comparator;
-
+accessible method net/minecraft/client/resources/model/BlockStateModelLoader loadBlockStateDefinitionStack (Lnet/minecraft/resources/Identifier;Lnet/minecraft/world/level/block/state/StateDefinition;Ljava/util/List;)Lnet/minecraft/client/resources/model/BlockStateModelLoader$LoadedModels;
 accessible field net/minecraft/client/multiplayer/ClientPacketListener registryAccess Lnet/minecraft/core/RegistryAccess$Frozen;
 accessible method net/minecraft/resources/RegistryOps <init> (Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/resources/RegistryOps$RegistryInfoLookup;)V
 accessible class net/minecraft/resources/RegistryOps$HolderLookupAdapter
 accessible class net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl
-accessible method net/minecraft/client/resources/model/ModelBakery$ModelBakerImpl <init> (Lnet/minecraft/client/resources/model/ModelBakery;Lnet/minecraft/client/resources/model/SpriteGetter;)V
 
 accessible field net/minecraft/world/entity/monster/Creeper DATA_IS_POWERED Lnet/minecraft/network/syncher/EntityDataAccessor;
 accessible method net/minecraft/world/entity/decoration/ArmorStand setSmall (Z)V
 accessible method net/minecraft/server/packs/resources/FallbackResourceManager parseMetadata (Lnet/minecraft/server/packs/resources/IoSupplier;)Lnet/minecraft/server/packs/resources/ResourceMetadata;
-accessible method net/minecraft/client/gui/GuiGraphics innerBlit (Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIIIFFFFI)V
 
 accessible field net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket MAX_PAYLOAD_SIZE I
 
 accessible class net/minecraft/client/resources/model/BlockStateModelLoader$LoadedBlockModelDefinition
 accessible field net/minecraft/client/resources/model/BlockStateModelLoader BLOCKSTATE_LISTER Lnet/minecraft/resources/FileToIdConverter;
 accessible method net/minecraft/client/resources/model/BlockStateModelLoader$LoadedBlockModelDefinition <init> (Ljava/lang/String;Lnet/minecraft/client/renderer/block/model/BlockModelDefinition;)V
-accessible method net/minecraft/client/resources/model/BlockStateModelLoader loadBlockStateDefinitionStack (Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/level/block/state/StateDefinition;Ljava/util/List;)Lnet/minecraft/client/resources/model/BlockStateModelLoader$LoadedModels;
 
 mutable field net/minecraft/world/inventory/Slot x I
 mutable field net/minecraft/world/inventory/Slot y I
 
-#accessible field net/minecraft/entity/player/PlayerEntity PLAYER_MODEL_PARTS Lnet/minecraft/entity/data/TrackedData;
 accessible field net/minecraft/client/renderer/LevelRenderer viewArea Lnet/minecraft/client/renderer/ViewArea;
 accessible field net/minecraft/client/renderer/texture/OverlayTexture texture Lnet/minecraft/client/renderer/texture/DynamicTexture;
-
-accessible method net/minecraft/client/renderer/RenderStateShard$TextureStateShard cutoutTexture ()Ljava/util/Optional;
-# was accessible method net/minecraft/client/renderer/RenderStateShard$TextureStateShard getId ()Ljava/util/Optional;
-
-accessible field net/minecraft/client/renderer/RenderType$CompositeRenderType state Lnet/minecraft/client/renderer/RenderType$CompositeState;
-accessible field net/minecraft/client/renderer/RenderType$CompositeState textureState Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;
+accessible field net/minecraft/client/renderer/item/ItemModels ID_MAPPER Lnet/minecraft/util/ExtraCodecs$LateBoundIdMapper;
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyBlockPos Lnet/minecraft/core/BlockPos;
-accessible field net/minecraft/client/renderer/RenderType$CompositeRenderType renderPipeline Lcom/mojang/blaze3d/pipeline/RenderPipeline;
 
 mutable field net/minecraft/client/renderer/entity/state/LivingEntityRenderState headItem Lnet/minecraft/client/renderer/item/ItemStackRenderState;
 
@@ -45,3 +33,13 @@ accessible field net/minecraft/client/Minecraft userApiService Lcom/mojang/authl
 accessible field net/minecraft/world/entity/Entity position Lnet/minecraft/world/phys/Vec3;
 accessible method net/minecraft/world/item/component/ResolvableProfile unpack ()Lcom/mojang/datafixers/util/Either;
 accessible field net/minecraft/world/entity/Avatar DATA_PLAYER_MODE_CUSTOMISATION Lnet/minecraft/network/syncher/EntityDataAccessor;
+accessible field net/minecraft/client/renderer/RenderPipelines GUI_TEXTURED_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines LINES_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines MATRICES_PROJECTION_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible field net/minecraft/client/renderer/RenderPipelines ENTITY_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible method net/minecraft/client/gui/GuiGraphics innerBlit (Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIIFFFFI)V
+accessible field net/minecraft/client/gui/GuiGraphics guiRenderState Lnet/minecraft/client/gui/render/state/GuiRenderState;
+accessible method net/minecraft/client/renderer/rendertype/RenderType create (Ljava/lang/String;Lnet/minecraft/client/renderer/rendertype/RenderSetup;)Lnet/minecraft/client/renderer/rendertype/RenderType;
+accessible class net/minecraft/client/renderer/rendertype/RenderSetup$TextureBinding
+accessible field net/minecraft/client/renderer/rendertype/RenderType state Lnet/minecraft/client/renderer/rendertype/RenderSetup;
+accessible field net/minecraft/client/renderer/rendertype/RenderSetup textures Ljava/util/Map;

@@ -3,49 +3,48 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [versions]
-minecraft = "1.21.10"
+minecraft = "1.21.11"
 
 # Update from https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/
-fabric_kotlin = "1.13.7+kotlin.2.2.21"
+fabric_kotlin = "1.13.8+kotlin.2.3.0"
 # Update from https://kotlinlang.org/
 kotlin = "2.2.21"
 # Update from https://github.com/google/ksp/releases
 kotlin_ksp = "2.2.21-2.0.4"
 
 # Update from https://linkie.shedaniel.dev/dependencies?loader=fabric
-yarn = "1.21.10+build.2"
-fabric_loader = "0.18.0"
-fabric_api = "0.138.3+1.21.10"
-architectury = "18.0.6"
-modmenu = "16.0.0-rc.1"
+fabric_loader = "0.18.4"
+fabric_api = "0.141.2+1.21.11"
+architectury = "19.0.1"
+modmenu = "17.0.0-beta.1"
 # Update from https://maven.architectury.dev/me/shedaniel/RoughlyEnoughItems-fabric/ (but is typically late)
-rei = "21.9.812"
+rei = "21.11.814"
 reidev = "33d8900cd6621816680634fcbae2dd07f1cffbd3"
 
 # Update from https://maven.architectury.dev/dev/architectury/loom/dev.architectury.loom.gradle.plugin/
 loom = "1.13.457" # TODO: port back to architectury (and) 1.9.424
 
 # Update from https://modrinth.com/mod/sodium/versions?l=fabric
-sodium = "mc1.21.10-0.7.3-fabric"
+sodium = "mc1.21.11-0.8.4-fabric"
 
 # Update from https://modrinth.com/mod/freecam/versions?l=fabric
-freecammod = "1.3.5+mc1.21.10"
+freecammod = "1.3.6+mc1.21.11"
 
 # Update from https://modrinth.com/mod/female-gender/versions?l=fabric
-femalegender = "5.0.0-Beta.2+1.21.10"
+femalegender = "5.0.0-Beta.2+1.21.11"
 
 # Update from https://modrinth.com/mod/iris/versions?l=fabric
-iris = "1.9.6+1.21.10-fabric"
+iris = "1.10.5+1.21.11-fabric"
 
 shadow = "8.3.8"
 
 # Update from https://modrinth.com/mod/not-enough-animations/versions?l=fabric
-notenoughanimations = "rPkK5la7"
+notenoughanimations = "Dp0dn63B"
 
 # Update from https://modrinth.com/mod/jade/versions?l=fabric
-jade = "20.1.0+fabric"
+jade = "21.1.1+fabric"
 
-devauth = "1.2.1"
+devauth = "1.2.2"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/neurepoparser
 neurepoparser = "1.8.0"
@@ -55,7 +54,7 @@ neurepoparser = "1.8.0"
 hotswap_agent = "1.4.2-SNAPSHOT"
 
 # Update from https://github.com/LlamaLad7/MixinExtras/tags
-mixinextras = "0.5.0"
+mixinextras = "0.5.3"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/jarvis/
 jarvis = "2.1.0"
@@ -77,7 +76,7 @@ manninghamMills = "2.4.1"
 
 # Update from https://docs.isxander.dev/yet-another-config-lib/installing-yacl
 # Nvm, they just don't update docs: https://modrinth.com/mod/yacl/versions?l=fabric
-yacl = "3.8.0+1.21.9-fabric"
+yacl = "3.8.2+1.21.11-fabric"
 
 # Update from https://maven.shedaniel.me/me/shedaniel/cloth/basic-math/
 basicMath = "0.6.1"
@@ -86,7 +85,7 @@ basicMath = "0.6.1"
 classtransform = "1.14.1"
 
 # Update from https://mvnrepository.com/artifact/org.ow2.asm/asm/
-asm = "9.8"
+asm = "9.9.1"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -105,7 +104,7 @@ rei_dev_fabric = { module = "com.github.shedaniel.roughlyenoughitems:RoughlyEnou
 jspecify = { module = "org.jspecify:jspecify", version = "1.0.0" }
 jbAnnotations = { module = "org.jetbrains:annotations", version = "26.0.2" }
 
-moulconfig = { module = "org.notenoughupdates.moulconfig:modern-1.21.10", version.ref = "moulconfig" }
+moulconfig = { module = "org.notenoughupdates.moulconfig:modern-1.21.11", version.ref = "moulconfig" }
 repoparser = { module = "moe.nea:neurepoparser", version.ref = "neurepoparser" }
 mixinextras = { module = "io.github.llamalad7:mixinextras-fabric", version.ref = "mixinextras" }
 jarvis_api = { module = "moe.nea.jarvis:jarvis-api", version.ref = "jarvis" }
@@ -154,5 +153,6 @@ kotlin_plugin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization"
 kotlin_plugin_powerassert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 kotlin_plugin_ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin_ksp" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
-loom = { id = "dev.architectury.loom", version.ref = "loom" }
+#loom = { id = "dev.architectury.loom", version.ref = "loom" }
+loom = { id = "fabric-loom", version = "1.15.3" }
 mcAutoTranslations = { id = "moe.nea.mc-auto-translations", version.ref = "mcAutoTranslations" }

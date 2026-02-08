@@ -15,7 +15,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.entity.ItemOwner
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.features.texturepack.predicates.AndPredicate
 
 class PredicateModel {
@@ -29,10 +29,10 @@ class PredicateModel {
 		)
 
 		override fun update(
-            state: ItemStackRenderState?,
+            state: ItemStackRenderState,
             stack: ItemStack,
-            resolver: ItemModelResolver?,
-            displayContext: ItemDisplayContext?,
+            resolver: ItemModelResolver,
+            displayContext: ItemDisplayContext,
             world: ClientLevel?,
             heldItemContext: ItemOwner?,
             seed: Int
@@ -57,7 +57,7 @@ class PredicateModel {
 				val newOverrides = ArrayList<Override>()
 				for (legacyOverride in legacyOverrides) {
 					legacyOverride as JsonObject
-					val overrideModel = ResourceLocation.tryParse(legacyOverride.get("model")?.asString ?: continue) ?: continue
+					val overrideModel = Identifier.tryParse(legacyOverride.get("model")?.asString ?: continue) ?: continue
 					val predicate = CustomModelOverrideParser.parsePredicates(legacyOverride.getAsJsonObject("predicate"))
 					newOverrides.add(Override(
 						BlockModelWrapper.Unbaked(overrideModel, listOf()),

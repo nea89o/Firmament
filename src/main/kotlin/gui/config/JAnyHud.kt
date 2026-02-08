@@ -6,7 +6,7 @@ import org.joml.Vector2i
 import org.joml.Vector2ic
 import kotlinx.serialization.Serializable
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.jarvis.JarvisIntegration
 
 @Serializable
@@ -19,7 +19,7 @@ data class HudPosition(
 
 data class HudMeta(
     val position: HudPosition,
-    private val id: ResourceLocation,
+    private val id: Identifier,
     private val label: Component,
     private val width: Int,
     private val height: Int,
@@ -33,7 +33,7 @@ data class HudMeta(
 		return height
 	}
 
-	override fun getHudId(): ResourceLocation {
+	override fun getHudId(): Identifier {
 		return id
 	}
 

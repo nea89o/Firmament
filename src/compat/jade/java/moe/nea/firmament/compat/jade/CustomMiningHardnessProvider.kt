@@ -6,7 +6,7 @@ import snownee.jade.api.ITooltip
 import snownee.jade.api.config.IPluginConfig
 import kotlin.time.DurationUnit
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.core.BlockPos
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -20,14 +20,14 @@ object CustomMiningHardnessProvider : IBlockComponentProvider {
 	override fun appendTooltip(
 		tooltip: ITooltip,
 		block: BlockAccessor,
-		config: IPluginConfig?
+		config: IPluginConfig
 	) {
 		val customBlock = CustomFakeBlockProvider.getCustomBlock(block) ?: return
 		if (customBlock.breakingPower > 0)
 			tooltip.add(tr("firmament.jade.breaking_power", "Required Breaking Power: ${customBlock.breakingPower}"))
 	}
 
-	override fun getUid(): ResourceLocation =
+	override fun getUid(): Identifier =
 		Firmament.identifier("custom_mining_hardness")
 
 	data class BreakingInfo(

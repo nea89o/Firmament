@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.EntitySpawnReason
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.level.Level
 import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
@@ -140,7 +140,7 @@ object EntityRenderer {
 	}
 
 	private val gson = Gson()
-	fun constructEntity(location: ResourceLocation): LivingEntity? {
+	fun constructEntity(location: Identifier): LivingEntity? {
 		return constructEntity(
 			gson.fromJson(
 				location.openFirmamentResource().bufferedReader(), JsonObject::class.java
@@ -199,41 +199,16 @@ object EntityRenderer {
 		entity: LivingEntity
 	) {
 		context.enableScissorWithTranslation(x1.toFloat(), y1.toFloat(), x2.toFloat(), y2.toFloat())
-		val centerX = (x1 + x2) / 2f
-		val centerY = (y1 + y2) / 2f
-		val hw = (x2 - x1) / 2
-		val hh = (y2 - y1) / 2
-		val targetYaw = atan(((centerX - mouseX) / hw)).toFloat()
-		val targetPitch = atan(((centerY - mouseY) / hh - entity.eyeHeight * hh / 40)).toFloat()
-		val rotateToFaceTheFront = Quaternionf().rotateZ(Math.PI.toFloat())
-		val rotateToFaceTheCamera = Quaternionf().rotateX(targetPitch * 20.0f * (Math.PI.toFloat() / 180))
-		rotateToFaceTheFront.mul(rotateToFaceTheCamera)
-		val oldBodyYaw = entity.yBodyRot
-		val oldYaw = entity.yRot
-		val oldPitch = entity.xRot
-		val oldPrevHeadYaw = entity.yHeadRotO
-		val oldHeadYaw = entity.yHeadRot
-		entity.yBodyRot = 180.0f + targetYaw * 20.0f
-		entity.yRot = 180.0f + targetYaw * 40.0f
-		entity.xRot = -targetPitch * 20.0f
-		entity.yHeadRot = entity.yRot
-		entity.yHeadRotO = entity.yRot
-		val vector3f = Vector3f(0.0f, (entity.bbHeight / 2.0f + bottomOffset).toFloat(), 0.0f)
-		InventoryScreen.renderEntityInInventory( // TODO: fix multiple entities rendering the same entity
+		InventoryScreen.renderEntityInInventoryFollowsMouse(
 			context,
 			x1, y1,
 			x2, y2,
-			size.toFloat(),
-			vector3f,
-			rotateToFaceTheFront,
-			rotateToFaceTheCamera,
+			size.toInt(),
+			bottomOffset.toFloat(),
+			mouseX.toFloat(),
+			mouseY.toFloat(),
 			entity
 		)
-		entity.yBodyRot = oldBodyYaw
-		entity.yRot = oldYaw
-		entity.xRot = oldPitch
-		entity.yHeadRotO = oldPrevHeadYaw
-		entity.yHeadRot = oldHeadYaw
 		context.disableScissor()
 	}
 

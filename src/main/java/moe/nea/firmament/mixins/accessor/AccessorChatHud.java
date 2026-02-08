@@ -18,7 +18,4 @@ public interface AccessorChatHud {
 
 	@Accessor("chatScrollbarPos")
 	int getScrolledLines_firmament();
-
-	@Invoker("screenToChatY")
-	double toChatLineY_firmament(double y);
 }

@@ -28,7 +28,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlin.coroutines.EmptyCoroutineContext
 import net.minecraft.commands.CommandBuildContext
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.commands.registerFirmamentCommand
 import moe.nea.firmament.events.ClientInitEvent
 import moe.nea.firmament.events.ClientStartedEvent
@@ -144,7 +144,7 @@ object Firmament {
 	}
 
 
-	fun identifier(path: String) = ResourceLocation.fromNamespaceAndPath(MOD_ID, path)
+	fun identifier(path: String) = Identifier.fromNamespaceAndPath(MOD_ID, path)
 	inline fun <reified T : Any> tryDecodeJsonFromStream(inputStream: InputStream): Result<T> {
 		return runCatching {
 			json.decodeFromStream<T>(inputStream)

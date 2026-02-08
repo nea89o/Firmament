@@ -2,7 +2,7 @@ package moe.nea.firmament.features.debug.itemeditor
 
 import kotlinx.serialization.Serializable
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache
@@ -54,7 +54,7 @@ object LegacyItemData {
 		).getOrThrow()
 
 	val enchantmentData = getLegacyData<List<EnchantmentData>>("enchantments")
-	val enchantmentLut = enchantmentData.associateBy { ResourceLocation.withDefaultNamespace(it.name) }
+	val enchantmentLut = enchantmentData.associateBy { Identifier.withDefaultNamespace(it.name) }
 
 	val itemDat = getLegacyData<List<ItemData>>("items")
 

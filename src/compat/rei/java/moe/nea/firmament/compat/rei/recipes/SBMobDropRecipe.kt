@@ -11,7 +11,7 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import me.shedaniel.rei.api.common.util.EntryStacks
 import net.minecraft.world.item.Items
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.compat.rei.EntityWidget
 import moe.nea.firmament.compat.rei.SBItemEntryDefinition
@@ -35,7 +35,7 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
 				add(Widgets.createRecipeBase(bounds))
 				val source = display.neuRecipe.render
 				val entity = if (source.startsWith("@")) {
-					EntityRenderer.constructEntity(ResourceLocation.parse(source.substring(1)))
+					EntityRenderer.constructEntity(Identifier.parse(source.substring(1)))
 				} else {
 					EntityRenderer.applyModifiers(source, listOf())
 				}
@@ -84,7 +84,7 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
 				for (drop in display.neuRecipe.drops) {
 					val lore = drop.extra.mapTo(mutableListOf()) { Component.literal(it) }
 					if (drop.chance != null) {
-						lore += listOf(Component.translatable("firmament.recipe.mobs.drops", drop.chance))
+						lore += listOf(Component.translatable("firmament.recipe.mobs.drops", drop.chance!!))
 					}
 					val item = SBItemEntryDefinition.getEntry(drop.dropItem)
 						.value.copy(extraLore = lore)

@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.chat
 
+import com.mojang.blaze3d.platform.NativeImage
 import java.net.URI
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
@@ -9,15 +10,16 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.future.await
 import kotlin.math.min
+import net.minecraft.ChatFormatting
+import net.minecraft.client.gui.ActiveTextCollector.ClickableStyleFinder
+import net.minecraft.client.gui.components.ChatComponent
 import net.minecraft.client.gui.screens.ChatScreen
-import com.mojang.blaze3d.platform.NativeImage
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
-import net.minecraft.network.chat.Component
-import net.minecraft.ChatFormatting
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ModifyChatEvent
@@ -30,6 +32,7 @@ import moe.nea.firmament.util.net.HttpUtil
 import moe.nea.firmament.util.render.drawTexture
 import moe.nea.firmament.util.transformEachRecursively
 import moe.nea.firmament.util.unformattedString
+
 
 object ChatLinks {
 	val identifier: String
@@ -54,7 +57,7 @@ object ChatLinks {
 	val nextTexId = AtomicInteger(0)
 
 	data class Image(
-		val texture: ResourceLocation,
+		val texture: Identifier,
 		val width: Int,
 		val height: Int,
 	)
@@ -93,13 +96,20 @@ object ChatLinks {
 		return (url.substringAfterLast('.').lowercase() in imageExtensions)
 	}
 
+	fun ChatComponent.findComponentAtMousePos(x: Int, y: Int): Style? {
+		val clickableStyleFinder = ClickableStyleFinder(MC.font, x,y)
+			.includeInsertions(false)
+		captureClickableText(clickableStyleFinder, MC.window.guiScaledHeight, MC.instance.gui.guiTicks, true)
+		return clickableStyleFinder.result()
+	}
+
 	@Subscribe
 	@OptIn(ExperimentalCoroutinesApi::class)
 	fun onRender(it: ScreenRenderPostEvent) {
 		if (!TConfig.imageEnabled) return
 		if (it.screen !is ChatScreen) return
 		val hoveredComponent =
-			MC.inGameHud.chat.getClickedComponentStyleAt(it.mouseX.toDouble(), it.mouseY.toDouble()) ?: return
+			MC.inGameHud.chat.findComponentAtMousePos(it.mouseX, it.mouseY) ?: return
 		val hoverEvent = hoveredComponent.hoverEvent as? HoverEvent.ShowText ?: return
 		val value = hoverEvent.value
 		val url = urlRegex.matchEntire(value.unformattedString)?.groupValues?.get(0) ?: return

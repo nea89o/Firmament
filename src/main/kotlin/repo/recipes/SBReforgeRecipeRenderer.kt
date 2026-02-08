@@ -4,10 +4,10 @@ import io.github.moulberry.repo.NEURepository
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.npc.VillagerProfession
+import net.minecraft.world.entity.npc.villager.VillagerProfession
 import net.minecraft.world.item.ItemStack
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.entity.EntityRenderer
@@ -155,7 +155,7 @@ object SBReforgeRecipeRenderer : GenericRecipeRenderer<Reforge> {
 		get() = SBItemStack(SkyBlockItems.REFORGE_ANVIL).asImmutableItemStack()
 	override val title: Component
 		get() = tr("firmament.recipecategory.reforge", "Reforge")
-	override val identifier: ResourceLocation
+	override val identifier: Identifier
 		get() = Firmament.identifier("reforge_recipe")
 
 	override fun findAllRecipes(neuRepository: NEURepository): Iterable<Reforge> {

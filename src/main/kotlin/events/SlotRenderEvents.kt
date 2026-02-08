@@ -4,14 +4,14 @@ package moe.nea.firmament.events
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.world.inventory.Slot
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.util.render.drawGuiTexture
 
 interface SlotRenderEvents {
     val context: GuiGraphics
     val slot: Slot
 
-	fun highlight(sprite: ResourceLocation) {
+	fun highlight(sprite: Identifier) {
 		context.drawGuiTexture(
 			slot.x, slot.y, 0, 16, 16,
 			sprite

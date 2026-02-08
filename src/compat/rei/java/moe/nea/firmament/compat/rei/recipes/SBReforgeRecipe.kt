@@ -19,12 +19,11 @@ import me.shedaniel.rei.api.common.display.Display
 import me.shedaniel.rei.api.common.display.DisplaySerializer
 import me.shedaniel.rei.api.common.entry.EntryIngredient
 import me.shedaniel.rei.api.common.entry.EntryStack
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.EntitySpawnReason
-import net.minecraft.core.Holder
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.npc.VillagerProfession
+import net.minecraft.resources.Identifier
+import net.minecraft.world.entity.EntitySpawnReason
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.npc.villager.VillagerProfession
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.compat.rei.EntityWidget
 import moe.nea.firmament.compat.rei.SBItemEntryDefinition
@@ -38,7 +37,6 @@ import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.AprilFoolsUtil
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.gold
 import moe.nea.firmament.util.grey
 import moe.nea.firmament.util.skyblock.ItemType
@@ -121,7 +119,8 @@ class SBReforgeRecipe(
 				list.add(Widgets.withTooltip(
 					EntityWidget(
 						EntityType.VILLAGER.create(EntityRenderer.fakeWorld, EntitySpawnReason.COMMAND)
-							?.also { it.villagerData = it.villagerData.withProfession(MC.currentOrDefaultRegistries, VillagerProfession.WEAPONSMITH) },
+							?.also { it.villagerData = it.villagerData.withProfession(MC.currentOrDefaultRegistries,
+								VillagerProfession.WEAPONSMITH) },
 						Point(bounds.minX + 10 + 24 + 8 - dimension.width / 2, bounds.centerY - dimension.height / 2),
 						dimension
 					),
@@ -207,8 +206,8 @@ class SBReforgeRecipe(
 		return catIdentifier
 	}
 
-	override fun getDisplayLocation(): Optional<ResourceLocation> {
-		return Optional.empty<ResourceLocation>()
+	override fun getDisplayLocation(): Optional<Identifier> {
+		return Optional.empty<Identifier>()
 	}
 
 	override fun getSerializer(): DisplaySerializer<out Display>? {

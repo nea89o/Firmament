@@ -13,7 +13,7 @@ object SlotUtils {
 			this.index,
 			GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
 			ClickType.CLONE,
-			MC.player
+			MC.player!!
 		)
 	}
 
@@ -21,7 +21,7 @@ object SlotUtils {
 		MC.interactionManager?.handleInventoryMouseClick(
 			handler.containerId, this.index,
 			hotbarIndex, ClickType.SWAP,
-			MC.player
+			MC.player!!
 		)
 	}
 
@@ -31,7 +31,7 @@ object SlotUtils {
 			this.index,
 			GLFW.GLFW_MOUSE_BUTTON_RIGHT,
 			ClickType.PICKUP,
-			MC.player
+			MC.player!!
 		)
 	}
 
@@ -41,7 +41,7 @@ object SlotUtils {
 			this.index,
 			GLFW.GLFW_MOUSE_BUTTON_LEFT,
 			ClickType.PICKUP,
-			MC.player
+			MC.player!!
 		)
 	}
 }

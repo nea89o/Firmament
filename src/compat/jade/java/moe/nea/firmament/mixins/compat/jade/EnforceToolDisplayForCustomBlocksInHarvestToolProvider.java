@@ -6,6 +6,7 @@ import moe.nea.firmament.compat.jade.CustomFakeBlockProvider;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import snownee.jade.addon.harvest.HarvestToolProvider;
 import snownee.jade.api.BlockAccessor;
@@ -21,6 +22,7 @@ public class EnforceToolDisplayForCustomBlocksInHarvestToolProvider {
 		return original;
 	}
 
+	@Unique
 	private static final List<ItemStack> REPLACEABLE_TOOL = List.of(new ItemStack(Blocks.ENCHANTING_TABLE));
 
 	@ModifyExpressionValue(method = "getText", at = @At(value = "INVOKE", target = "Lcom/google/common/cache/Cache;get(Ljava/lang/Object;Ljava/util/concurrent/Callable;)Ljava/lang/Object;"))

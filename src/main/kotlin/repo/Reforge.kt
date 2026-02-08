@@ -16,7 +16,7 @@ import kotlinx.serialization.serializer
 import net.minecraft.world.item.Item
 import net.minecraft.resources.ResourceKey
 import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.util.ReforgeId
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.skyblock.ItemType
@@ -64,7 +64,7 @@ data class Reforge(
 				}
 				jsonElement["itemId"]?.let {
 					decoder.json.decodeFromJsonElement(serializer<List<String>>(), it).forEach {
-						val ident = ResourceLocation.tryParse(it)
+						val ident = Identifier.tryParse(it)
 						if (ident != null)
 							filters.add(AllowsVanillaItemType(ResourceKey.create(Registries.ITEM, ident)))
 					}
@@ -91,7 +91,7 @@ data class Reforge(
 				}
 				jsonObject["minecraftId"]?.let {
 					return AllowsVanillaItemType(ResourceKey.create(Registries.ITEM,
-					                                            ResourceLocation.parse((it as JsonPrimitive).content)))
+					                                            Identifier.parse((it as JsonPrimitive).content)))
 				}
 				error("Unknown item type")
 			}

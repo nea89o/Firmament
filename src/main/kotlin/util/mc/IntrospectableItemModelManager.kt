@@ -1,7 +1,7 @@
 package moe.nea.firmament.util.mc
 
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 interface IntrospectableItemModelManager {
-	fun hasModel_firmament(identifier: ResourceLocation): Boolean
+	fun hasModel_firmament(identifier: Identifier): Boolean
 }

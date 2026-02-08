@@ -66,12 +66,12 @@ class InventoryButtonEditor(
 		super.onClose()
 	}
 
-	override fun resize(client: Minecraft, width: Int, height: Int) {
+	override fun resize(width: Int, height: Int) {
 		lastGuiRect.move(
 			MC.window.guiScaledWidth / 2 - lastGuiRect.width / 2,
 			MC.window.guiScaledHeight / 2 - lastGuiRect.height / 2
 		)
-		super.resize(client, width, height)
+		super.resize(width, height)
 	}
 
 	override fun init() {

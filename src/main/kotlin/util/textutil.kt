@@ -202,7 +202,7 @@ fun Component.transformEachRecursively(function: (Component) -> Component): Comp
 }
 
 fun tr(key: String, default: String): MutableComponent = error("Compiler plugin did not run.")
-fun trResolved(key: String, vararg args: Any): MutableComponent = Component.translatableEscape(key, *args)
+fun trResolved(key: String, vararg args: Any): MutableComponent = Component.translatableEscape(key, *args) // TODO: handle null args
 fun titleCase(str: String): String {
 	return str
 		.lowercase()

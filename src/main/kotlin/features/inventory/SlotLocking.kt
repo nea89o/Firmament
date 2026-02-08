@@ -25,7 +25,7 @@ import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.inventory.ClickType
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.StringRepresentable
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ClientInitEvent
@@ -54,6 +54,7 @@ import moe.nea.firmament.util.mc.SlotUtils.swapWithHotBar
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.red
+import moe.nea.firmament.util.render.drawAlignedBox
 import moe.nea.firmament.util.render.drawLine
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.DungeonUtil
@@ -402,12 +403,12 @@ object SlotLocking {
 					hotX + sx, hotY + sy,
 					color(anyHovered)
 				)
-			event.context.submitOutline(
+			event.context.drawAlignedBox(
 				hotbarSlot.x + sx,
 				hotbarSlot.y + sy,
 				16, 16, color(hotbarSlot in highlitSlots).color
 			)
-			event.context.submitOutline( // TODO: 1.21.10
+			event.context.drawAlignedBox( // TODO: 1.21.10
 				inventorySlot.x + sx,
 				inventorySlot.y + sy,
 				16, 16, color(inventorySlot in highlitSlots).color
@@ -425,7 +426,7 @@ object SlotLocking {
 		val sx = accScreen.x_Firmament
 		val sy = accScreen.y_Firmament
 		val (borderX, borderY) = draggingSlot.lineCenter()
-		event.context.submitOutline(
+		event.context.drawAlignedBox(
 			draggingSlot.x + sx,
 			draggingSlot.y + sy,
 			16,
@@ -445,7 +446,7 @@ object SlotLocking {
 				hovX + sx, hovY + sy,
 				me.shedaniel.math.Color.ofOpaque(0x00FF00)
 			)
-			event.context.submitOutline(
+			event.context.drawAlignedBox(
 				hoveredSlot.x + sx,
 				hoveredSlot.y + sy,
 				16, 16, 0xFF00FF00u.toInt()
@@ -515,10 +516,10 @@ object SlotLocking {
 				RenderPipelines.GUI_TEXTURED,
 				when {
 					isSlotLocked ->
-						(ResourceLocation.parse("firmament:slot_locked"))
+						(Identifier.parse("firmament:slot_locked"))
 
 					isUUIDLocked ->
-						(ResourceLocation.parse("firmament:uuid_locked"))
+						(Identifier.parse("firmament:uuid_locked"))
 
 					else ->
 						error("unreachable")

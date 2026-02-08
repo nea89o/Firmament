@@ -39,7 +39,7 @@ import net.minecraft.server.packs.resources.Resource
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.world.level.block.state.StateDefinition
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.AABB
 import net.minecraft.util.profiling.ProfilerFiller
@@ -66,13 +66,13 @@ object CustomBlockTextures {
 	data class CustomBlockOverride(
         val modes: @Serializable(SingletonSerializableList::class) List<String>,
         val area: List<Area>? = null,
-        val replacements: Map<ResourceLocation, Replacement>,
+        val replacements: Map<Identifier, Replacement>,
 	)
 
 	@Serializable(with = Replacement.Serializer::class)
 	data class Replacement(
-        val block: ResourceLocation,
-        val sound: ResourceLocation?,
+        val block: Identifier,
+        val sound: Identifier?,
 	) {
 		fun replace(block: BlockState): BlockStateModel? {
 			blockStateMap?.let { return it[block] }
@@ -113,7 +113,7 @@ object CustomBlockTextures {
 				val jsonElement = decoder.decodeSerializableValue(delegate)
 				if (jsonElement is JsonPrimitive) {
 					require(jsonElement.isString)
-					return Replacement(ResourceLocation.tryParse(jsonElement.content)!!, null)
+					return Replacement(Identifier.tryParse(jsonElement.content)!!, null)
 				}
 				return (decoder as JsonDecoder).json.decodeFromJsonElement(DefaultSerializer, jsonElement)
 			}
@@ -355,14 +355,14 @@ object CustomBlockTextures {
 				}
 			}
 
-			override fun apply(prepared: BakedReplacements, manager: ResourceManager, profiler: ProfilerFiller?) {
+			override fun apply(prepared: BakedReplacements, manager: ResourceManager, profiler: ProfilerFiller) {
 				allLocationReplacements = prepared
 				refreshReplacements()
 			}
 		})
 	}
 
-	fun simpleBlockModel(blockId: ResourceLocation): SingleVariant.Unbaked {
+	fun simpleBlockModel(blockId: Identifier): SingleVariant.Unbaked {
 		// TODO: does this need to be shared between resolving and baking? I think not, but it would probably be wise to do so in the future.
 		return SingleVariant.Unbaked(
 			Variant(blockId)
@@ -424,11 +424,11 @@ object CustomBlockTextures {
 	@JvmStatic
 	fun collectExtraBlockStateMaps(
         extra: BakedReplacements,
-        original: Map<ResourceLocation, List<Resource>>,
-        stateManagers: Function<ResourceLocation, StateDefinition<Block, BlockState>?>
+        original: Map<Identifier, List<Resource>>,
+        stateManagers: Function<Identifier, StateDefinition<Block, BlockState>?>
 	) {
 		extra.collectAllReplacements().forEach {
-			val blockId = BuiltInRegistries.BLOCK.getResourceKey(it.overridingBlock).getOrNull()?.location() ?: return@forEach
+			val blockId = BuiltInRegistries.BLOCK.getResourceKey(it.overridingBlock).getOrNull()?.identifier() ?: return@forEach
 			val allModels = mutableListOf<BlockStateModelLoader.LoadedBlockModelDefinition>()
 			val stateManager = stateManagers.apply(blockId) ?: return@forEach
 			for (resource in original[BlockStateModelLoader.BLOCKSTATE_LISTER.idToFile(it.block)] ?: return@forEach) {

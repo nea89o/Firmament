@@ -4,14 +4,14 @@ import util.render.CustomRenderPipelines
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.client.player.AbstractClientPlayer
-import net.minecraft.client.renderer.RenderType
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.state.AvatarRenderState
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.world.entity.player.PlayerSkin
 import net.minecraft.core.ClientAsset
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
@@ -38,7 +38,7 @@ object CustomCapes {
 	}
 
 	data class TexturedCapeRenderer(
-		val location: ResourceLocation
+		val location: Identifier
 	) : CustomCapeRenderer {
 		override fun replaceRender(
             renderLayer: RenderType,
@@ -46,14 +46,14 @@ object CustomCapes {
             matrixStack: PoseStack,
             model: (VertexConsumer) -> Unit
 		) {
-			model(vertexConsumerProvider.getBuffer(RenderType.entitySolid(location)))
+//			model(vertexConsumerProvider.getBuffer(RenderType.entitySolid(location)))
 		}
 	}
 
 	data class ParallaxedHighlightCapeRenderer(
-        val template: ResourceLocation,
-        val background: ResourceLocation,
-        val overlay: ResourceLocation,
+        val template: Identifier,
+        val background: Identifier,
+        val overlay: Identifier,
         val animationSpeed: Duration,
 	) : CustomCapeRenderer {
 		override fun replaceRender(

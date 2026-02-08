@@ -27,8 +27,9 @@ class TintedOverlayTexture : OverlayTexture() {
 			}
 		}
 
-		texture.setFilter(false, false)
-		texture.setClamp(true)
+//		texture.sampler =
+//		texture.setFilter(false, false)
+//		texture.setClamp(true)
 		texture.upload()
 		return this
 	}

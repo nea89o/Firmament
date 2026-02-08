@@ -65,7 +65,7 @@ object RepoManager {
 		fun rendersPerfectText() = this == RENDER_AND_TEXT
 		fun rendersPerfectVisuals() = this == RENDER || this == RENDER_AND_TEXT
 
-		override fun getSerializedName(): String? = label
+		override fun getSerializedName(): String = label
 	}
 
 	val currentDownloadedSha by RepoDownloadManager::latestSavedVersionHash

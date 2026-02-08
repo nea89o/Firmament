@@ -12,7 +12,7 @@ public class IncreaseStackLimitSizeInDrawContext {
 	// VS minecraft:core/position_tex_color and FS firmament:circle_discard_color.
 	// Log output: error: declarations for uniform `ColorModulator` are inside block `DynamicTransforms` and outside a block
 	@ModifyArg(
-		method = "<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/render/state/GuiRenderState;)V",
+		method = "<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/render/state/GuiRenderState;II)V",
 		at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;<init>(I)V"))
 	private static int increaseStackSize(int stackSize) {
 		return Math.max(stackSize, 48);

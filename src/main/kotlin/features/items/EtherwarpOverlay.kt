@@ -75,9 +75,9 @@ object EtherwarpOverlay {
 		)
 	)
 
-	data class Checker<T>(
-        val direct: Set<T>,
-        val byTag: Set<TagKey<T>>,
+	data class Checker<T : Any>(
+		val direct: Set<T>,
+		val byTag: Set<TagKey<T>>,
 	) {
 		fun matches(entry: Holder<T>): Boolean {
 			return entry.value() in direct || checkTags(entry, byTag)
@@ -123,7 +123,7 @@ object EtherwarpOverlay {
 	)
 
 
-	fun <T> checkTags(holder: Holder<out T>, set: Set<TagKey<out T>>) =
+	fun <T : Any> checkTags(holder: Holder<out T>, set: Set<TagKey<out T>>) =
 		holder.tags()
 			.anyMatch(set::contains)
 
@@ -161,7 +161,13 @@ object EtherwarpOverlay {
 //				if (world.raycastBlock(start, end, blockPos, hitShape, defaultedState) == null) {
 //					return@raycast null
 //				}
-				val partialResult = world.clipWithInteractionOverride(start, end, blockPos, Shapes.block(), world.getBlockState(blockPos).block.defaultBlockState())
+				val partialResult = world.clipWithInteractionOverride(
+					start,
+					end,
+					blockPos,
+					Shapes.block(),
+					world.getBlockState(blockPos).block.defaultBlockState()
+				)
 				return@traverseBlocks EtherwarpBlockHit.BlockHit(blockPos, partialResult?.location)
 			},
 			{ EtherwarpBlockHit.Miss })

@@ -271,15 +271,15 @@ fun firmamentCommand(ctx: CommandBuildContext) = literal("firmament") {
 		}
 		thenLiteral("sbdata") {
 			thenExecute {
-				source.sendFeedback(Component.translatableEscape("firmament.sbinfo.profile", SBData.profileId))
+				source.sendFeedback(Component.translatableEscape("firmament.sbinfo.profile", SBData.profileId ?: "null"))
 				val locrawInfo = SBData.locraw
 				if (locrawInfo == null) {
 					source.sendFeedback(Component.translatable("firmament.sbinfo.nolocraw"))
 				} else {
-					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.server", locrawInfo.server))
-					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.gametype", locrawInfo.gametype))
-					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.mode", locrawInfo.mode))
-					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.map", locrawInfo.map))
+					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.server", locrawInfo.server ?: "null"))
+					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.gametype", locrawInfo.gametype ?: "null"))
+					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.mode", locrawInfo.mode ?: "null"))
+					source.sendFeedback(Component.translatableEscape("firmament.sbinfo.map", locrawInfo.map ?: "null"))
 					source.sendFeedback(
 						tr(
 							"firmament.sbinfo.custommining",

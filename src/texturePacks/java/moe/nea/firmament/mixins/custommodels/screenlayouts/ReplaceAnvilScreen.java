@@ -11,7 +11,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +23,7 @@ public abstract class ReplaceAnvilScreen extends ItemCombinerScreen<AnvilMenu> {
 	@Shadow
 	private EditBox name;
 
-	public ReplaceAnvilScreen(AnvilMenu handler, Inventory playerInventory, Component title, ResourceLocation texture) {
+	public ReplaceAnvilScreen(AnvilMenu handler, Inventory playerInventory, Component title, Identifier texture) {
 		super(handler, playerInventory, title, texture);
 	}
 

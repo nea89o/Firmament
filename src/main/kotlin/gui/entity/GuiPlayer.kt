@@ -12,7 +12,7 @@ fun makeGuiPlayer(world: Level): GuiPlayer {
 	return player
 }
 
-class GuiPlayer(world: ClientLevel?) : ClientMannequin(world, MC.instance.playerSkinRenderCache()) {
+class GuiPlayer(world: ClientLevel) : ClientMannequin(world, MC.instance.playerSkinRenderCache()) {
 	override fun isSpectator(): Boolean {
 		return false
 	}

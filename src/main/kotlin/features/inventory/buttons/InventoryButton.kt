@@ -12,7 +12,7 @@ import net.minecraft.commands.arguments.item.ItemArgument
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.flag.FeatureFlags
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.ItemCache.isBroken
@@ -92,7 +92,7 @@ data class InventoryButton(
 	fun render(context: GuiGraphics) {
 		context.blitSprite(
 			RenderPipelines.GUI_TEXTURED,
-			ResourceLocation.parse("firmament:inventory_button_background"),
+			Identifier.parse("firmament:inventory_button_background"),
 			0,
 			0,
 			myDimension.width,

@@ -28,7 +28,7 @@ import net.minecraft.nbt.TagParser
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.datafix.DataFixers
 import net.minecraft.util.datafix.fixes.References
 import net.minecraft.world.item.ItemStack
@@ -102,7 +102,7 @@ object ItemCache : IReloadable {
 				listOf(
 					Component.translatableEscape(
 						"firmament.repo.brokenitem",
-						(neuItem?.skyblockItemId ?: idHint)
+						(neuItem?.skyblockItemId ?: idHint ?: "null")
 					)
 				)
 			)
@@ -180,7 +180,7 @@ object ItemCache : IReloadable {
 					itemInstance.set(DataComponents.CUSTOM_DATA, CustomData.of(extraAttributes))
 				val itemModel = tag.flatMap { it.getString("ItemModel") }.getOrNull()
 				if (itemModel != null)
-					itemInstance.set(DataComponents.ITEM_MODEL, ResourceLocation.parse(itemModel))
+					itemInstance.set(DataComponents.ITEM_MODEL, Identifier.parse(itemModel))
 			}
 			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
 			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)

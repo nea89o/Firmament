@@ -1,22 +1,16 @@
 package moe.nea.firmament.util.render
 
-import com.mojang.blaze3d.systems.RenderSystem
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import util.render.CustomRenderLayers
-import kotlin.math.pow
-import net.minecraft.client.Camera
-import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.ItemBlockRenderTypes
-import net.minecraft.client.DeltaTracker
-import net.minecraft.client.renderer.Sheets
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -121,7 +115,7 @@ class RenderInWorldContext private constructor(
 	}
 
 	fun texture(
-		position: Vec3, texture: ResourceLocation, width: Int, height: Int,
+		position: Vec3, texture: Identifier, width: Int, height: Int,
 		u1: Float, v1: Float,
 		u2: Float, v2: Float,
 	) {
@@ -152,11 +146,10 @@ class RenderInWorldContext private constructor(
 	}
 
 	fun wireframeCube(blockPos: BlockPos, lineWidth: Float = 10F) {
-		val buf = vertexConsumers.getBuffer(RenderType.LINES)
+		val buf = vertexConsumers.getBuffer(RenderTypes.LINES)
 		matrixStack.pushPose()
 		// TODO: add color arg to this
 		// TODO: this does not render through blocks (or water layers) anymore
-		RenderSystem.lineWidth(lineWidth / camera.pos.distanceToSqr(blockPos.center).pow(0.25).toFloat())
 		val offset = 1 / 512F
 		matrixStack.translate(
 			blockPos.x.toFloat() - offset,
@@ -166,7 +159,7 @@ class RenderInWorldContext private constructor(
 		val scale = 1 + 2 * offset
 		matrixStack.scale(scale, scale, scale)
 
-		buildWireFrameCube(matrixStack.last(), buf)
+		buildWireFrameCube(matrixStack.last(), buf, lineWidth)
 		matrixStack.popPose()
 		vertexConsumers.endBatch()
 	}
@@ -181,8 +174,7 @@ class RenderInWorldContext private constructor(
 	}
 
 	fun line(points: List<Vec3>, color: Int, lineWidth: Float = 10F) {
-		RenderSystem.lineWidth(lineWidth)
-		val buffer = vertexConsumers.getBuffer(CustomRenderLayers.LINES)
+		val buffer = vertexConsumers.getBuffer(RenderTypes.LINES)
 
 		val matrix = matrixStack.last()
 		var lastNormal: Vector3f? = null
@@ -194,10 +186,12 @@ class RenderInWorldContext private constructor(
 			lastNormal = normal
 			buffer.addVertex(matrix.pose(), a.x.toFloat(), a.y.toFloat(), a.z.toFloat())
 				.setColor(color)
+				.setLineWidth(lineWidth)
 				.setNormal(matrix, lastNormal0.x, lastNormal0.y, lastNormal0.z)
 
 			buffer.addVertex(matrix.pose(), b.x.toFloat(), b.y.toFloat(), b.z.toFloat())
 				.setColor(color)
+				.setLineWidth(lineWidth)
 				.setNormal(matrix, normal.x, normal.y, normal.z)
 
 		}
@@ -206,7 +200,7 @@ class RenderInWorldContext private constructor(
 	// TODO: put the favourite icons in front of items again
 
 	companion object {
-		private fun doLine(
+		private fun doLine( // i swear its legal
 			matrix: PoseStack.Pose,
 			buf: VertexConsumer,
 			i: Float,
@@ -214,7 +208,8 @@ class RenderInWorldContext private constructor(
 			k: Float,
 			x: Float,
 			y: Float,
-			z: Float
+			z: Float,
+			lineWidth: Float
 		) {
 			val normal = Vector3f(x, y, z)
 				.sub(i, j, k)
@@ -222,22 +217,24 @@ class RenderInWorldContext private constructor(
 			buf.addVertex(matrix.pose(), i, j, k)
 				.setNormal(matrix, normal.x, normal.y, normal.z)
 				.setColor(-1)
+				.setLineWidth(lineWidth)
 
 			buf.addVertex(matrix.pose(), x, y, z)
 				.setNormal(matrix, normal.x, normal.y, normal.z)
 				.setColor(-1)
+				.setLineWidth(lineWidth)
 
 		}
 
 
-		private fun buildWireFrameCube(matrix: PoseStack.Pose, buf: VertexConsumer) {
+		private fun buildWireFrameCube(matrix: PoseStack.Pose, buf: VertexConsumer, lineWidth: Float) {
 			for (i in 0..1) {
 				for (j in 0..1) {
 					val i = i.toFloat()
 					val j = j.toFloat()
-					doLine(matrix, buf, 0F, i, j, 1F, i, j)
-					doLine(matrix, buf, i, 0F, j, i, 1F, j)
-					doLine(matrix, buf, i, j, 0F, i, j, 1F)
+					doLine(matrix, buf, 0F, i, j, 1F, i, j, lineWidth)
+					doLine(matrix, buf, i, 0F, j, i, 1F, j, lineWidth)
+					doLine(matrix, buf, i, j, 0F, i, j, 1F, lineWidth)
 				}
 			}
 		}

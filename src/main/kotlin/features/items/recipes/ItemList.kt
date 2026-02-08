@@ -25,6 +25,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.accessors.castAccessor
+import moe.nea.firmament.util.render.drawAlignedBox
 import moe.nea.firmament.util.render.drawLine
 import moe.nea.firmament.util.skyblockId
 
@@ -131,7 +132,7 @@ object ItemList {
 			partialTick: Float
 		) {
 			guiGraphics.fill(rectangle.minX, rectangle.minY, rectangle.maxX, rectangle.maxY, 0xFF000000.toInt())
-			guiGraphics.submitOutline(rectangle.x, rectangle.y, rectangle.width, rectangle.height, -1)
+			guiGraphics.drawAlignedBox(rectangle.x, rectangle.y, rectangle.width, rectangle.height, -1)
 			val sel = selected.get()
 			for ((index, element) in options.withIndex()) {
 				val b = bb(index)

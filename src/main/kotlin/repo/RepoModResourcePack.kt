@@ -5,7 +5,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Optional
 import net.fabricmc.fabric.api.resource.ModResourcePack
-import net.fabricmc.fabric.impl.resource.loader.ModResourcePackSorter
+import net.fabricmc.fabric.impl.resource.pack.ModPackResourcesSorter
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.api.metadata.ModMetadata
 import kotlin.io.path.exists
@@ -23,18 +23,18 @@ import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.resources.ResourceMetadata
 import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.FileUtil
+import net.minecraft.resources.Identifier
+import net.minecraft.util.FileUtil
 import moe.nea.firmament.Firmament
 
 class RepoModResourcePack(val basePath: Path) : ModResourcePack {
 	companion object {
-		fun append(packs: ModResourcePackSorter) {
+		fun append(packs: ModPackResourcesSorter) {
 			Firmament.logger.info("Registering mod resource pack")
 			packs.addPack(RepoModResourcePack(RepoDownloadManager.repoSavedLocation))
 		}
 
-		fun createResourceDirectly(identifier: ResourceLocation): Optional<Resource> {
+		fun createResourceDirectly(identifier: Identifier): Optional<Resource> {
 			val pack = RepoModResourcePack(RepoDownloadManager.repoSavedLocation)
 			return Optional.of(
 				Resource(
@@ -66,7 +66,7 @@ class RepoModResourcePack(val basePath: Path) : ModResourcePack {
 		return path
 	}
 
-	override fun getResource(type: PackType?, id: ResourceLocation): IoSupplier<InputStream>? {
+	override fun getResource(type: PackType, id: Identifier): IoSupplier<InputStream>? {
 		if (type != PackType.CLIENT_RESOURCES) return null
 		if (id.namespace != "neurepo") return null
 		val file = getFile(id.path.split("/").toTypedArray())
@@ -74,7 +74,7 @@ class RepoModResourcePack(val basePath: Path) : ModResourcePack {
 	}
 
 	override fun listResources(
-		type: PackType?,
+		type: PackType,
 		namespace: String,
 		prefix: String,
 		consumer: PackResources.ResourceOutput
@@ -90,18 +90,18 @@ class RepoModResourcePack(val basePath: Path) : ModResourcePack {
 			.map { it.relativeTo(basePath) }
 			.forEach {
 				consumer.accept(
-					ResourceLocation.tryBuild("neurepo", it.toString()) ?: return@forEach,
+					Identifier.tryBuild("neurepo", it.toString()) ?: return@forEach,
 					IoSupplier.create(it)
 				)
 			}
 	}
 
-	override fun getNamespaces(type: PackType?): Set<String> {
+	override fun getNamespaces(type: PackType): Set<String> {
 		if (type != PackType.CLIENT_RESOURCES) return emptySet()
 		return setOf("neurepo")
 	}
 
-	override fun <T : Any?> getMetadataSection(metadataSerializer: MetadataSectionType<T>?): T? {
+	override fun <T : Any> getMetadataSection(metadataSerializer: MetadataSectionType<T>): T? {
 		return AbstractPackResources.getMetadataFromStream(
 			metadataSerializer, """
 {

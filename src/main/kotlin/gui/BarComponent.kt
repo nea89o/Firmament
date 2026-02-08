@@ -8,7 +8,7 @@ import io.github.notenoughupdates.moulconfig.platform.MoulConfigRenderContext
 import me.shedaniel.math.Color
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 
 class BarComponent(
@@ -25,7 +25,7 @@ class BarComponent(
 	}
 
 	data class Texture(
-        val identifier: ResourceLocation,
+        val identifier: Identifier,
         val u1: Float, val v1: Float,
         val u2: Float, val v2: Float,
 	) {
@@ -107,6 +107,6 @@ class BarComponent(
 
 }
 
-fun ResourceLocation.toMoulConfig(): MyResourceLocation {
+fun Identifier.toMoulConfig(): MyResourceLocation {
 	return MyResourceLocation(this.namespace, this.path)
 }

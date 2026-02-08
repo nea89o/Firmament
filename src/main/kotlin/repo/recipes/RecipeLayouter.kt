@@ -4,9 +4,7 @@ import io.github.notenoughupdates.moulconfig.gui.GuiComponent
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import net.minecraft.network.chat.Component
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.npc.Villager
 import moe.nea.firmament.repo.SBItemStack
 
 interface RecipeLayouter {

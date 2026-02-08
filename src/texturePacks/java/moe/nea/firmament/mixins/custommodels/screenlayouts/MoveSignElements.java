@@ -27,17 +27,17 @@ public class MoveSignElements {
 	}
 
 	@WrapOperation(method = "renderSignText", at = {
-		@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;textHighlight(IIII)V")}
+		@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;textHighlight(IIIIZ)V")}
 	)
 	private void onRenderSignTextSelection(
-            GuiGraphics instance, int x1, int y1, int x2, int y2, Operation<Void> original,
-            @Local(index = 9) int messageIndex) {
+		GuiGraphics instance, int i, int j, int k, int l, boolean bl, Operation<Void> original,
+		@Local(index = 9) int messageIndex) {
 		instance.pose().pushMatrix();
 		final var override = CustomScreenLayouts.getSignTextMover(messageIndex);
 		if (override != null) {
 			instance.pose().translate(override.getX(), override.getY());
 		}
-		original.call(instance, x1, y1, x2, y2);
+		original.call(instance, i, j, k, l, bl);
 		instance.pose().popMatrix();
 	}
 	@WrapOperation(method = "renderSignText", at = {

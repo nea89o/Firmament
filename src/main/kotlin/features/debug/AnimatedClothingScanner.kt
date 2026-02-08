@@ -25,7 +25,7 @@ import moe.nea.firmament.util.tr
 
 object AnimatedClothingScanner {
 
-	data class LensOfFashionTheft<T>(
+	data class LensOfFashionTheft<T : Any>(
 		val prism: NbtPrism,
 		val component: DataComponentType<T>,
 	) {
@@ -151,7 +151,7 @@ object AnimatedClothingScanner {
 								source.sendFeedback(
 									tr(
 										"firmament.fitstealer.lensset",
-										"Analyzing path ${get(path)} for component ${get(component).location()}"
+										"Analyzing path ${get(path)} for component ${get(component).identifier()}"
 									)
 								)
 							}

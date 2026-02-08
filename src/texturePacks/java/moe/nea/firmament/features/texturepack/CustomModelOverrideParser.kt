@@ -9,7 +9,7 @@ import com.mojang.serialization.DynamicOps
 import com.mojang.serialization.Encoder
 import net.minecraft.client.renderer.item.ItemModels
 import net.minecraft.world.item.ItemStack
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
@@ -49,11 +49,11 @@ object CustomModelOverrideParser {
 			}
 		)
 
-	val predicateParsers = mutableMapOf<ResourceLocation, FirmamentModelPredicateParser>()
+	val predicateParsers = mutableMapOf<Identifier, FirmamentModelPredicateParser>()
 
 
 	fun registerPredicateParser(name: String, parser: FirmamentModelPredicateParser) {
-		predicateParsers[ResourceLocation.fromNamespaceAndPath("firmament", name)] = parser
+		predicateParsers[Identifier.fromNamespaceAndPath("firmament", name)] = parser
 	}
 
 	init {
@@ -91,7 +91,7 @@ object CustomModelOverrideParser {
 				parsedPredicates.add(PullingPredicate.AnyPulling)
 			}
 			if (!predicateName.startsWith("firmament:")) continue
-			val identifier = ResourceLocation.parse(predicateName)
+			val identifier = Identifier.parse(predicateName)
 			val parser = predicateParsers[identifier] ?: return neverPredicate
 			val parsedPredicate = parser.parse(predicates[predicateName]) ?: return neverPredicate
 			parsedPredicates.add(parsedPredicate)

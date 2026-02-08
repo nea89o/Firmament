@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.resources.ResourceKey
 import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.util.MC
 
 class ItemPredicate(
@@ -24,7 +24,7 @@ class ItemPredicate(
         override fun parse(jsonElement: JsonElement): ItemPredicate? {
             if (jsonElement is JsonPrimitive && jsonElement.isString) {
                 val itemKey = ResourceKey.create(Registries.ITEM,
-                                             ResourceLocation.tryParse(jsonElement.asString)
+                                             Identifier.tryParse(jsonElement.asString)
                                                  ?: return null)
                 return ItemPredicate(MC.defaultItems.get(itemKey).getOrNull()?.value() ?: return null)
             }

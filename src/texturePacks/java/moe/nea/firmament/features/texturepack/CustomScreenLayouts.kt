@@ -4,22 +4,19 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.client.gui.Font
-import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.HangingSignEditScreen
 import net.minecraft.client.gui.screens.inventory.SignEditScreen
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
-import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.inventory.Slot
-import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.profiling.ProfilerFiller
+import net.minecraft.world.inventory.Slot
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
@@ -27,7 +24,6 @@ import moe.nea.firmament.events.ScreenChangeEvent
 import moe.nea.firmament.features.texturepack.CustomScreenLayouts.Alignment.CENTER
 import moe.nea.firmament.features.texturepack.CustomScreenLayouts.Alignment.LEFT
 import moe.nea.firmament.features.texturepack.CustomScreenLayouts.Alignment.RIGHT
-import moe.nea.firmament.mixins.accessor.AccessorHandledScreen
 import moe.nea.firmament.mixins.accessor.AccessorScreenHandler
 import moe.nea.firmament.util.ErrorUtil.intoCatch
 import moe.nea.firmament.util.IdentifierSerializer
@@ -64,7 +60,7 @@ object CustomScreenLayouts : SimplePreparableReloadListener<List<CustomScreenLay
 	data class Preds(
         val label: StringMatcher,
         @Serializable(with = IdentifierSerializer::class)
-		val screenType: ResourceLocation? = null,
+		val screenType: Identifier? = null,
 	) {
 		fun matches(screen: Screen): Boolean {
 			// TODO: does this deserve the restriction to handled screen
@@ -73,8 +69,8 @@ object CustomScreenLayouts : SimplePreparableReloadListener<List<CustomScreenLay
 					BuiltInRegistries.MENU.getKey(it)
 				}
 
-				is HangingSignEditScreen -> ResourceLocation.fromNamespaceAndPath("firmskyblock", "hanging_sign")
-				is SignEditScreen -> ResourceLocation.fromNamespaceAndPath("firmskyblock", "sign")
+				is HangingSignEditScreen -> Identifier.fromNamespaceAndPath("firmskyblock", "hanging_sign")
+				is SignEditScreen -> Identifier.fromNamespaceAndPath("firmskyblock", "sign")
 				else -> null
 			}
 			val typeMatches = screenType == null || type == screenType;
@@ -85,7 +81,7 @@ object CustomScreenLayouts : SimplePreparableReloadListener<List<CustomScreenLay
 	@Serializable
 	data class BackgroundReplacer(
         @Serializable(with = IdentifierSerializer::class)
-		val texture: ResourceLocation,
+		val texture: Identifier,
 		// TODO: allow selectively still rendering some components (recipe button, trade backgrounds, furnace flame progress, arrows)
         val x: Int,
         val y: Int,
@@ -213,8 +209,8 @@ object CustomScreenLayouts : SimplePreparableReloadListener<List<CustomScreenLay
 
 	override fun apply(
         prepared: List<CustomScreenLayout>,
-        manager: ResourceManager?,
-        profiler: ProfilerFiller?
+        manager: ResourceManager,
+        profiler: ProfilerFiller
 	) {
 		this.customScreenLayouts = prepared
 	}

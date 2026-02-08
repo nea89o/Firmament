@@ -10,7 +10,7 @@ import kotlin.time.Duration.Companion.seconds
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.tr
@@ -76,7 +76,7 @@ object SBForgeRecipeRenderer : GenericRecipeRenderer<NEUForgeRecipe> {
 
 	override val icon: ItemStack = ItemStack(Blocks.ANVIL)
 	override val title: Component = tr("firmament.category.forge", "Forge Recipes")
-	override val identifier: ResourceLocation = Firmament.identifier("forge_recipe")
+	override val identifier: Identifier = Firmament.identifier("forge_recipe")
 
 	override fun findAllRecipes(neuRepository: NEURepository): Iterable<NEUForgeRecipe> {
 		// TODO: theres gotta be an index for these tbh.

@@ -5,14 +5,14 @@ import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderPipelines
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 class ArrowWidget(override var position: Point) : RecipeWidget() {
 	override val size: Dimension
 		get() = Dimension(14, 14)
 
 	companion object {
-		val arrowSprite = ResourceLocation.withDefaultNamespace("container/furnace/lit_progress")
+		val arrowSprite = Identifier.withDefaultNamespace("container/furnace/lit_progress")
 	}
 
 	override fun render(

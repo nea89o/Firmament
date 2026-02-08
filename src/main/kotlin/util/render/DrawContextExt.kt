@@ -10,7 +10,9 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.renderer.MultiBufferSource
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.client.TextureFilteringMethod
+import net.minecraft.client.renderer.rendertype.RenderTypes
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.util.MC
 
 fun GuiGraphics.isUntranslatedGuiDrawContext(): Boolean {
@@ -19,16 +21,16 @@ fun GuiGraphics.isUntranslatedGuiDrawContext(): Boolean {
 
 @Deprecated("Use the other drawGuiTexture")
 fun GuiGraphics.drawGuiTexture(
-	x: Int, y: Int, z: Int, width: Int, height: Int, sprite: ResourceLocation
+	x: Int, y: Int, z: Int, width: Int, height: Int, sprite: Identifier
 ) = this.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, width, height)
 
 fun GuiGraphics.drawGuiTexture(
-	sprite: ResourceLocation,
+	sprite: Identifier,
 	x: Int, y: Int, width: Int, height: Int
 ) = this.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, width, height)
 
 fun GuiGraphics.drawTexture(
-	sprite: ResourceLocation,
+	sprite: Identifier,
 	x: Int,
 	y: Int,
 	u: Float,
@@ -95,6 +97,7 @@ class LineRenderer(vertexConsumers: MultiBufferSource.BufferSource) :
 	) {
 		val gr = MC.instance.gameRenderer
 		val client = MC.instance
+
 		gr.globalSettingsUniform
 			.update(
 				state.bounds.width,
@@ -102,11 +105,12 @@ class LineRenderer(vertexConsumers: MultiBufferSource.BufferSource) :
 				client.options.glintStrength().get(),
 				client.level?.gameTime ?: 0L,
 				client.deltaTracker,
-				client.options.menuBackgroundBlurriness
-			)
+				client.options.menuBackgroundBlurriness,
+				gr.mainCamera,
+				client.options.textureFiltering().get() == TextureFilteringMethod.RGSS
+			) // TODO: is this viewport mangling still needed with the new line shader in 1.21.11
 
-		RenderSystem.lineWidth(state.lineWidth)
-		val buf = bufferSource.getBuffer(CustomRenderLayers.LINES)
+		val buf = bufferSource.getBuffer(RenderTypes.LINES)
 		val matrix = matrices.last()
 		val wh = state.w / 2F
 		val hh = state.h / 2F
@@ -117,8 +121,10 @@ class LineRenderer(vertexConsumers: MultiBufferSource.BufferSource) :
 		val norm = Vector3f(highX - lowX, highY - lowY, 0F).normalize()
 		buf.addVertex(matrix, lowX, lowY, 0F).setColor(state.color)
 			.setNormal(matrix, norm)
+			.setLineWidth(state.lineWidth)
 		buf.addVertex(matrix, highX, highY, 0F).setColor(state.color)
 			.setNormal(matrix, norm)
+			.setLineWidth(state.lineWidth)
 		bufferSource.endBatch()
 		gr.globalSettingsUniform
 			.update(
@@ -127,16 +133,24 @@ class LineRenderer(vertexConsumers: MultiBufferSource.BufferSource) :
 				client.options.glintStrength().get(),
 				client.level?.gameTime ?: 0L,
 				client.deltaTracker,
-				client.options.menuBackgroundBlurriness
+				client.options.menuBackgroundBlurriness,
+				gr.mainCamera,
+				client.options.textureFiltering().get() == TextureFilteringMethod.RGSS
 			)
-
 	}
 
-	override fun getTextureLabel(): String? {
+	override fun getTextureLabel(): String {
 		return "Firmament Line Renderer"
 	}
 }
 
+
+fun GuiGraphics.drawAlignedBox(fromX: Int, fromY: Int, toX: Int, toY: Int, color: Int) {
+	vLine(fromX, fromY, toY, color)
+	vLine(toY, fromY, toY, color)
+	hLine(fromX, toX, fromY, color)
+	hLine(fromX, toX, toY, color)
+}
 
 fun GuiGraphics.drawLine(fromX: Int, fromY: Int, toX: Int, toY: Int, color: Color, lineWidth: Float = 1F) {
 	if (toY < fromY) {

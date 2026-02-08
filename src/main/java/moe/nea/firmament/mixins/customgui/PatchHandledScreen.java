@@ -109,14 +109,14 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 		method = "renderSlots",
 		at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V"))
-	private void beforeSlotRender(AbstractContainerScreen instance, GuiGraphics context, Slot slot, Operation<Void> original) {
+			target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V"))
+	private void beforeSlotRender(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot, int i, int j, Operation<Void> original) {
 		if (override != null) {
-			override.beforeSlotRender(context, slot);
+			override.beforeSlotRender(guiGraphics, slot);
 		}
-		original.call(instance, context, slot);
+		original.call(instance, guiGraphics, slot, i, j);
 		if (override != null) {
-			override.afterSlotRender(context, slot);
+			override.afterSlotRender(guiGraphics, slot);
 		}
 	}
 

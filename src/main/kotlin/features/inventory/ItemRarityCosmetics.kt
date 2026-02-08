@@ -4,7 +4,7 @@ import java.awt.Color
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.world.item.ItemStack
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HotbarItemRenderEvent
 import moe.nea.firmament.events.SlotRenderEvents
@@ -32,7 +32,7 @@ object ItemRarityCosmetics {
 		val rgb = rarityToColor[rarity] ?: 0xFF00FF80.toInt()
 		drawContext.blitSprite(
 			RenderPipelines.GUI_TEXTURED,
-			ResourceLocation.parse("firmament:item_rarity_background"),
+			Identifier.parse("firmament:item_rarity_background"),
 			x, y,
 			16, 16,
 			rgb

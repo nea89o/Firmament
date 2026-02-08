@@ -3,12 +3,10 @@
 package moe.nea.firmament.mixins.custommodels;
 
 import moe.nea.firmament.features.texturepack.CustomSkyBlockTextures;
+import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
-import net.minecraft.world.item.component.ResolvableProfile;
-import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

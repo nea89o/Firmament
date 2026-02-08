@@ -14,7 +14,7 @@ public class MinecraftInitLevelListener {
 		InitLevel.bump(InitLevel.RENDER_INIT);
 	}
 
-	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;initRenderer(JIZLjava/util/function/BiFunction;Z)V"))
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;initRenderer(JIZLcom/mojang/blaze3d/shaders/ShaderSource;Z)V"))
 	private void onInitRender(CallbackInfo ci) {
 		InitLevel.bump(InitLevel.RENDER);
 	}

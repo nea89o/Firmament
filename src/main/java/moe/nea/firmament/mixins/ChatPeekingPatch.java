@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(ChatComponent.class)
 public class ChatPeekingPatch {
 
-    @ModifyVariable(method = "render", at = @At(value = "HEAD"), index = 5, argsOnly = true)
+    @ModifyVariable(method = "render(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IIZ)V", at = @At(value = "HEAD"), index = 4, argsOnly = true)
     public boolean onGetChatHud(boolean old) {
         return old || Fixes.INSTANCE.shouldPeekChat();
     }

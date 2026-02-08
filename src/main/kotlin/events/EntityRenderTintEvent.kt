@@ -29,8 +29,10 @@ class EntityRenderTintEvent(
 		 *
 		 * Currently supported layers: [net.minecraft.client.render.entity.equipment.EquipmentRenderer], [net.minecraft.client.render.entity.model.PlayerEntityModel], as well as some others naturally.
 		 *
-		 * @see moe.nea.firmament.mixins.render.entitytints.ReplaceOverlayTexture
 		 * @see TintedOverlayTexture
+		 * @see moe.nea.firmament.mixins.render.entitytints.ReplaceOverlayTexture
+		 * @see moe.nea.firmament.mixins.render.entitytints.UseOverlayableEquipmentRenderer
+		 * @see moe.nea.firmament.mixins.render.entitytints.UseOverlayableHeadFeatureRenderer
 		 */
 		@JvmField
 		var overlayOverride: OverlayTexture? = null

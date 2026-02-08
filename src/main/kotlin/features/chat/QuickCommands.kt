@@ -159,7 +159,7 @@ object QuickCommands {
 				source.sendFeedback(
 					Component.translatableEscape(
 						"firmament.quick-commands.join.unknown-catacombs",
-						kuudraLevel
+						kuudraLevel ?: "null"
 					)
 				)
 				return null

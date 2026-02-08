@@ -8,7 +8,7 @@ import java.util.function.Supplier
 class ImageComponent(
 	private val width: Int,
 	private val height: Int,
-	val resourceLocation: Supplier<MyResourceLocation>,
+	val Identifier: Supplier<MyResourceLocation>,
 	val u1: Float,
 	val u2: Float,
 	val v1: Float,
@@ -24,7 +24,7 @@ class ImageComponent(
 
 	override fun render(context: GuiImmediateContext) {
 		context.renderContext.drawComplexTexture(
-			resourceLocation.get(),
+			Identifier.get(),
 			0f, 0f,
 			context.width.toFloat(), context.height.toFloat(),
 			{

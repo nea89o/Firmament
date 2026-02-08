@@ -11,7 +11,7 @@ import kotlin.jvm.optionals.getOrNull
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.util.profiling.ProfilerFiller
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -32,8 +32,8 @@ object CustomGlobalTextures : SimplePreparableReloadListener<CustomGlobalTexture
 
 	@Serializable
 	data class GlobalItemOverride(
-        val screen: @Serializable(SingletonSerializableList::class) List<ResourceLocation>,
-        val model: ResourceLocation,
+        val screen: @Serializable(SingletonSerializableList::class) List<Identifier>,
+        val model: Identifier,
         val predicate: FirmamentModelPredicate,
 	)
 
@@ -67,11 +67,11 @@ object CustomGlobalTextures : SimplePreparableReloadListener<CustomGlobalTexture
 		CustomGuiTextureOverride(listOf())
 	)
 
-	override fun prepare(manager: ResourceManager?, profiler: ProfilerFiller?): CustomGuiTextureOverride {
+	override fun prepare(manager: ResourceManager, profiler: ProfilerFiller): CustomGuiTextureOverride {
 		return preparationFuture.join()
 	}
 
-	override fun apply(prepared: CustomGuiTextureOverride, manager: ResourceManager?, profiler: ProfilerFiller?) {
+	override fun apply(prepared: CustomGuiTextureOverride, manager: ResourceManager, profiler: ProfilerFiller) {
 		guiClassOverrides = prepared
 	}
 
@@ -92,7 +92,7 @@ object CustomGlobalTextures : SimplePreparableReloadListener<CustomGlobalTexture
 			.mapNotNull {
 				val key = it.key
 				val guiClassResource =
-					manager.getResource(ResourceLocation.fromNamespaceAndPath(key.namespace, "filters/screen/${key.path}.json"))
+					manager.getResource(Identifier.fromNamespaceAndPath(key.namespace, "filters/screen/${key.path}.json"))
 						.getOrNull()
 						?: return@mapNotNull runNull {
 							ErrorUtil.softError("Failed to locate screen filter at $key used by ${it.value.map { it.first }}")

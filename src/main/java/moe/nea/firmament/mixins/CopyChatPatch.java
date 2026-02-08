@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import java.util.List;
 
 @Mixin(ChatScreen.class)
@@ -27,6 +28,7 @@ public class CopyChatPatch {
 		ChatComponent chatHud = client.gui.getChat();
 		int lineIndex = getChatLineIndex(chatHud, click.y());
 		if (lineIndex < 0) return;
+		// TODO!!! use the new visitor for this (cc: image links)
 		List<GuiMessage.Line> visible = ((AccessorChatHud) chatHud).getVisibleMessages_firmament();
 		if (lineIndex >= visible.size()) return;
 		GuiMessage.Line line = visible.get(lineIndex);
@@ -39,7 +41,6 @@ public class CopyChatPatch {
 
 	@Unique
 	private int getChatLineIndex(ChatComponent chatHud, double mouseY) {
-		double chatLineY = ((AccessorChatHud) chatHud).toChatLineY_firmament(mouseY);
-		return Mth.floor(chatLineY + ((AccessorChatHud) chatHud).getScrolledLines_firmament());
+		return 0; /// TODO!!!!
 	}
 }

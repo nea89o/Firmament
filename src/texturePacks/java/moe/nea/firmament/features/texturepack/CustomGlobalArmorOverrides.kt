@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import net.minecraft.client.resources.model.EquipmentClientInfo
+import net.minecraft.core.Holder
 import net.minecraft.world.item.equipment.Equippable
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.ItemStack
@@ -16,7 +17,9 @@ import net.minecraft.world.item.equipment.EquipmentAssets
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.util.profiling.ProfilerFiller
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -33,11 +36,11 @@ object CustomGlobalArmorOverrides {
         @SerialName("item_ids")
 		val itemIds: List<String>,
         val layers: List<ArmorOverrideLayer>? = null,
-        val model: ResourceLocation? = null,
+        val model: Identifier? = null,
         val overrides: List<ArmorOverrideOverride> = listOf(),
 	) {
 		@Transient
-		lateinit var modelIdentifier: ResourceLocation
+		lateinit var modelIdentifier: Identifier
 		fun bake(manager: ResourceManager) {
 			modelIdentifier = bakeModel(model, layers)
 			overrides.forEach { it.bake(manager) }
@@ -52,7 +55,7 @@ object CustomGlobalArmorOverrides {
 	@Serializable
 	data class ArmorOverrideLayer(
         val tint: Boolean = false,
-        val identifier: ResourceLocation,
+        val identifier: Identifier,
         val suffix: String = "",
 	)
 
@@ -60,7 +63,7 @@ object CustomGlobalArmorOverrides {
 	data class ArmorOverrideOverride(
         val predicate: FirmamentModelPredicate,
         val layers: List<ArmorOverrideLayer>? = null,
-        val model: ResourceLocation? = null,
+        val model: Identifier? = null,
 	) {
 		init {
 			require(layers != null || model != null) { "Either model or layers must be specified for armor override override" }
@@ -68,17 +71,17 @@ object CustomGlobalArmorOverrides {
 		}
 
 		@Transient
-		lateinit var modelIdentifier: ResourceLocation
+		lateinit var modelIdentifier: Identifier
 		fun bake(manager: ResourceManager) {
 			modelIdentifier = bakeModel(model, layers)
 		}
 	}
 
 
-	private fun resolveComponent(slot: EquipmentSlot, model: ResourceLocation): Equippable {
+	private fun resolveComponent(slot: EquipmentSlot, model: Identifier): Equippable {
 		return Equippable(
 			slot,
-			null,
+			SoundEvents.ARMOR_EQUIP_GENERIC,
 			Optional.of(ResourceKey.create(EquipmentAssets.ROOT_ID, model)),
 			Optional.empty(),
 			Optional.empty(),
@@ -87,7 +90,7 @@ object CustomGlobalArmorOverrides {
 			false,
 			false,
 			false,
-			null
+			SoundEvents.ARMOR_EQUIP_GENERIC
 		)
 	}
 
@@ -107,16 +110,16 @@ object CustomGlobalArmorOverrides {
 		}
 
 	var overrides: Map<String, ArmorOverride> = mapOf()
-	private var bakedOverrides: MutableMap<ResourceLocation, EquipmentClientInfo> = mutableMapOf()
+	private var bakedOverrides: MutableMap<Identifier, EquipmentClientInfo> = mutableMapOf()
 	private val sentinelFirmRunning = AtomicInteger()
 
-	private fun bakeModel(model: ResourceLocation?, layers: List<ArmorOverrideLayer>?): ResourceLocation {
+	private fun bakeModel(model: Identifier?, layers: List<ArmorOverrideLayer>?): Identifier {
 		require(model == null || layers == null)
 		if (model != null) {
 			return model
 		} else if (layers != null) {
 			val idNumber = sentinelFirmRunning.incrementAndGet()
-			val identifier = ResourceLocation.parse("firmament:sentinel/armor/$idNumber")
+			val identifier = Identifier.parse("firmament:sentinel/armor/$idNumber")
 			val equipmentLayers = layers.map {
 				EquipmentClientInfo.Layer(
 					it.identifier, if (it.tint) {
@@ -174,7 +177,7 @@ object CustomGlobalArmorOverrides {
 	}
 
 	@JvmStatic
-	fun overrideArmorLayer(id: ResourceLocation): EquipmentClientInfo? {
+	fun overrideArmorLayer(id: Identifier): EquipmentClientInfo? {
 		if (!CustomSkyBlockTextures.TConfig.enableArmorOverrides) return null
 		return bakedOverrides[id]
 	}

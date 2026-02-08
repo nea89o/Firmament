@@ -86,12 +86,12 @@ public abstract class MixinHandledScreen<T extends AbstractContainerMenu> {
 	}
 
 
-	@WrapOperation(method = "renderSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V"))
-	public void onDrawSlots(AbstractContainerScreen instance, GuiGraphics context, Slot slot, Operation<Void> original) {
-		var before = new SlotRenderEvents.Before(context, slot);
+	@WrapOperation(method = "renderSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V"))
+	public void onDrawSlots(AbstractContainerScreen instance, GuiGraphics guiGraphics, Slot slot, int i, int j, Operation<Void> original) {
+		var before = new SlotRenderEvents.Before(guiGraphics, slot);
 		SlotRenderEvents.Before.Companion.publish(before);
-		original.call(instance, context, slot);
-		var after = new SlotRenderEvents.After(context, slot);
+		original.call(instance, guiGraphics, slot, i, j);
+		var after = new SlotRenderEvents.After(guiGraphics, slot);
 		SlotRenderEvents.After.Companion.publish(after);
 	}
 }

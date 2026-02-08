@@ -13,7 +13,7 @@ import net.minecraft.world.level.ItemLike
 import net.minecraft.world.item.ItemStack
 import net.minecraft.tags.TagKey
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.compat.rei.FirmamentReiPlugin.Companion.asItemEntry
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
@@ -77,7 +77,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 		return value.getStackSize() == 0
 	}
 
-	override fun getIdentifier(entry: EntryStack<SBItemStack>?, value: SBItemStack): ResourceLocation {
+	override fun getIdentifier(entry: EntryStack<SBItemStack>?, value: SBItemStack): Identifier {
 		return value.skyblockId.identifier
 	}
 

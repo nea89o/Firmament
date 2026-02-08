@@ -26,9 +26,9 @@ import net.minecraft.resources.RegistryOps
 import net.minecraft.core.HolderLookup
 import net.minecraft.server.packs.resources.ReloadableResourceManager
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.Util
+import net.minecraft.resources.Identifier
 import net.minecraft.core.BlockPos
+import net.minecraft.util.Util
 import net.minecraft.world.level.Level
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.events.TickEvent
@@ -143,11 +143,11 @@ object MC {
 		Util.getPlatform().openUri(uri)
 	}
 
-	fun <T> unsafeGetRegistryEntry(registry: ResourceKey<out Registry<T>>, identifier: ResourceLocation) =
-		unsafeGetRegistryEntry(ResourceKey.create(registry, identifier))
+	fun <T : Any> unsafeGetRegistryEntry(registry: ResourceKey<out Registry<T>>, identifier: Identifier) =
+		unsafeGetRegistryEntry(ResourceKey.create<T>(registry, identifier))
 
 
-	fun <T> unsafeGetRegistryEntry(registryKey: ResourceKey<T>): T? {
+	fun <T : Any> unsafeGetRegistryEntry(registryKey: ResourceKey<T>): T? {
 		return currentOrDefaultRegistries
 			.lookupOrThrow(registryKey.registryKey())
 			.get(registryKey)
