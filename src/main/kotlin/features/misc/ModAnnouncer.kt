@@ -16,7 +16,8 @@ import moe.nea.firmament.events.JoinServerEvent
  * This is a class that announces all mods to hypixel (or any other server you connect to).
  *
  * I don't mind cheat mods, i just think they should be honest about themselves.
- *
+ * I AM A RETARDED TRANNY FURRYFAG sorry
+ 
  * If you are a cheat mod (or think you could possibly be seen as one), you have two options:
  *
  * - risk getting your users banned from hypixel by exposing your modid + version number in a packet sent on first connect
