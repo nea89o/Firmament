@@ -39,8 +39,6 @@ object EtherwarpOverlay {
 		val tooFarCubeColour by colour("cube-colour-toofar") { ChromaColour.fromStaticRGB(255, 255, 0, 60) }
 		var wireframe by toggle("wireframe") { false }
 		var failureText by toggle("failure-text") { false }
-		var smoothZoom by toggle("smooth-zoom") { false }
-		val zoomSmoothness by integer("zoom-smoothness", 1, 100) { 50 }
 	}
 
 	enum class EtherwarpResult(val label: Component?, val color: () -> ChromaColour) {
@@ -154,6 +152,15 @@ object EtherwarpOverlay {
 				if (isEtherwarpTransparent(world, blockPos)) {
 					return@traverseBlocks null
 				}
+//				val defaultedState = world.getBlockState(blockPos).block.defaultState
+//				val hitShape = defaultedState.getCollisionShape(
+//					world,
+//					blockPos,
+//					ShapeContext.absent()
+//				)
+//				if (world.raycastBlock(start, end, blockPos, hitShape, defaultedState) == null) {
+//					return@raycast null
+//				}
 				val partialResult = world.clipWithInteractionOverride(start, end, blockPos, Shapes.block(), world.getBlockState(blockPos).block.defaultBlockState())
 				return@traverseBlocks EtherwarpBlockHit.BlockHit(blockPos, partialResult?.location)
 			},
@@ -165,39 +172,11 @@ object EtherwarpOverlay {
 		RAW
 	}
 
-	// Smooth FOV state
-	private var currentFovMult = 1.0f
-	private var targetFovMult: Float = 1.0f
-	private var lastPartialTicks = 0f
-
-	@JvmStatic
-	fun getFovMultiplier(partialTicks: Float): Float {
-		val partialDelta = (partialTicks + MC.currentTick) - lastPartialTicks
-		val pd = if (partialDelta <= 0f) 0.0f else partialDelta
-		lastPartialTicks = partialTicks + MC.currentTick
-
-		val smooth = if (TConfig.smoothZoom) (TConfig.zoomSmoothness / 100f) else 1f
-
-		if (!TConfig.smoothZoom) {
-			currentFovMult = targetFovMult
-			return currentFovMult
-		}
-
-		val delta = targetFovMult - currentFovMult
-		currentFovMult += delta * pd * smooth
-		if (currentFovMult < 0.15f) currentFovMult = 0.15f
-		if (currentFovMult > 1f) currentFovMult = 1f
-		return currentFovMult
-	}
-
 	@Subscribe
 	fun renderEtherwarpOverlay(event: WorldRenderLastEvent) {
 		if (!TConfig.etherwarpOverlay) return
 		val player = MC.player ?: return
-		if (TConfig.onlyShowWhileSneaking && !player.isShiftKeyDown) {
-			targetFovMult = 1.0f
-			return
-		}
+		if (TConfig.onlyShowWhileSneaking && !player.isShiftKeyDown) return
 		val world = player.level
 		val heldItem = MC.stackInHand
 		val etherwarpTyp = run {
@@ -205,12 +184,10 @@ object EtherwarpOverlay {
 				EtherwarpItemKind.MERGED
 			else if (heldItem.skyBlockId == SkyBlockItems.ETHERWARP_CONDUIT)
 				EtherwarpItemKind.RAW
-			else {
-				targetFovMult = 1.0f
+			else
 				return
-			}
 		}
-		val playerEyeHeight = // Sneaking: 1.27 (1.21) 1.54 (1.8.9) / Upright: 1.62
+		val playerEyeHeight = // Sneaking: 1.27 (1.21) 1.54 (1.8.9) / Upright: 1.62 (1.8.9,1.21)
 			if (player.isShiftKeyDown || etherwarpTyp == EtherwarpItemKind.MERGED)
 				(if (SBData.skyblockLocation?.isModernServer ?: false) 1.27 else 1.54)
 			else 1.62
@@ -222,11 +199,7 @@ object EtherwarpOverlay {
 			start,
 			end,
 		)
-		if (hitResult !is EtherwarpBlockHit.BlockHit) {
-			// no hit -> smoothly return to normal FOV
-			targetFovMult = 1.0f
-			return
-		}
+		if (hitResult !is EtherwarpBlockHit.BlockHit) return
 		val blockPos = hitResult.blockPos
 		val success = run {
 			if (!isEtherwarpTransparent(world, blockPos.above()))
@@ -244,8 +217,6 @@ object EtherwarpOverlay {
 			else
 				EtherwarpResult.SUCCESS
 		}
-
-		// Update render overlay
 		RenderInWorldContext.renderInWorld(event) {
 			if (TConfig.cube)
 				block(
@@ -258,19 +229,6 @@ object EtherwarpOverlay {
 					text(success.label)
 				}
 			}
-		}
-
-		// Update target FOV only for Etherwarp success; if fail, revert to normal smoothly
-		if (success == EtherwarpResult.SUCCESS) {
-			val hitCenter = hitResult.accuratePos ?: blockPos.center
-			val dist = playerEyePos.distanceTo(hitCenter)
-			val distFactor = 1 - (kotlin.math.sqrt(dist * dist) / 60.0)
-			var newTarget = (distFactor * distFactor * distFactor * 0.75).toFloat() + 0.25f
-			if (newTarget < 0.25f) newTarget = 0.25f
-			targetFovMult = newTarget
-		} else {
-			// not successful -> smoothly return to normal FOV
-			targetFovMult = 1.0f
 		}
 	}
 }
