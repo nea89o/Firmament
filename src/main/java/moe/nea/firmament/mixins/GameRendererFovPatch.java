@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.Camera;
 
-// This mixin injects into GameRenderer.getFov(Camera, float, boolean) and applies our multiplier
 @Mixin(GameRenderer.class)
 public abstract class GameRendererFovPatch {
     @Inject(
@@ -21,7 +20,6 @@ public abstract class GameRendererFovPatch {
             float mult = moe.nea.firmament.features.items.EtherwarpOverlay.getFovMultiplier(tickDelta);
             cir.setReturnValue(base * mult);
         } catch (Throwable t) {
-            // on any error, keep base value
         }
     }
 }
