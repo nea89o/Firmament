@@ -172,16 +172,18 @@ object EtherwarpOverlay {
 
 	@JvmStatic
 	fun getFovMultiplier(partialTicks: Float): Float {
+		if (!TConfig.smoothZoom) {
+			currentFovMult = 1.0f
+			targetFovMult = 1.0f
+			lastPartialTicks = partialTicks + MC.currentTick
+			return 1.0f
+		}
+
 		val partialDelta = (partialTicks + MC.currentTick) - lastPartialTicks
 		val pd = if (partialDelta <= 0f) 0.0f else partialDelta
 		lastPartialTicks = partialTicks + MC.currentTick
 
-		val smooth = if (TConfig.smoothZoom) (TConfig.zoomSmoothness / 100f) else 1f
-
-		if (!TConfig.smoothZoom) {
-			currentFovMult = targetFovMult
-			return currentFovMult
-		}
+		val smooth = (TConfig.zoomSmoothness / 100f)
 
 		val delta = targetFovMult - currentFovMult
 		currentFovMult += delta * pd * smooth
