@@ -19,4 +19,5 @@ dependencies {
 	api("com.gradleup.shadow:shadow-gradle-plugin:9.0.0-rc1")
 	implementation("net.fabricmc:access-widener:2.1.0")
 	implementation("com.google.code.gson:gson:2.10.1")
+	api("com.guardsquare:proguard-gradle:7.6.1")
 }
