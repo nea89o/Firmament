@@ -1,13 +1,18 @@
+# About Taunahi and this Fork
+I use this fork mainly to contribute to Firmament. To find the Firmament Version that is compatible with Taunahi go to the [Releases](https://github.com/einekratzekatze/Firmament/releases) of this fork or the [Hidden for Taunahi](https://github.com/einekratzekatze/Firmament/tree/hidden-for-taunahi) branch. Should the release be out of date please try to fix it yourself. The branch can easily be updated by rebasing from upstream. If you need help DM @einekratzekatze on Discord.
+## How does this work?
+Taumahi checks for Firmaments class names. This fork uses Proguard to obfuscate these.
+The file responsible for sending the modlist to the server was simply removed.
+
 <!--
 SPDX-FileCopyrightText: 2023 Linnea Gräf <nea@nea.moe>
 
 SPDX-License-Identifier: CC0-1.0
 -->
 
-
-
 <div align="center">
-
+<br>
+	
 # Firmament
 
 ![firmament logo](./docs/firmament_logo_256_nobg.webp)
