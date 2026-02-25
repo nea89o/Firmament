@@ -6,12 +6,12 @@ import com.mojang.authlib.properties.Property
 import java.util.Optional
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import kotlin.jvm.optionals.getOrNull
+import net.minecraft.world.level.block.SkullBlock
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.rendertype.RenderTypes
-import net.minecraft.resources.Identifier
 import net.minecraft.world.item.component.ResolvableProfile
-import net.minecraft.world.level.block.SkullBlock
+import net.minecraft.resources.Identifier
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
@@ -106,17 +106,10 @@ object CustomSkyBlockTextures {
 
 	fun modifyRenderInfoType(gameProfile: GameProfile, cir: CallbackInfoReturnable<RenderType>) {
 		if (!TConfig.skullsEnabled) return
-<<<<<<< HEAD
-		if (component == null) return
-
-		val n = skullTextureCache.invoke(component).getOrNull() ?: return
-		cir.returnValue = RenderTypes.entityTranslucent(n)
-=======
 		val textureProperty = gameProfile.properties["textures"].firstOrNull() ?: return
 		val id = getSkullId(textureProperty) ?: return
-		val identifier = ResourceLocation.fromNamespaceAndPath("firmskyblock", "textures/placedskull/$id.png")
+		val identifier = Identifier.fromNamespaceAndPath("firmskyblock", "textures/placedskull/$id.png")
 		if (!Minecraft.getInstance().resourceManager.getResource(identifier).isPresent) return
-		cir.returnValue = RenderType.entityTranslucent(identifier)
->>>>>>> af40a810 (make one mixin for all skull render types)
+		cir.returnValue = RenderTypes.entityTranslucent(identifier)
 	}
 }
