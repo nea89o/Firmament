@@ -5,13 +5,11 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
 import java.util.Optional
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
-import kotlin.jvm.optionals.getOrNull
-import net.minecraft.world.level.block.SkullBlock
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.rendertype.RenderTypes
-import net.minecraft.world.item.component.ResolvableProfile
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.component.ResolvableProfile
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
