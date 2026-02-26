@@ -56,3 +56,8 @@ SPDX-FileCopyrightText = ["Linnea Gräf <nea@nea.moe>", "Firmament Contributors"
 path = ["src/main/resources/legacy_data/*.json"]
 SPDX-License-Identifier = "MIT"
 SPDX-FileCopyrightText = ["PrismarineJS Minecraft Data"]
+
+[[annotations]]
+path = ["flake.lock"]
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = ["Auto Generated"]

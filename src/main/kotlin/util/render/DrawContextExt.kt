@@ -145,9 +145,11 @@ class LineRenderer(vertexConsumers: MultiBufferSource.BufferSource) :
 }
 
 
-fun GuiGraphics.drawAlignedBox(fromX: Int, fromY: Int, toX: Int, toY: Int, color: Int) {
+fun GuiGraphics.drawAlignedBox(fromX: Int, fromY: Int, width: Int, height: Int, color: Int) {
+	val toY = fromY + height
+	val toX = fromX + width
 	vLine(fromX, fromY, toY, color)
-	vLine(toY, fromY, toY, color)
+	vLine(toX, fromY, toY, color)
 	hLine(fromX, toX, fromY, color)
 	hLine(fromX, toX, toY, color)
 }

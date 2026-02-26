@@ -3,11 +3,13 @@ package util.render
 import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.platform.DepthTestFunction
+import com.mojang.blaze3d.shaders.UniformType
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import java.util.function.Function
 import net.minecraft.client.renderer.RenderPipelines
-import com.mojang.blaze3d.shaders.UniformType
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import net.minecraft.client.renderer.rendertype.LayeringTransform
+import net.minecraft.client.renderer.rendertype.OutputTarget
 import net.minecraft.client.renderer.rendertype.RenderSetup
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.resources.Identifier
@@ -23,12 +25,6 @@ object CustomRenderPipelines {
 			.withCull(false)
 			.withDepthWrite(false)
 			.build()
-	val OMNIPRESENT_LINES = RenderPipeline
-		.builder(RenderPipelines.LINES_SNIPPET)
-		.withLocation(Firmament.identifier("lines"))
-		.withDepthWrite(false)
-		.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-		.build()
 	val COLORED_OMNIPRESENT_QUADS =
 		RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)// TODO: split this up to support better transparent ordering.
 			.withLocation(Firmament.identifier("colored_omnipresent_quads"))
@@ -58,6 +54,11 @@ object CustomRenderPipelines {
 			.withSampler("Sampler3")
 			.withUniform("Animation", UniformType.UNIFORM_BUFFER)
 			.build()
+	val OMNIPRESENT_LINES = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+		.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+		.withLocation(Firmament.identifier("lines"))
+		.withDepthWrite(false)
+		.withLocation("pipeline/lines").build()
 }
 
 object CustomRenderLayers {
@@ -88,6 +89,14 @@ object CustomRenderLayers {
 		RenderSetup
 			.builder(CustomRenderPipelines.COLORED_OMNIPRESENT_QUADS)
 			.bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
+			.createRenderSetup()
+	)
+
+	val LINES_NO_DEPTH = RenderType.create(
+		"firmament_lines_no_depth",
+		RenderSetup.builder(CustomRenderPipelines.OMNIPRESENT_LINES)
+			.setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+			.setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
 			.createRenderSetup()
 	)
 

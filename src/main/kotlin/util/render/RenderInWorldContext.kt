@@ -174,7 +174,7 @@ class RenderInWorldContext private constructor(
 	}
 
 	fun line(points: List<Vec3>, color: Int, lineWidth: Float = 10F) {
-		val buffer = vertexConsumers.getBuffer(RenderTypes.LINES)
+		val buffer = vertexConsumers.getBuffer(CustomRenderLayers.LINES_NO_DEPTH)
 
 		val matrix = matrixStack.last()
 		var lastNormal: Vector3f? = null
