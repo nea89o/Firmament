@@ -54,23 +54,6 @@ jobs:
                 run: |
                     ./gradlew test --scan
 
-    upload:
-        name: Upload
-        runs-on: ubuntu-latest
-        needs: build
-        if: ${{ 'push' == github.event_name && ('master' == github.ref_name || startsWith(github.ref_name, 'mc-')) && '637563904' == github.repository_id }}
-        steps:
-            -   name: Download generated artifact
-                uses: actions/download-artifact@v5
-                with:
-                    name: built-mod-jar
-            -   name: Upload to discord
-                run: |
-                    ls -lahR .
-                    curl "$WEBHOOK_URL" -X POST -H "Content-type: multipart/form-data" --form "files[0]=@$(echo *.jar)"
-                env:
-                    WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-
     prepare-release:
         name: Prepare a release
         runs-on: ubuntu-22.04
@@ -97,12 +80,4 @@ jobs:
                 env:
                     GH_TOKEN: ${{ github.token }}
                 run: |
-                    gh release create --draft -t "Firmament ${GITHUB_REF#refs/tags/}" "${GITHUB_REF#refs/tags/}" -F "changelog.md" "*.jar"
-
-            -   name: Notify discord
-                env:
-                    ACTOR: ${{ github.actor }}
-                    WEBHOOK: ${{ secrets.CONFIDENTIAL_WEBHOOK }}
-                    REPO: ${{ github.repository }}
-                run: |
-                    curl -X POST "$WEBHOOK" --data "$(jq -n --arg r "$REPO" --arg v "${GITHUB_REF#refs/tags/}" --arg a "$ACTOR" '{"content": ("Created release preview, ready for publishing." + $v+"\n\nSee the draft at https://github.com/"+$r+"/releases/"), "username": $a, "avatar_url": ("https://github.com/" + $a + ".png")}')" -H 'content-type: application/json'
+                    gh release create --draft -t "Firmament ${{ github.ref_name }}" "${{ github.ref_name }}" -F "changelog.md" "*.jar"
