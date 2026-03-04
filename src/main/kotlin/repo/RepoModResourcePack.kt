@@ -120,7 +120,7 @@ class RepoModResourcePack(val basePath: Path) : ModResourcePack {
 	}
 
 	override fun getFabricModMetadata(): ModMetadata {
-		return FabricLoader.getInstance().getModContainer("firmament")
+		return FabricLoader.getInstance().getModContainer(Firmament.FABRIC_MOD_ID)
 			.get().metadata
 	}
 

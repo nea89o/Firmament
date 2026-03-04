@@ -23,7 +23,9 @@ public class SectionBuilderRiser extends RiserUtils {
 	Intermediary.InterClass BlockRenderManager = Intermediary.<BlockRenderDispatcher>intermediaryClass();
 	Intermediary.InterClass BlockState = Intermediary.<BlockState>intermediaryClass();
 	Intermediary.InterClass BlockStateModel = Intermediary.<BlockStateModel>intermediaryClass();
-	String CustomBlockTextures = "moe.nea.firmament.features.texturepack.CustomBlockTextures";
+	// Use a class literal so ProGuard tracks and renames BlockRenderHooks correctly,
+	// rather than a hardcoded string that ProGuard cannot update.
+	Type BlockRenderHooksType = Type.getType(BlockRenderHooks.class);
 
 	Intermediary.InterMethod getModel =
 		Intermediary.intermediaryMethod(
@@ -75,7 +77,7 @@ public class SectionBuilderRiser extends RiserUtils {
 				methodInsn,
 				new MethodInsnNode(
 					Opcodes.INVOKESTATIC,
-					getTypeForClassName(CustomBlockTextures).getInternalName(),
+					BlockRenderHooksType.getInternalName(),
 					"enterFallbackCall",
 					Type.getMethodDescriptor(Type.VOID_TYPE)
 				));
@@ -83,7 +85,7 @@ public class SectionBuilderRiser extends RiserUtils {
 			var insnList = new InsnList();
 			insnList.add(new MethodInsnNode(
 				Opcodes.INVOKESTATIC,
-				getTypeForClassName(CustomBlockTextures).getInternalName(),
+				BlockRenderHooksType.getInternalName(),
 				"exitFallbackCall",
 				Type.getMethodDescriptor(Type.VOID_TYPE)
 			));
@@ -91,7 +93,7 @@ public class SectionBuilderRiser extends RiserUtils {
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, blockStateVar.index));
 			insnList.add(new MethodInsnNode(
 				Opcodes.INVOKESTATIC,
-				getTypeForClassName(CustomBlockTextures).getInternalName(),
+				BlockRenderHooksType.getInternalName(),
 				"patchIndigo",
 				Type.getMethodDescriptor(
 					(BlockStateModel).mapped(),

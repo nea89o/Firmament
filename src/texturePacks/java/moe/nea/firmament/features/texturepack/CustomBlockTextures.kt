@@ -293,6 +293,13 @@ object CustomBlockTextures {
 
 	val insideFallbackCall = ThreadLocal.withInitial { 0 }
 
+	init {
+		moe.nea.firmament.init.BlockRenderHooks.enterCallback = Runnable { enterFallbackCall() }
+		moe.nea.firmament.init.BlockRenderHooks.exitCallback = Runnable { exitFallbackCall() }
+		moe.nea.firmament.init.BlockRenderHooks.patchCallback =
+			moe.nea.firmament.init.BlockRenderHooks.PatchCallback { model, pos, state -> patchIndigo(model, pos, state) }
+	}
+
 	@JvmStatic
 	fun enterFallbackCall() {
 		insideFallbackCall.set(insideFallbackCall.get() + 1)

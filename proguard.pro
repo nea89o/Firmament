@@ -29,6 +29,10 @@
 -keep class moe.nea.firmament.api.** { *; }
 -keep class moe.nea.firmament.deps.** { *; }
 
+# Update string constants that contain class names to their obfuscated equivalents.
+# Needed for FirmamentAPI (Class.forName("moe.nea.firmament.impl.v1.FirmamentAPIImpl")).
+-adaptclassstrings
+
 # Keep all ServiceLoader service interfaces and their implementations.
 # ProGuard cannot trace ServiceLoader's dynamic class loading, so implementations
 # would otherwise be removed. The interfaces must also be kept (not just adapted via
@@ -76,6 +80,11 @@
 # Keep AutoService service files consistent
 -adaptresourcefilenames META-INF/services/**
 -adaptresourcefilecontents META-INF/services/**
+
+# Move all obfuscated classes into a flat package to hide the moe/nea/firmament prefix.
+# Kept classes (mixins, entry points, API, service impls) remain at their original names.
+-repackageclasses 'a'
+-allowaccessmodification
 
 # Safety flags
 -dontoptimize

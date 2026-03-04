@@ -48,14 +48,15 @@ import moe.nea.firmament.util.mc.InitLevel
 import moe.nea.firmament.util.tr
 
 object Firmament {
-	val modContainer by lazy { FabricLoader.getInstance().getModContainer(MOD_ID).get() }
+	const val FABRIC_MOD_ID = "taument"
+	val modContainer by lazy { FabricLoader.getInstance().getModContainer(FABRIC_MOD_ID).get() }
 	const val MOD_ID = "firmament"
 
 	val DEBUG = System.getProperty("firmament.debug") == "true"
 	val DATA_DIR: Path = Path.of(".firmament").also { Files.createDirectories(it) }
 	val logger: Logger = LogManager.getLogger("Firmament")
 	private val metadata: ModMetadata by lazy {
-		FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow().metadata
+		FabricLoader.getInstance().getModContainer(FABRIC_MOD_ID).orElseThrow().metadata
 	}
 	val version: Version by lazy { metadata.version }
 

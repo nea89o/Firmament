@@ -1,9 +1,9 @@
 {
     "schemaVersion": 1,
-    "id": "firmament",
+    "id": "taument",
     "version": "${version}",
-    "name": "Firmament",
-    "description": "Firmament powered by NEU",
+    "name": "Taument",
+    "description": "Taument",
     "authors": [
         {
             "name": "Linnea Gräf",
