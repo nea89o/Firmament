@@ -22,7 +22,7 @@ runs:
             with:
                 cache-read-only: false
                 add-job-summary-as-pr-comment: 'on-failure'
-                dependency-graph: 'generate-and-submit'
+                dependency-graph: 'disabled'
         -   name: Prepare unpacked Jars
             run: |
                 ./gradlew unpackAllJars

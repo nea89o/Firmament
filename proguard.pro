@@ -29,6 +29,50 @@
 -keep class moe.nea.firmament.api.** { *; }
 -keep class moe.nea.firmament.deps.** { *; }
 
+# Keep all ServiceLoader service interfaces and their implementations.
+# ProGuard cannot trace ServiceLoader's dynamic class loading, so implementations
+# would otherwise be removed. The interfaces must also be kept (not just adapted via
+# -adaptresourcefilenames) because ProGuard does not reliably rename extensionless
+# META-INF/services files, so ServiceLoader would look for the obfuscated name and
+# find nothing.
+-keep interface moe.nea.firmament.events.subscription.SubscriptionList
+-keep class * implements moe.nea.firmament.events.subscription.SubscriptionList { *; }
+-keep interface moe.nea.firmament.gui.config.FirmamentConfigScreenProvider
+-keep class * implements moe.nea.firmament.gui.config.FirmamentConfigScreenProvider { *; }
+-keep interface moe.nea.firmament.util.HoveredItemStackProvider
+-keep class * implements moe.nea.firmament.util.HoveredItemStackProvider { *; }
+-keep interface moe.nea.firmament.util.compatloader.ICompatMetaGen
+-keep class * implements moe.nea.firmament.util.compatloader.ICompatMetaGen { *; }
+-keep interface moe.nea.firmament.util.data.IConfigProvider
+-keep class * implements moe.nea.firmament.util.data.IConfigProvider { *; }
+
+# Preserve method names across all Firmament classes to avoid breaking Minecraft interface
+# implementations. The compileClasspath (ProGuard library JARs) uses Yarn-mapped Minecraft
+# (e.g. location()), but the input JAR is post-remapJar and uses Intermediary names
+# (e.g. method_56926()). ProGuard cannot match these names, so it freely removes/renames
+# methods that implement Minecraft interfaces, causing AbstractMethodError at runtime.
+#
+# -dontshrink: prevents removal of interface implementation methods that ProGuard thinks
+# are unreachable (because it can't match intermediary names to yarn library names).
+# Firmament has minimal dead code anyway so this is acceptable.
+-dontshrink
+#
+# -keepclassmembernames: prevents renaming of non-private methods so that intermediary
+# method names (method_56926, etc.) are preserved for Minecraft's runtime dispatch.
+-keepclassmembernames class moe.nea.firmament.** {
+    public <methods>;
+    protected <methods>;
+}
+
+# Keep enum members accessed via Class.getEnumConstants() / EnumSet / reflection.
+# ProGuard removes values() and valueOf() from enums because it cannot trace that
+# Class.getEnumConstants() calls values() reflectively. This causes a NPE when any
+# code (e.g. ManagedConfig.choice()) calls enumClass.enumConstants.
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
 # Keep AutoService service files consistent
 -adaptresourcefilenames META-INF/services/**
 -adaptresourcefilecontents META-INF/services/**

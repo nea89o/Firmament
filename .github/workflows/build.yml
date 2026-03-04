@@ -14,17 +14,18 @@ jobs:
     build:
         name: Build
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             -   uses: actions/checkout@v5
                 name: Checkout repository
                 with:
                     fetch-tags: true
                     fetch-depth: 0
-                    filter: 'tree:0'
             -   uses: ./.github/composite/gradle
             -   name: Build with gradle
                 run: |
-                    ./gradlew assemble --scan
+                    ./gradlew build
             -   name: Move build artifact around and print check sum
                 run: |
                     rm -f build/libs/*sources*.jar build/libs/*-api.jar
@@ -34,9 +35,6 @@ jobs:
                 with:
                     name: built-mod-jar
                     path: build/libs/Firmament-*.jar
-                    exclude: |
-                        build/libs/*-sources.jar
-                        build/libs/*-api.jar
 
     test:
         name: Test
@@ -52,7 +50,7 @@ jobs:
             -   uses: ./.github/composite/gradle
             -   name: Build with gradle
                 run: |
-                    ./gradlew test --scan
+                    ./gradlew test
 
     prepare-release:
         name: Prepare a release
