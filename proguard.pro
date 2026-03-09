@@ -67,6 +67,18 @@
     public <methods>;
     protected <methods>;
 }
+-keepclassmembernames class util.mc.** {
+    public <methods>;
+    protected <methods>;
+}
+-keepclassmembernames class util.json.** {
+    public <methods>;
+    protected <methods>;
+}
+-keepclassmembernames class util.render.** {
+    public <methods>;
+    protected <methods>;
+}
 
 # Keep enum members accessed via Class.getEnumConstants() / EnumSet / reflection.
 # ProGuard removes values() and valueOf() from enums because it cannot trace that
