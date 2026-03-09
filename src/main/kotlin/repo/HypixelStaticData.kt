@@ -1,8 +1,6 @@
 package moe.nea.firmament.repo
 
 import org.apache.logging.log4j.LogManager
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
@@ -12,6 +10,7 @@ import kotlin.time.Duration.Companion.minutes
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.apis.CollectionResponse
 import moe.nea.firmament.apis.CollectionSkillData
+import moe.nea.firmament.features.inventory.PriceData
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.net.HttpUtil
 
@@ -21,11 +20,7 @@ object HypixelStaticData {
 	private val hypixelApiBaseUrl = "https://api.hypixel.net"
 	var lowestBin: Map<SkyblockId, Double> = mapOf()
 		private set
-	var avg1dlowestBin: Map<SkyblockId, Double> = mapOf()
-		private set
-	var avg3dlowestBin: Map<SkyblockId, Double> = mapOf()
-		private set
-	var avg7dlowestBin: Map<SkyblockId, Double> = mapOf()
+	var avgLowestBin: Map<SkyblockId, Double> = mapOf()
 		private set
 	var bazaarData: Map<SkyblockId.BazaarStock, BazaarData> = mapOf()
 		private set
@@ -76,10 +71,10 @@ object HypixelStaticData {
 			updateCollectionData()
 		}
 		Firmament.coroutineScope.launch {
+			fetchPricesFromMoulberry(force = true)
 			while (true) {
-				logger.info("Updating NEU prices")
-				fetchPricesFromMoulberry()
 				delay(5.minutes)
+				fetchPricesFromMoulberry(force = false)
 			}
 		}
 		Firmament.coroutineScope.launch {
@@ -91,15 +86,22 @@ object HypixelStaticData {
 		}
 	}
 
-	private suspend fun fetchPricesFromMoulberry() {
+	private suspend fun fetchPricesFromMoulberry(force: Boolean = false) {
+		if (!PriceData.TConfig.tooltipEnabled && !force) {
+			return
+		}
+		logger.info("Updating NEU prices${if (force) " (forced)" else ""}")
 		lowestBin = HttpUtil.request("$moulberryBaseUrl/lowestbin.json")
 			.forJson<Map<SkyblockId, Double>>().await()
-		avg1dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/1day.json")
-			.forJson<Map<SkyblockId, Double>>().await()
-		avg3dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/3day.json")
-			.forJson<Map<SkyblockId, Double>>().await()
-		avg7dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/7day.json")
-			.forJson<Map<SkyblockId, Double>>().await()
+		when (PriceData.TConfig.avgLowestBin) {
+			PriceData.AvgLowestBin.ONEDAYAVGLOWESTBIN -> "1day.json"
+			PriceData.AvgLowestBin.THREEDAYAVGLOWESTBIN -> "3day.json"
+			PriceData.AvgLowestBin.SEVENDAYAVGLOWESTBIN -> "7day.json"
+			else -> null
+		}?.let { path ->
+			avgLowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/$path")
+				.forJson<Map<SkyblockId, Double>>().await()
+		}
 	}
 
 	private suspend fun fetchBazaarPrices() {
