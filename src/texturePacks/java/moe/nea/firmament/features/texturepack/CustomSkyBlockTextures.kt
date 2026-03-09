@@ -1,16 +1,15 @@
 package moe.nea.firmament.features.texturepack
 
+import com.mojang.authlib.GameProfile
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
 import java.util.Optional
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
-import kotlin.jvm.optionals.getOrNull
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.component.ResolvableProfile
-import net.minecraft.world.level.block.SkullBlock
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.CustomItemModelEvent
 import moe.nea.firmament.events.FinalizeResourceManagerEvent
@@ -103,16 +102,12 @@ object CustomSkyBlockTextures {
 		return Identifier.fromNamespaceAndPath("firmskyblock", "textures/placedskull/$id.png")
 	}
 
-	fun modifySkullTexture(
-        type: SkullBlock.Type?,
-        component: ResolvableProfile?,
-        cir: CallbackInfoReturnable<RenderType>
-	) {
-		if (type != SkullBlock.Types.PLAYER) return
+	fun modifyRenderInfoType(gameProfile: GameProfile, cir: CallbackInfoReturnable<RenderType>) {
 		if (!TConfig.skullsEnabled) return
-		if (component == null) return
-
-		val n = skullTextureCache.invoke(component).getOrNull() ?: return
-		cir.returnValue = RenderTypes.entityTranslucent(n)
+		val textureProperty = gameProfile.properties["textures"].firstOrNull() ?: return
+		val id = getSkullId(textureProperty) ?: return
+		val identifier = Identifier.fromNamespaceAndPath("firmskyblock", "textures/placedskull/$id.png")
+		if (!Minecraft.getInstance().resourceManager.getResource(identifier).isPresent) return
+		cir.returnValue = RenderTypes.entityTranslucent(identifier)
 	}
 }

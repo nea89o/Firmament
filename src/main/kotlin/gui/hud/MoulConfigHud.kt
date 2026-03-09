@@ -19,11 +19,7 @@ abstract class MoulConfigHud(
 ) {
 	companion object {
 		private val componentWrapper by lazy {
-			object : MoulConfigScreenComponent(Component.empty(), GuiContext(TextComponent("§cERROR")), null) {
-				init {
-					this.minecraft = MC.instance
-				}
-			}
+			MoulConfigScreenComponent(Component.empty(), GuiContext(TextComponent("§cERROR")), null)
 		}
 	}
 

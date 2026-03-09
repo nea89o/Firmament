@@ -32,6 +32,11 @@ object PriceData {
 		) {
 			AvgLowestBin.THREEDAYAVGLOWESTBIN
 		}
+		val bzPriceType by choice(
+			"bz-price-type",
+		) {
+			BazaarPriceType.ORDERPRICES
+		}
 	}
 
 	enum class AvgLowestBin : StringRepresentable {
@@ -39,6 +44,15 @@ object PriceData {
 		ONEDAYAVGLOWESTBIN,
 		THREEDAYAVGLOWESTBIN,
 		SEVENDAYAVGLOWESTBIN;
+
+		override fun getSerializedName(): String {
+			return name
+		}
+	}
+
+	enum class BazaarPriceType : StringRepresentable {
+		ORDERPRICES,
+		INSTANTPRICES;
 
 		override fun getSerializedName(): String {
 			return name
@@ -86,18 +100,37 @@ object PriceData {
 		if (bazaarData != null) {
 			it.lines.add(Component.literal(""))
 			it.lines.add(multiplierText)
-			it.lines.add(
-				formatPrice(
-					tr("firmament.tooltip.bazaar.buy-order", "Bazaar Buy Order"),
-					bazaarData.quickStatus.sellPrice * multiplier
-				)
-			)
-			it.lines.add(
-				formatPrice(
-					tr("firmament.tooltip.bazaar.sell-order", "Bazaar Sell Order"),
-					bazaarData.quickStatus.buyPrice * multiplier
-				)
-			)
+			when (TConfig.bzPriceType) {
+				BazaarPriceType.ORDERPRICES -> {
+					it.lines.add(
+						formatPrice(
+							tr("firmament.tooltip.bazaar.buy-order", "Bazaar Buy Order"),
+							bazaarData.quickStatus.sellPrice * multiplier
+						)
+					)
+					it.lines.add(
+						formatPrice(
+							tr("firmament.tooltip.bazaar.sell-order", "Bazaar Sell Order"),
+							bazaarData.quickStatus.buyPrice * multiplier
+						)
+					)
+				}
+				BazaarPriceType.INSTANTPRICES -> {
+					it.lines.add(
+						formatPrice(
+							tr("firmament.tooltip.bazaar.instant-buy", "Bazaar Instant Buy"),
+							bazaarData.quickStatus.buyPrice * multiplier
+						)
+					)
+					it.lines.add(
+						formatPrice(
+							tr("firmament.tooltip.bazaar.instant-sell", "Bazaar Instant Sell"),
+							bazaarData.quickStatus.sellPrice * multiplier
+						)
+					)
+				}
+			}
+
 		} else if (lowestBin != null) {
 			it.lines.add(Component.literal(""))
 			it.lines.add(multiplierText)
