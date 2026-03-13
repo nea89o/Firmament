@@ -171,7 +171,7 @@ object ExportRecipe {
 	private val essenceRegex = "(?<essence>.*) Essence x(?<count>$SHORT_NUMBER_FORMAT)".toPattern()
 	private val numberedItemRegex = "(?<count>$SHORT_NUMBER_FORMAT) (?<what>.*)".toPattern()
 
-	private val etherialRewardPattern = "\\+(?<amount>${SHORT_NUMBER_FORMAT})x? (?<what>.*)".toPattern()
+	private val etherialRewardPattern = "\\+?(?<amount>${SHORT_NUMBER_FORMAT})x? (?<what>.*)".toPattern()
 
 	fun findForName(name: String, fallbackToGenerated: Boolean = true): SkyblockId? {
 		var id = ItemNameLookup.guessItemByName(name, true)
@@ -207,6 +207,7 @@ object ExportRecipe {
 				"Gemstone Powder" -> SkyblockId("SKYBLOCK_POWDER_GEMSTONE")
 				"Mithril Powder" -> SkyblockId("SKYBLOCK_POWDER_MITHRIL")
 				"Pelts" -> SkyblockId("SKYBLOCK_PELT")
+				"Pests" -> SkyblockId("SKYBLOCK_PEST")
 				"Fine Flour" -> SkyblockId("FINE_FLOUR")
 				else -> {
 					id.ifDropLast(" Experience") {
