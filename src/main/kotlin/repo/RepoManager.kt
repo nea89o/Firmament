@@ -77,6 +77,7 @@ object RepoManager {
 	val miningData = MiningRepoData()
 	val overlayData = ModernOverlaysData()
 	val enchantedBookCache = EnchantedBookCache()
+	val enchantData = EnchantData()
 
 	fun makeNEURepository(path: Path): NEURepository {
 		return NEURepository.of(path).apply {
@@ -90,6 +91,7 @@ object RepoManager {
 			registerReloadListener(recipeCache)
 			registerReloadListener(miningData)
 			registerReloadListener(enchantedBookCache)
+			registerReloadListener(enchantData)
 			ReloadRegistrationEvent.publish(ReloadRegistrationEvent(this))
 			registerReloadListener {
 				if (TestUtil.isInTest) return@registerReloadListener

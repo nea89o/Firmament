@@ -1,7 +1,6 @@
 package moe.nea.firmament.util.skyblock
 
 import net.minecraft.world.item.ItemStack
-import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
 
@@ -22,18 +21,18 @@ data class ItemType private constructor(val name: String) {
 		fun fromItemStack(itemStack: ItemStack): ItemType? {
 			if (itemStack.petData != null)
 				return PET
-			val typeText =
-				itemStack.loreAccordingToNbt.lastOrNull()
-					?.siblings?.find {
-						!it.style.isObfuscated && !it.directLiteralStringContent.isNullOrBlank()
-					}?.directLiteralStringContent
-			if (typeText != null) {
-				val type = typeText.substringAfter(' ', missingDelimiterValue = "").trim()
-				if (type.isEmpty()) return null
-				return ofName(type)
+			for (loreLine in itemStack.loreAccordingToNbt) {
+				val words = loreLine.string.split(" ").filter { it.length > 1 } // removes [recomb?]
+				if (words.any { word -> word.any { it.isLowerCase() } }) continue // only uppercase
+				val rarityIdx = words.indexOfFirst { Rarity.fromString(it) != null } // skips [SHINY?] [VERY?]
+				if (rarityIdx == -1) continue // no rarity in line
+				val typeWords = words.subList(rarityIdx + 1, words.size)
+				if (typeWords.isEmpty()) continue
+				return ofName(typeWords.joinToString(" "))
 			}
-			return itemStack.loreAccordingToNbt.lastOrNull()?.directLiteralStringContent?.let(::fromEscapeCodeLore)
+			return null
 		}
+
 
 		// TODO: some of those are not actual in game item types, but rather ones included in the repository to splat to multiple in game types. codify those somehow
 
@@ -58,6 +57,9 @@ data class ItemType private constructor(val name: String) {
 		val HELMET = ofName("HELMET")
 		val BOOTS = ofName("BOOTS")
 		val SHOVEL = ofName("SHOVEL")
+		val BOW = ofName("BOW")
+		val HOE = ofName("HOE")
+		val CARNIVAL_MASK = ofName("CARNIVAL MASK")
 
 		val NIL = ofName("__NIL")
 
@@ -70,6 +72,8 @@ data class ItemType private constructor(val name: String) {
 	val dungeonVariant get() = ofName("DUNGEON $name")
 
 	val isDungeon get() = name.startsWith("DUNGEON ")
+
+	val nonDungeonVariant get() = ofName(name.removePrefix("DUNGEON "))
 
 	override fun toString(): String {
 		return name
