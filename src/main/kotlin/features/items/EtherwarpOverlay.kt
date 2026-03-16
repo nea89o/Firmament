@@ -39,6 +39,8 @@ object EtherwarpOverlay {
 		val tooFarCubeColour by colour("cube-colour-toofar") { ChromaColour.fromStaticRGB(255, 255, 0, 60) }
 		var wireframe by toggle("wireframe") { false }
 		var failureText by toggle("failure-text") { false }
+		var smoothZoom by toggle("smooth-zoom") { false }
+		val zoomSmoothness by integer("zoom-smoothness", 1, 100) { 50 }
 	}
 
 	enum class EtherwarpResult(val label: Component?, val color: () -> ChromaColour) {
@@ -152,15 +154,6 @@ object EtherwarpOverlay {
 				if (isEtherwarpTransparent(world, blockPos)) {
 					return@traverseBlocks null
 				}
-//				val defaultedState = world.getBlockState(blockPos).block.defaultState
-//				val hitShape = defaultedState.getCollisionShape(
-//					world,
-//					blockPos,
-//					ShapeContext.absent()
-//				)
-//				if (world.raycastBlock(start, end, blockPos, hitShape, defaultedState) == null) {
-//					return@raycast null
-//				}
 				val partialResult = world.clipWithInteractionOverride(start, end, blockPos, Shapes.block(), world.getBlockState(blockPos).block.defaultBlockState())
 				return@traverseBlocks EtherwarpBlockHit.BlockHit(blockPos, partialResult?.location)
 			},
@@ -172,11 +165,41 @@ object EtherwarpOverlay {
 		RAW
 	}
 
+	// Smooth FOV state
+	private var currentFovMult = 1.0f
+	private var targetFovMult: Float = 1.0f
+	private var lastPartialTicks = 0f
+
+	@JvmStatic
+	fun getFovMultiplier(partialTicks: Float): Float {
+		if (!TConfig.smoothZoom) {
+			currentFovMult = 1.0f
+			targetFovMult = 1.0f
+			lastPartialTicks = partialTicks + MC.currentTick
+			return 1.0f
+		}
+
+		val partialDelta = (partialTicks + MC.currentTick) - lastPartialTicks
+		val pd = if (partialDelta <= 0f) 0.0f else partialDelta
+		lastPartialTicks = partialTicks + MC.currentTick
+
+		val smooth = (TConfig.zoomSmoothness / 100f)
+
+		val delta = targetFovMult - currentFovMult
+		currentFovMult += delta * pd * smooth
+		if (currentFovMult < 0.15f) currentFovMult = 0.15f
+		if (currentFovMult > 1f) currentFovMult = 1f
+		return currentFovMult
+	}
+
 	@Subscribe
 	fun renderEtherwarpOverlay(event: WorldRenderLastEvent) {
 		if (!TConfig.etherwarpOverlay) return
 		val player = MC.player ?: return
-		if (TConfig.onlyShowWhileSneaking && !player.isShiftKeyDown) return
+		if (TConfig.onlyShowWhileSneaking && !player.isShiftKeyDown) {
+			targetFovMult = 1.0f
+			return
+		}
 		val world = player.level
 		val heldItem = MC.stackInHand
 		val etherwarpTyp = run {
@@ -184,10 +207,12 @@ object EtherwarpOverlay {
 				EtherwarpItemKind.MERGED
 			else if (heldItem.skyBlockId == SkyBlockItems.ETHERWARP_CONDUIT)
 				EtherwarpItemKind.RAW
-			else
+			else {
+				targetFovMult = 1.0f
 				return
+			}
 		}
-		val playerEyeHeight = // Sneaking: 1.27 (1.21) 1.54 (1.8.9) / Upright: 1.62 (1.8.9,1.21)
+		val playerEyeHeight = // Sneaking: 1.27 (1.21) 1.54 (1.8.9) / Upright: 1.62
 			if (player.isShiftKeyDown || etherwarpTyp == EtherwarpItemKind.MERGED)
 				(if (SBData.skyblockLocation?.isModernServer ?: false) 1.27 else 1.54)
 			else 1.62
@@ -199,7 +224,10 @@ object EtherwarpOverlay {
 			start,
 			end,
 		)
-		if (hitResult !is EtherwarpBlockHit.BlockHit) return
+		if (hitResult !is EtherwarpBlockHit.BlockHit) {
+			targetFovMult = 1.0f
+			return
+		}
 		val blockPos = hitResult.blockPos
 		val success = run {
 			if (!isEtherwarpTransparent(world, blockPos.above()))
@@ -217,6 +245,7 @@ object EtherwarpOverlay {
 			else
 				EtherwarpResult.SUCCESS
 		}
+
 		RenderInWorldContext.renderInWorld(event) {
 			if (TConfig.cube)
 				block(
@@ -229,6 +258,17 @@ object EtherwarpOverlay {
 					text(success.label)
 				}
 			}
+		}
+
+		if (success == EtherwarpResult.SUCCESS) {
+			val hitCenter = hitResult.accuratePos ?: blockPos.center
+			val dist = playerEyePos.distanceTo(hitCenter)
+			val distFactor = 1 - (kotlin.math.sqrt(dist * dist) / 60.0)
+			var newTarget = (distFactor * distFactor * distFactor * 0.75).toFloat() + 0.25f
+			if (newTarget < 0.25f) newTarget = 0.25f
+			targetFovMult = newTarget
+		} else {
+			targetFovMult = 1.0f
 		}
 	}
 }
