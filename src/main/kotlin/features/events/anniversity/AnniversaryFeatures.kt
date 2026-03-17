@@ -54,7 +54,7 @@ object AnniversaryFeatures {
 		clickedPigs.removeIf { it.clickedAt.passedTime() > pigDuration }
 	}
 
-	val pattern = "SHINY! You extracted (?<reward>.*) from the piglet's orb!".toPattern()
+	val pattern = "SHINY! You extracted Shiny Shard and (?<reward>.*) from the piglet's orb!".toPattern()
 
 	@Subscribe
 	fun onChat(event: ProcessChatEvent) {
