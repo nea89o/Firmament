@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(targets = "me.shedaniel.rei.impl.client.gui.ScreenOverlayImpl")
 @Pseudo
 public class PublishREIOverlayKeyPressEvent {
-	@Inject(method = "keyPressed", at = @At("RETURN"))
+	@Inject(method = {"method_25404", "keyPressed" }, at = @At("RETURN"), require = 0)
 	public void onKeyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
 		// Only publish event if REI didn't handle the key
 		if (!cir.getReturnValue()) {
