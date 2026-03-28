@@ -2,14 +2,15 @@ package moe.nea.firmament.util
 
 import java.time.ZoneId
 import java.util.UUID
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.hypixel.modapi.HypixelModAPI
+import net.hypixel.modapi.packet.impl.clientbound.ClientboundHelloPacket
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.seconds
 import moe.nea.firmament.events.AllowChatEvent
 import moe.nea.firmament.events.ProcessChatEvent
 import moe.nea.firmament.events.ProfileSwitchEvent
-import moe.nea.firmament.events.ServerConnectedEvent
 import moe.nea.firmament.events.SkyblockServerUpdateEvent
 
 object SBData {
@@ -48,9 +49,16 @@ object SBData {
 	 * Nota bene: We don't generally disable features outside of SkyBlock unless they could lead to bans.
 	 */
 	val isOnSkyblock get() = locraw?.gametype == "SKYBLOCK"
+	var isOnHypixel: Boolean = false
+		private set
 	var profileIdCommandDebounce = TimeMark.farPast()
 	fun init() {
-		ServerConnectedEvent.subscribe("SBData:onServerConnected") {
+		ClientPlayConnectionEvents.DISCONNECT.register { _, _ ->
+			isOnHypixel = false
+			locraw = null
+		}
+		HypixelModAPI.getInstance().createHandler(ClientboundHelloPacket::class.java) {
+			isOnHypixel = true
 			HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket::class.java)
 		}
 		HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket::class.java) {

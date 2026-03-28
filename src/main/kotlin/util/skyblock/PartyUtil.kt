@@ -19,6 +19,7 @@ import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.bold
 import moe.nea.firmament.util.boolColour
 import moe.nea.firmament.util.grey
@@ -38,6 +39,7 @@ object PartyUtil {
 		}
 
 		fun sendSyncPacket() {
+			if (!SBData.isOnHypixel) return
 			hma.sendPacket(ServerboundPartyInfoPacket())
 		}
 
