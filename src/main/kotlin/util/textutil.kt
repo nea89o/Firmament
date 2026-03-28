@@ -14,6 +14,8 @@ import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.ChatFormatting
 
 
+val darkGreyColor = TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY)
+
 val formattingChars = "kmolnrKMOLNR".toSet()
 fun CharSequence.removeColorCodes(keepNonColorCodes: Boolean = false): String {
 	var nextParagraph = indexOf('§')

@@ -1,6 +1,7 @@
 package moe.nea.firmament.util.skyblock
 
 import net.minecraft.world.item.ItemStack
+import moe.nea.firmament.util.darkGreyColor
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
 
@@ -18,11 +19,15 @@ data class ItemType private constructor(val name: String) {
 				?.let(::ofName)
 		}
 
+		// Lore line syntax: [recomb?] [SHINY?] [VERY?] RARITY [DUNGEON?] TYPE1 [TYPE2?] [recomb?] [(ID *)?]
 		fun fromItemStack(itemStack: ItemStack): ItemType? {
 			if (itemStack.petData != null)
 				return PET
 			for (loreLine in itemStack.loreAccordingToNbt) {
-				val words = loreLine.string.split(" ").filter { it.length > 1 } // removes [recomb?]
+				val lineText = loreLine.siblings
+					.takeWhile { it.style.color != darkGreyColor } // removes [(ID *)?] by text color
+					.joinToString("") { it.string }
+				val words = lineText.split(" ").filter { it.length > 1 } // removes [recomb?]
 				if (words.any { word -> word.any { it.isLowerCase() } }) continue // only uppercase
 				val rarityIdx = words.indexOfFirst { Rarity.fromString(it) != null } // skips [SHINY?] [VERY?]
 				if (rarityIdx == -1) continue // no rarity in line

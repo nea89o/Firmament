@@ -11,11 +11,11 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.Component
 import net.minecraft.ChatFormatting
-import moe.nea.firmament.util.StringUtil.words
 import moe.nea.firmament.util.collections.lastNotNullOfOrNull
+import moe.nea.firmament.util.darkGreyColor
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
-import moe.nea.firmament.util.unformattedString
+import moe.nea.firmament.util.removeColorCodes
 
 typealias RepoRarity = io.github.moulberry.repo.data.Rarity
 
@@ -89,11 +89,25 @@ enum class Rarity(vararg altNames: String) {
 		fun fromPetItem(itemStack: ItemStack): Rarity? =
 			itemStack.petData?.tier?.let(::fromNeuRepo)
 
+
+		private fun rarityFromWords(words: List<String>): Rarity? {
+			if (words.any { word -> word.any { it.isLowerCase() } }) return null
+			return words.firstNotNullOfOrNull(::fromString)
+		}
+
+		// Lore line syntax: [recomb?] [SHINY?] [VERY?] RARITY [DUNGEON?] TYPE [recomb?] [(ID *)?]
 		fun fromLore(lore: List<Component>): Rarity? =
-			lore.lastNotNullOfOrNull {
-				it.unformattedString.words()
-					.firstNotNullOfOrNull(::fromString)
+			lore.lastNotNullOfOrNull { loreLine ->
+				val words = loreLine.siblings
+					.takeWhile { it.style.color != darkGreyColor }
+					.joinToString("") { it.string }
+					.split(" ").filter { it.length > 1 }
+				rarityFromWords(words)
 			}
 
+		fun fromEscapeCodeLore(lore: List<String>): Rarity? =
+			lore.lastNotNullOfOrNull { line ->
+				rarityFromWords(line.removeColorCodes().split(" ").filter { it.length > 1 })
+			}
 	}
 }
