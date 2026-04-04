@@ -179,12 +179,6 @@ val shadowMe by configurations.creating {
 	exclude(module = "gson")
 	exclude(group = "org.slf4j")
 }
-val transInclude by configurations.creating {
-	exclude(group = "com.mojang")
-	exclude(group = "org.jetbrains.kotlin")
-	exclude(group = "org.jetbrains.kotlinx")
-	isTransitive = true
-}
 
 val hotswap by configurations.creating {
 	isVisible = false
@@ -245,7 +239,7 @@ dependencies {
 	include(libs.basicMath)
 	(modmenuSourceSet.modImplementationConfigurationName)(libs.modmenu)
 	modImplementation(libs.hypixelmodapi)
-	include(libs.hypixelmodapi.fabric)
+	modLocalRuntime(include(libs.hypixelmodapi.fabric)!!)
 	compileOnly(projects.javaplugin)
 	annotationProcessor(projects.javaplugin)
 	nonModImplentation("com.google.auto.service:auto-service-annotations:1.1.1")
@@ -283,15 +277,9 @@ dependencies {
 	shadowMe(libs.repoparser)
 
 	// Dev environment preinstalled mods
-	modLocalRuntime(libs.bundles.runtime.required)
-	modLocalRuntime(libs.bundles.runtime.optional)
+	modLocalRuntime(libs.devauth)
 	modLocalRuntime(libs.jarvis.fabric)
 	modLocalRuntime(libs.modmenu)
-
-	transInclude.resolvedConfiguration.resolvedArtifacts.forEach {
-		include(it.moduleVersion.id.toString())
-	}
-
 
 	testImplementation("net.fabricmc:fabric-loader-junit:${libs.versions.fabric.loader.get()}")
 	testAgent(files(tasks.getByPath(":testagent:jar")))

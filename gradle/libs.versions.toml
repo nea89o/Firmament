@@ -133,20 +133,6 @@ classTransform-core = { module = "net.lenni0451.classtransform:core", version.re
 
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 
-[bundles]
-runtime_required = [
-	#	"rei_fabric",
-	#	"notenoughanimations",
-	"hypixelmodapi_fabric",
-]
-runtime_optional = [
-	"devauth",
-	#	"freecammod",
-	#	"sodium",
-	#	"qolify",
-	#	"ncr",
-]
-
 [plugins]
 kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin_plugin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
