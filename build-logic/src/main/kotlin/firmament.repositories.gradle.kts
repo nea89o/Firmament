@@ -15,8 +15,9 @@ repositories {
 		}
 	}
 	ivy("https://github.com/HotswapProjects/HotswapAgent/releases/download") {
+		//https://github.com/HotswapProjects/HotswapAgent/releases/download/RELEASE-2.0.3/hotswap-agent-2.0.3.jar
 		patternLayout {
-			artifact("[revision]/[artifact]-[revision].[ext]")
+			artifact("RELEASE-[revision]/[artifact]-[revision].[ext]")
 		}
 		content {
 			includeGroup("virtual.github.hotswapagent")

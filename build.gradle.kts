@@ -239,7 +239,8 @@ dependencies {
 	include(libs.basicMath)
 	(modmenuSourceSet.modImplementationConfigurationName)(libs.modmenu)
 	modImplementation(libs.hypixelmodapi)
-	modLocalRuntime(include(libs.hypixelmodapi.fabric)!!)
+	modLocalRuntime(libs.hypixelmodapi.fabric)
+	include(libs.hypixelmodapi.fabric)
 	compileOnly(projects.javaplugin)
 	annotationProcessor(projects.javaplugin)
 	nonModImplentation("com.google.auto.service:auto-service-annotations:1.1.1")
@@ -269,7 +270,6 @@ dependencies {
 	(yaclSourceSet.modImplementationConfigurationName)(libs.yacl)
 
 	// Actual dependencies
-
 	val reiDeps = libs.rei
 	(reiSourceSet.modImplementationConfigurationName)(reiDeps.api)
 	(reiSourceSet.modRuntimeOnlyConfigurationName)(reiDeps.fabric)
@@ -316,9 +316,11 @@ loom {
 		named("client") {
 			property("devauth.enabled", "true")
 			vmArg("-ea")
-//			vmArg("-XX:+AllowEnhancedClassRedefinition")
-//			vmArg("-XX:HotswapAgent=external")
-//			vmArg("-javaagent:${hotswap.resolve().single().absolutePath}")
+			if (project.findProperty("firmament.useHotswap") == "true") {
+				vmArg("-XX:+AllowEnhancedClassRedefinition")
+				vmArg("-XX:HotswapAgent=external")
+				vmArg("-javaagent:${hotswap.resolve().single().absolutePath}")
+			}
 		}
 	}
 }

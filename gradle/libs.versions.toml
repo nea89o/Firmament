@@ -50,8 +50,7 @@ devauth = "1.2.2"
 neurepoparser = "1.8.0"
 
 # Update from https://github.com/HotswapProjects/HotswapAgent/releases
-# TODO: bump to 2.0.1
-hotswap_agent = "1.4.2-SNAPSHOT"
+hotswap_agent = "2.0.3"
 
 # Update from https://github.com/LlamaLad7/MixinExtras/tags
 mixinextras = "0.5.3"
