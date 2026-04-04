@@ -31,7 +31,6 @@ plugins {
 	alias(libs.plugins.kotlin.plugin.powerassert)
 	alias(libs.plugins.kotlin.plugin.ksp)
 	alias(libs.plugins.loom)
-	alias(libs.plugins.shadow) apply false
 	id("firmament.common")
 	id("firmament.license-management")
 	alias(libs.plugins.mcAutoTranslations)

@@ -36,7 +36,7 @@ femalegender = "5.0.0-Beta.2+1.21.11"
 # Update from https://modrinth.com/mod/iris/versions?l=fabric
 iris = "1.10.5+1.21.11-fabric"
 
-shadow = "8.3.8"
+shadow = "9.4.1"
 
 # Update from https://modrinth.com/mod/not-enough-animations/versions?l=fabric
 notenoughanimations = "Dp0dn63B"
@@ -126,7 +126,6 @@ iris = { module = "maven.modrinth:iris", version.ref = "iris" }
 jade = { module = "maven.modrinth:jade", version.ref = "jade" }
 yacl = { module = "dev.isxander:yet-another-config-lib", version.ref = "yacl" }
 basicMath = { module = "me.shedaniel.cloth:basic-math", version.ref = "basicMath" }
-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 classTransform-mixinsTranslator = { module = "net.lenni0451.classtransform:mixinstranslator", version.ref = "classtransform" }
 classTransform-core = { module = "net.lenni0451.classtransform:core", version.ref = "classtransform" }
 
