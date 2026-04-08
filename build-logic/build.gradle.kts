@@ -26,7 +26,7 @@ fun createPluginCoordinate(provider: Provider<PluginDependency>): String {
 }
 
 dependencies {
-	implementation("com.github.romangraef:neaslicenseextractificator:1.1.0")
+	implementation("io.github.lineargraph:neaslicenseextractificator:1.1.0")
 	api(createPluginCoordinate(libs.plugins.shadow))
 	api(createPluginCoordinate(libs.plugins.loom))
 	implementation("net.fabricmc:access-widener:2.1.0")
