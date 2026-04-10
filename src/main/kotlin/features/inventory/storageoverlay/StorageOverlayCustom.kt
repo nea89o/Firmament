@@ -85,7 +85,12 @@ class StorageOverlayCustom(
 	}
 
 	override fun mouseClick(click: MouseButtonEvent, doubled: Boolean): Boolean {
-		return overview.mouseClicked(click, doubled, (handler as? StorageBackingHandle.Page)?.storagePageSlot)
+		return overview.mouseClicked(
+			click,
+			doubled,
+			(handler as? StorageBackingHandle.Page)?.storagePageSlot,
+			screen.menu.slots.take(screen.menu.rowCount * 9).drop(9)
+		)
 	}
 
 	override fun render(drawContext: GuiGraphics, delta: Float, mouseX: Int, mouseY: Int) {

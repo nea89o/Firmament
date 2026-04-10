@@ -95,7 +95,7 @@ object StorageOverlay {
 
 	@Subscribe
 	fun onChestContentUpdate(event: ChestInventoryUpdateEvent) {
-		rememberContent(currentHandler)
+		rememberContent(currentHandler, event)
 	}
 
 	@Subscribe
@@ -151,12 +151,12 @@ object StorageOverlay {
 		)
 	}
 
-	fun rememberContent(handler: StorageBackingHandle?) {
+	fun rememberContent(handler: StorageBackingHandle?, event: ChestInventoryUpdateEvent? = null) {
 		handler ?: return
 		val data = Data.data.storageInventories
 		when (handler) {
 			is StorageBackingHandle.Overview -> rememberStorageOverview(handler, data)
-			is StorageBackingHandle.Page -> rememberPage(handler, data)
+			is StorageBackingHandle.Page -> rememberPage(handler, data, event)
 		}
 	}
 
@@ -183,10 +183,45 @@ object StorageOverlay {
 
 	private fun rememberPage(
 		handler: StorageBackingHandle.Page,
-		data: SortedMap<StoragePageSlot, StorageData.StorageInventory>
+		data: SortedMap<StoragePageSlot, StorageData.StorageInventory>,
+		event: ChestInventoryUpdateEvent?
 	) {
-		val newStacks =
-			VirtualInventory(handler.handler.items.take(handler.handler.rowCount * 9).drop(9).map { it.copy() })
+		val containerSlotCount = handler.handler.rowCount * 9
+		val storageSlotCount = containerSlotCount - 9
+		val existingStacks = data[handler.storagePageSlot]
+			?.inventory
+			?.stacks
+			?.takeIf { it.size == storageSlotCount }
+			?.map { it.copy() }
+			?.toMutableList()
+		val handlerSnapshot = {
+			handler.handler.items
+				.take(containerSlotCount)
+				.drop(9)
+				.map { it.copy() }
+		}
+		val newStacks = when (event) {
+			is ChestInventoryUpdateEvent.Single -> {
+				val slot = event.slot
+				if (slot !in 9 until containerSlotCount) return
+				val targetIndex = slot - 9
+				val nextStacks = (existingStacks ?: handlerSnapshot().toMutableList())
+				if (targetIndex !in nextStacks.indices) return
+				nextStacks[targetIndex] = event.stack.copy()
+				VirtualInventory(nextStacks)
+			}
+
+			is ChestInventoryUpdateEvent.Multi -> {
+				val source = if (event.contents.size >= containerSlotCount) {
+					event.contents.take(containerSlotCount).drop(9)
+				} else {
+					handlerSnapshot()
+				}
+				VirtualInventory(source.map { it.copy() })
+			}
+
+			null -> VirtualInventory(handlerSnapshot())
+		}
 		data.compute(handler.storagePageSlot) { slot, existingInventory ->
 			(existingInventory ?: StorageData.StorageInventory(
 				slot.defaultName(),

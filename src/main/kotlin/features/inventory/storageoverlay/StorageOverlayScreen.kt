@@ -36,7 +36,6 @@ import moe.nea.firmament.util.MoulConfigUtils.clickMCComponentInPlace
 import moe.nea.firmament.util.MoulConfigUtils.drawMCComponentInPlace
 import moe.nea.firmament.util.MoulConfigUtils.typeMCComponentInPlace
 import moe.nea.firmament.util.StringUtil.words
-import moe.nea.firmament.util.assertTrueOr
 import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.mc.FakeSlot
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
@@ -204,7 +203,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 			.also { it.isAccessible = true }
 			.get(searchText) as MutableCollection<*>).clear()
 		searchText.addObserver { _, _ ->
-			layoutedForEach(StorageOverlay.Data.data ?: StorageData(), { _, _, _ -> })
+			layoutedForEach(StorageOverlay.Data.data ?: StorageData(), null, { _, _, _ -> })
 			coerceScroll(0F)
 		}
 		guiContext.adopt(knobStub)
@@ -296,7 +295,8 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 	) {
 		createScissors(context)
 		val data = StorageOverlay.Data.data ?: StorageData()
-		layoutedForEach(data) { rect, page, inventory ->
+		val includeActivePage = shouldIncludeActivePage(excluding, slots)
+		layoutedForEach(data, excluding.takeIf { includeActivePage }) { rect, page, inventory ->
 			drawPage(
 				context,
 				rect.x,
@@ -317,8 +317,11 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 		get() = guiContext.focusedElement == knobStub
 		set(value) = knobStub.setFocus(value)
 
+	private var navigationGracePage: StoragePageSlot? = null
+	private var navigationGraceUntil: Long = 0L
+
 	override fun mouseClicked(click: MouseButtonEvent, doubled: Boolean): Boolean {
-		return mouseClicked(click, doubled, null)
+		return mouseClicked(click, doubled, null, null)
 	}
 
 	override fun mouseReleased(click: MouseButtonEvent): Boolean {
@@ -348,14 +351,22 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 		return super.mouseDragged(click, offsetX, offsetY)
 	}
 
-	fun mouseClicked(click: MouseButtonEvent, doubled: Boolean, activePage: StoragePageSlot?): Boolean {
+	fun mouseClicked(
+		click: MouseButtonEvent,
+		doubled: Boolean,
+		activePage: StoragePageSlot?,
+		activeSlots: List<Slot>?,
+	): Boolean {
 		guiContext.setFocusedElement(null) // Blur all elements. They will be refocused by clickMCComponentInPlace if in doubt, and we don't have any double click components.
 		val mouseX = click.x
 		val mouseY = click.y
 		if (getScrollPanelInner().contains(mouseX, mouseY)) {
 			val data = StorageOverlay.Data.data
-			layoutedForEach(data) { rect, page, _ ->
+			val includeActivePage = shouldIncludeActivePage(activePage, activeSlots)
+			layoutedForEach(data, activePage.takeIf { includeActivePage }) { rect, page, _ ->
 				if (rect.contains(mouseX, mouseY) && activePage != page && click.button() == 0) {
+					navigationGracePage = page
+					navigationGraceUntil = System.currentTimeMillis() + 1500L
 					page.navigateTo()
 					return true
 				}
@@ -424,14 +435,47 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 		return super.keyPressed(input)
 	}
 
+	private fun shouldIncludeActivePage(activePage: StoragePageSlot?, activeSlots: List<Slot>?): Boolean {
+		activePage ?: return false
+		val searchValue = searchText.get()
+		if (searchValue.isBlank()) return true
+		if (navigationGracePage == activePage) {
+			if (activeSlots?.any { matchesSearch(it.item, searchValue) } == true) {
+				navigationGracePage = null
+				navigationGraceUntil = 0L
+				return true
+			}
+			if (System.currentTimeMillis() < navigationGraceUntil) return true
+		}
+		if (activeSlots?.any { matchesSearch(it.item, searchValue) } == true) return true
+		return StorageOverlay.Data.data
+			?.storageInventories
+			?.get(activePage)
+			?.inventory
+			?.stacks
+			?.any { matchesSearch(it, searchValue) } == true
+	}
+
 
 	var searchCache: String? = null
+	var dataCacheKey: Int? = null
 	var filteredPagesCache = setOf<StoragePageSlot>()
+
+	private fun buildDataCacheKey(data: StorageData): Int {
+		var key = data.storageInventories.size
+		for ((page, inventory) in data.storageInventories) {
+			key = 31 * key + page.hashCode()
+			key = 31 * key + inventory.title.hashCode()
+			key = 31 * key + System.identityHashCode(inventory.inventory)
+		}
+		return key
+	}
 
 	fun getFilteredPages(): Set<StoragePageSlot> {
 		val searchValue = searchText.get()
 		val data = StorageOverlay.Data.data ?: return filteredPagesCache // Do not update cache if data is missing
-		if (searchCache == searchValue) return filteredPagesCache
+		val currentDataCacheKey = buildDataCacheKey(data)
+		if (searchCache == searchValue && dataCacheKey == currentDataCacheKey) return filteredPagesCache
 		val result =
 			data.storageInventories
 				.entries.asSequence()
@@ -439,12 +483,14 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 				.map { it.key }
 				.toSet()
 		searchCache = searchValue
+		dataCacheKey = currentDataCacheKey
 		filteredPagesCache = result
 		return result
 	}
 
 
 	fun matchesSearch(itemStack: ItemStack, search: String): Boolean {
+		if (itemStack.isEmpty) return false
 		val searchWords = search.words().toCollection(TreeSet())
 		fun removePrefixes(value: String) {
 			searchWords.removeIf { value.contains(it, ignoreCase = true) }
@@ -459,6 +505,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 
 	private inline fun layoutedForEach(
 		data: StorageData,
+		alwaysInclude: StoragePageSlot?,
 		func: (
 			rectangle: Rectangle,
 			page: StoragePageSlot, inventory: StorageData.StorageInventory,
@@ -469,7 +516,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 		var maxHeight = 0
 		val filter = getFilteredPages()
 		for ((page, inventory) in data.storageInventories.entries) {
-			if (page !in filter) continue
+			if (page !in filter && page != alwaysInclude && !isNavigationGracePage(page)) continue
 			val currentHeight = inventory.inventory?.let { it.rows * SLOT_SIZE + 6 + font.lineHeight }
 				?: 18
 			maxHeight = maxOf(maxHeight, currentHeight)
@@ -488,6 +535,10 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 			}
 		}
 		lastRenderedInnerHeight = maxHeight + yOffset + scroll.toInt()
+	}
+
+	private fun isNavigationGracePage(page: StoragePageSlot): Boolean {
+		return navigationGracePage == page && System.currentTimeMillis() < navigationGraceUntil
 	}
 
 	fun drawPage(
@@ -514,10 +565,12 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 			)
 			return 18
 		}
-		assertTrueOr(slots == null || slots.size == inv.stacks.size) { return 0 }
+		// During fast server-side transitions, live slots can be one frame out of sync.
+		// Fall back to cached data instead of dropping the page render for that frame.
+		val liveSlots = slots?.takeIf { it.size == inv.stacks.size }
 		val name = inventory.title
 		val pageHeight = inv.rows * SLOT_SIZE + 8 + font.lineHeight
-		if (slots != null && StorageOverlay.TConfig.outlineActiveStoragePage)
+		if (liveSlots != null && StorageOverlay.TConfig.outlineActiveStoragePage)
 			context.drawAlignedBox(
 				x,
 				y + 3 + font.lineHeight,
@@ -527,7 +580,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 			)
 		context.drawString(
 			font, Component.literal(name), x + 6, y + 3,
-			if (slots == null) 0xFFFFFFFF.toInt() else 0xFFFFFF00.toInt(), true
+			if (liveSlots == null) 0xFFFFFFFF.toInt() else 0xFFFFFF00.toInt(), true
 		)
 		context.drawGuiTexture(
 			slotRowSprite,
@@ -540,7 +593,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 		inv.stacks.forEachIndexed { index, stack ->
 			val slotX = (index % 9) * SLOT_SIZE + x + 3
 			val slotY = (index / 9) * SLOT_SIZE + y + 5 + font.lineHeight + 1
-			if (slots == null) {
+			if (liveSlots == null) {
 				val fakeSlot = FakeSlot(stack, slotX, slotY)
 				SlotRenderEvents.Before.publish(SlotRenderEvents.Before(context, fakeSlot))
 				context.renderItem(stack, slotX, slotY)
@@ -568,7 +621,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 					}
 				}
 			} else {
-				val slot = slots[index]
+				val slot = liveSlots[index]
 				slot.x = slotX - slotOffset.x
 				slot.y = slotY - slotOffset.y
 			}
