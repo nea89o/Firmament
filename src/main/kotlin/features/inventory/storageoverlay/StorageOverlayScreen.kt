@@ -343,7 +343,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 	override fun mouseDragged(click: MouseButtonEvent, offsetX: Double, offsetY: Double): Boolean {
 		if (knobGrabbed) {
 			val sbRect = getScrollBarRect()
-			val percentage = (click.x - sbRect.getY()) / sbRect.getHeight()
+			val percentage = (click.y - sbRect.getY()) / sbRect.getHeight()
 			scroll = (getMaxScroll() * percentage).toFloat()
 			mouseScrolled(0.0, 0.0, 0.0, 0.0)
 			return true
