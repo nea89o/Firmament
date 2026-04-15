@@ -310,9 +310,8 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	fun legacyifyItemStack(): LegacyItemData.LegacyItemType {
-		// TODO: add a default here
 		if (itemStack.item == Items.LINGERING_POTION || itemStack.item == Items.SPLASH_POTION)
 			return LegacyItemData.LegacyItemType("potion", 16384)
-		return LegacyItemData.itemLut[itemStack.item]!!
+		return LegacyItemData.itemLut[itemStack.item] ?: LegacyItemData.LegacyItemType(itemStack.item.toString(), 0)
 	}
 }
