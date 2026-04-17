@@ -70,7 +70,9 @@ object ItemExporter {
 			val mut = json.jsonObject.toMutableMap()
 			for (prop in existing) {
 				if (prop.key !in mut || mut[prop.key]!!.let {
-						(it is JsonPrimitive && (it.content.isEmpty() || it.content == "0")) || (it is JsonArray && it.isEmpty()) || (it is JsonObject && it.isEmpty())
+						(it is JsonPrimitive && it.content.isEmpty())
+							|| (it is JsonArray && it.isEmpty())
+							|| (it is JsonObject && it.isEmpty())
 					})
 					mut[prop.key] = prop.value
 			}
