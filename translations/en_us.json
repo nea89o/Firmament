@@ -405,6 +405,8 @@
 	"firmament.config.storage-overlay": "Storage Overlay",
 	"firmament.config.storage-overlay.always-replace": "Always Open Overlay",
 	"firmament.config.storage-overlay.always-replace.description": "Always replace the ender chest with Firmament's storage overlay.",
+	"firmament.config.storage-overlay.auto-focus-search": "Auto Focus Search",
+	"firmament.config.storage-overlay.auto-focus-search.description": "Automatically focus the search field when opening the storage overlay.",
 	"firmament.config.storage-overlay.block-item-scrolling": "Block Scrolling on Items",
 	"firmament.config.storage-overlay.block-item-scrolling.description": "Disables scrolling the storage overlay screen while you are hovering over an item. Useful if you have a tooltip scrolling mod.",
 	"firmament.config.storage-overlay.height": "Storage Height",

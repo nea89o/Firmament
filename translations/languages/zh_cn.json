@@ -383,6 +383,8 @@
 	"firmament.config.storage-overlay.rows.description": "存储UI和概览使用的最大列数。",
 	"firmament.config.storage-overlay.scroll-speed": "滚动速度",
 	"firmament.config.storage-overlay.scroll-speed.description": "存储叠加和概览内部的滚动速度。",
+	"firmament.config.storage-overlay.auto-focus-search": "自动聚焦搜索",
+	"firmament.config.storage-overlay.auto-focus-search.description": "打开存储叠加时自动聚焦搜索字段。",
 	"firmament.config.wardrobe-keybinds": "衣柜快捷键",
 	"firmament.config.wardrobe-keybinds.change-page": "更改页面",
 	"firmament.config.wardrobe-keybinds.change-page.description": "更改当前选中的页面",

@@ -101,6 +101,10 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 
 	public override fun init() {
 		super.init()
+		searchText.set("") // Reset search input on open
+		if (StorageOverlay.TConfig.autoFocusSearch) {
+			guiContext.setFocusedElement(searchField)
+		}
 		pageWidthCount = StorageOverlay.TConfig.columns
 			.coerceAtMost((width - PADDING) / (PAGE_WIDTH + PADDING))
 			.coerceAtLeast(1)
