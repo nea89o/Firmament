@@ -1,5 +1,6 @@
 package moe.nea.firmament.features.texturepack
 
+import com.mojang.authlib.GameProfile
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.mojang.authlib.properties.Property
 import java.util.Optional
@@ -102,16 +103,12 @@ object CustomSkyBlockTextures {
 		return ResourceLocation.fromNamespaceAndPath("firmskyblock", "textures/placedskull/$id.png")
 	}
 
-	fun modifySkullTexture(
-        type: SkullBlock.Type?,
-        component: ResolvableProfile?,
-        cir: CallbackInfoReturnable<RenderType>
-	) {
-		if (type != SkullBlock.Types.PLAYER) return
+	fun modifyRenderInfoType(gameProfile: GameProfile, cir: CallbackInfoReturnable<RenderType>) {
 		if (!TConfig.skullsEnabled) return
-		if (component == null) return
-
-		val n = skullTextureCache.invoke(component).getOrNull() ?: return
-		cir.returnValue = RenderType.entityTranslucent(n)
+		val textureProperty = gameProfile.properties["textures"].firstOrNull() ?: return
+		val id = getSkullId(textureProperty) ?: return
+		val identifier = ResourceLocation.fromNamespaceAndPath("firmskyblock", "textures/placedskull/$id.png")
+		if (!Minecraft.getInstance().resourceManager.getResource(identifier).isPresent) return
+		cir.returnValue = RenderType.entityTranslucent(identifier)
 	}
 }

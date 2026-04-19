@@ -63,7 +63,7 @@ jarvis = "2.1.0"
 nealisp = "1.1.0"
 
 # Update from https://github.com/NotEnoughUpdates/MoulConfig/tags
-moulconfig = "4.3.0-beta"
+moulconfig = "4.4.0-beta"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/mc-auto-translations/moe.nea.mc-auto-translations.gradle.plugin
 mcAutoTranslations = "0.4.0"
