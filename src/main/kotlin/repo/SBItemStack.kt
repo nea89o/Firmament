@@ -427,7 +427,7 @@ data class SBItemStack constructor(
 		if (stars == 0) return
 		// TODO: increase stats and add the star level into the nbt data so star displays work
 		itemStack.modifyExtraAttributes {
-			it.putInt("upgrade_level", stars)
+			putInt("upgrade_level", stars)
 		}
 		itemStack.displayNameAccordingToNbt = itemStack.displayNameAccordingToNbt.copy()
 			.append(starString(stars))

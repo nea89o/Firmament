@@ -200,8 +200,8 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 
 	fun exportModernSnbt(): Tag {
 		val overlay = ItemStack.CODEC.encodeStart(MC.currentOrDefaultRegistryNbtOps, itemStack.copy().also {
-			it.modifyExtraAttributes { attribs ->
-				originalId.ifPresent { attribs.putString("id", it) }
+			it.modifyExtraAttributes {
+				originalId.ifPresent { putString("id", it) }
 			}
 		}).orThrow
 		val overlayWithVersion =

@@ -18,25 +18,23 @@ import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.component.CustomData
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.component.CustomData
 import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.ItemNameLookup
 import moe.nea.firmament.repo.RepoManager
-import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
-import moe.nea.firmament.util.mc.unsafeNbt
 import moe.nea.firmament.util.skyblock.ScreenIdentification
 import moe.nea.firmament.util.skyblock.ScreenType
 
@@ -128,23 +126,21 @@ data class HypixelPetInfo(
 
 private val jsonparser = Json { ignoreUnknownKeys = true }
 
+/**
+ * Returns a copy of the [ItemStack]'s `minecraft:custom_data` component.
+ *
+ * If you want to modify attributes without replacing the list, use [modifyExtraAttributes].
+ */
 var ItemStack.extraAttributes: CompoundTag
+	get() = get(DataComponents.CUSTOM_DATA)?.copyTag() ?: CompoundTag()
 	set(value) {
 		set(DataComponents.CUSTOM_DATA, CustomData.of(value))
 	}
-	get() {
-		val customData = get(DataComponents.CUSTOM_DATA) ?: run {
-			val component = CustomData.of(CompoundTag())
-			set(DataComponents.CUSTOM_DATA, component)
-			component
-		}
-		return customData.unsafeNbt
-	}
 
-fun ItemStack.modifyExtraAttributes(block: (CompoundTag) -> Unit) {
+fun ItemStack.modifyExtraAttributes(block: CompoundTag.() -> Unit) {
 	val baseNbt = get(DataComponents.CUSTOM_DATA)?.copyTag() ?: CompoundTag()
-	block(baseNbt)
-	set(DataComponents.CUSTOM_DATA, CustomData.of(baseNbt))
+	baseNbt.block()
+	extraAttributes = baseNbt
 }
 
 val ItemStack.skyBlockUUIDString: String?
@@ -206,9 +202,10 @@ val ItemStack.petData: HypixelPetInfo?
 	get() = petDataCache(this).getOrNull()
 
 fun ItemStack.setSkyBlockFirmamentUiId(uiId: String) = setSkyBlockId(SkyblockId("FIRMAMENT_UI_$uiId"))
-fun ItemStack.setSkyBlockId(skyblockId: SkyblockId): ItemStack {
-	this.extraAttributes["id"] = skyblockId.neuItem
-	return this
+fun ItemStack.setSkyBlockId(skyblockId: SkyblockId): ItemStack = apply {
+	modifyExtraAttributes {
+		putString("id", skyblockId.neuItem)
+	}
 }
 
 private val STORED_REGEX = "Stored: ($SHORT_NUMBER_FORMAT)/.+".toPattern()
