@@ -93,6 +93,7 @@ object TimerInLore {
 		GREENHOUSE_GROWTH_STAGE("Next Stage:", "Come back at"),
 		GREENHOUSE_DECAY("Decay", "Decays at"),
 		GREENHOUSE_WATER_LEVEL("Lasts for:", "Water until"),
+		CADUCOUS_FEEDER("Until ready:", "Ready at:"),
 		;
 	}
 
