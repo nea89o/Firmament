@@ -28,7 +28,7 @@ data class CustomItemModelEvent(
 
 				inner class IRef(weakInstance: ItemStack, data: IntrospectableItemModelManager) :
 					Ref(weakInstance, data) {
-					override fun shouldBeEvicted(): Boolean = false
+					override fun shouldBeEvicted(): Boolean = !isSimpleStack
 					val isSimpleStack = weakInstance.componentsPatch.isEmpty || (weakInstance.componentsPatch.size() == 1 && weakInstance.get(
 						DataComponents.CUSTOM_DATA)?.isEmpty == true)
 					val item = weakInstance.item
