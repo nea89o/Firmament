@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.nbt.StringTag
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.AxeItem
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.RestArgumentType
@@ -44,6 +45,7 @@ import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.setSkyBlockId
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.tr
+import moe.nea.firmament.util.unformattedString
 
 object ItemExporter {
 
@@ -209,10 +211,38 @@ object ItemExporter {
 
 	@Subscribe
 	fun onKeyBind(event: HandledScreenKeyPressedEvent) {
-		if (event.matches(PowerUserTools.TConfig.exportItemStackToRepo)) {
-			val itemStack = event.screen.focusedItemStack ?: return
-			PowerUserTools.lastCopiedStack = (itemStack to exportItem(itemStack))
+		if (!event.matches(PowerUserTools.TConfig.exportItemStackToRepo)) return
+
+		val itemStack = event.screen.focusedItemStack ?: return
+		val displayName = itemStack.displayName?.string ?: return
+		val skyblockID = itemStack.skyBlockId.toString()
+		val vanillaItem = itemStack.item
+		val lore = itemStack.loreAccordingToNbt
+
+		val warn = { reason: String ->
+			MC.sendChat(
+				tr(
+					"firmament.repo.modified.item",
+					"§cThis Item could be modified ($reason§c), please make sure to export a default item."
+				)
+			)
 		}
+
+		if (displayName.isBlank()) return
+
+		if (itemStack.count > 1) {
+			warn("item count above 1")
+			return
+		}
+		if (skyblockID.contains("SACK") || skyblockID.contains("FISHING_NET")) {
+			warn("modified by attributes")
+		}
+		if (vanillaItem is AxeItem && lore.any {
+				it.unformattedString.contains("Damage") || it.unformattedString.contains("Strength") }) {
+			warn("modified by essence perk")
+		}
+
+		PowerUserTools.lastCopiedStack = itemStack to exportItem(itemStack)
 	}
 
 	val nonOverlayCache = mutableMapOf<SkyblockId, Boolean>()
