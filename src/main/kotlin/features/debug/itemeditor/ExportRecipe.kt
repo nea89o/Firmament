@@ -4,9 +4,10 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.client.player.AbstractClientPlayer
-import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.core.ClientAsset
+import net.minecraft.world.entity.decoration.ArmorStand
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.HandledScreenKeyPressedEvent
@@ -88,6 +89,7 @@ object ExportRecipe {
 		if (!event.matches(PowerUserTools.TConfig.exportUIRecipes)) {
 			return
 		}
+		if (event.screen !is ContainerScreen) return
 		val title = event.screen.title.string
 		val sellSlot = event.screen.getSlotByIndex(49, false)?.item
 		val craftingTableSlot = event.screen.getSlotByIndex(craftingTableSlut, false)
