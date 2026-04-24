@@ -11,6 +11,7 @@ import kotlin.io.path.moveTo
 import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 import kotlin.io.path.writeText
+import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.config.storage.FirmamentConfigLoader.configFolder
 import moe.nea.firmament.gui.config.storage.FirmamentConfigLoader.configVersionFile
 import moe.nea.firmament.gui.config.storage.FirmamentConfigLoader.storageFolder
@@ -32,6 +33,7 @@ object LegacyImporter {
 	)
 
 	fun importFromLegacy() {
+		Firmament.logger.info("Importing legacy config")
 		if (!configFolder.exists()) return
 		configFolder.moveTo(backupPath)
 		configFolder.createDirectories()

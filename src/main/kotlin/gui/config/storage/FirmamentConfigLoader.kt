@@ -18,6 +18,7 @@ import kotlin.time.Duration.Companion.seconds
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.features.debug.DebugLogger
+import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.SBData.NULL_UUID
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.data.IConfigProvider
@@ -58,7 +59,7 @@ object FirmamentConfigLoader {
 					?.listDirectoryEntries()
 					?.filter { it.isDirectory() }
 					?.mapNotNull {
-						val uuid= runCatching { UUID.fromString(it.name) }.getOrNull() ?: return@mapNotNull null
+						val uuid = runCatching { UUID.fromString(it.name) }.getOrNull() ?: return@mapNotNull null
 						uuid to FirstLevelSplitJsonFolder(loadContext, it).load()
 					}
 					?.toMap()
@@ -162,10 +163,13 @@ object FirmamentConfigLoader {
 	val allConfigs: List<IDataHolder<*>> = IConfigProvider.providers.allValidInstances.flatMap { it.configs }
 
 	fun updateConfigs() {
-		val startVersion = configVersionFile.readText()
-			.substringBefore(' ')
-			.trim()
-			.toInt()
+		val configVersionText = configVersionFile.readText()
+		val startVersion = ErrorUtil.catch("Could not parse old config version from '$configVersionText'") {
+			configVersionText
+				.substringBefore(' ')
+				.trim()
+				.toInt()
+		}.or { return }
 		ConfigLoadContext("update-from-$startVersion-to-$currentConfigVersion-${System.currentTimeMillis()}")
 			.use { loadContext ->
 				updateOneConfig(
