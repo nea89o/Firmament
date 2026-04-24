@@ -1,8 +1,6 @@
 package moe.nea.firmament.repo
 
 import org.apache.logging.log4j.LogManager
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
@@ -17,7 +15,6 @@ import moe.nea.firmament.util.net.HttpUtil
 
 object HypixelStaticData {
 	private val logger = LogManager.getLogger("Firmament.HypixelStaticData")
-	private val moulberryBaseUrl = "https://moulberry.codes"
 	private val hypixelApiBaseUrl = "https://api.hypixel.net"
 	var lowestBin: Map<SkyblockId, Double> = mapOf()
 		private set
@@ -77,9 +74,10 @@ object HypixelStaticData {
 		}
 		Firmament.coroutineScope.launch {
 			while (true) {
-				logger.info("Updating NEU prices")
-				fetchPricesFromMoulberry()
-				delay(5.minutes)
+				logger.info("Updating auction house prices")
+				fetchAuctionHousePrices()
+				delay(
+					2.minutes)
 			}
 		}
 		Firmament.coroutineScope.launch {
@@ -91,15 +89,17 @@ object HypixelStaticData {
 		}
 	}
 
-	private suspend fun fetchPricesFromMoulberry() {
-		lowestBin = HttpUtil.request("$moulberryBaseUrl/lowestbin.json")
+	private suspend fun fetchAuctionHousePrices() {
+		lowestBin = HttpUtil.request("https://api.eliteskyblock.com/resources/auctions/neu")
 			.forJson<Map<SkyblockId, Double>>().await()
+		/*
 		avg1dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/1day.json")
 			.forJson<Map<SkyblockId, Double>>().await()
 		avg3dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/3day.json")
 			.forJson<Map<SkyblockId, Double>>().await()
 		avg7dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/7day.json")
 			.forJson<Map<SkyblockId, Double>>().await()
+		 */
 	}
 
 	private suspend fun fetchBazaarPrices() {
