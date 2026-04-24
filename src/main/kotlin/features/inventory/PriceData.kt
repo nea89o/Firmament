@@ -77,7 +77,7 @@ object PriceData {
 	fun onItemTooltip(it: ItemTooltipEvent) {
 		if (!TConfig.tooltipEnabled) return
 		if (TConfig.enableKeybinding.isBound && !TConfig.enableKeybinding.isPressed()) return
-		val sbId = it.stack.skyBlockId
+		val sbId = it.stack.skyBlockId ?: return
 		val stackSize = it.stack.getLogicalStackSize()
 		val isShowingStack = TConfig.stackSizeKey.isPressed()
 		val multiplier = if (isShowingStack) stackSize else 1
@@ -89,14 +89,9 @@ object PriceData {
 					"firmament.tooltip.multiply.hint",
 					"[${TConfig.stackSizeKey.format()}] to show x${stackSize}"
 				).darkGrey()
-		val bazaarData = HypixelStaticData.bazaarData[sbId?.asBazaarStock]
+		val bazaarData = HypixelStaticData.bazaarData[sbId.asBazaarStock]
 		val lowestBin = HypixelStaticData.lowestBin[sbId]
-		val avgBinValue: Double? = when (TConfig.avgLowestBin) {
-			AvgLowestBin.ONEDAYAVGLOWESTBIN -> HypixelStaticData.avg1dlowestBin[sbId]
-			AvgLowestBin.THREEDAYAVGLOWESTBIN -> HypixelStaticData.avg3dlowestBin[sbId]
-			AvgLowestBin.SEVENDAYAVGLOWESTBIN -> HypixelStaticData.avg7dlowestBin[sbId]
-			AvgLowestBin.OFF -> null
-		}
+		val avgBinValue = HypixelStaticData.avgLowestBin[sbId].takeIf { TConfig.avgLowestBin != AvgLowestBin.OFF }
 		if (bazaarData != null) {
 			it.lines.add(Component.literal(""))
 			it.lines.add(multiplierText)
