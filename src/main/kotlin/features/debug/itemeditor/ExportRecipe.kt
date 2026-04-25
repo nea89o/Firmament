@@ -133,6 +133,7 @@ object ExportRecipe {
 					.dropWhile { it == "Cost" }
 					.takeWhile { it != "Click to trade!" }
 					.takeWhile { it != "Stock" }
+					.takeWhile { !it.startsWith("Annual Stock Year ") }
 					.filter { !it.isBlank() }
 					.map { it.removePrefix("Cost: ") }
 
