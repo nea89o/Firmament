@@ -16,6 +16,7 @@ import moe.nea.firmament.util.net.HttpUtil
 object HypixelStaticData {
 	private val logger = LogManager.getLogger("Firmament.HypixelStaticData")
 	private val hypixelApiBaseUrl = "https://api.hypixel.net"
+	private val eliteSkyblockApiBaseUrl = "https://api.eliteskyblock.com"
 	var lowestBin: Map<SkyblockId, Double> = mapOf()
 		private set
 	var avg1dlowestBin: Map<SkyblockId, Double> = mapOf()
@@ -90,16 +91,15 @@ object HypixelStaticData {
 	}
 
 	private suspend fun fetchAuctionHousePrices() {
-		lowestBin = HttpUtil.request("https://api.eliteskyblock.com/resources/auctions/neu")
+		lowestBin = HttpUtil.request("$eliteSkyblockApiBaseUrl/resources/auctions/neu")
 			.forJson<Map<SkyblockId, Double>>().await()
-		/*
-		avg1dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/1day.json")
+		avg1dlowestBin = HttpUtil.request("$eliteSkyblockApiBaseUrl/resources/auctions/neu/average-lbin/1day")
 			.forJson<Map<SkyblockId, Double>>().await()
-		avg3dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/3day.json")
+		avg3dlowestBin = HttpUtil.request("$eliteSkyblockApiBaseUrl/resources/auctions/neu/average-lbin/3day")
 			.forJson<Map<SkyblockId, Double>>().await()
-		avg7dlowestBin = HttpUtil.request("$moulberryBaseUrl/auction_averages_lbin/7day.json")
+		avg7dlowestBin = HttpUtil.request("$eliteSkyblockApiBaseUrl/resources/auctions/neu/average-lbin/7day")
 			.forJson<Map<SkyblockId, Double>>().await()
-		 */
+
 	}
 
 	private suspend fun fetchBazaarPrices() {
