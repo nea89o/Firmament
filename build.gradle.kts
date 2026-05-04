@@ -431,12 +431,14 @@ mergedSourceSetsJar.configure {
 	from(zipTree(tasks.jar.flatMap { it.archiveFile }))
 	destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 	archiveClassifier.set("merged-source-sets")
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	mergeServiceFiles()
 }
 shadowJar.configure {
 	from(zipTree(tasks.remapJar.flatMap { it.archiveFile }))
 	configurations = listOf(shadowMe)
 	archiveClassifier.set("")
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
 	relocate("io.github.notenoughupdates.moulconfig", "moe.nea.firmament.deps.moulconfig")
 	mergeServiceFiles()
