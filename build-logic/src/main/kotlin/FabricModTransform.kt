@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowCopyAction
+import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.ResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import com.google.gson.Gson
@@ -13,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 
+@CacheableTransformer
 open class FabricModTransform : ResourceTransformer {
 
 	enum class AccessWidenerInclusion : Serializable {
@@ -61,7 +64,7 @@ open class FabricModTransform : ResourceTransformer {
 	}
 
 	override fun hasTransformedResource(): Boolean {
-		return mergedFmj != null
+		return mergedFmj != null || foundAnyAccessWidener
 	}
 
 	override fun modifyOutputStream(os: ZipOutputStream, preserveFileTimestamps: Boolean) {
@@ -69,11 +72,15 @@ open class FabricModTransform : ResourceTransformer {
 		if (foundAnyAccessWidener) {
 			val awFile = mergedFmj["accessWidener"]
 			require(awFile is JsonPrimitive && awFile.isString)
-			os.putNextEntry(ZipEntry(awFile.asString))
+			os.putNextEntry(ZipEntry(awFile.asString).also {
+				it.time = ShadowCopyAction.CONSTANT_TIME_FOR_ZIP_ENTRIES
+			})
 			os.write(foundAccessWideners.write())
 			os.closeEntry()
 		}
-		os.putNextEntry(ZipEntry("fabric.mod.json"))
+		os.putNextEntry(ZipEntry("fabric.mod.json").also {
+			it.time = ShadowCopyAction.CONSTANT_TIME_FOR_ZIP_ENTRIES
+		})
 		os.write(mergedFmj.toString().toByteArray())
 		os.closeEntry()
 	}
