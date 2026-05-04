@@ -427,15 +427,28 @@ tasks.assemble {
 	dependsOn(apiSourcesJar)
 }
 
+
+/**
+ * This configures a shadow jar task to allow duplicate entries before transformation through [mergeServiceFiles]
+ * or [transform], but to fail if those transformers don't collapse all duplicates.
+ */
+fun ShadowJar.configureDuplicateStrategy() {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	failOnDuplicateEntries = true
+}
+
 mergedSourceSetsJar.configure {
 	from(zipTree(tasks.jar.flatMap { it.archiveFile }))
 	destinationDirectory.set(layout.buildDirectory.dir("badjars"))
 	archiveClassifier.set("merged-source-sets")
 	mergeServiceFiles()
+	configureDuplicateStrategy()
 }
+
 shadowJar.configure {
 	from(zipTree(tasks.remapJar.flatMap { it.archiveFile }))
 	configurations = listOf(shadowMe)
+	configureDuplicateStrategy()
 	archiveClassifier.set("")
 	relocate("io.github.moulberry.repo", "moe.nea.firmament.deps.repo")
 	relocate("io.github.notenoughupdates.moulconfig", "moe.nea.firmament.deps.moulconfig")
