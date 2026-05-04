@@ -12,12 +12,13 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSName
+import java.util.TreeSet
 
 class CompatMetaProcessor(val logger: KSPLogger, val codeGenerator: CodeGenerator, val sourceSetName: String) :
 	SymbolProcessor {
 	override fun process(resolver: Resolver): List<KSAnnotated> {
 		val files = resolver.getAllFiles().toList()
-		val packages = files.mapTo(mutableSetOf()) { it.packageName.asString() }
+		val packages = files.mapTo(TreeSet()) { it.packageName.asString() }
 		packages.add("moe.nea.firmament.annotations.generated.$sourceSetName")
 		val compatMeta = resolver.getSymbolsWithAnnotation("moe.nea.firmament.util.compatloader.CompatMeta")
 			.singleOrNull() as KSClassDeclaration? ?: return listOf()
