@@ -2,11 +2,9 @@
 // Check status at https://github.com/NotEnoughUpdates/NotEnoughUpdates-REPO/issues/2311
 package moe.nea.firmament.features.inventory
 
-import java.util.Optional
 import org.lwjgl.glfw.GLFW
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.Style
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ItemTooltipEvent
 import moe.nea.firmament.repo.RepoManager
@@ -17,7 +15,9 @@ import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.darkGrey
+import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.removeColorCodes
+import moe.nea.firmament.util.transformEachRecursively
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.IntUtil.toRomanNumeral
 import moe.nea.firmament.util.grey
@@ -84,26 +84,26 @@ object MissingEnchantments {
 
 				// If any enchantments can be upgraded, rebuild the line
 				if (upgradeMap.isNotEmpty()) {
-					val newLine = Component.literal("")
-					line.visit({ style, string ->
-						var remaining = string
+					it.lines[i] = line.transformEachRecursively { child ->
+						val text = child.directLiteralStringContent ?: return@transformEachRecursively child
+						val result = Component.literal("").setStyle(child.style)
+						var remaining = text
 						while (remaining.isNotEmpty()) {
 							val match = upgradeMap.keys
 								.mapNotNull { enchText -> remaining.indexOf(enchText).takeIf { it >= 0 }?.let { it to enchText } }
 								.minByOrNull { it.first }
 							if (match == null) {
-								newLine.append(Component.literal(remaining).setStyle(style))
+								result.append(Component.literal(remaining))
 								break
 							}
 							val (idx, enchText) = match
-							if (idx > 0) newLine.append(Component.literal(remaining.substring(0, idx)).setStyle(style))
-							newLine.append(Component.literal(enchText).setStyle(style))
-							newLine.append(Component.literal(" → ${upgradeMap[enchText]!!.toRomanNumeral()}").darkGrey())
+							if (idx > 0) result.append(Component.literal(remaining.substring(0, idx)))
+							result.append(Component.literal(enchText))
+							result.append(Component.literal(" → ${upgradeMap[enchText]!!.toRomanNumeral()}").darkGrey())
 							remaining = remaining.substring(idx + enchText.length)
 						}
-						Optional.empty()
-					}, Style.EMPTY)
-					it.lines[i] = newLine
+						result
+					}
 				}
 			}
 		}
