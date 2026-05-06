@@ -117,7 +117,7 @@ object ExportRecipe {
 			MC.sendChat(tr("firmament.repo.export.recipe", "Recipe for ${output.skyBlockId} exported."))
 			return
 		} else if (sellSlot?.displayNameAccordingToNbt?.string == "Sell Item" || (sellSlot?.loreAccordingToNbt
-				?: listOf()).any { it.string == "Click to buyback!" }
+				?: listOf()).any { it.string == "Click to buyback!" } || title.endsWith("Shop")
 		) {
 			val shopId = SkyblockId(title.uppercase().replace(" ", "_") + "_NPC")
 			if (!ItemExporter.isExported(shopId)) {
