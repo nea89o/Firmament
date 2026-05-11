@@ -34,6 +34,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
+import moe.nea.firmament.util.mc.CompoundMutationChecker
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.unsafeNbt
@@ -134,7 +135,7 @@ var ItemStack.extraAttributes: CompoundTag
 	}
 	get() {
 		val customData = get(DataComponents.CUSTOM_DATA)?.unsafeNbt ?: CompoundTag()
-		return customData
+		return CompoundMutationChecker.disallowMutations(customData)
 	}
 
 fun ItemStack.modifyExtraAttributes(block: (CompoundTag) -> Unit) {

@@ -6,6 +6,7 @@ public class EarlyRiser implements Runnable {
     public void run() {
         new HandledScreenRiser().addTinkerers();
         new SectionBuilderRiser().addTinkerers();
+        new CompoundTagMutationFinalizationDetectorInjector().addTinkerers();
 //		TODO: new ItemColorsSodiumRiser().addTinkerers();
     }
 }
