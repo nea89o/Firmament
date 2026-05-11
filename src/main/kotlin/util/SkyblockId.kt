@@ -133,12 +133,8 @@ var ItemStack.extraAttributes: CompoundTag
 		set(DataComponents.CUSTOM_DATA, CustomData.of(value))
 	}
 	get() {
-		val customData = get(DataComponents.CUSTOM_DATA) ?: run {
-			val component = CustomData.of(CompoundTag())
-			set(DataComponents.CUSTOM_DATA, component)
-			component
-		}
-		return customData.unsafeNbt
+		val customData = get(DataComponents.CUSTOM_DATA)?.unsafeNbt ?: CompoundTag()
+		return customData
 	}
 
 fun ItemStack.modifyExtraAttributes(block: (CompoundTag) -> Unit) {
