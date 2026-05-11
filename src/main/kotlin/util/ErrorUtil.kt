@@ -2,6 +2,7 @@
 
 package moe.nea.firmament.util
 
+import io.github.notenoughupdates.moulconfig.internal.InitUtil
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -9,7 +10,8 @@ import moe.nea.firmament.Firmament
 
 @Suppress("NOTHING_TO_INLINE") // Suppressed since i want the logger to not pick up the ErrorUtil stack-frame
 object ErrorUtil {
-	var aggressiveErrors = run {
+	@JvmField
+	val aggressiveErrors = run {
 		TestUtil.isInTest || Firmament.DEBUG
 			|| ErrorUtil::class.java.desiredAssertionStatus()
 	}
@@ -35,6 +37,7 @@ object ErrorUtil {
 	fun logError(message: String, exception: Throwable) {
 		Firmament.logger.error(message, exception)
 	}
+
 	fun logError(message: String) {
 		Firmament.logger.error(message)
 	}
@@ -68,6 +71,10 @@ object ErrorUtil {
 			fun <T> succeed(value: T): Catch<T> = Catch(value, null)
 		}
 	}
+
+	@JvmStatic
+	@JvmName("_catch")
+	fun <T> catch(message: String, block: InitUtil.ThrowingSupplier<T, Throwable>) = catch(message, { block.get() })
 
 	inline fun <T> catch(message: String, block: () -> T): Catch<T> {
 		try {
