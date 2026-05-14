@@ -7,18 +7,18 @@ import kotlinx.serialization.json.put
 import kotlin.concurrent.thread
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.nbt.ByteTag
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.Tag
 import net.minecraft.nbt.IntTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.StringTag
-import net.minecraft.tags.ItemTags
+import net.minecraft.nbt.Tag
 import net.minecraft.network.chat.Component
+import net.minecraft.tags.ItemTags
 import net.minecraft.util.Unit
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.ClientStartedEvent
@@ -89,6 +89,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		deleteLineUntilNextSpace { it.startsWith("Progress to Level ") }
 		deleteLineUntilNextSpace { it.startsWith("MAX LEVEL") }
 		deleteLineUntilNextSpace { it.startsWith("Click to view recipe!") }
+		deleteLineUntilNextSpace { it.equals("Ability: (Pickobulus|Mining Speed Boost|Maniac Miner|Tunnel Vision|Sheer Force|Gemstone Infusion)  ".toRegex()) }
 		collapseWhitespaces()
 
 		name = name.transformEachRecursively {
