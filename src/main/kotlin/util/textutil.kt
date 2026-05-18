@@ -93,28 +93,20 @@ fun Component.getLegacyFormatString(trimmed: Boolean = false): String =
 				lastCode = code
 			}
 		}
-		for (component in iterator()) {
-			if (component.directLiteralStringContent.isNullOrEmpty() && component.siblings.isEmpty()) {
-				continue
+		if (!trimmed && directLiteralStringContent == "" && siblings.isNotEmpty()) {
+			appendCode(style.toLegacyFormatString())
+			appendCode("§r")
+		}
+		visit({ style, string ->
+			if (string.isEmpty()) {
+				return@visit Optional.empty<Unit>()
 			}
-			appendCode(component.style.let { style ->
-				var color = style.color?.toChatFormatting()?.toString() ?: "§r"
-				if (style.isBold)
-					color += LegacyFormattingCode.BOLD.formattingCode
-				if (style.isItalic)
-					color += LegacyFormattingCode.ITALIC.formattingCode
-				if (style.isUnderlined)
-					color += LegacyFormattingCode.UNDERLINE.formattingCode
-				if (style.isObfuscated)
-					color += LegacyFormattingCode.OBFUSCATED.formattingCode
-				if (style.isStrikethrough)
-					color += LegacyFormattingCode.STRIKETHROUGH.formattingCode
-				color
-			})
-			sb.append(component.directLiteralStringContent)
+			appendCode(style.toLegacyFormatString())
+			sb.append(string)
 			if (!trimmed)
 				appendCode("§r")
-		}
+			Optional.empty()
+		}, Style.EMPTY)
 		sb.toString()
 	}.also {
 		var it = it
@@ -125,6 +117,21 @@ fun Component.getLegacyFormatString(trimmed: Boolean = false): String =
 		}
 		it
 	}
+
+private fun Style.toLegacyFormatString(): String {
+	var color = color?.toChatFormatting()?.toString() ?: "§r"
+	if (isBold)
+		color += LegacyFormattingCode.BOLD.formattingCode
+	if (isItalic)
+		color += LegacyFormattingCode.ITALIC.formattingCode
+	if (isUnderlined)
+		color += LegacyFormattingCode.UNDERLINE.formattingCode
+	if (isObfuscated)
+		color += LegacyFormattingCode.OBFUSCATED.formattingCode
+	if (isStrikethrough)
+		color += LegacyFormattingCode.STRIKETHROUGH.formattingCode
+	return color
+}
 
 private val textColorLUT = ChatFormatting.entries
 	.mapNotNull { formatting -> formatting.color?.let { it to formatting } }
@@ -212,5 +219,3 @@ fun titleCase(str: String): String {
 			word.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 		}
 }
-
-
