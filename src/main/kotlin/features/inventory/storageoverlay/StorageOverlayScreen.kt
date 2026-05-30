@@ -515,7 +515,7 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 			return 18
 		}
 		assertTrueOr(slots == null || slots.size == inv.stacks.size) { return 0 }
-		val name = inventory.title
+		val name = StorageOverlay.Data.data.displayName(page)
 		val pageHeight = inv.rows * SLOT_SIZE + 8 + font.lineHeight
 		if (slots != null && StorageOverlay.TConfig.outlineActiveStoragePage)
 			context.drawAlignedBox(

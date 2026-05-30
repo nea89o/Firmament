@@ -10,11 +10,14 @@ import moe.nea.firmament.util.SortedMapSerializer
 
 @Serializable
 data class StorageData(
-    val storageInventories: SortedMap<StoragePageSlot, StorageInventory> = sortedMapOf()
+    val storageInventories: SortedMap<StoragePageSlot, StorageInventory> = sortedMapOf(),
+    val customNames: SortedMap<StoragePageSlot, String> = sortedMapOf(),
 ) {
+    /** The name to show for [slot]: the user assigned name if there is one, otherwise the vanilla default. */
+    fun displayName(slot: StoragePageSlot): String = customNames[slot] ?: slot.defaultName()
+
     @Serializable
     data class StorageInventory(
-        var title: String,
         val slot: StoragePageSlot,
         var inventory: VirtualInventory?,
     )

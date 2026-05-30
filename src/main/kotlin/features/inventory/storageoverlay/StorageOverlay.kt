@@ -175,7 +175,7 @@ object StorageOverlay {
 				continue
 			}
 			if (!isEmpty) {
-				data[slot] = StorageData.StorageInventory(slot.defaultName(), slot, null)
+				data[slot] = StorageData.StorageInventory(slot, null)
 			}
 		}
 		Data.markDirty()
@@ -189,7 +189,6 @@ object StorageOverlay {
 			VirtualInventory(handler.handler.items.take(handler.handler.rowCount * 9).drop(9).map { it.copy() })
 		data.compute(handler.storagePageSlot) { slot, existingInventory ->
 			(existingInventory ?: StorageData.StorageInventory(
-				slot.defaultName(),
 				slot,
 				null
 			)).also {

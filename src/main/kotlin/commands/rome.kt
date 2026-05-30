@@ -3,6 +3,7 @@ package moe.nea.firmament.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType.string
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import java.net.http.HttpResponse
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import kotlinx.coroutines.launch
@@ -18,8 +19,10 @@ import moe.nea.firmament.features.debug.DebugLogger
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.features.inventory.buttons.InventoryButtons
+import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlay
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverlayScreen
 import moe.nea.firmament.features.inventory.storageoverlay.StorageOverviewScreen
+import moe.nea.firmament.features.inventory.storageoverlay.StoragePageSlot
 import moe.nea.firmament.features.mining.MiningBlockInfoUi
 import moe.nea.firmament.gui.config.AllConfigsGui
 import moe.nea.firmament.gui.config.BooleanHandler
@@ -45,6 +48,31 @@ import moe.nea.firmament.util.mc.SNbtFormatter
 import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.unformattedString
 
+
+private fun setStorageName(source: DefaultSource, slot: StoragePageSlot, name: String) {
+	StorageOverlay.Data.data.customNames[slot] = name
+	StorageOverlay.Data.markDirty()
+	source.sendFeedback(tr("firmament.command.storagename.set", "Renamed ${slot.defaultName()} to \"$name\"."))
+}
+
+private fun resetStorageName(source: DefaultSource, slot: StoragePageSlot) {
+	StorageOverlay.Data.data.customNames.remove(slot)
+	StorageOverlay.Data.markDirty()
+	source.sendFeedback(tr("firmament.command.storagename.reset", "Reset the name of ${slot.defaultName()}."))
+}
+
+private fun LiteralArgumentBuilder<DefaultSource>.storageNameBranch(
+	type: String,
+	maxPage: Int,
+	toSlot: (Int) -> StoragePageSlot,
+) = thenLiteral(type) {
+	thenArgument("page", IntegerArgumentType.integer(1, maxPage)) { page ->
+		thenExecute { resetStorageName(source, toSlot(this[page])) }
+		thenArgument("name", RestArgumentType) { name ->
+			thenExecute { setStorageName(source, toSlot(this[page]), this[name]) }
+		}
+	}
+}
 
 fun firmamentCommand(ctx: CommandBuildContext) = literal("firmament") {
 	thenLiteral("config") {
@@ -134,6 +162,10 @@ fun firmamentCommand(ctx: CommandBuildContext) = literal("firmament") {
 			ScreenUtil.setScreenLater(StorageOverlayScreen())
 			MC.player?.connection?.sendCommand("storage")
 		}
+	}
+	thenLiteral("storagename") {
+		storageNameBranch("enderchest", 9) { StoragePageSlot.ofEnderChestPage(it) }
+		storageNameBranch("backpack", 18) { StoragePageSlot.ofBackPackPage(it) }
 	}
 	thenLiteral("repo") {
 		thenLiteral("checkpr") {

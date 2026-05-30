@@ -107,7 +107,7 @@ class StorageOverviewScreen() : Screen(Component.empty()) {
 	private fun getMaxScroll() = lastRenderedHeight - height + 2 * StorageOverlay.TConfig.margin
 
     private fun renderStoragePage(context: GuiGraphics, page: StorageData.StorageInventory, mouseX: Int, mouseY: Int) {
-        context.drawString(MC.font, page.title, 2, 2, -1, true)
+        context.drawString(MC.font, content.displayName(page.slot), 2, 2, -1, true)
         val inventory = page.inventory
         if (inventory == null) {
             // TODO: Missing texture
