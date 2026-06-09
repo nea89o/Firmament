@@ -61,6 +61,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		extraAttribs.remove("timestamp")
 		extraAttribs.remove("uuid")
 		extraAttribs.remove("modifier")
+		extraAttribs.remove("donated_museum")
 		extraAttribs.getString("petInfo").ifPresent { petInfoJson ->
 			var petInfo = Firmament.json.decodeFromString<HypixelPetInfo>(petInfoJson)
 			petInfo = petInfo.copy(candyUsed = 0, heldItem = null, exp = 0.0, active = null, uuid = null)
