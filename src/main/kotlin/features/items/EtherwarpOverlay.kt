@@ -15,7 +15,6 @@ import net.minecraft.world.level.BlockGetter
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.extraAttributes
@@ -173,33 +172,18 @@ object EtherwarpOverlay {
 			{ EtherwarpBlockHit.Miss })
 	}
 
-	enum class EtherwarpItemKind {
-		MERGED,
-		RAW
-	}
-
 	@Subscribe
 	fun renderEtherwarpOverlay(event: WorldRenderLastEvent) {
 		if (!TConfig.etherwarpOverlay) return
 		val player = MC.player ?: return
 		if (TConfig.onlyShowWhileSneaking && !player.isShiftKeyDown) return
-		val world = player.level
+
 		val heldItem = MC.stackInHand
-		val etherwarpTyp = run {
-			if (heldItem.extraAttributes.contains("ethermerge"))
-				EtherwarpItemKind.MERGED
-			else if (heldItem.skyBlockId == SkyBlockItems.ETHERWARP_CONDUIT)
-				EtherwarpItemKind.RAW
-			else
-				return
-		}
-		val playerEyeHeight = // Sneaking: 1.27 (1.21) 1.54 (1.8.9) / Upright: 1.62 (1.8.9,1.21)
-			if (player.isShiftKeyDown || etherwarpTyp == EtherwarpItemKind.MERGED)
-				(if (SBData.skyblockLocation?.isModernServer ?: false) 1.27 else 1.54)
-			else 1.62
-		val playerEyePos = player.position.add(0.0, playerEyeHeight, 0.0)
-		val start = playerEyePos
-		val end = player.getViewVector(0F).scale(160.0).add(playerEyePos)
+		if (!heldItem.extraAttributes.contains("ethermerge") && heldItem.skyBlockId != SkyBlockItems.ETHERWARP_CONDUIT) return
+
+		val world = player.level
+		val start = player.eyePosition
+		val end = player.getViewVector(0F).scale(160.0).add(start)
 		val hitResult = raycastWithEtherwarpTransparency(
 			world,
 			start,
@@ -212,7 +196,7 @@ object EtherwarpOverlay {
 				EtherwarpResult.OCCUPIED
 			else if (!isEtherwarpTransparent(world, blockPos.above(2)))
 				EtherwarpResult.OCCUPIED
-			else if (playerEyePos.distanceToSqr(hitResult.accuratePos ?: blockPos.center) > 61 * 61)
+			else if (start.distanceToSqr(hitResult.accuratePos ?: blockPos.center) > 61 * 61)
 				EtherwarpResult.TOO_DISTANT
 			else if ((MC.instance.hitResult as? BlockHitResult)
 					?.takeIf { it.type == HitResult.Type.BLOCK }

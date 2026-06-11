@@ -69,11 +69,6 @@ private constructor(
 
 	val hasCustomMining
 		get() = RepoManager.miningData.customMiningAreas[this]?.isSpecialMining ?: false
-	val isModernServer
-		get() = when(this) {
-			GALATEA, HUB, PRIVATE_ISLAND, FARMING_ISLANDS, SPIDER, END, PARK, JERRY_WORKSHOP, CRIMSON_ISLE -> true
-			else -> false
-		}
 
 	val userFriendlyName
 		get() = RepoManager.neuRepo.constants.islands.areaNames
