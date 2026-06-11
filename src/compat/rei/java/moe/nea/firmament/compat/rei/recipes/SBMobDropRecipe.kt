@@ -8,10 +8,9 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget
 import me.shedaniel.rei.api.client.gui.widgets.Widgets
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
-import me.shedaniel.rei.api.common.util.EntryStacks
-import net.minecraft.world.item.Items
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.compat.rei.EntityWidget
 import moe.nea.firmament.compat.rei.SBItemEntryDefinition
@@ -49,19 +48,27 @@ class SBMobDropRecipe(override val neuRecipe: NEUMobDropRecipe) : SBRecipe() {
 				if (display.neuRecipe.coins > 0) {
 					tt.add(Component.translatable("firmament.recipe.mobs.coins", display.neuRecipe.coins))
 				}
-				if (display.neuRecipe.combatExperience > 0) {
-					tt.add(
-						Component.translatable(
-							"firmament.recipe.mobs.combat",
-							display.neuRecipe.combatExperience
-						)
-					)
+				listOf(
+					"combat" to display.neuRecipe.combatExperience,
+					"alchemy" to display.neuRecipe.alchemyExperience,
+					"farming" to display.neuRecipe.farmingExperience,
+					"taming" to display.neuRecipe.tamingExperience,
+					"foraging" to display.neuRecipe.foragingExperience,
+					"carpentry" to display.neuRecipe.carpentryExperience,
+					"fishing" to display.neuRecipe.fishingExperience,
+					"runecrafting" to display.neuRecipe.runecraftingExperience,
+					"mining" to display.neuRecipe.miningExperience,
+					"enchanting" to display.neuRecipe.enchantingExperience,
+				).forEach { (key, exp) ->
+					if (exp > 0) {
+						tt.add(Component.translatable("firmament.recipe.mobs.$key", exp))
+					}
 				}
-				if (display.neuRecipe.enchantingExperience > 0) {
+				if (display.neuRecipe.experienceOrbs > 0) {
 					tt.add(
 						Component.translatable(
 							"firmament.recipe.mobs.exp",
-							display.neuRecipe.enchantingExperience
+							display.neuRecipe.experienceOrbs
 						)
 					)
 				}

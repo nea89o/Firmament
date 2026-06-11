@@ -47,7 +47,7 @@ jade = "21.1.1+fabric"
 devauth = "1.2.2"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/neurepoparser
-neurepoparser = "1.8.0"
+neurepoparser = "1.11.0"
 
 # Update from https://github.com/HotswapProjects/HotswapAgent/releases
 hotswap_agent = "2.0.3"
