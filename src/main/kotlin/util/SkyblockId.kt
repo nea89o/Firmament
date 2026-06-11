@@ -318,13 +318,14 @@ val ItemStack.skyBlockId: SkyblockId?
 				}
 			}
 
-			"PARTY_HAT_SLOTH", "PARTY_HAT_CRAB", "PARTY_HAT_CRAB_ANIMATED" -> {
+			"PARTY_HAT_SLOTH", "PARTY_HAT_CRAB", "PARTY_HAT_CRAB_ANIMATED", "CAKE_HAT_2026" -> {
 				val partyHatEmoji = extraAttributes.getString("party_hat_emoji").getOrNull()
 				val partyHatYear = extraAttributes.getInt("party_hat_year").getOrNull()
 				val partyHatColor = extraAttributes.getString("party_hat_color").getOrNull()
 				when {
 					partyHatEmoji != null -> SkyblockId("PARTY_HAT_SLOTH_${partyHatEmoji.uppercase()}")
 					partyHatYear == 2022 -> SkyblockId("PARTY_HAT_CRAB_${partyHatColor?.uppercase()}_ANIMATED")
+					id == "CAKE_HAT_2026" -> SkyblockId("CAKE_HAT_2026_${partyHatColor?.uppercase()}")
 					else -> SkyblockId("PARTY_HAT_CRAB_${partyHatColor?.uppercase()}")
 				}
 			}
