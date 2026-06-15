@@ -271,12 +271,13 @@ object ItemExporter {
 	}
 
 	fun exportStub(skyblockId: SkyblockId, title: String, extra: (ItemStack) -> Unit = {}) {
-		exportItem(ItemStack(Items.PLAYER_HEAD).also {
+		val exportText = exportItem(ItemStack(Items.PLAYER_HEAD).also {
 			it.displayNameAccordingToNbt = Component.literal(title)
 			it.loreAccordingToNbt = listOf(Component.literal(""))
 			it.setSkyBlockId(skyblockId)
 			extra(it) // LOL
 		})
+		MC.sendChat(exportText)
 		MC.sendChat(tr("firmament.repo.export.stub", "Exported a stub item for $skyblockId"))
 	}
 }

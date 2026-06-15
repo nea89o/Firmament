@@ -18,14 +18,14 @@ import kotlinx.serialization.UseSerializers
 import kotlinx.serialization.json.Json
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.component.CustomData
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.component.CustomData
 import moe.nea.firmament.repo.ExpLadders
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache.asItemStack
@@ -204,7 +204,9 @@ val ItemStack.petData: HypixelPetInfo?
 
 fun ItemStack.setSkyBlockFirmamentUiId(uiId: String) = setSkyBlockId(SkyblockId("FIRMAMENT_UI_$uiId"))
 fun ItemStack.setSkyBlockId(skyblockId: SkyblockId): ItemStack {
-	this.extraAttributes["id"] = skyblockId.neuItem
+	modifyExtraAttributes { tag ->
+		tag["id"] = skyblockId.neuItem
+	}
 	return this
 }
 
@@ -242,7 +244,7 @@ fun ItemStack.guessContextualSkyBlockId(): SkyblockId? {
 		return ItemNameLookup.guessItemByName(name, false)
 	}
 	if (screenType == ScreenType.EXPERIMENTATION_RNG_METER
-			|| screenType == ScreenType.ENCHANTMENT_GUIDE
+		|| screenType == ScreenType.ENCHANTMENT_GUIDE
 	) {
 		val name = displayNameAccordingToNbt.unformattedString
 		return RepoManager.enchantedBookCache.byName[name]
