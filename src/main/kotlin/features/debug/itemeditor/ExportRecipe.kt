@@ -5,8 +5,6 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
-import net.minecraft.client.player.AbstractClientPlayer
-import net.minecraft.core.ClientAsset
 import net.minecraft.world.entity.decoration.ArmorStand
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -23,7 +21,6 @@ import moe.nea.firmament.util.ifDropLast
 import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
-import moe.nea.firmament.util.mc.setSkullOwner
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.red
 import moe.nea.firmament.util.removeColorCodes
@@ -67,12 +64,7 @@ object ExportRecipe {
 				?: ""
 			val reply = waitForTextInput("$guessName (NPC)", "Export stub")
 			val id = generateName(reply)
-			ItemExporter.exportStub(id, "§9$reply") {
-				val playerEntity = entity as? AbstractClientPlayer
-				val textureUrl = (playerEntity?.skin?.body as? ClientAsset.DownloadedTexture)?.url
-				if (textureUrl != null)
-					it.setSkullOwner(playerEntity.uuid, textureUrl)
-			}
+			ItemExporter.exportStub(id, "§9$reply", entity)
 			ItemExporter.modifyJson(id) {
 				val mutJson = it.toMutableMap()
 				mutJson["island"] = JsonPrimitive(SBData.skyblockLocation?.locrawMode ?: "unknown")
@@ -121,8 +113,7 @@ object ExportRecipe {
 		) {
 			val shopId = SkyblockId(title.uppercase().replace(" ", "_") + "_NPC")
 			if (!ItemExporter.isExported(shopId)) {
-				// TODO: export location + skin of last clicked npc
-				ItemExporter.exportStub(shopId, "§9$title (NPC)")
+				ItemExporter.exportStub(shopId, "§9$title (NPC)", MC.instance.crosshairPickEntity)
 			}
 			for (index in (9..9 * 5)) {
 				val item = event.screen.getSlotByIndex(index, false)?.item ?: continue

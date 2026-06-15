@@ -12,11 +12,15 @@ import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
+import net.minecraft.client.player.AbstractClientPlayer
+import net.minecraft.core.ClientAsset
 import net.minecraft.nbt.StringTag
 import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.AxeItem
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.commands.RestArgumentType
@@ -40,6 +44,7 @@ import moe.nea.firmament.util.focusedItemStack
 import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
+import moe.nea.firmament.util.mc.setSkullOwner
 import moe.nea.firmament.util.mc.toNbtList
 import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.setSkyBlockId
@@ -270,12 +275,23 @@ object ItemExporter {
 			)
 	}
 
-	fun exportStub(skyblockId: SkyblockId, title: String, extra: (ItemStack) -> Unit = {}) {
-		val exportText = exportItem(ItemStack(Items.PLAYER_HEAD).also {
+	fun getItemForEntity(entity: Entity?): Item {
+		if (entity == null) return Items.BARRIER
+		if (entity is AbstractClientPlayer) return Items.PLAYER_HEAD
+		return entity.pickResult?.item ?: Items.BARRIER
+	}
+
+	fun exportStub(skyblockId: SkyblockId, title: String, entity: Entity?) {
+		val exportText = exportItem(ItemStack(getItemForEntity(entity)).also {
 			it.displayNameAccordingToNbt = Component.literal(title)
 			it.loreAccordingToNbt = listOf(Component.literal(""))
 			it.setSkyBlockId(skyblockId)
-			extra(it) // LOL
+			if (it.`is`(Items.PLAYER_HEAD)) {
+				val playerEntity = entity as? AbstractClientPlayer
+				val textureUrl = (playerEntity?.skin?.body as? ClientAsset.DownloadedTexture)?.url
+				if (textureUrl != null)
+					it.setSkullOwner(playerEntity.uuid, textureUrl)
+			}
 		})
 		MC.sendChat(exportText)
 		MC.sendChat(tr("firmament.repo.export.stub", "Exported a stub item for $skyblockId"))
