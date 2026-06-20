@@ -43,7 +43,7 @@ public class ChangeColorOfLivingEntities<T extends LivingEntity, S extends Livin
 	}
 
 	@Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
-	private void afterRender(S livingEntityRenderState, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, CameraRenderState cameraRenderState, CallbackInfo ci) {
+	private void afterRender(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera, CallbackInfo ci) {
 //		var tintState = EntityRenderTintEvent.HasTintRenderState.cast(livingEntityRenderState);
 //		var overlayTexture = tintState.getOverlayTexture_firmament();
 //		if (overlayTexture != null && vertexConsumerProvider instanceof VertexConsumerProvider.Immediate imm) {
@@ -54,8 +54,8 @@ public class ChangeColorOfLivingEntities<T extends LivingEntity, S extends Livin
 	}
 
 	@Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V"))
-	private void beforeRender(S livingEntityRenderState, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, CameraRenderState cameraRenderState, CallbackInfo ci) {
-		var tintState = EntityRenderTintEvent.HasTintRenderState.cast(livingEntityRenderState);
+	private void beforeRender(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera, CallbackInfo ci) {
+		var tintState = EntityRenderTintEvent.HasTintRenderState.cast(state);
 		var overlayTexture = tintState.getOverlayTexture_firmament();
 		if (overlayTexture != null) {
 			EntityRenderTintEvent.overlayOverride = overlayTexture;

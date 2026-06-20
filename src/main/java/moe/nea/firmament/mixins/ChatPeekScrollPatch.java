@@ -13,15 +13,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ChatPeekScrollPatch {
 
 	@Inject(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;getSelectedSlot()I"), cancellable = true)
-	public void onHotbarScrollWhilePeeking(long window, double horizontal, double vertical, CallbackInfo ci) {
+	public void onHotbarScrollWhilePeeking(long handle, double xoffset, double yoffset, CallbackInfo ci) {
 		if (Fixes.INSTANCE.shouldPeekChat() && Fixes.INSTANCE.shouldScrollPeekedChat()) ci.cancel();
 	}
 
-	@ModifyVariable(method = "onScroll", at = @At(value = "STORE"), ordinal = 0)
-	public int onGetChatHud(int i) {
+	@ModifyVariable(method = "onScroll", at = @At(value = "STORE"), name = "wheel")
+	public int onGetChatHud(int wheel) {
 		if (Fixes.INSTANCE.shouldPeekChat() && Fixes.INSTANCE.shouldScrollPeekedChat())
-			Minecraft.getInstance().gui.getChat().scrollChat(i);
-		return i;
+			Minecraft.getInstance().gui.getChat().scrollChat(wheel);
+		return wheel;
 	}
 
 }

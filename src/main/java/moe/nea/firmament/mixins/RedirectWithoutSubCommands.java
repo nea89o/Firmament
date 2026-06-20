@@ -26,8 +26,8 @@ public class RedirectWithoutSubCommands<S> {
 	)
 	private void injectCommandForRedirects(
 		CommandNode<S> node, StringReader originalReader, CommandContextBuilder<S> contextSoFar, CallbackInfoReturnable<ParseResults<S>> cir,
-		@Local(index = 10) CommandContextBuilder<S> context,
-		@Local(index = 9) CommandNode<S> child
+		@Local(name = "context") CommandContextBuilder<S> context,
+		@Local(name = "child") CommandNode<S> child
 	) {
 		var p = child;
 		var set = new HashSet<>();

@@ -17,10 +17,10 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ClientPacketListener.class)
 public class SoundReceiveEventPatch {
     @WrapWithCondition(method = "handleSoundEvent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;playSeededSound(Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/core/Holder;Lnet/minecraft/sounds/SoundSource;FFJ)V"))
-    private boolean postEventWhenSoundIsPlayed(ClientLevel instance, @Nullable Entity source, double x, double y, double z, Holder<SoundEvent> sound, SoundSource category, float volume, float pitch, long seed) {
+    private boolean postEventWhenSoundIsPlayed(ClientLevel instance, @Nullable Entity except, double x, double y, double z, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch, long seed) {
         var event = new SoundReceiveEvent(
             sound,
-            category,
+			source,
             new Vec3(x,y,z),
             pitch,
             volume,

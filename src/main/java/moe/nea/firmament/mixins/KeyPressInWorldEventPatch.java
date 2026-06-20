@@ -17,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class KeyPressInWorldEventPatch {
 
 	@WrapWithCondition(method = "keyPress", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;click(Lcom/mojang/blaze3d/platform/InputConstants$Key;)V"))
-	public boolean onKeyBoardInWorld(InputConstants.Key key, @Local(argsOnly = true) KeyEvent keyInput) {
-		var event = WorldKeyboardEvent.Companion.publish(new WorldKeyboardEvent(GenericInputAction.of(keyInput), InputModifiers.of(keyInput)));
-		return !event.getCancelled();
+	public boolean onKeyBoardInWorld(InputConstants.Key key, @Local(argsOnly = true, name = "event") KeyEvent event) {
+		return !WorldKeyboardEvent.Companion.publish(new WorldKeyboardEvent(GenericInputAction.of(event), InputModifiers.of(event))).getCancelled();
 	}
 }

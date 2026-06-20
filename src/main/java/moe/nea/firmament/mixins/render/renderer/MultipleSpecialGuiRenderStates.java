@@ -34,17 +34,17 @@ public class MultipleSpecialGuiRenderStates {
 	private MultiBufferSource.BufferSource bufferSource;
 	@Shadow
 	@Final
-	GuiRenderState renderState;
+	private GuiRenderState renderState;
 	@Unique
 	Map<MultiSpecialGuiRenderState, MultiSpecialGuiRenderer<?>> multiRenderers = new HashMap<>();
 
 	@Inject(method = "preparePictureInPictureState", at = @At("HEAD"), cancellable = true)
-	private <T extends PictureInPictureRenderState> void onPrepareElement(T elementState, int windowScaleFactor, CallbackInfo ci) {
-		if (elementState instanceof MultiSpecialGuiRenderState multiState) {
+	private <T extends PictureInPictureRenderState> void onPrepareElement(T picturesInPictureState, int guiScale, CallbackInfo ci) {
+		if (picturesInPictureState instanceof MultiSpecialGuiRenderState multiState) {
 			@SuppressWarnings({"resource", "unchecked"})
 			var renderer = (PictureInPictureRenderer<T>) multiRenderers
 				.computeIfAbsent(multiState, elementState$ -> elementState$.createRenderer(this.bufferSource));
-			renderer.prepare(elementState, renderState, windowScaleFactor);
+			renderer.prepare(picturesInPictureState, renderState, guiScale);
 			ci.cancel();
 		}
 	}

@@ -56,7 +56,7 @@ neurepoparser = "1.11.0"
 hotswap_agent = "2.0.3"
 
 # Update from https://github.com/LlamaLad7/MixinExtras/tags
-mixinextras = "0.5.3"
+mixinextras = "0.5.4"
 
 nealisp = "1.1.0"
 

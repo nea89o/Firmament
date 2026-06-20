@@ -31,8 +31,9 @@ public abstract class EntityUpdateEventListener extends ClientCommonPacketListen
 	}
 
 	@Inject(method = "handleSetEquipment", at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER))
-	private void onEquipmentUpdate(ClientboundSetEquipmentPacket packet, CallbackInfo ci, @Local LivingEntity entity) {
-		EntityUpdateEvent.Companion.publish(new EntityUpdateEvent.EquipmentUpdate(entity, packet.getSlots()));
+	private void onEquipmentUpdate(ClientboundSetEquipmentPacket packet, CallbackInfo ci, @Local Entity entity) {
+		if (entity instanceof LivingEntity livingEntity)
+			EntityUpdateEvent.Companion.publish(new EntityUpdateEvent.EquipmentUpdate(livingEntity, packet.getSlots()));
 	}
 
 	@Inject(method = "handleUpdateAttributes", at = @At("TAIL"))
@@ -42,7 +43,7 @@ public abstract class EntityUpdateEventListener extends ClientCommonPacketListen
 	}
 
 	@Inject(method = "handleSetEntityData", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/syncher/SynchedEntityData;assignValues(Ljava/util/List;)V", shift = At.Shift.AFTER))
-	private void onEntityTracker(ClientboundSetEntityDataPacket packet, CallbackInfo ci, @Local Entity entity) {
+	private void onEntityTracker(ClientboundSetEntityDataPacket packet, CallbackInfo ci, @Local(name = "entity") Entity entity) {
 		EntityUpdateEvent.Companion.publish(new EntityUpdateEvent.TrackedDataUpdate(entity, packet.packedItems()));
 	}
 }

@@ -18,8 +18,8 @@ import java.util.Objects;
 public class DisableCommonPacketWarnings {
 
     @Inject(method = "handleUnknownCustomPayload", at = @At("HEAD"), cancellable = true)
-    public void onCustomPacketError(CustomPacketPayload customPayload, CallbackInfo ci) {
-        if (Objects.equals(customPayload.type(), Identifier.fromNamespaceAndPath("badlion", "mods"))) {
+    public void onCustomPacketError(CustomPacketPayload payload, CallbackInfo ci) {
+        if (Objects.equals(payload.type().id(), Identifier.fromNamespaceAndPath("badlion", "mods"))) {
             ci.cancel();
         }
     }

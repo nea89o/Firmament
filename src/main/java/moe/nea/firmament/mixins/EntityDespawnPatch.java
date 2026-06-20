@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientLevel.class)
 public class EntityDespawnPatch {
     @Inject(method = "removeEntity", at = @At(value = "TAIL"))
-    private void onRemoved(int entityId, Entity.RemovalReason removalReason, CallbackInfo ci, @Local @Nullable Entity entity) {
-        EntityDespawnEvent.Companion.publish(new EntityDespawnEvent(entity, entityId, removalReason));
+    private void onRemoved(int id, Entity.RemovalReason reason, CallbackInfo ci, @Local(name = "entity") @Nullable Entity entity) {
+        EntityDespawnEvent.Companion.publish(new EntityDespawnEvent(entity, id, reason));
     }
 }

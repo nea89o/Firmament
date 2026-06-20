@@ -19,7 +19,7 @@ public class BandAidResourcePackPatch {
         method = "getResource",
         at = @At("RETURN")
     )
-    private Optional<Resource> injectOurCustomResourcesInCaseExistingMethodsFailed(Optional<Resource> original, @Local(argsOnly = true) Identifier identifier) {
-        return original.or(() -> RepoModResourcePack.Companion.createResourceDirectly(identifier));
+    private Optional<Resource> injectOurCustomResourcesInCaseExistingMethodsFailed(Optional<Resource> original, @Local(argsOnly = true, name = "location") Identifier location) {
+        return original.or(() -> RepoModResourcePack.Companion.createResourceDirectly(location));
     }
 }

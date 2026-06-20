@@ -17,7 +17,7 @@ public class MixinPlayerScreenHandler {
 	private static final int OFF_HAND_SLOT = 40;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void moveOffHandSlot(Inventory inventory, boolean onServer, Player owner, CallbackInfo ci) {
+	private void moveOffHandSlot(Inventory inventory, boolean active, Player owner, CallbackInfo ci) {
 		if (Fixes.TConfig.INSTANCE.getHideOffHand()) {
 			InventoryMenu self = (InventoryMenu) (Object) this;
 			self.slots.stream()

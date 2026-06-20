@@ -36,10 +36,6 @@ public abstract class MixinHandledScreen<T extends AbstractContainerMenu> {
 	@Shadow
 	public abstract T getMenu();
 
-	@Shadow
-	protected int topPos;
-	@Shadow
-	protected int leftPos;
 	@Unique
 	Inventory playerInventory;
 
@@ -49,10 +45,10 @@ public abstract class MixinHandledScreen<T extends AbstractContainerMenu> {
 	}
 
 	@Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
-	private void onMouseReleased(MouseButtonEvent click, CallbackInfoReturnable<Boolean> cir) {
+	private void onMouseReleased(MouseButtonEvent event, CallbackInfoReturnable<Boolean> cir) {
 		var self = (AbstractContainerScreen<?>) (Object) this;
-		var clickEvent = new HandledScreenClickEvent(self, click.x(), click.y(), click.button());
-		var keyEvent = new HandledScreenKeyReleasedEvent(self, GenericInputAction.mouse(click), InputModifiers.of(click.modifiers()));
+		var clickEvent = new HandledScreenClickEvent(self, event.x(), event.y(), event.button());
+		var keyEvent = new HandledScreenKeyReleasedEvent(self, GenericInputAction.mouse(event), InputModifiers.of(event.modifiers()));
 		if (HandledScreenClickEvent.Companion.publish(clickEvent).getCancelled()
 			|| HandledScreenKeyReleasedEvent.Companion.publish(keyEvent).getCancelled()) {
 			cir.setReturnValue(true);
@@ -60,25 +56,25 @@ public abstract class MixinHandledScreen<T extends AbstractContainerMenu> {
 	}
 
 	@Inject(method = "extractContents", at = @At("HEAD"))
-	public void onAfterRenderForeground(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		HandledScreenForegroundEvent.Companion.publish(new HandledScreenForegroundEvent((AbstractContainerScreen<?>) (Object) this, context, mouseX, mouseY, delta));
+	public void onAfterRenderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+		HandledScreenForegroundEvent.Companion.publish(new HandledScreenForegroundEvent((AbstractContainerScreen<?>) (Object) this, graphics, mouseX, mouseY, a));
 	}
 
 	@Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
-	public void onMouseClickedSlot(Slot slot, int slotId, int button, ContainerInput actionType, CallbackInfo ci) {
-		if (slotId == -999 && getMenu() != null && actionType == ContainerInput.PICKUP) { // -999 is code for "clicked outside the main window"
+	public void onMouseClickedSlot(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
+		if (slotId == -999 && getMenu() != null && containerInput == ContainerInput.PICKUP) { // -999 is code for "clicked outside the main window"
 			ItemStack cursorStack = getMenu().getCarried();
-			if (cursorStack != null && IsSlotProtectedEvent.shouldBlockInteraction(slot, ContainerInput.THROW, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE, cursorStack)) {
+			if (IsSlotProtectedEvent.shouldBlockInteraction(slot, ContainerInput.THROW, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE, cursorStack)) {
 				ci.cancel();
 				return;
 			}
 		}
-		if (IsSlotProtectedEvent.shouldBlockInteraction(slot, actionType, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE)) {
+		if (IsSlotProtectedEvent.shouldBlockInteraction(slot, containerInput, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE)) {
 			ci.cancel();
 			return;
 		}
-		if (actionType == ContainerInput.SWAP && 0 <= button && button < 9) {
-			if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, button, 0, 0), actionType, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE)) {
+		if (containerInput == ContainerInput.SWAP && 0 <= buttonNum && buttonNum < 9) {
+			if (IsSlotProtectedEvent.shouldBlockInteraction(new Slot(playerInventory, buttonNum, 0, 0), containerInput, IsSlotProtectedEvent.MoveOrigin.INVENTORY_MOVE)) {
 				ci.cancel();
 			}
 		}
@@ -86,10 +82,10 @@ public abstract class MixinHandledScreen<T extends AbstractContainerMenu> {
 
 
 	@WrapOperation(method = "extractSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;extractSlot(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/inventory/Slot;II)V"))
-	public void onDrawSlots(AbstractContainerScreen instance, GuiGraphicsExtractor graphics, Slot slot, int i, int j, Operation<Void> original) {
+	public void onDrawSlots(AbstractContainerScreen<?> instance, GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, Operation<Void> original) {
 		var before = new SlotRenderEvents.Before(graphics, slot);
 		SlotRenderEvents.Before.Companion.publish(before);
-		original.call(instance, graphics, slot, i, j);
+		original.call(instance, graphics, slot, mouseX, mouseY);
 		var after = new SlotRenderEvents.After(graphics, slot);
 		SlotRenderEvents.After.Companion.publish(after);
 	}

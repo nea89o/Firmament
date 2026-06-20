@@ -18,18 +18,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Gui.class)
 public class HudRenderEventsPatch {
-    @Inject(method = "renderSleepOverlay", at = @At(value = "HEAD"))
-    public void renderCallBack(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
-        HudRenderEvent.Companion.publish(new HudRenderEvent(context, tickCounter));
-    }
+	@Inject(method = "extractSleepOverlay", at = @At(value = "HEAD"))
+	public void renderCallBack(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+		HudRenderEvent.Companion.publish(new HudRenderEvent(graphics, deltaTracker));
+	}
 
-    @Inject(method = "renderSlot", at = @At("HEAD"))
-    public void onRenderHotbarItem(GuiGraphicsExtractor context, int x, int y, DeltaTracker tickCounter, Player player, ItemStack stack, int seed, CallbackInfo ci) {
-        if (stack != null && !stack.isEmpty())
-            HotbarItemRenderEvent.Companion.publish(new HotbarItemRenderEvent(stack, context, x, y, tickCounter));
-    }
+	@Inject(method = "extractSlot", at = @At("HEAD"))
+	public void onRenderHotbarItem(GuiGraphicsExtractor graphics, int x, int y, DeltaTracker deltaTracker, Player player, ItemStack itemStack, int seed, CallbackInfo ci) {
+		if (itemStack != null && !itemStack.isEmpty())
+			HotbarItemRenderEvent.Companion.publish(new HotbarItemRenderEvent(itemStack, graphics, x, y, deltaTracker));
+	}
 
-	@Inject(method = "renderEffects", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "extractEffects", at = @At("HEAD"), cancellable = true)
 	public void hideStatusEffects(CallbackInfo ci) {
 		if (Fixes.TConfig.INSTANCE.getHidePotionEffectsHud() && SBData.INSTANCE.isOnSkyblock()) ci.cancel();
 	}

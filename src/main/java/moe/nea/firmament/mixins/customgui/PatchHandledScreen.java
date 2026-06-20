@@ -1,7 +1,6 @@
 
 package moe.nea.firmament.mixins.customgui;
 
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import moe.nea.firmament.events.HandledScreenKeyReleasedEvent;
@@ -38,8 +37,10 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 	protected int leftPos;
 	@Shadow
 	protected int topPos;
+	@Final
 	@Shadow
 	protected int imageHeight;
+	@Final
 	@Shadow
 	protected int imageWidth;
 	@Unique
@@ -74,10 +75,12 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 		this.override = gui;
 	}
 
+	@SuppressWarnings("MissingUnique")
 	public boolean mouseScrolled_firmament(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 		return override != null && override.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 	}
 
+	@SuppressWarnings("MissingUnique")
 	public boolean keyReleased_firmament(KeyEvent input) {
 		if (HandledScreenKeyReleasedEvent.Companion.publish(new HandledScreenKeyReleasedEvent(
 			(AbstractContainerScreen<?>) (Object) this,
@@ -87,6 +90,7 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 		return override != null && override.keyReleased(input);
 	}
 
+	@SuppressWarnings("MissingUnique")
 	public boolean charTyped_firmament(CharacterEvent input) {
 		return override != null && override.charTyped(input);
 	}
@@ -99,7 +103,7 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 	}
 
 	@Inject(method = "extractLabels", at = @At("HEAD"), cancellable = true)
-	private void onDrawForeground(GuiGraphicsExtractor context, int mouseX, int mouseY, CallbackInfo ci) {
+	private void onDrawForeground(GuiGraphicsExtractor graphics, int xm, int ym, CallbackInfo ci) {
 		if (override != null && !override.shouldDrawForeground())
 			ci.cancel();
 	}
@@ -110,41 +114,41 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 		at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;extractSlot(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/inventory/Slot;II)V"))
-	private void beforeSlotRender(AbstractContainerScreen instance, GuiGraphicsExtractor GuiGraphicsExtractor, Slot slot, int i, int j, Operation<Void> original) {
+	private void beforeSlotRender(AbstractContainerScreen<?> instance, GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, Operation<Void> original) {
 		if (override != null) {
-			override.beforeSlotRender(GuiGraphicsExtractor, slot);
+			override.beforeSlotRender(graphics, slot);
 		}
-		original.call(instance, GuiGraphicsExtractor, slot, i, j);
+		original.call(instance, graphics, slot, mouseX, mouseY);
 		if (override != null) {
-			override.afterSlotRender(GuiGraphicsExtractor, slot);
+			override.afterSlotRender(graphics, slot);
 		}
 	}
 
 	@Inject(method = "hasClickedOutside", at = @At("HEAD"), cancellable = true)
 	public void onIsClickOutsideBounds(
-		double mouseX, double mouseY, int left, int top,
+		double mx, double my, int xo, int yo,
 		CallbackInfoReturnable<Boolean> cir) {
 		if (override != null) {
-			cir.setReturnValue(override.isClickOutsideBounds(mouseX, mouseY));
+			cir.setReturnValue(override.isClickOutsideBounds(mx, my));
 		}
 	}
 
 	@Inject(method = "isHovering(IIIIDD)Z", at = @At("HEAD"), cancellable = true)
-	public void onIsPointWithinBounds(int x, int y, int width, int height, double pointX, double pointY, CallbackInfoReturnable<Boolean> cir) {
+	public void onIsPointWithinBounds(int left, int top, int w, int h, double xm, double ym, CallbackInfoReturnable<Boolean> cir) {
 		if (override != null) {
-			cir.setReturnValue(override.isPointWithinBounds(x + this.leftPos, y + this.topPos, width, height, pointX, pointY));
+			cir.setReturnValue(override.isPointWithinBounds(left + this.leftPos, top + this.topPos, w, h, xm, ym));
 		}
 	}
 
 	@Inject(method = "isHovering(Lnet/minecraft/world/inventory/Slot;DD)Z", at = @At("HEAD"), cancellable = true)
-	public void onIsPointOverSlot(Slot slot, double pointX, double pointY, CallbackInfoReturnable<Boolean> cir) {
+	public void onIsPointOverSlot(Slot slot, double xm, double ym, CallbackInfoReturnable<Boolean> cir) {
 		if (override != null) {
-			cir.setReturnValue(override.isPointOverSlot(slot, this.leftPos, this.topPos, pointX, pointY));
+			cir.setReturnValue(override.isPointOverSlot(slot, this.leftPos, this.topPos, xm, ym));
 		}
 	}
 
 	@Inject(method = "extractContents", at = @At("HEAD"))
-	public void moveSlots(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	public void moveSlots(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
 		if (override != null) {
 			for (Slot slot : menu.slots) {
 				if (!hasRememberedSlots) {
@@ -182,7 +186,7 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 	@WrapOperation(
 		method = "mouseClicked",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;mouseClicked(Lnet/minecraft/client/input/MouseButtonEvent;Z)Z"))
-	public boolean overrideMouseClicks(AbstractContainerScreen instance, MouseButtonEvent click, boolean doubled, Operation<Boolean> original) {
+	public boolean overrideMouseClicks(AbstractContainerScreen<?> instance, MouseButtonEvent click, boolean doubled, Operation<Boolean> original) {
 		if (override != null) {
 			if (override.mouseClick(click, doubled))
 				return true;
@@ -191,17 +195,17 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 	}
 
 	@Inject(method = "mouseDragged", at = @At("HEAD"), cancellable = true)
-	public void overrideMouseDrags(MouseButtonEvent click, double offsetX, double offsetY, CallbackInfoReturnable<Boolean> cir) {
+	public void overrideMouseDrags(MouseButtonEvent event, double dx, double dy, CallbackInfoReturnable<Boolean> cir) {
 		if (override != null) {
-			if (override.mouseDragged(click, offsetX, offsetY))
+			if (override.mouseDragged(event, dx, dy))
 				cir.setReturnValue(true);
 		}
 	}
 
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-	private void overrideKeyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
+	private void overrideKeyPressed(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
 		if (override != null) {
-			if (override.keyPressed(input)) {
+			if (override.keyPressed(event)) {
 				cir.setReturnValue(true);
 			}
 		}
@@ -211,9 +215,9 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 	@Inject(
 		method = "mouseReleased",
 		at = @At("HEAD"), cancellable = true)
-	public void overrideMouseReleases(MouseButtonEvent click, CallbackInfoReturnable<Boolean> cir) {
+	public void overrideMouseReleases(MouseButtonEvent event, CallbackInfoReturnable<Boolean> cir) {
 		if (override != null) {
-			if (override.mouseReleased(click))
+			if (override.mouseReleased(event))
 				cir.setReturnValue(true);
 		}
 	}

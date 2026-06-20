@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(HolderOwner.class)
 public interface TolerateFirmamentTolerateRegistryOwners<T> {
 	@Inject(method = "canSerializeIn", at = @At("HEAD"), cancellable = true)
-	private void equalTolerantRegistryOwners(HolderOwner<T> other, CallbackInfoReturnable<Boolean> cir) {
-		if (other instanceof TolerantRegistriesOps.TolerantOwner<?>) {
+	private void equalTolerantRegistryOwners(HolderOwner<T> context, CallbackInfoReturnable<Boolean> cir) {
+		if (context instanceof TolerantRegistriesOps.TolerantOwner<?>) {
 			cir.setReturnValue(true);
 		}
 	}

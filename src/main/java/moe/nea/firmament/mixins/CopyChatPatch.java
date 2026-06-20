@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChatScreen.class)
 public class CopyChatPatch {
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-	private void onRightClick(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
-		if (click.button() != 1 || !CopyChat.TConfig.INSTANCE.getCopyChat()) return;
+	private void onRightClick(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
+		if (event.button() != 1 || !CopyChat.TConfig.INSTANCE.getCopyChat()) return;
 		Minecraft client = Minecraft.getInstance();
 		ChatComponent chatHud = client.gui.getChat();
-		var collector = new CopyChat.HoveredTextLineCollector((int) click.x(), (int) click.y());
+		var collector = new CopyChat.HoveredTextLineCollector((int) event.x(), (int) event.y());
 		chatHud.captureClickableText(collector,
 			MC.INSTANCE.getWindow().getGuiScaledHeight(), MC.INSTANCE.getInstance().gui.getGuiTicks(), ChatComponent.DisplayMode.FOREGROUND);
 		if (collector.getResult() == null) return;

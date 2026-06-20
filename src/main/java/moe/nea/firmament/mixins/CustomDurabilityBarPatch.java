@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(GuiGraphicsExtractor.class)
 public class CustomDurabilityBarPatch {
     @WrapOperation(
-        method = "renderItemBar",
+        method = "itemBar",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isBarVisible()Z")
     )
     private boolean onIsItemBarVisible(
@@ -29,7 +29,7 @@ public class CustomDurabilityBarPatch {
         return barOverride.get() != null;
     }
 
-    @WrapOperation(method = "renderItemBar",
+    @WrapOperation(method = "itemBar",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getBarWidth()I"))
     private int overrideItemStep(
 		ItemStack instance, Operation<Integer> original,
@@ -40,7 +40,7 @@ public class CustomDurabilityBarPatch {
         return original.call(instance);
     }
 
-    @WrapOperation(method = "renderItemBar",
+    @WrapOperation(method = "itemBar",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getBarColor()I"))
     private int overrideItemColor(
 		ItemStack instance, Operation<Integer> original,

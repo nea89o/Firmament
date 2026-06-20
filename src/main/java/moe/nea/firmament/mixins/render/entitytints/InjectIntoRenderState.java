@@ -18,7 +18,7 @@ public class InjectIntoRenderState<T extends Entity, S extends EntityRenderState
 	@Inject(
 		method = "extractRenderState",
 		at = @At("RETURN"))
-	private void onUpdateRenderState(T entity, S state, float tickDelta, CallbackInfo ci) {
+	private void onUpdateRenderState(T entity, S state, float partialTicks, CallbackInfo ci) {
 		var renderState = EntityRenderTintEvent.HasTintRenderState.cast(state);
 		renderState.reset_firmament();
 		var tintEvent = new EntityRenderTintEvent(

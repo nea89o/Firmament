@@ -19,7 +19,7 @@ public abstract class PlayerDropEventPatch extends Player {
 	}
 
 	@Inject(method = "drop", at = @At("HEAD"), cancellable = true)
-	public void onDropSelectedItem(boolean entireStack, CallbackInfoReturnable<Boolean> cir) {
+	public void onDropSelectedItem(boolean all, CallbackInfoReturnable<Boolean> cir) {
 		Slot fakeSlot = new Slot(getInventory(), getInventory().getSelectedSlot(), 0, 0);
 		if (IsSlotProtectedEvent.shouldBlockInteraction(fakeSlot, ContainerInput.THROW, IsSlotProtectedEvent.MoveOrigin.DROP_FROM_HOTBAR)) {
 			cir.setReturnValue(false);

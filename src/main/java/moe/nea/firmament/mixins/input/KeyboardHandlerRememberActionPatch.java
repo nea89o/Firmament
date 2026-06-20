@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardHandler.class)
 public class KeyboardHandlerRememberActionPatch {
 	@Inject(method = "keyPress", at = @At("HEAD"))
-	private static void saveActionOnKeyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
+	private static void saveActionOnKeyPress(long handle, int action, KeyEvent event, CallbackInfo ci) {
 		HandledScreenKeyPressedEvent.Companion.internalPushAction(action);
 	}
 }

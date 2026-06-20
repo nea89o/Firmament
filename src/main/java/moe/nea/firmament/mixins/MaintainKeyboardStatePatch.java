@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardHandler.class)
 public class MaintainKeyboardStatePatch {
 	@Inject(method = "keyPress", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/FramerateLimitTracker;onInputReceived()V"))
-	private void onKeyInput(long window, int action, KeyEvent input, CallbackInfo ci) {
-		FirmamentKeyboardState.INSTANCE.maintainState(input, action);
+	private void onKeyInput(long handle, int action, KeyEvent event, CallbackInfo ci) {
+		FirmamentKeyboardState.INSTANCE.maintainState(event, action);
 	}
 }

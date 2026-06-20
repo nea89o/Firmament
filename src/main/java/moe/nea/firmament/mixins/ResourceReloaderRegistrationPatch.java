@@ -19,7 +19,7 @@ public class ResourceReloaderRegistrationPatch {
     private ReloadableResourceManager resourceManager;
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;openAllSelected()Ljava/util/List;", shift = At.Shift.BEFORE))
-    private void onBeforeResourcePackCreation(GameConfig args, CallbackInfo ci) {
+    private void onBeforeResourcePackCreation(GameConfig gameConfig, CallbackInfo ci) {
         FinalizeResourceManagerEvent.Companion.publish(new FinalizeResourceManagerEvent(this.resourceManager));
     }
 }

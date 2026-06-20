@@ -23,7 +23,7 @@ public abstract class WarnOnMissingTranslations {
 	private final Set<String> missingTranslations = new TreeSet<>();
 
 	@Inject(method = "getOrDefault", at = @At("HEAD"))
-	private void onGetTranslationKey(String key, String fallback, CallbackInfoReturnable<String> cir) {
+	private void onGetTranslationKey(String key, String defaultValue, CallbackInfoReturnable<String> cir) {
 		warnForMissingTranslation(key);
 	}
 

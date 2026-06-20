@@ -19,7 +19,7 @@ import java.util.concurrent.Executor;
 @Mixin(ReloadableResourceManager.class)
 public abstract class EarlyResourceReloadPatch implements ResourceManager {
     @Inject(method = "createReload", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance;create(Lnet/minecraft/server/packs/resources/ResourceManager;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/server/packs/resources/ReloadInstance;", shift = At.Shift.BEFORE))
-    public void onResourceReload(Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<PackResources> packs, CallbackInfoReturnable<ReloadInstance> cir) {
-        EarlyResourceReloadEvent.Companion.publish(new EarlyResourceReloadEvent(this, prepareExecutor));
+    public void onResourceReload(Executor backgroundExecutor, Executor mainThreadExecutor, CompletableFuture<Unit> initialTask, List<PackResources> resourcePacks, CallbackInfoReturnable<ReloadInstance> cir) {
+        EarlyResourceReloadEvent.Companion.publish(new EarlyResourceReloadEvent(this, backgroundExecutor));
     }
 }
