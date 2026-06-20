@@ -5,6 +5,8 @@ import me.shedaniel.math.Rectangle
 import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.ItemStackTemplate
+import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.EssenceRecipeProvider
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
@@ -61,8 +63,7 @@ object SBEssenceUpgradeRecipeRenderer : GenericRecipeRenderer<EssenceRecipeProvi
 		return listOfNotNull(SBItemStack(recipe.itemId))
 	}
 
-	@OptIn(ExpensiveItemCacheApi::class)
-	override val icon: ItemStack get() = SBItemStack(SkyblockId("ESSENCE_WITHER")).asImmutableItemStack()
+	override val icon: ItemStackTemplate = ItemStackTemplate(Items.WITHER_SKELETON_SKULL)
 	override val title: Component = tr("firmament.category.essence", "Essence Upgrades")
 	override val identifier: Identifier = Firmament.identifier("essence_upgrade")
 	override fun findAllRecipes(neuRepository: NEURepository): Iterable<EssenceRecipeProvider.EssenceUpgradeRecipe> {

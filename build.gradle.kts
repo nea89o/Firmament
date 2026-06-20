@@ -198,7 +198,7 @@ val yaclSourceSet = createIsolatedSourceSet("yacl")
 val wildfireGenderSourceSet = createIsolatedSourceSet("wildfireGender")
 val jadeSourceSet = createIsolatedSourceSet("jade")
 val modmenuSourceSet = createIsolatedSourceSet("modmenu")
-val reiSourceSet = createIsolatedSourceSet("rei", isEnabled = false)
+val reiSourceSet = createIsolatedSourceSet("rei")
 val moulconfigSourceSet = createIsolatedSourceSet("moulconfig")
 val irisSourceSet = createIsolatedSourceSet("iris")
 val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
@@ -458,7 +458,7 @@ tasks.processResources {
 		expand(*replacements.toTypedArray())
 	}
 	exclude("**/*.license")
-//	from(tasks.scanLicenses) // TODO: reinstate this
+	from(tasks.scanLicenses) // TODO: reinstate this
 	from(collectTranslations) {
 		into("assets/firmament/lang")
 	}

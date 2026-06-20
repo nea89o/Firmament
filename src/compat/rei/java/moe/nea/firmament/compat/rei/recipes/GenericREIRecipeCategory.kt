@@ -10,6 +10,7 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.common.category.CategoryIdentifier
 import me.shedaniel.rei.api.common.util.EntryStacks
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.Items
 import moe.nea.firmament.compat.rei.REIRecipeLayouter
 import moe.nea.firmament.compat.rei.neuDisplayGeneratorWithItem
 import moe.nea.firmament.repo.SBItemStack
@@ -41,7 +42,7 @@ class GenericREIRecipeCategory<T : NEURecipe>(
 	}
 
 	override fun getIcon(): Renderer? {
-		return EntryStacks.of(renderer.icon)
+		return EntryStacks.of { Items.ANVIL }
 	}
 
 	override fun setupDisplay(display: GenericRecipe<T>, bounds: Rectangle): List<Widget> {

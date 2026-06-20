@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [versions]
-minecraft = "26.1"
+minecraft = "26.1.2"
 
 # Update from https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/
 fabric_kotlin = "1.13.12+kotlin.2.4.0"
@@ -14,24 +14,24 @@ kotlin_ksp = "2.3.9"
 
 # Update from https://linkie.shedaniel.dev/dependencies?loader=fabric
 fabric_loader = "0.19.3"
-fabric_api = "0.145.1+26.1"
+fabric_api = "0.152.1+26.1.2"
 architectury = "20.0.5"
 modmenu = "18.0.0-beta.1"
 # Update from https://maven.architectury.dev/me/shedaniel/RoughlyEnoughItems-fabric/ (but is typically late)
-rei = "21.11.814"
+rei = "26.1.819"
 reidev = "33d8900cd6621816680634fcbae2dd07f1cffbd3"
 
 # Update from https://maven.architectury.dev/dev/architectury/loom/dev.architectury.loom.gradle.plugin/
 loom = "1.13.457" # TODO: port back to architectury (and) 1.9.424
 
 # Update from https://modrinth.com/mod/sodium/versions?l=fabric
-sodium = "mc26.1-0.8.7-fabric"
+sodium = "mc26.1.2-0.8.12-fabric"
 
 # Update from https://modrinth.com/mod/freecam/versions?l=fabric
 freecammod = "1.4.0-rc.1"
 
 # Update from https://modrinth.com/mod/female-gender/versions?l=fabric
-femalegender = "5.0.0-Beta.3+26.1"
+femalegender = "5.0.0-Beta.4+26.1"
 
 # Update from https://modrinth.com/mod/iris/versions?l=fabric
 iris = "1.10.9+26.1-fabric"
@@ -42,7 +42,7 @@ shadow = "9.4.1"
 notenoughanimations = "WQRZ7KyE"
 
 # Update from https://modrinth.com/mod/jade/versions?l=fabric
-jade = "26.1.0+fabric"
+jade = "26.1.6+fabric"
 
 # Update from https://modrinth.com/mod/no-chat-restrictions/versions?l=fabric
 noChatRestrictions = "Fabric-MC26.1-v1.1.0"

@@ -11,8 +11,13 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStackTemplate
+import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.tr
 
 object SBForgeRecipeRenderer : GenericRecipeRenderer<NEUForgeRecipe> {
@@ -74,7 +79,7 @@ object SBForgeRecipeRenderer : GenericRecipeRenderer<NEUForgeRecipe> {
 		return listOfNotNull(SBItemStack(recipe.outputStack))
 	}
 
-	override val icon: ItemStack = ItemStack(Blocks.ANVIL)
+	override val icon: ItemStackTemplate = ItemStackTemplate(Items.ANVIL)
 	override val title: Component = tr("firmament.category.forge", "Forge Recipes")
 	override val identifier: Identifier = Firmament.identifier("forge_recipe")
 

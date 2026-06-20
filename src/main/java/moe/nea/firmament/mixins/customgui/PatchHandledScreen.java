@@ -1,4 +1,5 @@
 
+
 package moe.nea.firmament.mixins.customgui;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -98,6 +99,10 @@ public class PatchHandledScreen<T extends AbstractContainerMenu> extends Screen 
 	@Inject(method = "init", at = @At("TAIL"))
 	private void onInit(CallbackInfo ci) {
 		if (override != null) {
+			int totalWidth = override.getBounds().getFirst().width;
+			int totalHeight = override.getBounds().getFirst().height - 3 + override.getBounds().get(1).height;
+			this.leftPos = (this.width - totalWidth) / 2;
+			this.topPos = (this.height - totalHeight) / 2;
 			override.onInit();
 		}
 	}

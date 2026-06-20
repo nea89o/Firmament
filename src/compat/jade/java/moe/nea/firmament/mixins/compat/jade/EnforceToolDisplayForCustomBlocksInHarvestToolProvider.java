@@ -21,15 +21,16 @@ public class EnforceToolDisplayForCustomBlocksInHarvestToolProvider {
 			return true;
 		return original;
 	}
-
+/*
 	@Unique
 	private static final List<ItemStack> REPLACEABLE_TOOL = List.of(new ItemStack(Blocks.ENCHANTING_TABLE));
-
 	@ModifyExpressionValue(method = "getText", at = @At(value = "INVOKE", target = "Lcom/google/common/cache/Cache;get(Ljava/lang/Object;Ljava/util/concurrent/Callable;)Ljava/lang/Object;"))
 	private Object overwriteAvailableTools(Object original, @Local(argsOnly = true) BlockAccessor accessor) {
 		var orig = (List<ItemStack>) original;
 		if (orig.isEmpty() && CustomFakeBlockProvider.hasCustomBlock(accessor))
 			return REPLACEABLE_TOOL;
+
 		return orig;
 	}
+*/
 }

@@ -11,12 +11,12 @@ package moe.nea.firmament.compat.rei
 
 import me.shedaniel.math.Rectangle
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer
+import me.shedaniel.rei.api.client.gui.compat.GuiGraphics
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext
 import me.shedaniel.rei.api.common.entry.EntryStack
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.TooltipFlag
@@ -39,7 +39,7 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 	@OptIn(ExpensiveItemCacheApi::class)
 	override fun render(
 		entry: EntryStack<SBItemStack>,
-		context: GuiGraphicsExtractor,
+		context: GuiGraphics,
 		bounds: Rectangle,
 		mouseX: Int,
 		mouseY: Int,

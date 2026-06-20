@@ -63,10 +63,15 @@ object LegacyItemData {
 		item.allVariants().map { legacyItemType ->
 			val nbt = ItemCache.convert189ToModern(CompoundTag().apply {
 				putString("id", legacyItemType.name)
-				putByte("Count", 1)
-				putShort("Damage", legacyItemType.metadata)
+				putInt("count", 1)
+				if(legacyItemType.metadata != 0.toShort()) {
+					val components = CompoundTag().apply {
+						putShort("minecraft:damage", legacyItemType.metadata)
+					}
+
+					put("components", components)
+				}
 			})!!
-			nbt.remove("components")
 			val stack = loadItemFromNbt(nbt) ?: error("Could not transform $legacyItemType: $nbt")
 			stack.item to legacyItemType
 		}

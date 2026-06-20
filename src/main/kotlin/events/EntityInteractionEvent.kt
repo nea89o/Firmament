@@ -15,9 +15,9 @@ data class EntityInteractionEvent(
 		 */
 		ATTACK,
 
-		/**
-		 * Is a fallback when [INTERACT_AT_LOCATION] fails
-		 */
-		INTERACT,
-	}
+        /**
+         * Is sent when right-clicking an entity
+         */
+        INTERACT,
+    }
 }

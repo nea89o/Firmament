@@ -8,8 +8,12 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.ItemStackTemplate
+import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.SBItemStack
+import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.tr
 
 object SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
@@ -62,7 +66,7 @@ object SBCraftingRecipeRenderer : GenericRecipeRenderer<NEUCraftingRecipe> {
 		return neuRepository.items.items.values.flatMap { it.recipes }.filterIsInstance<NEUCraftingRecipe>()
 	}
 
-	override val icon: ItemStack = ItemStack(Blocks.CRAFTING_TABLE)
+	override val icon: ItemStackTemplate = ItemStackTemplate(Items.CRAFTING_TABLE)
 	override val title: Component = tr("firmament.category.crafting", "SkyBlock Crafting")
 	override val identifier: Identifier = Firmament.identifier("crafting_recipe")
 }
