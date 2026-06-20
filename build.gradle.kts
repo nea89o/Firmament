@@ -279,6 +279,7 @@ dependencies {
 	modLocalRuntime(libs.devauth)
 	modLocalRuntime(libs.jarvis.fabric)
 	modLocalRuntime(libs.modmenu)
+	modLocalRuntime(libs.noChatRestrictions)
 
 	testImplementation("net.fabricmc:fabric-loader-junit:${libs.versions.fabric.loader.get()}")
 	testAgent(files(tasks.getByPath(":testagent:jar")))

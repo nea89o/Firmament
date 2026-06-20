@@ -44,6 +44,9 @@ notenoughanimations = "Dp0dn63B"
 # Update from https://modrinth.com/mod/jade/versions?l=fabric
 jade = "21.1.1+fabric"
 
+# Update from https://modrinth.com/mod/no-chat-restrictions/versions?l=fabric
+noChatRestrictions = "Fabric-MC1.21.11-v1.0.0"
+
 devauth = "1.2.2"
 
 # Update from https://repo.nea.moe/#/releases/moe/nea/neurepoparser
@@ -124,6 +127,7 @@ freecammod = { module = "maven.modrinth:freecam", version.ref = "freecammod" }
 femalegender = { module = "maven.modrinth:female-gender", version.ref = "femalegender" }
 iris = { module = "maven.modrinth:iris", version.ref = "iris" }
 jade = { module = "maven.modrinth:jade", version.ref = "jade" }
+noChatRestrictions = { module = "maven.modrinth:no-chat-restrictions", version.ref = "noChatRestrictions" }
 yacl = { module = "dev.isxander:yet-another-config-lib", version.ref = "yacl" }
 basicMath = { module = "me.shedaniel.cloth:basic-math", version.ref = "basicMath" }
 classTransform-mixinsTranslator = { module = "net.lenni0451.classtransform:mixinstranslator", version.ref = "classtransform" }
