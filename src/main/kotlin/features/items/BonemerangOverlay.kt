@@ -13,6 +13,7 @@ import moe.nea.firmament.events.HudRenderEvent
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.render.TintedOverlayTexture
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.SkyBlockItems
@@ -59,7 +60,7 @@ object BonemerangOverlay {
 	@Subscribe
 	fun onEntityRender(event: EntityRenderTintEvent) {
 		if (!TConfig.highlightHitEntities) return
-		if (MC.stackInHand.skyBlockId !in throwableWeapons) return
+		if (MC.stackInHand.accessor().skyBlockId !in throwableWeapons) return
 
 		val entities = getEntities()
 		if (entities.isEmpty()) return
@@ -76,7 +77,7 @@ object BonemerangOverlay {
 	@Subscribe
 	fun onRenderHud(it: HudRenderEvent) {
 		if (!TConfig.bonemerangOverlay) return
-		if (MC.stackInHand.skyBlockId !in throwableWeapons) return
+		if (MC.stackInHand.accessor().skyBlockId !in throwableWeapons) return
 
 		val entities = getEntities()
 

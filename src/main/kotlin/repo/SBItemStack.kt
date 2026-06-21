@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TextColor
 import net.minecraft.ChatFormatting
 import moe.nea.firmament.repo.ItemCache.asItemStack
+import moe.nea.firmament.repo.ItemCache.isBroken
 import moe.nea.firmament.repo.ItemCache.withFallback
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.LegacyFormattingCode
@@ -26,6 +27,10 @@ import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.getReforgeId
 import moe.nea.firmament.util.getUpgradeStars
 import moe.nea.firmament.util.grey
+import moe.nea.firmament.util.mc.DataComponentAccessor
+import moe.nea.firmament.util.mc.DataComponentMutator
+import moe.nea.firmament.util.mc.LazyItemStack
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.appendLore
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
@@ -50,7 +55,7 @@ data class SBItemStack constructor(
 	private var petData: PetData?,
 	val extraLore: List<Component> = emptyList(),
 	val stars: Int = 0,
-	val fallback: ItemStack? = null,
+	val fallback: LazyItemStack? = null,
 	val reforge: ReforgeId? = null,
 ) {
 
@@ -83,7 +88,9 @@ data class SBItemStack constructor(
 		val EMPTY = SBItemStack(SkyblockId.NULL, 0)
 
 		private val BREAKING_POWER_REGEX = "Breaking Power (?<power>[0-9]+)".toPattern()
-		operator fun invoke(itemStack: ItemStack): SBItemStack {
+		operator fun invoke(itemStack: ItemStack): SBItemStack=
+			invoke(itemStack.accessor())
+		operator fun invoke(itemStack: DataComponentAccessor): SBItemStack {
 			val skyblockId = itemStack.skyBlockId ?: SkyblockId.NULL
 			return SBItemStack(
 				skyblockId,
@@ -103,11 +110,11 @@ data class SBItemStack constructor(
 			return SBItemStack(neuIngredient.skyblockId, neuIngredient.amount.toInt())
 		}
 
-		fun passthrough(itemStack: ItemStack): SBItemStack {
+		fun passthrough(itemStack: LazyItemStack): SBItemStack {
 			return SBItemStack(SkyblockId.NULL, null, itemStack.count, null, fallback = itemStack)
 		}
 
-		fun parseStatBlock(itemStack: ItemStack): List<StatLine> {
+		fun parseStatBlock(itemStack: DataComponentAccessor): List<StatLine> {
 			return itemStack.loreAccordingToNbt
 				.map { parseStatLine(it) }
 				.takeWhile { it != null }
@@ -115,7 +122,7 @@ data class SBItemStack constructor(
 		}
 
 		fun appendEnhancedStats(
-			itemStack: ItemStack,
+			itemStack: DataComponentMutator,
 			reforgeStats: Map<String, Double>,
 			buffKind: BuffKind,
 		) {
@@ -322,7 +329,7 @@ data class SBItemStack constructor(
 
 
 	private fun appendReforgeInfo(
-		itemStack: ItemStack,
+		itemStack: DataComponentMutator,
 	) {
 		val rarity = Rarity.fromItem(itemStack) ?: return
 		val reforgeId = this.reforge ?: return
@@ -361,7 +368,7 @@ data class SBItemStack constructor(
 	@ExpensiveItemCacheApi
 	val rarity: Rarity? get() = Rarity.fromItem(asImmutableItemStack())
 
-	private var itemStack_: ItemStack? = null
+	private var itemStack_: LazyItemStack? = null
 
 	val breakingPower: Int
 		get() =
@@ -370,23 +377,24 @@ data class SBItemStack constructor(
 			} ?: 0
 
 	@ExpensiveItemCacheApi
-	private val itemStack: ItemStack
+	private val itemStack: LazyItemStack
 		get() {
 			val itemStack = itemStack_ ?: run {
 				if (skyblockId == SkyblockId.COINS)
-					return@run ItemCache.coinItem(stackSize).also { it.appendLore(extraLore) }
+					return@run ItemCache.coinItem(stackSize).withMutations { appendLore(extraLore) }
 				if (stackSize == 0)
-					return@run ItemStack.EMPTY
+					return@run LazyItemStack.empty()
 				val replacementData = mutableMapOf<String, String>()
 				injectReplacementDataForPets(replacementData)
 				val baseItem = neuItem.asItemStack(idHint = skyblockId, replacementData)
 					.withFallback(fallback)
-					.copyWithCount(stackSize)
+					.withCount(stackSize)
+					.intoMutable()
 				val baseStats = parseStatBlock(baseItem)
 				appendReforgeInfo(baseItem)
 				baseItem.appendLore(extraLore)
 				enhanceStatsByStars(baseItem, stars, baseStats)
-				return@run baseItem
+				return@run baseItem.finish()
 			}
 			if (itemStack_ == null && !itemStack.isBroken)
 				itemStack_ = itemStack
@@ -423,7 +431,7 @@ data class SBItemStack constructor(
 		return starString
 	}
 
-	private fun enhanceStatsByStars(itemStack: ItemStack, stars: Int, baseStats: List<StatLine>) {
+	private fun enhanceStatsByStars(itemStack: DataComponentMutator, stars: Int, baseStats: List<StatLine>) {
 		if (stars == 0) return
 		// TODO: increase stats and add the star level into the nbt data so star displays work
 		itemStack.modifyExtraAttributes {
@@ -451,18 +459,13 @@ data class SBItemStack constructor(
 	}
 
 	@OptIn(ExpensiveItemCacheApi::class)
-	fun asLazyImmutableItemStack(): ItemStack? {
-		if (isWarm()) return asImmutableItemStack()
+	fun asLazyImmutableItemStack(): LazyItemStack? {
+		if (isWarm()) return itemStack
 		return null
 	}
 
 	@ExpensiveItemCacheApi
-	fun asImmutableItemStack(): ItemStack { // TODO: add a "or fallback to painting" option to asLazyImmutableItemStack to be used in more places.
+	fun asImmutableItemStack(): LazyItemStack { // TODO: add a "or fallback to painting" option to asLazyImmutableItemStack to be used in more places.
 		return itemStack
-	}
-
-	@ExpensiveItemCacheApi
-	fun asCopiedItemStack(): ItemStack {
-		return itemStack.copy()
 	}
 }

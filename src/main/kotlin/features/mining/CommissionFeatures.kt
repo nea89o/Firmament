@@ -6,6 +6,7 @@ import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.unformattedString
 
@@ -21,7 +22,7 @@ object CommissionFeatures {
 		if (!TConfig.highlightCompletedCommissions) return
 		if (MC.screenName != "Commissions") return
 		val stack = event.slot.item
-		if (stack.loreAccordingToNbt.any { it.unformattedString == "COMPLETED" }) {
+		if (stack.accessor().loreAccordingToNbt.any { it.unformattedString == "COMPLETED" }) {
 			event.highlight(Firmament.identifier("completed_commission_background"))
 		}
 	}

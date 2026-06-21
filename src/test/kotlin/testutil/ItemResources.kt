@@ -18,6 +18,7 @@ import net.minecraft.network.chat.ComponentSerialization
 import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.test.FirmTestBootstrap
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.LazyItemStack
 import moe.nea.firmament.util.mc.MCTabListAPI
 
 object ItemResources {
@@ -83,11 +84,11 @@ object ItemResources {
 		).getOrThrow { IllegalStateException("Could not load test chat '$name': $it") }
 	}
 
-	fun loadItem(name: String): ItemStack {
+	fun loadItem(name: String): LazyItemStack {
 		try {
 			//MC.currentOrDefaultRegistries.get(ResourceKey.create(Registries.ITEM, Identifier.withDefaultNamespace("diamond")))
 			val itemNbt = loadSNbt("testdata/items/$name.snbt")
-			return ItemStack.CODEC.parse(getNbtOps(), tryMigrateNbt(itemNbt, References.ITEM_STACK)).orThrow
+			return LazyItemStack.CODEC.parse(getNbtOps(), tryMigrateNbt(itemNbt, References.ITEM_STACK)).orThrow
 		} catch (ex: Exception) {
 			throw RuntimeException("Could not load item resource '$name'", ex)
 		}

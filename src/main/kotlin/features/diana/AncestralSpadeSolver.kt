@@ -15,6 +15,7 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.WarpUtil
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.SkyBlockItems
@@ -33,10 +34,11 @@ object AncestralSpadeSolver {
 		DianaWaypoints.TConfig.ancestralSpadeSolver
 			&& SBData.skyblockLocation == SkyBlockIsland.HUB
 			&& MC.player?.inventory?.hasAnyMatching {
-				it.skyBlockId == SkyBlockItems.ANCESTRAL_SPADE ||
-					it.skyBlockId == SkyBlockItems.ARCHAIC_SPADE ||
-					it.skyBlockId == SkyBlockItems.DEIFIC_SPADE
-			} == true // TODO: add a reactive property here
+			val skyBlockId = it.accessor().skyBlockId
+			skyBlockId == SkyBlockItems.ANCESTRAL_SPADE ||
+				skyBlockId == SkyBlockItems.ARCHAIC_SPADE ||
+				skyBlockId == SkyBlockItems.DEIFIC_SPADE
+		} == true // TODO: add a reactive property here
 
 	@Subscribe
 	fun onKeyBind(event: WorldKeyboardEvent) {

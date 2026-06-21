@@ -28,6 +28,7 @@ import moe.nea.firmament.features.texturepack.CustomGlobalTextures.logger
 import moe.nea.firmament.util.IdentifierSerializer
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.intoOptional
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.skyBlockId
 
 object CustomGlobalArmorOverrides {
@@ -99,7 +100,7 @@ object CustomGlobalArmorOverrides {
 	// Then also re add this to the cache clearing function
 	val overrideCache =
 		WeakCache.dontMemoize<ItemStack, EquipmentSlot, Optional<Equippable>>("ArmorOverrides") { stack, slot ->
-			val id = stack.skyBlockId ?: return@dontMemoize Optional.empty()
+			val id = stack.accessor().skyBlockId ?: return@dontMemoize Optional.empty()
 			val override = overrides[id.neuItem] ?: return@dontMemoize Optional.empty()
 			for (suboverride in override.overrides) {
 				if (suboverride.predicate.test(stack)) {

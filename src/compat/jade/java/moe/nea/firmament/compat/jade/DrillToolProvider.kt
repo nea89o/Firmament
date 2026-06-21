@@ -19,9 +19,10 @@ import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.RequiresComponents
 
 class DrillToolProvider : IBlockComponentProvider {
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	override fun appendTooltip(
 		tooltip: ITooltip,
 		accessor: BlockAccessor,
@@ -47,7 +48,7 @@ class DrillToolProvider : IBlockComponentProvider {
 				}
 				innerMut.set(
 					lastItemIndex, JadeUI
-						.item(tool, 0.75f)
+						.item(tool.upgrade(), 0.75f)
 				)
 				innerMut.subList(0, lastItemIndex - 1).removeIf { it is ItemStackElement }
 				innerMut

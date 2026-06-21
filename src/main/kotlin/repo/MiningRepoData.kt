@@ -19,8 +19,10 @@ import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loadItemFromNbt
+import moe.nea.firmament.util.mc.mutator
 import moe.nea.firmament.util.skyblockId
 
 class MiningRepoData : IReloadable {
@@ -79,15 +81,15 @@ class MiningRepoData : IReloadable {
 	) {
 		@Transient
 		val dropItem = baseDrop?.let(::SBItemStack)
-		@OptIn(ExpensiveItemCacheApi::class)
+		@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 		private val labeledStack by lazy {
-			dropItem?.asCopiedItemStack()?.also(::markItemStack)
+			dropItem?.asImmutableItemStack()?.copiedUpgrade()?.also(::markItemStack)
 		}
 
 		private fun markItemStack(itemStack: ItemStack) {
-			itemStack.set(FirmamentDataComponentTypes.CUSTOM_MINING_BLOCK_DATA, this)
+			itemStack.mutator().set(FirmamentDataComponentTypes.CUSTOM_MINING_BLOCK_DATA, this)
 			if (name != null)
-				itemStack.displayNameAccordingToNbt = Component.literal(name)
+				itemStack.mutator().displayNameAccordingToNbt = Component.literal(name)
 		}
 
 		fun getDisplayItem(block: Block): ItemStack {

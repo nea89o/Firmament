@@ -30,13 +30,15 @@ import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.darkGrey
+import moe.nea.firmament.util.mc.RequiresComponents
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 
 // TODO: make this re implement BatchedEntryRenderer, if possible (likely not, due to no-alloc rendering)
 // Also it is probably not even that much faster now, with render layers.
 object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	override fun render(
 		entry: EntryStack<SBItemStack>,
 		context: GuiGraphics,
@@ -50,7 +52,7 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 			ItemCache.recacheSoon(neuItem)
 			ItemStack(Items.PAINTING)
 		} else {
-			entry.value.asImmutableItemStack()
+			entry.value.asImmutableItemStack().upgrade()
 		}
 
 		context.pose().pushMatrix()
@@ -71,7 +73,7 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 	val minecraft = Minecraft.getInstance()
 	var canUseVanillaTooltipEvents = true
 
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	override fun getTooltip(entry: EntryStack<SBItemStack>, tooltipContext: TooltipContext): Tooltip? {
 		if (!entry.value.isWarm() && !RepoManager.TConfig.perfectRenders.rendersPerfectText()) {
 			val neuItem = entry.value.neuItem
@@ -83,10 +85,10 @@ object NEUItemEntryRenderer : EntryRenderer<SBItemStack> {
 			}
 		}
 
-		val stack = entry.value.asImmutableItemStack()
+		val stack = entry.value.asImmutableItemStack().upgrade() // TODO: this shouldnt upgrade if possible, or check for upgradability, otherwise we risk a too fast repo, with a too slow REI tooltip indexer crashing us here
 
-		val lore = mutableListOf(stack.displayNameAccordingToNbt)
-		lore.addAll(stack.loreAccordingToNbt)
+		val lore = mutableListOf(stack.accessor().displayNameAccordingToNbt)
+		lore.addAll(stack.accessor().loreAccordingToNbt)
 		if (canUseVanillaTooltipEvents) {
 			try {
 				ItemTooltipCallback.EVENT.invoker().getTooltip(

@@ -1,12 +1,17 @@
 package moe.nea.firmament.features.debug.itemeditor
 
 import kotlinx.serialization.Serializable
+import net.minecraft.core.component.DataComponentType
+import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.Identifier
+import net.minecraft.resources.ResourceKey
+import net.minecraft.world.item.Item
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.ItemCache
 import moe.nea.firmament.util.StringUtil.camelWords
+import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
 import moe.nea.firmament.util.mc.loadItemFromNbt
 
 /**
@@ -59,21 +64,16 @@ object LegacyItemData {
 	val itemDat = getLegacyData<List<ItemData>>("items")
 
 	@OptIn(ExpensiveItemCacheApi::class) // This is fine, we get loaded in a thread.
-	val itemLut = itemDat.flatMap { item ->
+	val itemLut: Map<ResourceKey<Item>, LegacyItemType> = itemDat.flatMap { item ->
 		item.allVariants().map { legacyItemType ->
 			val nbt = ItemCache.convert189ToModern(CompoundTag().apply {
 				putString("id", legacyItemType.name)
-				putInt("count", 1)
-				if(legacyItemType.metadata != 0.toShort()) {
-					val components = CompoundTag().apply {
-						putShort("minecraft:damage", legacyItemType.metadata)
-					}
-
-					put("components", components)
-				}
+				putByte("Count", 1)
+				putShort("Damage", legacyItemType.metadata)
 			})!!
+			nbt.remove("components")
 			val stack = loadItemFromNbt(nbt) ?: error("Could not transform $legacyItemType: $nbt")
-			stack.item to legacyItemType
+			stack.itemId to legacyItemType
 		}
 	}.toMap()
 

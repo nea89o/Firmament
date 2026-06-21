@@ -22,7 +22,9 @@ import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.parseShortNumber
+import moe.nea.firmament.util.renderingName
 import moe.nea.firmament.util.useMatch
 
 object AnniversaryFeatures {
@@ -201,13 +203,13 @@ object AnniversaryFeatures {
 				SBItemStack(SkyblockId.NULL)
 			}
 
-			@OptIn(ExpensiveItemCacheApi::class)
+			@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 			@Bind
 			fun name(): Component {
 				return when (backedBy) {
 					is Reward.Coins -> Component.literal("Coins")
 					is Reward.EXP -> Component.literal(backedBy.skill)
-					is Reward.Items -> itemStack.asImmutableItemStack().hoverName
+					is Reward.Items -> itemStack.asImmutableItemStack().renderingName
 					is Reward.Unknown -> Component.literal(backedBy.text)
 				}
 			}

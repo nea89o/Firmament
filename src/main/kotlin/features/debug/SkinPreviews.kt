@@ -19,6 +19,7 @@ import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.json.toJsonArray
 import moe.nea.firmament.util.math.GChainReconciliation.shortenCycle
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.rawSkyBlockId
@@ -74,13 +75,14 @@ object SkinPreviews {
 	@Subscribe
 	fun onActivate(event: IsSlotProtectedEvent) {
 		if (!PowerUserTools.TConfig.autoCopyAnimatedSkins) return
-		val lastLine = event.itemStack.loreAccordingToNbt.lastOrNull()?.string
+		val accessor = event.itemStack.accessor()
+		val lastLine = accessor.loreAccordingToNbt.lastOrNull()?.string
 		if (lastLine != "Right-click to preview!" && lastLine != "Click to preview!") return
 		lastDiscard = TimeMark.now()
-		val stackName = event.itemStack.displayNameAccordingToNbt.string
+		val stackName = accessor.displayNameAccordingToNbt.string
 		if (stackName == "FIRE SALE!") {
 			skinColor = null
-			skinId = event.itemStack.rawSkyBlockId
+			skinId = accessor.rawSkyBlockId
 		} else {
 			skinColor = stackName
 		}

@@ -19,6 +19,7 @@ import net.minecraft.nbt.LongTag
 import net.minecraft.nbt.ShortTag
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.mc.NbtPrism
+import moe.nea.firmament.util.mc.accessor
 
 fun interface NbtMatcher {
 	fun matches(nbt: Tag): Boolean
@@ -234,7 +235,7 @@ data class ExtraAttributesPredicate(
 	}
 
 	override fun test(stack: ItemStack): Boolean {
-		return path.access(stack.extraAttributes)
+		return path.access(stack.accessor().extraAttributes)
 			.any { matcher.matches(it) }
 	}
 }

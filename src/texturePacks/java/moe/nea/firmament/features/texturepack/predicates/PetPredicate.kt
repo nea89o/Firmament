@@ -9,6 +9,7 @@ import moe.nea.firmament.features.texturepack.RarityMatcher
 import moe.nea.firmament.features.texturepack.StringMatcher
 import net.minecraft.world.item.ItemStack
 import moe.nea.firmament.repo.ExpLadders
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.petData
 
 data class PetPredicate(
@@ -20,7 +21,7 @@ data class PetPredicate(
 ) : FirmamentModelPredicate {
 
     override fun test(stack: ItemStack): Boolean {
-        val petData = stack.petData ?: return false
+        val petData = stack.accessor().petData ?: return false
         if (petId != null) {
             if (!petId.matches(petData.type)) return false
         }

@@ -18,6 +18,7 @@ import moe.nea.firmament.features.debug.PowerUserTools
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.decodeProfileTextureProperty
 import moe.nea.firmament.util.skyBlockId
 
@@ -74,7 +75,7 @@ object CustomSkyBlockTextures {
 	@Subscribe
 	fun onCustomModelId(it: CustomItemModelEvent) {
 		if (!TConfig.enabled) return
-		val id = it.itemStack.skyBlockId ?: return
+		val id = it.itemStack.accessor().skyBlockId ?: return
 		it.overrideIfEmpty(Identifier.fromNamespaceAndPath("firmskyblock", id.identifier.path))
 	}
 

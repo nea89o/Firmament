@@ -27,6 +27,11 @@ import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.formattedString
+import moe.nea.firmament.util.mc.DataComponentAccessor
+import moe.nea.firmament.util.mc.LazyItemStack
+import moe.nea.firmament.util.mc.RequiresComponents
+import moe.nea.firmament.util.mc.accessor
+import moe.nea.firmament.util.mc.lazy
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.render.drawGuiTexture
@@ -87,9 +92,9 @@ object PetFeatures {
 		// Cache pets
 		petMenuTitle.useMatch(MC.screenName ?: return) {
 			val stack = event.slot.item
-			if (!stack.isEmpty) cachePet(stack)
-			if (stack.petData?.active == true) {
-				if (currentPetUUID == "") currentPetUUID = stack.skyblockUUID.toString()
+			if (!stack.isEmpty) cachePet(stack.lazy())
+			if (stack.accessor().petData?.active == true) {
+				if (currentPetUUID == "") currentPetUUID = stack.accessor().skyblockUUID.toString()
 				// Highlight active pet feature
 				if (!TConfig.highlightEquippedPet) return
 				event.context.drawGuiTexture(
@@ -100,7 +105,7 @@ object PetFeatures {
 		}
 	}
 
-	private fun cachePet(stack: ItemStack) {
+	private fun cachePet(stack: LazyItemStack) {
 		// Cache information about a pet
 		if (stack.skyblockUUID == null) return
 		if (petMap.containsKey(stack.skyblockUUID.toString()) &&
@@ -116,14 +121,14 @@ object PetFeatures {
 		petMenuTitle.useMatch(MC.screenName ?: return) {
 			if (event.slot.container is Inventory) return
 			if (event.button != 0 && event.button != 1) return
-			val petData = event.stack.petData ?: return
+			val petData = event.stack.accessor().petData ?: return
 			if (petData.active == true) {
 				currentPetUUID = "None"
 				return
 			}
 			if (event.button != 0) return
-			if (!petMap.containsKey(event.stack.skyblockUUID.toString())) cachePet(event.stack)
-			currentPetUUID = event.stack.skyblockUUID.toString()
+			if (!petMap.containsKey(event.stack.accessor().skyblockUUID.toString())) cachePet(event.stack.lazy())
+			currentPetUUID = event.stack.accessor().skyblockUUID.toString()
 		}
 	}
 
@@ -198,6 +203,7 @@ object PetFeatures {
 		}
 	}
 
+	@OptIn(RequiresComponents::class)
 	@Subscribe
 	fun onRenderHud(it: HudRenderEvent) {
 		if (!TConfig.petOverlay || !SBData.isOnSkyblock) return
@@ -336,7 +342,7 @@ object PetFeatures {
 		it.context.pose().pushMatrix()
 		it.context.pose().translate(-0.5F, -0.5F)
 		it.context.pose().scale(2f, 2f)
-		it.context.item(pet.petItemStack.value, 0, 0)
+		it.context.item(pet.petItemStack.value.upgrade(), 0, 0)
 		it.context.pose().popMatrix()
 
 		it.context.pose().popMatrix()
@@ -497,7 +503,7 @@ object PetParser {
 		)
 	}
 
-	fun parsePetMenuSlot(stack: ItemStack) : ParsedPet? {
+	fun parsePetMenuSlot(stack: LazyItemStack) : ParsedPet? {
 		val petData = stack.petData ?: return null
 		val expData = petData.level
 		val overflow = if (expData.expTotal - expData.expRequiredForMaxLevel > 0)
@@ -524,20 +530,20 @@ object PetParser {
 }
 
 data class ParsedPet(
-    val name: String,
-    val rarity: Rarity,
-    var level: Int,
-    val maxLevel: Int,
-    val expLadder: ExpLadders.ExpLadder?,
-    var currentExp: Double,
-    var expForNextLevel: Double,
-    var totalExp: Double,
-    var totalExpBeforeLevel: Double,
-    val expForMax: Double,
-    var overflowExp: Double,
-    var petItem: String,
-    var petItemStack: Lazy<ItemStack>,
-    var isComplete: Boolean
+	val name: String,
+	val rarity: Rarity,
+	var level: Int,
+	val maxLevel: Int,
+	val expLadder: ExpLadders.ExpLadder?,
+	var currentExp: Double,
+	var expForNextLevel: Double,
+	var totalExp: Double,
+	var totalExpBeforeLevel: Double,
+	val expForMax: Double,
+	var overflowExp: Double,
+	var petItem: String,
+	var petItemStack: Lazy<LazyItemStack>,
+	var isComplete: Boolean
 ) {
 	fun update(other: ParsedPet) {
 		// Update the pet data to reflect another instance (of itself)

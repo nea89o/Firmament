@@ -39,6 +39,7 @@ import moe.nea.firmament.util.grey
 import moe.nea.firmament.util.mc.IntrospectableItemModelManager
 import moe.nea.firmament.util.mc.SNbtFormatter
 import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.iterableArmorItems
 import moe.nea.firmament.util.mc.loreAccordingToNbt
@@ -88,7 +89,7 @@ object PowerUserTools {
 	}
 
 	fun debugFormat(itemStack: ItemStack): Component {
-		return Component.literal(itemStack.skyBlockId?.toString() ?: itemStack.toString())
+		return Component.literal(itemStack.accessor().skyBlockId?.toString() ?: itemStack.toString())
 	}
 
 	@Subscribe
@@ -144,8 +145,9 @@ object PowerUserTools {
 	fun copyInventoryInfo(it: HandledScreenKeyPressedEvent) {
 		if (it.screen !is AccessorHandledScreen) return
 		val item = it.screen.focusedItemStack ?: return
+		val accessor = item.accessor()
 		if (it.matches(TConfig.copyItemId)) {
-			val sbId = item.skyBlockId
+			val sbId = accessor.skyBlockId
 			if (sbId == null) {
 				lastCopiedStack = Pair(item, Component.translatable("firmament.tooltip.copied.skyblockid.fail"))
 				return
@@ -172,8 +174,8 @@ object PowerUserTools {
 			ClipboardUtils.setTextContent(nbt)
 			lastCopiedStack = Pair(item, Component.translatable("firmament.tooltip.copied.nbt"))
 		} else if (it.matches(TConfig.copyLoreData)) {
-			val list = mutableListOf(item.displayNameAccordingToNbt)
-			list.addAll(item.loreAccordingToNbt)
+			val list = mutableListOf(accessor.displayNameAccordingToNbt)
+			list.addAll(accessor.loreAccordingToNbt)
 			ClipboardUtils.setTextContent(list.joinToString("\n") {
 				ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, it).result().getOrNull().toString()
 			})
@@ -246,7 +248,7 @@ object PowerUserTools {
 	@Subscribe
 	fun addItemId(it: ItemTooltipEvent) {
 		if (TConfig.showItemIds) {
-			val id = it.stack.skyBlockId ?: return
+			val id = it.stack.accessor().skyBlockId ?: return
 			it.lines.add(Component.translatableEscape("firmament.tooltip.skyblockid", id.neuItem).grey())
 		}
 		val (item, text) = lastCopiedStack ?: return

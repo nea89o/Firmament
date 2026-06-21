@@ -19,7 +19,9 @@ import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.async.waitForTextInput
 import moe.nea.firmament.util.ifDropLast
 import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.isEmpty
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.red
@@ -83,19 +85,19 @@ object ExportRecipe {
 		}
 		if (event.screen !is ContainerScreen) return
 		val title = event.screen.title.string
-		val sellSlot = event.screen.getSlotByIndex(49, false)?.item
+		val sellSlot = event.screen.getSlotByIndex(49, false)?.item?.accessor()
 		val craftingTableSlot = event.screen.getSlotByIndex(craftingTableSlut, false)
-		if (craftingTableSlot?.item?.displayNameAccordingToNbt?.unformattedString == "Crafting Table") {
+		if (craftingTableSlot?.item?.accessor()?.displayNameAccordingToNbt?.unformattedString == "Crafting Table") {
 			slotIndices.forEach { (_, index) ->
 				event.screen.getSlotByIndex(index, false)?.item?.let(ItemExporter::ensureExported)
 			}
 			val inputs = slotIndices.associate { (name, index) ->
-				val id = event.screen.getSlotByIndex(index, false)?.item?.takeIf { !it.isEmpty() }?.let {
+				val id = event.screen.getSlotByIndex(index, false)?.item?.accessor()?.takeIf { !it.isEmpty() }?.let {
 					"${it.skyBlockId?.neuItem}:${it.count}"
 				} ?: ""
 				name to JsonPrimitive(id)
 			}
-			val output = event.screen.getSlotByIndex(resultSlot, false)?.item!!
+			val output = event.screen.getSlotByIndex(resultSlot, false)?.item!!.accessor()
 			val overrideOutputId = output.skyBlockId!!.neuItem
 			val count = output.count
 			val recipe = JsonObject(
@@ -116,7 +118,7 @@ object ExportRecipe {
 				ItemExporter.exportStub(shopId, "§9$title (NPC)", MC.instance.crosshairPickEntity)
 			}
 			for (index in (9..9 * 5)) {
-				val item = event.screen.getSlotByIndex(index, false)?.item ?: continue
+				val item = event.screen.getSlotByIndex(index, false)?.item?.accessor() ?: continue
 				val skyblockId = item.skyBlockId ?: continue
 				val costLines = item.loreAccordingToNbt
 					.map { it.string.trim() }

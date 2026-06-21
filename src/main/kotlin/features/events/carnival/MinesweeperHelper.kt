@@ -27,6 +27,8 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.mc.RequiresComponents
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.createSkullItem
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.setSkyBlockFirmamentUiId
@@ -44,7 +46,7 @@ object MinesweeperHelper {
     val startGameQuestion = "[NPC] Carnival Pirateman: Would ye like to do some Fruit Digging?"
 
 
-    enum class Piece(
+	enum class Piece(
         val fruitName: String,
         val points: Int,
         val specialAbility: String,
@@ -116,12 +118,13 @@ object MinesweeperHelper {
 
         val textureUrl = "http://textures.minecraft.net/texture/$textureHash"
         val itemStack = createSkullItem(UUID.randomUUID(), textureUrl)
-            .setSkyBlockFirmamentUiId("MINESWEEPER_$name")
+			.withMutations { setSkyBlockFirmamentUiId("MINESWEEPER_$name") }
 		@get:Bind("fruitName")
 		val textFruitName = Component.literal(fruitName)
 
         @Bind
-        fun getIcon() = MoulConfigPlatform.wrap(itemStack)
+		@OptIn(RequiresComponents::class)
+        fun getIcon() = MoulConfigPlatform.wrap(itemStack.upgrade())
 
         @get:Bind("pieceLabel")
         val pieceLabel = Component.literal(fruitColor.formattingCode + fruitName)
@@ -164,7 +167,7 @@ object MinesweeperHelper {
         companion object {
             val id = SkyblockId("CARNIVAL_SHOVEL")
             fun fromItem(itemStack: ItemStack): DowsingMode? {
-                if (itemStack.skyBlockId != id) return null
+                if (itemStack.accessor().skyBlockId != id) return null
                 return DowsingMode.entries.find { it.itemType == itemStack.item }
             }
         }

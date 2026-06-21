@@ -25,6 +25,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.accessors.castAccessor
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.render.drawAlignedBox
 import moe.nea.firmament.util.skyblockId
 
@@ -236,6 +237,7 @@ object ItemList {
 
 	var listElements = listOf<ItemListElement>()
 
+	@OptIn(RequiresComponents::class)
 	@Subscribe
 	fun onRender(event: HandledScreenForegroundEvent) {
 		if(!isItemListEnabled) return
@@ -254,7 +256,7 @@ object ItemList {
 		val isPopupHovered = popupElement?.isMouseOver(event.mouseX.toDouble(),event.mouseY.toDouble())
 			?: false
 		lastRenderPositions.forEach { (pos, stack) ->
-			val realStack = stack.asLazyImmutableItemStack()
+			val realStack = stack.asLazyImmutableItemStack()?.upgrade()
 			val toRender = realStack ?: ItemStack(Items.PAINTING)
 			event.context.item(toRender, pos.left() + 1, pos.top() + 1)
 			if (!isPopupHovered && pos.containsPoint(event.mouseX, event.mouseY)) {

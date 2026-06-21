@@ -49,9 +49,12 @@ import moe.nea.firmament.util.data.ProfileSpecificDataHolder
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.lime
+import moe.nea.firmament.util.mc.DataComponentAccessor
 import moe.nea.firmament.util.mc.ScreenUtil.getSlotByIndex
 import moe.nea.firmament.util.mc.SlotUtils.swapWithHotBar
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.isEmpty
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.red
 import moe.nea.firmament.util.render.drawAlignedBox
@@ -188,8 +191,8 @@ object SlotLocking {
 		val handler = screen.menu as? ChestMenu ?: return false
 		if (handler.container.containerSize < 9) return false
 		val middlePane = handler.container.getItem(handler.container.containerSize - 5)
-		if (middlePane == null) return false
-		return middlePane.displayNameAccordingToNbt?.unformattedString == "⇦ Your stuff"
+		if (middlePane.isEmpty) return false
+		return middlePane.accessor().displayNameAccordingToNbt.unformattedString == "⇦ Your stuff"
 	}
 
 	fun isNpcShop(screen: AbstractContainerScreen<*>?): Boolean {
@@ -197,9 +200,9 @@ object SlotLocking {
 		val handler = screen.menu as? ChestMenu ?: return false
 		if (handler.container.containerSize < 9) return false
 		val sellItem = handler.container.getItem(handler.container.containerSize - 5)
-		if (sellItem == null) return false
-		if (sellItem.displayNameAccordingToNbt.unformattedString == "Sell Item") return true
-		val lore = sellItem.loreAccordingToNbt
+		if (sellItem.isEmpty) return false
+		if (sellItem.accessor().displayNameAccordingToNbt.unformattedString == "Sell Item") return true
+		val lore = sellItem.accessor().loreAccordingToNbt
 		return (lore.lastOrNull() ?: return false).unformattedString == "Click to buyback!"
 	}
 
@@ -207,7 +210,7 @@ object SlotLocking {
 	fun onSalvageProtect(event: IsSlotProtectedEvent) {
 		if (event.slot == null) return
 		if (!event.slot.hasItem()) return
-		if (event.slot.item.displayNameAccordingToNbt.unformattedString != "Salvage Items") return
+		if (event.slot.item.accessor().displayNameAccordingToNbt.unformattedString != "Salvage Items") return
 		val inv = event.slot.container
 		var anyBlocked = false
 		for (i in 0 until event.slot.containerSlot) {
@@ -239,7 +242,8 @@ object SlotLocking {
 		if ((!isSellOrTradeScreen || event.slot?.container !is Inventory)
 			&& doesNotDeleteItem
 		) return
-		val stack = event.itemStack ?: return
+		val stack = event.itemStack.accessor()
+		if (stack.isEmpty()) return
 		if (TConfig.protectAllHuntingBoxes && (stack.isHuntingBox())) {
 			event.protect()
 			return
@@ -250,7 +254,7 @@ object SlotLocking {
 		}
 	}
 
-	fun ItemStack.isHuntingBox(): Boolean {
+	fun DataComponentAccessor.isHuntingBox(): Boolean {
 		return skyBlockId == SkyBlockItems.HUNTING_TOOLKIT || extraAttributes.get("tool_kit") != null
 	}
 
@@ -308,7 +312,7 @@ object SlotLocking {
 		inventory.castAccessor()
 
 		val slot = inventory.focusedSlot_Firmament ?: return
-		val stack = slot.item ?: return
+		val stack = slot.item.accessor().takeUnless { it.isEmpty() } ?: return
 		if (stack.isHuntingBox()) {
 			MC.sendChat(
 				tr(
@@ -510,7 +514,7 @@ object SlotLocking {
 	@Subscribe
 	fun onRenderSlotOverlay(it: SlotRenderEvents.After) {
 		val isSlotLocked = it.slot.container is Inventory && it.slot.containerSlot in (lockedSlots ?: setOf())
-		val isUUIDLocked = (it.slot.item?.skyblockUUID) in (lockedUUIDs ?: setOf())
+		val isUUIDLocked = (it.slot.item.accessor().skyblockUUID) in (lockedUUIDs ?: setOf())
 		if (isSlotLocked || isUUIDLocked) {
 			it.context.blitSprite(
 				RenderPipelines.GUI_TEXTURED,

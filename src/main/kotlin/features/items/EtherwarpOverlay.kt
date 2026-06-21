@@ -18,6 +18,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.extraAttributes
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.SkyBlockItems
@@ -179,7 +180,7 @@ object EtherwarpOverlay {
 		if (TConfig.onlyShowWhileSneaking && !player.isShiftKeyDown) return
 
 		val heldItem = MC.stackInHand
-		if (!heldItem.extraAttributes.contains("ethermerge") && heldItem.skyBlockId != SkyBlockItems.ETHERWARP_CONDUIT) return
+		if (!heldItem.accessor().extraAttributes.contains("ethermerge") && heldItem.accessor().skyBlockId != SkyBlockItems.ETHERWARP_CONDUIT) return
 
 		val world = player.level
 		val start = player.eyePosition

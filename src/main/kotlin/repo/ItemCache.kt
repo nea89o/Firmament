@@ -19,6 +19,7 @@ import kotlinx.coroutines.withContext
 import kotlin.io.path.readText
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.SharedConstants
+import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
@@ -32,6 +33,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.util.datafix.DataFixers
 import net.minecraft.util.datafix.fixes.References
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.CustomData
 import moe.nea.firmament.Firmament
@@ -43,7 +45,10 @@ import moe.nea.firmament.util.MinecraftDispatcher
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.TestUtil
 import moe.nea.firmament.util.directLiteralStringContent
+import moe.nea.firmament.util.mc.DataComponentAccessor
+import moe.nea.firmament.util.mc.DataComponentMutator
 import moe.nea.firmament.util.mc.FirmamentDataComponentTypes
+import moe.nea.firmament.util.mc.LazyItemStack
 import moe.nea.firmament.util.mc.appendLore
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loadItemFromNbt
@@ -55,7 +60,7 @@ import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.transformEachRecursively
 
 object ItemCache : IReloadable {
-	private val cache: MutableMap<String, ItemStack> = ConcurrentHashMap()
+	private val cache: MutableMap<String, LazyItemStack> = ConcurrentHashMap()
 	private val df = DataFixers.getDataFixer()
 	val logger = LogManager.getLogger("${Firmament.logger.name}.ItemCache")
 	var isFlawless = true
@@ -87,16 +92,16 @@ object ItemCache : IReloadable {
 			null
 		}
 
-	val ItemStack.isBroken
+	val DataComponentAccessor.isBroken
 		get() = get(FirmamentDataComponentTypes.IS_BROKEN) ?: false
 
-	fun ItemStack.withFallback(fallback: ItemStack?): ItemStack {
+	fun LazyItemStack.withFallback(fallback: LazyItemStack?): LazyItemStack {
 		if (isBroken && fallback != null) return fallback
 		return this
 	}
 
-	fun brokenItemStack(neuItem: NEUItem?, idHint: SkyblockId? = null): ItemStack {
-		return ItemStack(Items.PAINTING).apply {
+	fun brokenItemStack(neuItem: NEUItem?, idHint: SkyblockId? = null): LazyItemStack {
+		return LazyItemStack.build(Items.PAINTING) {
 			setCustomName(Component.literal(neuItem?.displayName ?: idHint?.neuItem ?: "null"))
 			appendLore(
 				listOf(
@@ -159,8 +164,7 @@ object ItemCache : IReloadable {
 	}
 
 	@ExpensiveItemCacheApi
-	private fun NEUItem.asItemStackNow(): ItemStack {
-
+	private fun NEUItem.asItemStackNow(): LazyItemStack {
 		try {
 			var modernItemTag = tryFindFromModernFormat(this.skyblockId)
 			val oldItemTag = get10809CompoundTag()
@@ -170,8 +174,7 @@ object ItemCache : IReloadable {
 				modernItemTag = oldItemTag.transformFrom10809ToModern()
 					?: return brokenItemStack(this)
 			}
-			val itemInstance =
-				loadItemFromNbt( modernItemTag) ?: return brokenItemStack(this)
+			val itemInstance = loadItemFromNbt(modernItemTag)?.intoMutable() ?: return brokenItemStack(this)
 			if (usedOldNbt) {
 				val tag = oldItemTag.getCompound("tag")
 				val extraAttributes = tag.flatMap { it.getCompound("ExtraAttributes") }
@@ -184,7 +187,7 @@ object ItemCache : IReloadable {
 			}
 			itemInstance.loreAccordingToNbt = lore.map { un189Lore(it) }
 			itemInstance.displayNameAccordingToNbt = un189Lore(displayName)
-			return itemInstance
+			return itemInstance.finish()
 		} catch (e: Exception) {
 			e.printStackTrace()
 			return brokenItemStack(this)
@@ -196,7 +199,7 @@ object ItemCache : IReloadable {
 	}
 
 	@ExpensiveItemCacheApi
-	fun NEUItem?.asItemStack(idHint: SkyblockId? = null, loreReplacements: Map<String, String>? = null): ItemStack {
+	fun NEUItem?.asItemStack(idHint: SkyblockId? = null, loreReplacements: Map<String, String>? = null): LazyItemStack {
 		if (this == null) return brokenItemStack(null, idHint)
 		var s = cache[this.skyblockItemId]
 		if (s == null) {
@@ -204,14 +207,17 @@ object ItemCache : IReloadable {
 			cache[this.skyblockItemId] = s
 		}
 		if (!loreReplacements.isNullOrEmpty()) {
-			s = s.copy()!!
-			s.applyLoreReplacements(loreReplacements)
-			s.setCustomName(s.hoverName.applyLoreReplacements(loreReplacements))
+			s = s.withMutations {
+				applyLoreReplacements(loreReplacements)
+				get(DataComponents.CUSTOM_NAME)?.let {
+					setCustomName(it)
+				}
+			}
 		}
 		return s
 	}
 
-	fun ItemStack.applyLoreReplacements(loreReplacements: Map<String, String>) {
+	fun DataComponentMutator.applyLoreReplacements(loreReplacements: Map<String, String>) {
 		modifyLore { lore ->
 			lore.map {
 				it.applyLoreReplacements(loreReplacements)
@@ -274,7 +280,7 @@ object ItemCache : IReloadable {
 		itemRecacheScope = newScope
 	}
 
-	fun coinItem(coinAmount: Int): ItemStack {
+	fun coinItem(coinAmount: Int): LazyItemStack {
 		var uuid = UUID.fromString("2070f6cb-f5db-367a-acd0-64d39a7e5d1b")
 		var texture =
 			"http://textures.minecraft.net/texture/538071721cc5b4cd406ce431a13f86083a8973e1064d2f8897869930ee6e5237"
@@ -288,10 +294,10 @@ object ItemCache : IReloadable {
 			texture =
 				"http://textures.minecraft.net/texture/7b951fed6a7b2cbc2036916dec7a46c4a56481564d14f945b6ebc03382766d3b"
 		}
-		val itemStack = ItemStack(Items.PLAYER_HEAD)
-		itemStack.setCustomName(Component.literal("§r§6" + NumberFormat.getInstance().format(coinAmount) + " Coins"))
-		itemStack.setSkullOwner(uuid, texture)
-		return itemStack
+		return LazyItemStack.build(Items.PLAYER_HEAD) {
+			setCustomName(Component.literal("§r§6" + NumberFormat.getInstance().format(coinAmount) + " Coins"))
+			setSkullOwner(uuid, texture)
+		}
 	}
 
 	init {

@@ -13,6 +13,7 @@ import moe.nea.firmament.features.items.recipes.ItemList
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.intoOptional
+import moe.nea.firmament.util.mc.RequiresComponents
 
 object FirmamentAPIImpl : FirmamentAPI() {
 	@JvmField
@@ -40,8 +41,9 @@ object FirmamentAPIImpl : FirmamentAPI() {
 					return FirmamentItemWidget.Placement.ITEM_LIST
 				}
 
+				@RequiresComponents
 				override fun getItemStack(): ItemStack {
-					return itemListStack.second.asImmutableItemStack()
+					return itemListStack.second.asImmutableItemStack().upgrade()
 				}
 
 				override fun getSkyBlockId(): String {

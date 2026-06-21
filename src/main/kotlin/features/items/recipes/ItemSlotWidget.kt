@@ -20,7 +20,10 @@ import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.FirmFormatters.shortFormat
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.darkGrey
+import moe.nea.firmament.util.mc.RequiresComponents
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.isEmpty
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 
 class ItemSlotWidget(
@@ -44,7 +47,7 @@ class ItemSlotWidget(
 	override val rect: Rectangle
 		get() = Rectangle(backgroundTopLeft, backgroundSize)
 
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	override fun extractRenderState(
 		context: GuiGraphicsExtractor,
 		mouseX: Int,
@@ -53,17 +56,17 @@ class ItemSlotWidget(
 	) {
 		val stack = current().asImmutableItemStack()
 		// TODO: draw slot background
-		if (stack.isEmpty) return
-		context.item(stack, position.x, position.y)
+		if (stack.isEmpty()) return
+		context.item(stack.upgrade(), position.x, position.y)
 		context.itemDecorations(
-			MC.font, stack, position.x, position.y,
+			MC.font, stack.upgrade(), position.x, position.y,
 			if (stack.count >= SHORT_NUM_CUTOFF) shortFormat(stack.count.toDouble())
 			else null
 		)
 		if (itemRect.contains(mouseX, mouseY)
 			&& context.containsPointInScissor(mouseX, mouseY)
 		) context.setTooltipForNextFrame(
-			MC.font, getTooltip(stack), Optional.empty(),
+			MC.font, getTooltip(stack.upgrade()), Optional.empty(),
 			mouseX, mouseY
 		)
 	}
@@ -73,8 +76,8 @@ class ItemSlotWidget(
 		var canUseTooltipEvent = true
 
 		fun getTooltip(itemStack: ItemStack): List<Component> {
-			val lore = mutableListOf(itemStack.displayNameAccordingToNbt)
-			lore.addAll(itemStack.loreAccordingToNbt)
+			val lore = mutableListOf(itemStack.accessor().displayNameAccordingToNbt)
+			lore.addAll(itemStack.accessor().loreAccordingToNbt)
 			if (canUseTooltipEvent) {
 				try {
 					ItemTooltipCallback.EVENT.invoker().getTooltip(
@@ -131,8 +134,9 @@ class ItemSlotWidget(
 	}
 
 	@OptIn(ExpensiveItemCacheApi::class)
+	@RequiresComponents
 	override fun getItemStack(): ItemStack {
-		return current().asImmutableItemStack()
+		return current().asImmutableItemStack().upgrade()
 	}
 
 	override fun getSkyBlockId(): String {

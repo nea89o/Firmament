@@ -12,6 +12,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.render.TintedOverlayTexture
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.SkyBlockItems
@@ -49,7 +50,7 @@ object CenturyRaffleFeatures {
 	@Subscribe
 	fun onEntityRender(event: EntityRenderTintEvent) {
 		if (!TConfig.highlightPlayersForSlice) return
-		val requestedCakeTeam = sliceToColor[MC.stackInHand?.skyBlockId] ?: return
+		val requestedCakeTeam = sliceToColor[MC.stackInHand.accessor().skyBlockId] ?: return
 		// TODO: cache the requested color
 		val player = event.entity as? Player ?: return
 		val cakeColor: Style = player.feedbackDisplayName.visit(

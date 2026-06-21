@@ -20,6 +20,7 @@ import kotlin.jvm.optionals.getOrNull
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.Identifier
@@ -35,6 +36,10 @@ import moe.nea.firmament.repo.set
 import moe.nea.firmament.util.collections.WeakCache
 import moe.nea.firmament.util.json.DashlessUUIDSerializer
 import moe.nea.firmament.util.mc.CompoundMutationChecker
+import moe.nea.firmament.util.mc.DataComponentAccessor
+import moe.nea.firmament.util.mc.DataComponentMutator
+import moe.nea.firmament.util.mc.RequiresComponents
+import moe.nea.firmament.util.mc.defaultItemStack
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.unsafeNbt
@@ -129,22 +134,25 @@ data class HypixelPetInfo(
 
 private val jsonparser = Json { ignoreUnknownKeys = true }
 
-var ItemStack.extraAttributes: CompoundTag
-	set(value) {
-		set(DataComponents.CUSTOM_DATA, CustomData.of(value))
-	}
+val DataComponentAccessor.extraAttributes: CompoundTag
 	get() {
 		val customData = get(DataComponents.CUSTOM_DATA)?.unsafeNbt ?: CompoundTag()
 		return CompoundMutationChecker.disallowMutations(customData)
 	}
 
-fun ItemStack.modifyExtraAttributes(block: (CompoundTag) -> Unit) {
+var DataComponentMutator.extraAttributes: CompoundTag
+	get() = (this as DataComponentAccessor).extraAttributes
+	set(value) {
+		set(DataComponents.CUSTOM_DATA, CustomData.of(value))
+	}
+
+fun DataComponentMutator.modifyExtraAttributes(block: (CompoundTag) -> Unit) {
 	val baseNbt = get(DataComponents.CUSTOM_DATA)?.copyTag() ?: CompoundTag()
 	block(baseNbt)
 	set(DataComponents.CUSTOM_DATA, CustomData.of(baseNbt))
 }
 
-val ItemStack.skyBlockUUIDString: String?
+val DataComponentAccessor.skyBlockUUIDString: String?
 	get() = extraAttributes.getString("uuid").getOrNull()?.takeIf { it.isNotBlank() }
 
 private val timestampFormat = //"10/11/21 3:39 PM"
@@ -162,7 +170,7 @@ private val timestampFormat = //"10/11/21 3:39 PM"
 		appendLiteral(" ")
 		appendText(ChronoField.AMPM_OF_DAY)
 	}.toFormatter()
-val ItemStack.timestamp
+val DataComponentAccessor.timestamp
 	get() =
 		extraAttributes.getLong("timestamp").getOrNull()?.let { Instant.ofEpochMilli(it) }
 			?: extraAttributes.getString("timestamp").getOrNull()?.let {
@@ -172,10 +180,10 @@ val ItemStack.timestamp
 				}.orNull()
 			}
 
-val ItemStack.skyblockUUID: UUID?
+val DataComponentAccessor.skyblockUUID: UUID?
 	get() = skyBlockUUIDString?.let { UUID.fromString(it) }
 
-private val petDataCache = WeakCache.memoize<ItemStack, Optional<HypixelPetInfo>>("PetInfo") {
+private val petDataCache = WeakCache.memoize<DataComponentAccessor, Optional<HypixelPetInfo>>("PetInfo") { // TODO: this will not memoize correctly since i wrap into DataComponentAccessor!
 	val jsonString = it.extraAttributes.getString("petInfo")
 		.getOrNull()
 	if (jsonString.isNullOrBlank()) return@memoize Optional.empty()
@@ -185,7 +193,7 @@ private val petDataCache = WeakCache.memoize<ItemStack, Optional<HypixelPetInfo>
 		.or { null }.intoOptional()
 }
 
-fun ItemStack.getUpgradeStars(): Int {
+fun DataComponentAccessor.getUpgradeStars(): Int {
 	return extraAttributes.getInt("upgrade_level").getOrNull()?.takeIf { it > 0 }
 		?: extraAttributes.getInt("dungeon_item_level").getOrNull()?.takeIf { it > 0 }
 		?: 0
@@ -195,15 +203,17 @@ fun ItemStack.getUpgradeStars(): Int {
 @JvmInline
 value class ReforgeId(val id: String)
 
-fun ItemStack.getReforgeId(): ReforgeId? {
+fun DataComponentAccessor.getReforgeId(): ReforgeId? {
 	return extraAttributes.getString("modifier").getOrNull()?.takeIf { it.isNotBlank() }?.let(::ReforgeId)
 }
 
-val ItemStack.petData: HypixelPetInfo?
+val DataComponentAccessor.petData: HypixelPetInfo?
 	get() = petDataCache(this).getOrNull()
 
-fun ItemStack.setSkyBlockFirmamentUiId(uiId: String) = setSkyBlockId(SkyblockId("FIRMAMENT_UI_$uiId"))
-fun ItemStack.setSkyBlockId(skyblockId: SkyblockId): ItemStack {
+fun <T : DataComponentMutator> T.setSkyBlockFirmamentUiId(uiId: String) =
+	setSkyBlockId(SkyblockId("FIRMAMENT_UI_$uiId"))
+
+fun <T : DataComponentMutator> T.setSkyBlockId(skyblockId: SkyblockId): T {
 	modifyExtraAttributes { tag ->
 		tag["id"] = skyblockId.neuItem
 	}
@@ -214,7 +224,7 @@ private val STORED_REGEX = "Stored: ($SHORT_NUMBER_FORMAT)/.+".toPattern()
 private val COMPOST_REGEX = "Compost Available: ($SHORT_NUMBER_FORMAT)".toPattern()
 private val GEMSTONE_SACK_REGEX = " Amount: ($SHORT_NUMBER_FORMAT)".toPattern()
 private val AMOUNT_REGEX = ".*(?:Offer amount|Amount|Order amount): ($SHORT_NUMBER_FORMAT)x".toPattern()
-fun ItemStack.getLogicalStackSize(): Long {
+fun DataComponentAccessor.getLogicalStackSize(): Long {
 	return loreAccordingToNbt.firstNotNullOfOrNull {
 		val string = it.unformattedString
 		GEMSTONE_SACK_REGEX.useMatch(string) {
@@ -229,9 +239,9 @@ fun ItemStack.getLogicalStackSize(): Long {
 	} ?: count.toLong()
 }
 
-val ItemStack.rawSkyBlockId: String? get() = extraAttributes.getString("id").getOrNull()
+val DataComponentAccessor.rawSkyBlockId: String? get() = extraAttributes.getString("id").getOrNull()
 
-fun ItemStack.guessContextualSkyBlockId(): SkyblockId? {
+fun DataComponentAccessor.guessContextualSkyBlockId(): SkyblockId? {
 	val screen = MC.screen
 	val screenType = ScreenIdentification.getType(screen)
 	if (screenType == ScreenType.BAZAAR_ANY || screenType == ScreenType.DYE_COMPENDIUM) {
@@ -256,7 +266,7 @@ fun ItemStack.guessContextualSkyBlockId(): SkyblockId? {
 			.dropWhile { !it.unformattedString.isBlank() }
 			.drop(1)
 			.firstOrNull()
-			?.unformattedString ?: displayName.unformattedString
+			?.unformattedString ?: displayNameAccordingToNbt.unformattedString
 		return RepoManager.enchantedBookCache.byName[name]
 			?: ItemNameLookup.guessItemByName(name, false)
 
@@ -264,7 +274,11 @@ fun ItemStack.guessContextualSkyBlockId(): SkyblockId? {
 	return null
 }
 
-val ItemStack.skyBlockId: SkyblockId?
+@RequiresComponents
+val DataComponentAccessor.renderingName
+	get() = displayNameAccordingToNbt.takeUnless { it === CommonComponents.EMPTY } ?: (maybeItemStack() ?: defaultItemStack()).hoverName
+
+val DataComponentAccessor.skyBlockId: SkyblockId?
 	get() {
 		return when (val id = rawSkyBlockId) {
 			"", null -> {

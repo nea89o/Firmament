@@ -40,6 +40,7 @@ import moe.nea.firmament.util.assertTrueOr
 import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.mc.FakeSlot
 import moe.nea.firmament.util.mc.RequiresComponents
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.render.drawAlignedBox
@@ -451,9 +452,9 @@ class StorageOverlayScreen : Screen(Component.literal("")) {
 		fun removePrefixes(value: String) {
 			searchWords.removeIf { value.contains(it, ignoreCase = true) }
 		}
-		itemStack.displayNameAccordingToNbt.unformattedString.words().forEach(::removePrefixes)
+		itemStack.accessor().displayNameAccordingToNbt.unformattedString.words().forEach(::removePrefixes)
 		if (searchWords.isEmpty()) return true
-		itemStack.loreAccordingToNbt.forEach {
+		itemStack.accessor().loreAccordingToNbt.forEach {
 			it.unformattedString.words().forEach(::removePrefixes)
 		}
 		return searchWords.isEmpty()

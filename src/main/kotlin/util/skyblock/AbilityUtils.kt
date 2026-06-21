@@ -5,6 +5,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
 import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.directLiteralStringContent
+import moe.nea.firmament.util.mc.DataComponentAccessor
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.parseTimePattern
@@ -132,7 +134,7 @@ object AbilityUtils {
 	}
 
 	// TODO: memoize
-	fun getAbilities(itemStack: ItemStack): List<ItemAbility> {
+	fun getAbilities(itemStack: DataComponentAccessor): List<ItemAbility> {
 		return getAbilities(itemStack.loreAccordingToNbt)
 	}
 

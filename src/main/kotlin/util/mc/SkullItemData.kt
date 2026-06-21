@@ -61,10 +61,9 @@ fun ItemStack.setEncodedSkullOwner(uuid: UUID, encodedData: String) {
 }
 
 val arbitraryUUID = UUID.fromString("d3cb85e2-3075-48a1-b213-a9bfb62360c1")
-fun createSkullItem(uuid: UUID, url: String) = ItemStack(Items.PLAYER_HEAD)
-	.also { it.setSkullOwner(uuid, url) }
+fun createSkullItem(uuid: UUID, url: String) = LazyItemStack.build(Items.PLAYER_HEAD) { setSkullOwner(uuid, url) }
 
-fun ItemStack.setSkullOwner(uuid: UUID, url: String) {
+fun DataComponentMutator.setSkullOwner(uuid: UUID, url: String) {
 	assert(this.item == Items.PLAYER_HEAD)
 	val gameProfile = GameProfile(
 		uuid, "nea89", createSkullTextures(

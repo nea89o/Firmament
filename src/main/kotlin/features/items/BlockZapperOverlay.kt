@@ -14,6 +14,7 @@ import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.render.RenderInWorldContext
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.skyblock.SkyBlockItems
@@ -66,7 +67,7 @@ object BlockZapperOverlay {
 		val player = MC.player ?: return
 		val world = player.level ?: return
 		val heldItem = MC.stackInHand
-		if (heldItem.skyBlockId != SkyBlockItems.BLOCK_ZAPPER) return
+		if (heldItem.accessor().skyBlockId != SkyBlockItems.BLOCK_ZAPPER) return
 		val hitResult = MC.instance.hitResult ?: return
 
 		val zapperBlocks: HashSet<BlockPos> = HashSet()
@@ -133,7 +134,7 @@ object BlockZapperOverlay {
 	fun onWorldKeyboard(it: WorldKeyboardEvent) {
 		if (!TConfig.undoKey.isBound) return
 		if (!it.matches(TConfig.undoKey)) return
-		if (MC.stackInHand.skyBlockId != SkyBlockItems.BLOCK_ZAPPER) return
+		if (MC.stackInHand.accessor().skyBlockId != SkyBlockItems.BLOCK_ZAPPER) return
 		MC.sendCommand("undozap")
 	}
 }

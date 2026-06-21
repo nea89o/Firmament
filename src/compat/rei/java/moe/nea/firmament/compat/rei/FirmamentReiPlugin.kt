@@ -39,6 +39,7 @@ import moe.nea.firmament.repo.recipes.SBForgeRecipeRenderer
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.guessRecipeId
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.skyblockId
 import moe.nea.firmament.util.unformattedString
 
@@ -46,9 +47,10 @@ import moe.nea.firmament.util.unformattedString
 class FirmamentReiPlugin : REIClientPlugin {
 
 	companion object {
+		@RequiresComponents
 		@ExpensiveItemCacheApi
 		fun EntryStack<SBItemStack>.asItemEntry(): EntryStack<ItemStack> {
-			return EntryStack.of(VanillaEntryTypes.ITEM, value.asImmutableItemStack())
+			return EntryStack.of(VanillaEntryTypes.ITEM, value.asImmutableItemStack().upgrade())
 		}
 
 		val SKYBLOCK_ITEM_TYPE_ID = Identifier.fromNamespaceAndPath("firmament", "skyblockitems")

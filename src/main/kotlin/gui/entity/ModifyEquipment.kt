@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.mc.arbitraryUUID
 import moe.nea.firmament.util.mc.setEncodedSkullOwner
 
@@ -32,10 +33,10 @@ object ModifyEquipment : EntityModifier {
 		return entity
 	}
 
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	private fun createItem(item: String): ItemStack {
 		val split = item.split("#")
-		if (split.size != 2) return SBItemStack(SkyblockId(item)).asImmutableItemStack()
+		if (split.size != 2) return SBItemStack(SkyblockId(item)).asImmutableItemStack().upgrade()
 		val (type, data) = split
 		return when (type) {
 			"SKULL" -> ItemStack(Items.PLAYER_HEAD).also { it.setEncodedSkullOwner(arbitraryUUID, data) }

@@ -6,6 +6,7 @@ import moe.nea.firmament.features.texturepack.FirmamentModelPredicate
 import moe.nea.firmament.features.texturepack.FirmamentModelPredicateParser
 import moe.nea.firmament.features.texturepack.StringMatcher
 import net.minecraft.world.item.ItemStack
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 
 class LorePredicate(val matcher: StringMatcher) : FirmamentModelPredicate {
@@ -16,7 +17,7 @@ class LorePredicate(val matcher: StringMatcher) : FirmamentModelPredicate {
     }
 
     override fun test(stack: ItemStack): Boolean {
-        val lore = stack.loreAccordingToNbt
+        val lore = stack.accessor().loreAccordingToNbt
         return lore.any { matcher.matches(it) }
     }
 }

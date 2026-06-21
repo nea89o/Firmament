@@ -28,6 +28,7 @@ import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.extraAttributes
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.parseShortNumber
@@ -101,8 +102,8 @@ object PickaxeAbility {
 	@Subscribe
 	fun onSlotClick(it: SlotClickEvent) {
 		if (MC.screen?.title?.unformattedString == "Heart of the Mountain") {
-			val name = it.stack.displayNameAccordingToNbt.unformattedString
-			val cooldown = it.stack.loreAccordingToNbt.firstNotNullOfOrNull {
+			val name = it.stack.accessor().displayNameAccordingToNbt.unformattedString
+			val cooldown = it.stack.accessor().loreAccordingToNbt.firstNotNullOfOrNull {
 				cooldownPattern.useMatch(it.unformattedString) {
 					parseTimePattern(group("cooldown"))
 				}
@@ -114,14 +115,14 @@ object PickaxeAbility {
 	@Subscribe
 	fun onDurabilityBar(it: DurabilityBarEvent) {
 		if (!TConfig.drillFuelBar) return
-		val lore = it.item.loreAccordingToNbt
+		val lore = it.item.accessor().loreAccordingToNbt
 		if (lore.lastOrNull()?.unformattedString?.contains("DRILL") != true) return
 		val maxFuel = lore.firstNotNullOfOrNull {
 			fuelPattern.useMatch(it.unformattedString) {
 				parseShortNumber(group("maxFuel"))
 			}
 		} ?: return
-		val extra = it.item.extraAttributes
+		val extra = it.item.accessor().extraAttributes
 		val fuel = extra.getInt("drill_fuel").getOrNull() ?: return
 		var percentage = fuel / maxFuel.toFloat()
 		if (percentage > 1f) percentage = 1f
@@ -190,10 +191,10 @@ object PickaxeAbility {
 	)
 
 	fun getCooldownFromLore(itemStack: ItemStack): PickaxeAbilityData? {
-		val lore = itemStack.loreAccordingToNbt
+		val lore = itemStack.accessor().loreAccordingToNbt
 		if (!lore.any { it.unformattedString.contains("Breaking Power") })
 			return null
-		val ability = AbilityUtils.getAbilities(itemStack).firstOrNull() ?: return null
+		val ability = AbilityUtils.getAbilities(itemStack.accessor()).firstOrNull() ?: return null
 		return PickaxeAbilityData(ability.name, ability.cooldown ?: return null)
 	}
 
@@ -207,7 +208,7 @@ object PickaxeAbility {
 		if (TConfig.disableInDungeons && DungeonUtil.isInDungeonIsland) return
 		if (!event.isRenderingCursor) return
 		val stack = MC.player?.getItemInHand(InteractionHand.MAIN_HAND) ?: return
-		if (!TConfig.showOnTools.matches(ItemType.fromItemStack(stack) ?: ItemType.NIL))
+		if (!TConfig.showOnTools.matches(ItemType.fromItemStack(stack.accessor()) ?: ItemType.NIL))
 			return
 		var ability = getCooldownFromLore(stack)?.also { ability ->
 			defaultAbilityDurations[ability.name] = ability.cooldown

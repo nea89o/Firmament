@@ -14,6 +14,7 @@ import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.getLogicalStackSize
 import moe.nea.firmament.util.gold
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.skyBlockId
 import moe.nea.firmament.util.tr
 import moe.nea.firmament.util.yellow
@@ -77,8 +78,8 @@ object PriceData {
 	fun onItemTooltip(it: ItemTooltipEvent) {
 		if (!TConfig.tooltipEnabled) return
 		if (TConfig.enableKeybinding.isBound && !TConfig.enableKeybinding.isPressed()) return
-		val sbId = it.stack.skyBlockId
-		val stackSize = it.stack.getLogicalStackSize()
+		val sbId = it.stack.accessor().skyBlockId
+		val stackSize = it.stack.accessor().getLogicalStackSize()
 		val isShowingStack = TConfig.stackSizeKey.isPressed()
 		val multiplier = if (isShowingStack) stackSize else 1
 		val multiplierText =

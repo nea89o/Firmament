@@ -21,8 +21,11 @@ import moe.nea.firmament.util.ErrorUtil
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.collections.memoize
+import moe.nea.firmament.util.mc.LazyItemStack
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.mc.arbitraryUUID
 import moe.nea.firmament.util.mc.createSkullItem
+import moe.nea.firmament.util.mc.lazy
 import moe.nea.firmament.util.render.drawGuiTexture
 
 @Serializable
@@ -54,7 +57,7 @@ data class InventoryButton(
 
 
 
-		fun getCustomItem0(icon: String): ItemStack? {
+		fun getCustomItem0(icon: String): LazyItemStack? {
 			when {
 				icon.startsWith("skull:") -> {
 					return createSkullItem(
@@ -71,13 +74,13 @@ data class InventoryButton(
 						runCatching {
 							itemStackParser.parse(StringReader(giveSyntaxItem)).createItemStack(1)
 						}.getOrNull()
-					return componentItem
+					return componentItem?.lazy()
 				}
 			}
 		}
 
 		@OptIn(ExpensiveItemCacheApi::class)
-		fun getItemForName(icon: String): ItemStack {
+		fun getItemForName(icon: String): LazyItemStack {
 			val repoItem = RepoManager.getNEUItem(SkyblockId(icon))
 			var itemStack = repoItem.asItemStack(idHint = SkyblockId(icon))
 			if (repoItem == null) {
@@ -89,6 +92,7 @@ data class InventoryButton(
 		}
 	}
 
+	@OptIn(RequiresComponents::class)
 	fun render(context: GuiGraphicsExtractor) {
 		context.blitSprite(
 			RenderPipelines.GUI_TEXTURED,
@@ -102,10 +106,10 @@ data class InventoryButton(
 			context.pose().pushMatrix()
 			context.pose().translate(myDimension.width / 2F, myDimension.height / 2F)
 			context.pose().scale(2F)
-			context.item(getItem(), -8, -8)
+			context.item(getItem().upgrade(), -8, -8)
 			context.pose().popMatrix()
 		} else {
-			context.item(getItem(), 1, 1)
+			context.item(getItem().upgrade(), 1, 1)
 		}
 	}
 
@@ -122,7 +126,7 @@ data class InventoryButton(
 		return Rectangle(getPosition(guiRect), myDimension)
 	}
 
-	fun getItem(): ItemStack {
+	fun getItem(): LazyItemStack {
 		return getItemForName(icon ?: "")
 	}
 

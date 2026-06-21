@@ -10,6 +10,7 @@ import moe.nea.firmament.events.HotbarItemRenderEvent
 import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.skyblock.Rarity
 
 object ItemRarityCosmetics {
@@ -28,7 +29,7 @@ object ItemRarityCosmetics {
 	}
 
 	fun drawItemStackRarity(drawContext: GuiGraphicsExtractor, x: Int, y: Int, item: ItemStack) {
-		val rarity = Rarity.fromItem(item) ?: return
+		val rarity = Rarity.fromItem(item.accessor()) ?: return
 		val rgb = rarityToColor[rarity] ?: 0xFF00FF80.toInt()
 		drawContext.blitSprite(
 			RenderPipelines.GUI_TEXTURED,

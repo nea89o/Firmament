@@ -19,15 +19,17 @@ import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.mc.LazyItemStack
+import moe.nea.firmament.util.mc.RequiresComponents
 
 object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	override fun equals(o1: SBItemStack, o2: SBItemStack, context: ComparisonContext): Boolean {
 		return o1.skyblockId == o2.skyblockId && o1.getStackSize() == o2.getStackSize()
 	}
 
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	override fun cheatsAs(entry: EntryStack<SBItemStack>?, value: SBItemStack): ItemStack {
-		return value.asCopiedItemStack()
+		return value.asImmutableItemStack().copiedUpgrade()
 	}
 
 	override fun getValueType(): Class<SBItemStack> = SBItemStack::class.java
@@ -43,11 +45,11 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 		return Stream.empty()
 	}
 
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	override fun asFormattedText(entry: EntryStack<SBItemStack>, value: SBItemStack): Component {
 		val neuItem = entry.value.neuItem
 		return if (!RepoManager.TConfig.perfectRenders.rendersPerfectText() || entry.value.isWarm() || neuItem == null) {
-			VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack())
+			VanillaEntryTypes.ITEM.definition.asFormattedText(entry.asItemEntry(), value.asImmutableItemStack().upgrade())
 		} else {
 			Component.literal(neuItem.displayName)
 		}
@@ -90,7 +92,7 @@ object SBItemEntryDefinition : EntryDefinition<SBItemStack> {
 	fun getEntry(ingredient: NEUIngredient): EntryStack<SBItemStack> =
 		getEntry(SkyblockId(ingredient.itemId), count = ingredient.amount.toInt())
 
-	fun getPassthrough(item: ItemLike) = getEntry(SBItemStack.passthrough(ItemStack(item.asItem())))
+	fun getPassthrough(item: ItemLike) = getEntry(SBItemStack.passthrough(LazyItemStack.build(item)))
 
 	fun getEntry(stack: ItemStack): EntryStack<SBItemStack> =
 		getEntry(SBItemStack(stack))

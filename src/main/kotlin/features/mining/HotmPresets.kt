@@ -29,6 +29,7 @@ import moe.nea.firmament.util.customgui.CustomGui
 import moe.nea.firmament.util.customgui.customGui
 import moe.nea.firmament.util.mc.CommonTextures
 import moe.nea.firmament.util.mc.SlotUtils.clickRightMouseButton
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.render.drawGuiTexture
 import moe.nea.firmament.util.unformattedString
@@ -145,7 +146,7 @@ object HotmPresets {
 			for (it in handler.slots) {
 				if (it.container is Inventory) continue
 				val stack = it.item
-				val name = stack.displayNameAccordingToNbt.unformattedString
+				val name = stack.accessor().displayNameAccordingToNbt.unformattedString
 				tierRegex.useMatch(name) {
 					coveredRows.add(group("tier").toInt())
 				}
@@ -188,7 +189,7 @@ object HotmPresets {
 	@Subscribe
 	fun onSlotRender(event: SlotRenderEvents.Before) {
 		if (hotmInventoryName == MC.screenName
-			&& event.slot.item.displayNameAccordingToNbt.unformattedString in highlightedPerks
+			&& event.slot.item.accessor().displayNameAccordingToNbt.unformattedString in highlightedPerks
 		) {
 			event.highlight((Firmament.identifier("hotm_perk_preset")))
 		}

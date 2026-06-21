@@ -16,6 +16,7 @@ import moe.nea.firmament.util.aqua
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.grey
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.timestamp
 import moe.nea.firmament.util.tr
@@ -104,7 +105,7 @@ object TimerInLore {
 	@Subscribe
 	fun creationInLore(event: ItemTooltipEvent) {
 		if (!TConfig.showCreationTimestamp) return
-		val timestamp = event.stack.timestamp ?: return
+		val timestamp = event.stack.accessor().timestamp ?: return
 		val formattedTimestamp = TConfig.timerFormat.formatter.format(ZonedDateTime.ofInstant(timestamp, ZoneId.systemDefault()))
 		event.lines.add(tr("firmament.lore.creationtimestamp", "Created at: $formattedTimestamp").grey())
 	}
@@ -117,7 +118,7 @@ object TimerInLore {
 			val line = event.lines[i].unformattedString
 			val countdownType = CountdownTypes.entries.find { it.match in line } ?: continue
 			if (countdownType == CountdownTypes.CALENDARDETAILS
-				&& !event.stack.displayNameAccordingToNbt.unformattedString.startsWith("Day ")
+				&& !event.stack.accessor().displayNameAccordingToNbt.unformattedString.startsWith("Day ")
 			) continue
 
 			val countdownMatch = regex.findAll(line).filter { it.value.isNotBlank() }.lastOrNull() ?: continue

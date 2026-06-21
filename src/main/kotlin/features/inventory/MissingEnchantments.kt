@@ -19,6 +19,7 @@ import moe.nea.firmament.util.removeColorCodes
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.IntUtil.toRomanNumeral
 import moe.nea.firmament.util.grey
+import moe.nea.firmament.util.mc.accessor
 
 object MissingEnchantments {
 	fun itemTypeToEnchantKey(itemType: ItemType): String {
@@ -51,12 +52,12 @@ object MissingEnchantments {
 		if (!TConfig.enabled) return
 		if (TConfig.enableKeybinding.isBound && !TConfig.enableKeybinding.isPressed()) return
 
-		val itemType = ItemType.fromItemStack(it.stack)
+		val itemType = ItemType.fromItemStack(it.stack.accessor())
 		val pools = RepoManager.enchantData.allEnchants?.enchantPools
 		val maxLevels: Map<String, Int> =
 			RepoManager.enchantData.allEnchants?.enchantExperienceCost?.mapValues { it.value.size }?: emptyMap()
 
-		val appliedEnchantmentsData = it.stack.extraAttributes.getCompound("enchantments").getOrNull()
+		val appliedEnchantmentsData = it.stack.accessor().extraAttributes.getCompound("enchantments").getOrNull()
 		val appliedEnchantments = appliedEnchantmentsData?.keySet().orEmpty()
 		val appliedEnchantmentLevels = appliedEnchantmentsData?.keySet()?.associateWith { enchId -> appliedEnchantmentsData.getInt(enchId) }
 		val enchantKey = itemType?.let { itemTypeToEnchantKey(it) } ?: return

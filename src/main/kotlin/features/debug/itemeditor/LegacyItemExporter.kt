@@ -5,9 +5,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlin.concurrent.thread
-import kotlin.jvm.optionals.getOrNull
-import net.minecraft.core.component.DataComponentGetter
-import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.ByteTag
 import net.minecraft.nbt.CompoundTag
@@ -17,9 +14,9 @@ import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.StringTag
 import net.minecraft.nbt.Tag
 import net.minecraft.network.chat.Component
-import net.minecraft.tags.ItemTags
 import net.minecraft.util.Unit
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
@@ -34,7 +31,13 @@ import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.extraAttributes
 import moe.nea.firmament.util.getLegacyFormatString
 import moe.nea.firmament.util.json.toJsonArray
+import moe.nea.firmament.util.mc.LazyItemStack
+import moe.nea.firmament.util.mc.MutableItemTemplate
+import moe.nea.firmament.util.mc.RequiresComponents
+import moe.nea.firmament.util.mc.defaultItemStack
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.isEmpty
+import moe.nea.firmament.util.mc.isItem
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.toNbtList
 import moe.nea.firmament.util.modifyExtraAttributes
@@ -43,9 +46,10 @@ import moe.nea.firmament.util.skyblock.Rarity
 import moe.nea.firmament.util.transformEachRecursively
 import moe.nea.firmament.util.unformattedString
 
-class LegacyItemExporter private constructor(var itemStack: ItemStack) {
+@OptIn(RequiresComponents::class)
+class LegacyItemExporter private constructor(var itemStack: MutableItemTemplate) {
 	init {
-		require(!itemStack.isEmpty)
+		require(!itemStack.isEmpty())
 		itemStack.count = 1
 	}
 
@@ -73,7 +77,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 			extraAttribs.putString("id", it.neuItem)
 		}
 		trimLore()
-		itemStack.loreAccordingToNbt = itemStack.item.defaultInstance.loreAccordingToNbt
+		itemStack.loreAccordingToNbt = itemStack.defaultItemStack().get(DataComponents.LORE)!!.lines
 		itemStack.remove(DataComponents.CUSTOM_NAME)
 	}
 
@@ -158,7 +162,7 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	private fun copyPotion() {
-		val effects = itemStack.get(DataComponents.POTION_CONTENTS) ?: return
+		val effects = itemStack.getWithDefault(DataComponents.POTION_CONTENTS) ?: return
 		legacyNbt.put("CustomPotionEffects", ListTag().also {
 			effects.allEffects.forEach { effect ->
 				val effectId = effect.effect.unwrapKey().get().identifier().path
@@ -181,19 +185,13 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 		return compound
 	}
 
-	object NullData : DataComponentGetter {
-		override fun <T : Any> get(type: DataComponentType<out T>): T? {
-			return null
-		}
-	}
-
 	private fun copyColour() {
-		val leatherTint = itemStack.componentsPatch.get(NullData, DataComponents.DYED_COLOR) ?: return
+		val leatherTint = itemStack.getWithDefault(DataComponents.DYED_COLOR) ?: return
 		legacyNbt.getOrPutCompound("display").put("color", IntTag.valueOf(leatherTint.rgb))
 	}
 
 	private fun copyItemModel() {
-		val itemModel = itemStack.get(DataComponents.ITEM_MODEL) ?: return
+		val itemModel = itemStack.getWithDefault(DataComponents.ITEM_MODEL) ?: return
 		legacyNbt.put("ItemModel", StringTag.valueOf(itemModel.toString()))
 	}
 
@@ -205,11 +203,13 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	fun exportModernSnbt(): Tag {
-		val overlay = ItemStack.CODEC.encodeStart(MC.currentOrDefaultRegistryNbtOps, itemStack.copy().also {
-			it.modifyExtraAttributes { attribs ->
-				originalId.ifPresent { attribs.putString("id", it) }
-			}
-		}).orThrow
+		val overlay =
+			ItemStack.CODEC.encodeStart(MC.currentOrDefaultRegistryNbtOps, itemStack.finish().withMutations {
+				modifyExtraAttributes { attribs ->
+					originalId.ifPresent { attribs.putString("id", it) }
+					collapseDefaults()
+				}
+			}.upgrade()).orThrow
 		val overlayWithVersion =
 			ExportedTestConstantMeta.SOURCE_CODEC.encode(ExportedTestConstantMeta.current, NbtOps.INSTANCE, overlay)
 				.orThrow
@@ -244,8 +244,8 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	companion object {
-		fun createExporter(itemStack: ItemStack): LegacyItemExporter {
-			return LegacyItemExporter(itemStack.copy()).also { it.prepare() }
+		fun createExporter(itemStack: LazyItemStack): LegacyItemExporter {
+			return LegacyItemExporter(itemStack.intoMutable()).also { it.prepare() }
 		}
 
 		@Subscribe
@@ -316,8 +316,8 @@ class LegacyItemExporter private constructor(var itemStack: ItemStack) {
 	}
 
 	fun legacyifyItemStack(): LegacyItemData.LegacyItemType {
-		if (itemStack.item == Items.LINGERING_POTION || itemStack.item == Items.SPLASH_POTION)
+		if (itemStack.isItem(Items.LINGERING_POTION) || itemStack.isItem(Items.SPLASH_POTION))
 			return LegacyItemData.LegacyItemType("potion", 16384)
-		return LegacyItemData.itemLut[itemStack.item] ?: LegacyItemData.LegacyItemType(itemStack.item.toString(), 0)
+		return LegacyItemData.itemLut[itemStack.itemId] ?: LegacyItemData.LegacyItemType(itemStack.item.registeredName, 0)
 	}
 }

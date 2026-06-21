@@ -1,6 +1,7 @@
 package moe.nea.firmament.util.skyblock
 
 import net.minecraft.world.item.ItemStack
+import moe.nea.firmament.util.mc.DataComponentAccessor
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
 
@@ -18,7 +19,7 @@ data class ItemType private constructor(val name: String) {
 				?.let(::ofName)
 		}
 
-		fun fromItemStack(itemStack: ItemStack): ItemType? {
+		fun fromItemStack(itemStack: DataComponentAccessor): ItemType? {
 			if (itemStack.petData != null)
 				return PET
 			for (loreLine in itemStack.loreAccordingToNbt) {

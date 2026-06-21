@@ -15,6 +15,7 @@ import moe.nea.firmament.util.SHORT_NUMBER_FORMAT
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ProfileSpecificDataHolder
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.iterableView
 import moe.nea.firmament.util.mc.loreAccordingToNbt
@@ -50,19 +51,19 @@ object SackUtil {
 		if (!screen.title.unformattedString.endsWith(" Sack")) return
 		val inv = screen.menu?.container ?: return
 		if (inv.containerSize < 18) return
-		val backSlot = inv.getItem(inv.containerSize - 5)
+		val backSlot = inv.getItem(inv.containerSize - 5).accessor()
 		if (backSlot.displayNameAccordingToNbt.unformattedString != "Go Back") return
 		if (backSlot.loreAccordingToNbt.map { it.unformattedString } != listOf("To Sack of Sacks")) return
 		for (itemStack in inv.iterableView) {
 			// TODO: handle runes and gemstones
-			val stored = itemStack.loreAccordingToNbt.firstNotNullOfOrNull {
+			val stored = itemStack.accessor().loreAccordingToNbt.firstNotNullOfOrNull {
 				storedRegex.useMatch(it.unformattedString) {
 					val stored = parseShortNumber(group("stored")).toLong()
 					val max = parseShortNumber(group("max")).toLong()
 					stored
 				}
 			} ?: continue
-			val itemId = itemStack.skyBlockId ?: continue
+			val itemId = itemStack.accessor().skyBlockId ?: continue
 			items[itemId] = stored
 		}
 		Store.markDirty()

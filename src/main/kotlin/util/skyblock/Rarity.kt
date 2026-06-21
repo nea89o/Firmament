@@ -13,6 +13,8 @@ import net.minecraft.network.chat.Component
 import net.minecraft.ChatFormatting
 import moe.nea.firmament.util.StringUtil.words
 import moe.nea.firmament.util.collections.lastNotNullOfOrNull
+import moe.nea.firmament.util.mc.DataComponentAccessor
+import moe.nea.firmament.util.mc.DataComponentMutator
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.petData
 import moe.nea.firmament.util.unformattedString
@@ -82,11 +84,11 @@ enum class Rarity(vararg altNames: String) {
 			return entries.getOrNull(tier)
 		}
 
-		fun fromItem(itemStack: ItemStack): Rarity? {
+		fun fromItem(itemStack: DataComponentAccessor): Rarity? {
 			return fromLore(itemStack.loreAccordingToNbt) ?: fromPetItem(itemStack)
 		}
 
-		fun fromPetItem(itemStack: ItemStack): Rarity? =
+		fun fromPetItem(itemStack: DataComponentAccessor): Rarity? =
 			itemStack.petData?.tier?.let(::fromNeuRepo)
 
 		fun fromLore(lore: List<Component>): Rarity? =

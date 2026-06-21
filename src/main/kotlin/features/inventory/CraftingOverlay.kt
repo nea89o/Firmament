@@ -10,6 +10,7 @@ import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.skyblockId
 
 object CraftingOverlay {
@@ -45,7 +46,7 @@ object CraftingOverlay {
 	val identifier: String
 		get() = "crafting-overlay"
 
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	@Subscribe
 	fun onSlotRender(event: SlotRenderEvents.After) {
 		val slot = event.slot
@@ -69,10 +70,10 @@ object CraftingOverlay {
 		}
 		if (!slot.hasItem()) {
 			val itemStack = SBItemStack(expectedItem)?.asImmutableItemStack() ?: return
-			event.context.item(itemStack, event.slot.x, event.slot.y)
+			event.context.item(itemStack.upgrade(), event.slot.x, event.slot.y)
 			event.context.itemDecorations(
 				MC.font,
-				itemStack,
+				itemStack.upgrade(),
 				event.slot.x,
 				event.slot.y,
 				"${ChatFormatting.RED}${expectedItem.amount.toInt()}"

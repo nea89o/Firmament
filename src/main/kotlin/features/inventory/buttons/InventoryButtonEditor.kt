@@ -23,6 +23,7 @@ import moe.nea.firmament.util.ClipboardUtils
 import moe.nea.firmament.util.FragmentGuiScreen
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.tr
 
 class InventoryButtonEditor(
@@ -38,10 +39,11 @@ class InventoryButtonEditor(
 		@field:Bind
 		var isGigantic: Boolean = originalButton.isGigantic
 
+		@OptIn(RequiresComponents::class)
 		@Bind
 		fun getItemIcon(): IItemStack {
 			save()
-			return MoulConfigPlatform.wrap(InventoryButton.getItemForName(icon))
+			return MoulConfigPlatform.wrap(InventoryButton.getItemForName(icon).upgrade())
 		}
 
 		@Bind

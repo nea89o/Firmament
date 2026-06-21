@@ -41,8 +41,11 @@ import moe.nea.firmament.util.LegacyTagWriter.Companion.toLegacyString
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.focusedItemStack
+import moe.nea.firmament.util.mc.LazyItemStack
 import moe.nea.firmament.util.mc.SNbtFormatter.Companion.toPrettyString
+import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.displayNameAccordingToNbt
+import moe.nea.firmament.util.mc.isItem
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.mc.setSkullOwner
 import moe.nea.firmament.util.mc.toNbtList
@@ -54,7 +57,8 @@ import moe.nea.firmament.util.unformattedString
 
 object ItemExporter {
 
-	fun exportItem(itemStack: ItemStack): Component {
+	fun exportItem(itemStack: ItemStack): Component = exportItem(LazyItemStack.fromItemStack(itemStack))
+	fun exportItem(itemStack: LazyItemStack): Component {
 		nonOverlayCache.clear()
 		val exporter = LegacyItemExporter.createExporter(itemStack)
 		var json = exporter.exportJson()
@@ -109,8 +113,8 @@ object ItemExporter {
 		pathFor(skyblockId).exists()
 
 	fun ensureExported(itemStack: ItemStack) {
-		if (!isExported(itemStack.skyBlockId ?: return))
-			MC.sendChat(exportItem(itemStack))
+		if (!isExported(itemStack.accessor().skyBlockId ?: return))
+			MC.sendChat(exportItem(LazyItemStack.fromItemStack(itemStack)))
 	}
 
 	fun modifyJson(skyblockId: SkyblockId, modify: (JsonObject) -> JsonObject) {
@@ -220,9 +224,9 @@ object ItemExporter {
 
 		val itemStack = event.screen.focusedItemStack ?: return
 		val displayName = itemStack.displayName?.string ?: return
-		val skyblockID = itemStack.skyBlockId.toString()
+		val skyblockID = itemStack.accessor().skyBlockId.toString()
 		val vanillaItem = itemStack.item
-		val lore = itemStack.loreAccordingToNbt
+		val lore = itemStack.accessor().loreAccordingToNbt
 
 		val warn = { reason: String ->
 			MC.sendChat(
@@ -258,14 +262,14 @@ object ItemExporter {
 			return
 		}
 		val stack = event.slot.item ?: return
-		val id = event.slot.item.skyBlockId?.neuItem
+		val id = event.slot.item.accessor().skyBlockId?.neuItem
 		if (PowerUserTools.TConfig.dontHighlightSemicolonItems && id != null && id.contains(";")) return
-		val sbId = stack.skyBlockId ?: return
+		val sbId = stack.accessor().skyBlockId ?: return
 		val isExported = nonOverlayCache.getOrPut(sbId) {
 			RepoManager.overlayData.getOverlayFiles(sbId).isNotEmpty() || // This extra case is here so that an export works immediately, without repo reload
 				RepoDownloadManager.repoSavedLocation.resolve("itemsOverlay")
 					.resolve(ExportedTestConstantMeta.current.dataVersion.toString())
-					.resolve("${stack.skyBlockId}.snbt")
+					.resolve("${stack.accessor().skyBlockId}.snbt")
 					.exists()
 		}
 		if (!isExported)
@@ -282,15 +286,15 @@ object ItemExporter {
 	}
 
 	fun exportStub(skyblockId: SkyblockId, title: String, entity: Entity?) {
-		val exportText = exportItem(ItemStack(getItemForEntity(entity)).also {
-			it.displayNameAccordingToNbt = Component.literal(title)
-			it.loreAccordingToNbt = listOf(Component.literal(""))
-			it.setSkyBlockId(skyblockId)
-			if (it.`is`(Items.PLAYER_HEAD)) {
+		val exportText = exportItem(LazyItemStack.build(getItemForEntity(entity)) {
+			displayNameAccordingToNbt = Component.literal(title)
+			loreAccordingToNbt = listOf(Component.literal(""))
+			setSkyBlockId(skyblockId)
+			if (isItem(Items.PLAYER_HEAD)) {
 				val playerEntity = entity as? AbstractClientPlayer
 				val textureUrl = (playerEntity?.skin?.body as? ClientAsset.DownloadedTexture)?.url
 				if (textureUrl != null)
-					it.setSkullOwner(playerEntity.uuid, textureUrl)
+					setSkullOwner(playerEntity.uuid, textureUrl)
 			}
 		})
 		MC.sendChat(exportText)
