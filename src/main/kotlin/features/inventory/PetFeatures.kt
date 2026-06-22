@@ -64,7 +64,7 @@ object PetFeatures {
 		}
 	}
 
-	private val petMenuTitle = "Pets(?: \\([0-9]+/[0-9]+\\))?".toPattern()
+	private val petMenuTitle = "(?:\\([0-9]+/[0-9]+\\)\\s)?Pets".toPattern()
 	private val autopetPattern =
 		"§cAutopet §eequipped your §7\\[Lvl (\\d{1,3})\\] §([fa956d])([\\w\\s]+)§e! §aVIEW RULE".toPattern()
 	private val petItemPattern = "§aYour pet is now holding (§[fa956d][\\w\\s]+)§a.".toPattern()
