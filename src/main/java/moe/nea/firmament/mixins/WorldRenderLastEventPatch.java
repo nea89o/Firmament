@@ -40,7 +40,7 @@ public abstract class WorldRenderLastEventPatch {
 	@Final
 	private LevelTargetBundle targets;
 
-	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V", shift = At.Shift.AFTER))
+	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;addLateDebugPass(Lcom/mojang/blaze3d/framegraph/FrameGraphBuilder;Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Matrix4fc;)V", shift = At.Shift.AFTER))
 	public void onWorldRenderLast(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker, boolean renderOutline, CameraRenderState cameraState, Matrix4fc modelViewMatrix, GpuBufferSlice terrainFog, Vector4f fogColor, boolean shouldRenderSky, ChunkSectionsToRender chunkSectionsToRender, CallbackInfo ci, @Local FrameGraphBuilder frame) {
 
 		var pass = frame.addPass("FirmamentWorldRenderLast");
@@ -62,7 +62,7 @@ public abstract class WorldRenderLastEventPatch {
 				imm
 			);
 			WorldRenderLastEvent.Companion.publish(event);
-			imm.endLastBatch();
+			imm.endBatch();
 
 			RenderSystem.outputColorTextureOverride = null;
 			RenderSystem.outputDepthTextureOverride = null;
