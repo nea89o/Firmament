@@ -8,8 +8,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.npc.villager.VillagerProfession
-import net.minecraft.world.item.ItemStackTemplate
-import net.minecraft.world.item.Items
+import net.minecraft.world.item.ItemStack
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.gui.entity.EntityRenderer
 import moe.nea.firmament.repo.ExpensiveItemCacheApi
@@ -151,7 +150,8 @@ object SBReforgeRecipeRenderer : GenericRecipeRenderer<Reforge> {
 		return listOf()
 	}
 
-	override val icon: ItemStackTemplate = ItemStackTemplate(Items.ANVIL)
+	@OptIn(ExpensiveItemCacheApi::class)
+	override val icon: ItemStack by lazy { SBItemStack(SkyBlockItems.REFORGE_ANVIL).asImmutableItemStack() }
 	override val title: Component
 		get() = tr("firmament.recipecategory.reforge", "Reforge")
 	override val identifier: Identifier
