@@ -158,6 +158,8 @@ object SlotLocking {
 		val allowMultiBinding by toggle("multi-bind") { true } // TODO: filter based on this option
 		val protectAllHuntingBoxes by toggle("hunting-box") { false }
 		val allowDroppingInDungeons by toggle("drop-in-dungeons") { true }
+		val dropMessage by toggle("drop-message") { true }
+		val dropSound by toggle("drop-sound") { true }
 	}
 
 	enum class SlotRenderLinesMode : StringRepresentable {
