@@ -15,7 +15,9 @@ import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.darkGrey
+import moe.nea.firmament.util.directLiteralStringContent
 import moe.nea.firmament.util.removeColorCodes
+import moe.nea.firmament.util.transformEachRecursively
 import moe.nea.firmament.util.unformattedString
 import moe.nea.firmament.util.IntUtil.toRomanNumeral
 import moe.nea.firmament.util.grey
@@ -29,7 +31,7 @@ object MissingEnchantments {
 	object TConfig : ManagedConfig("missing-enchantments", Category.INVENTORY) {
 		val enabled by toggle("enabled") { true }
 		val enableKeybinding by keyBinding("show-missing-enchantments") { GLFW.GLFW_KEY_LEFT_SHIFT }
-		val showUpgradableEnchantments by toggle("show-upgradable-enchantments") { false }
+		val showUpgradableEnchantments by toggle("show-upgradable-enchantments") { true }
 		val showConflictingEnchantments by toggle("show-conflicting-enchantments") { false }
 	}
 
@@ -38,7 +40,7 @@ object MissingEnchantments {
 		val displayName = RepoManager.getNEUItem(skyblockId)
 			?.lore?.firstOrNull()
 
-		return if (level == null || level <= 1) {
+		return if (level == null) {
 			displayName?.replace(Regex(" [IVX]+$"), "")
 		} else {
 			displayName
@@ -53,8 +55,7 @@ object MissingEnchantments {
 
 		val itemType = ItemType.fromItemStack(it.stack)
 		val pools = RepoManager.enchantData.allEnchants?.enchantPools
-		val maxLevels: Map<String, Int> =
-			RepoManager.enchantData.allEnchants?.enchantExperienceCost?.mapValues { it.value.size }?: emptyMap()
+		val maxLevels = RepoManager.enchantData.enchantMaxLevels
 
 		val appliedEnchantmentsData = it.stack.extraAttributes.getCompound("enchantments").getOrNull()
 		val appliedEnchantments = appliedEnchantmentsData?.keySet().orEmpty()
@@ -62,13 +63,14 @@ object MissingEnchantments {
 		val enchantKey = itemType?.let { itemTypeToEnchantKey(it) } ?: return
 		val neuEnchantmentData = RepoManager.enchantData.allEnchants?.availableEnchants[enchantKey] ?: return
 		var missingEnchantments = neuEnchantmentData.minus(appliedEnchantmentsData?.keySet().orEmpty())
+
 		// Shows Upgradable Enchantments Inline. For Example: "Sharpness V" will show as "Sharpness V → VII"
 		if (TConfig.showUpgradableEnchantments) {
 			for (i in it.lines.indices) {
 				val line = it.lines[i]
 				val lineText = line.unformattedString
 
-				// Build map of enchantment text -> max level for upgradable enchants on this Tooltip line
+				// Build map of enchantment text -> max level for upgradable enchants on this tooltip line
 				val upgradeMap = mutableMapOf<String, Int>()
 				for ((enchId, currentLevel) in appliedEnchantmentLevels.orEmpty()) {
 					val enchantText = enchantIdToText(enchId, currentLevel.getOrNull())?.removeColorCodes()
@@ -80,34 +82,28 @@ object MissingEnchantments {
 					}
 				}
 
-				// If any enchantments can be upgraded, rebuild the line with inline upgrades
+				// If any enchantments can be upgraded, rebuild the line
 				if (upgradeMap.isNotEmpty()) {
-					val parts = lineText.split(", ")
-					val newLine = Component.empty()
-
-					parts.forEachIndexed { index, part ->
-						newLine.append(Component.literal(part).withStyle(line.style))
-
-						var wasUpgraded = false
-						for ((enchText, maxLevel) in upgradeMap) {
-							if (enchText in part) {
-								newLine.append(Component.literal(" → ${maxLevel.toRomanNumeral()}").darkGrey())
-								wasUpgraded = true
+					it.lines[i] = line.transformEachRecursively { child ->
+						val text = child.directLiteralStringContent ?: return@transformEachRecursively child
+						val result = Component.literal("").setStyle(child.style)
+						var remaining = text
+						while (remaining.isNotEmpty()) {
+							val match = upgradeMap.keys
+								.mapNotNull { enchText -> remaining.indexOf(enchText).takeIf { it >= 0 }?.let { it to enchText } }
+								.minByOrNull { it.first }
+							if (match == null) {
+								result.append(Component.literal(remaining))
 								break
 							}
+							val (idx, enchText) = match
+							if (idx > 0) result.append(Component.literal(remaining.substring(0, idx)))
+							result.append(Component.literal(enchText))
+							result.append(Component.literal(" → ${upgradeMap[enchText]!!.toRomanNumeral()}").darkGrey())
+							remaining = remaining.substring(idx + enchText.length)
 						}
-
-						// Add comma separator if not last part
-						if (index < parts.size - 1) {
-							if (wasUpgraded) {
-								newLine.append(Component.literal(", ").darkGrey())
-							} else {
-								newLine.append(Component.literal(", ").withStyle(line.style))
-							}
-						}
+						result
 					}
-
-					it.lines[i] = newLine
 				}
 			}
 		}
