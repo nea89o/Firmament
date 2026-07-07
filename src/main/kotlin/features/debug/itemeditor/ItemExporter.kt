@@ -136,6 +136,21 @@ object ItemExporter {
 	@Subscribe
 	fun onCommand(event: CommandEvent.SubCommand) {
 		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
+			thenLiteral("setCustomHighlights") {
+				thenExecute {
+					val clipboard = MC.keyboard.clipboard.uppercase()
+					if (clipboard.isEmpty()) {
+						MC.sendChat(Component.literal("Clipboard is empty!"))
+						return@thenExecute
+					}
+					if (!PowerUserTools.TConfig.highlightCustomItems)
+						MC.sendChat(Component.literal("Warning: Higlight Custom Items is disabled in the Config!"))
+					val ids = clipboard.split(" ")
+					PowerUserTools.customHighlightItems.clear()
+					PowerUserTools.customHighlightItems.addAll(ids)
+					MC.sendChat(Component.literal("Loaded ${PowerUserTools.customHighlightItems.size} IDs to highlight."))
+				}
+			}
 			thenLiteral("reexportlore") {
 				thenArgument("itemid", RestArgumentType) { itemid ->
 					suggests { ctx, builder ->
@@ -252,27 +267,29 @@ object ItemExporter {
 		}
 
 		PowerUserTools.lastCopiedStack = itemStack to exportItem(itemStack)
+		PowerUserTools.customHighlightItems.remove(skyblockID)
 	}
 
 	val nonOverlayCache = mutableMapOf<SkyblockId, Boolean>()
 
 	@Subscribe
 	fun onRender(event: SlotRenderEvents.Before) {
-		if (!PowerUserTools.TConfig.highlightNonOverlayItems) {
+		if (!PowerUserTools.TConfig.highlightNonOverlayItems && !PowerUserTools.TConfig.highlightCustomItems) {
 			return
 		}
 		val stack = event.slot.item ?: return
 		val id = event.slot.item.accessor().skyBlockId?.neuItem
 		if (PowerUserTools.TConfig.dontHighlightSemicolonItems && id != null && id.contains(";")) return
 		val sbId = stack.accessor().skyBlockId ?: return
-		val isExported = nonOverlayCache.getOrPut(sbId) {
+		val isCustom = PowerUserTools.TConfig.highlightCustomItems && PowerUserTools.customHighlightItems.contains(sbId.toString())
+		val isExported = PowerUserTools.TConfig.highlightNonOverlayItems && nonOverlayCache.getOrPut(sbId) {
 			RepoManager.overlayData.getOverlayFiles(sbId).isNotEmpty() || // This extra case is here so that an export works immediately, without repo reload
 				RepoDownloadManager.repoSavedLocation.resolve("itemsOverlay")
 					.resolve(ExportedTestConstantMeta.current.dataVersion.toString())
 					.resolve("${stack.accessor().skyBlockId}.snbt")
 					.exists()
 		}
-		if (!isExported)
+		if (!isExported || isCustom)
 			event.context.drawGuiTexture(
 				Firmament.identifier("selected_pet_background"),
 				event.slot.x, event.slot.y, 16, 16,

@@ -320,6 +320,8 @@
 	"firmament.config.power-user.export-npc-location.description": "Export the NPC's location to the repo data",
 	"firmament.config.power-user.export-recipe": "Export Recipe Data",
 	"firmament.config.power-user.export-recipe.description": "Export Recipe Data to the repo data",
+	"firmament.config.power-user.highlight-custom-items": "Highlight Custom Items",
+	"firmament.config.power-user.highlight-custom-items.description": "Highlight items of your choosing.\nSet the list from your clipboard with '/firm dev setcustomhiglights'.",
 	"firmament.config.power-user.highlight-non-overlay": "Highlight Missing Items",
 	"firmament.config.power-user.highlight-non-overlay.description": "Highlights items that don't exist in the repo.",
 	"firmament.config.power-user.show-item-id": "Show SkyBlock Ids",
