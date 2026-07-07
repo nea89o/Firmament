@@ -1,5 +1,9 @@
 package moe.nea.firmament.features.debug.itemeditor
 
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.Suggestions
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -23,6 +27,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.commands.DefaultSource
 import moe.nea.firmament.commands.RestArgumentType
 import moe.nea.firmament.commands.get
 import moe.nea.firmament.commands.thenArgument
@@ -34,6 +39,8 @@ import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.features.debug.PowerUserTools
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
+import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoDownloadManager
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.LegacyTagParser
@@ -151,25 +158,23 @@ object ItemExporter {
 					MC.sendChat(Component.literal("Loaded ${PowerUserTools.customHighlightItems.size} IDs to highlight."))
 				}
 			}
+			thenLiteral("reexportSnbt") {
+				thenArgument("itemId", RestArgumentType) { itemId ->
+					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
+					@OptIn(ExpensiveItemCacheApi::class)
+					thenExecute {
+						for (itemId in get(itemId).split(" ").map { SkyblockId(it) }) {
+							val neuItem = RepoManager.getNEUItem(itemId)
+							val realItem = neuItem.asItemStack()
+							val output = exportItem(realItem)
+							MC.sendChat(output)
+						}
+					}
+				}
+			}
 			thenLiteral("reexportlore") {
 				thenArgument("itemid", RestArgumentType) { itemid ->
-					suggests { ctx, builder ->
-						val spaceIndex = builder.remaining.lastIndexOf(" ")
-						val (before, after) =
-							if (spaceIndex < 0) Pair("", builder.remaining)
-							else Pair(
-								builder.remaining.substring(0, spaceIndex + 1),
-								builder.remaining.substring(spaceIndex + 1)
-							)
-						RepoManager.neuRepo.items.items.keys
-							.asSequence()
-							.filter { it.startsWith(after, ignoreCase = true) }
-							.forEach {
-								builder.suggest(before + it)
-							}
-
-						builder.buildFuture()
-					}
+					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
 					thenExecute {
 						for (itemid in get(itemid).split(" ").map { SkyblockId(it) }) {
 							if (pathFor(itemid).notExists()) {
@@ -214,6 +219,25 @@ object ItemExporter {
 				}
 			}
 		}
+	}
+
+	fun itemIdSuggester(ctx: CommandContext<DefaultSource>, builder: SuggestionsBuilder):
+		CompletableFuture<Suggestions> {
+		val spaceIndex = builder.remaining.lastIndexOf(" ")
+		val (before, after) =
+			if (spaceIndex < 0) Pair("", builder.remaining)
+			else Pair(
+				builder.remaining.substring(0, spaceIndex + 1),
+				builder.remaining.substring(spaceIndex + 1)
+			)
+		RepoManager.neuRepo.items.items.keys
+			.asSequence()
+			.filter { it.startsWith(after, ignoreCase = true) }
+			.forEach {
+				builder.suggest(before + it)
+			}
+
+		return builder.buildFuture()
 	}
 
 	fun fixLoreNbtFor(itemid: SkyblockId) {
