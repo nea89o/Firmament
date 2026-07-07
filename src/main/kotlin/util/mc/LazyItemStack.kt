@@ -189,6 +189,7 @@ open class LazyItemStack private constructor() : DataComponentAccessor, TypedIns
 
 	@RequiresComponents
 	fun recreate(): ItemStack {
+		generation = ComponentsLoadedEvent.generation
 		return (_template?.create() ?: ItemStack.EMPTY)
 			.also { this._itemStack = it }
 	}
