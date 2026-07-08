@@ -144,18 +144,17 @@ object ItemExporter {
 	fun onCommand(event: CommandEvent.SubCommand) {
 		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
 			thenLiteral("setCustomHighlights") {
-				thenExecute {
-					val clipboard = MC.keyboard.clipboard.uppercase()
-					if (clipboard.isEmpty()) {
-						MC.sendChat(Component.literal("Clipboard is empty!"))
-						return@thenExecute
+				thenArgument("itemId", RestArgumentType) { itemId ->
+					thenExecute {
+						var items = get(itemId)
+						if (items == "clipboard") items = MC.keyboard.clipboard
+						if (!PowerUserTools.TConfig.highlightCustomItems)
+							MC.sendChat(Component.literal("Warning: Higlight Custom Items is disabled in the Config!"))
+						val ids = items.split(" ")
+						PowerUserTools.customHighlightItems.clear()
+						PowerUserTools.customHighlightItems.addAll(ids)
+						MC.sendChat(Component.literal("Loaded ${PowerUserTools.customHighlightItems.size} IDs to highlight."))
 					}
-					if (!PowerUserTools.TConfig.highlightCustomItems)
-						MC.sendChat(Component.literal("Warning: Higlight Custom Items is disabled in the Config!"))
-					val ids = clipboard.split(" ")
-					PowerUserTools.customHighlightItems.clear()
-					PowerUserTools.customHighlightItems.addAll(ids)
-					MC.sendChat(Component.literal("Loaded ${PowerUserTools.customHighlightItems.size} IDs to highlight."))
 				}
 			}
 			thenLiteral("reexportSnbt") {
@@ -163,7 +162,9 @@ object ItemExporter {
 					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
 					@OptIn(ExpensiveItemCacheApi::class)
 					thenExecute {
-						for (itemId in get(itemId).split(" ").map { SkyblockId(it) }) {
+						var items = get(itemId)
+						if (items == "clipboard") items = MC.keyboard.clipboard
+						for (itemId in items.split(" ").map { SkyblockId(it) }) {
 							val neuItem = RepoManager.getNEUItem(itemId)
 							val realItem = neuItem.asItemStack()
 							val output = exportItem(realItem)
@@ -176,12 +177,14 @@ object ItemExporter {
 				thenArgument("itemid", RestArgumentType) { itemid ->
 					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
 					thenExecute {
-						for (itemid in get(itemid).split(" ").map { SkyblockId(it) }) {
+						var items = get(itemid)
+						if (items == "clipboard") items = MC.keyboard.clipboard
+						for (itemid in items.split(" ").map { SkyblockId(it) }) {
 							if (pathFor(itemid).notExists()) {
 								MC.sendChat(
 									tr(
 										"firmament.repo.export.relore.fail",
-										"Could not find json file to relore for ${itemid}"
+										"Could not find json file to relore for $itemid"
 									)
 								)
 							}
