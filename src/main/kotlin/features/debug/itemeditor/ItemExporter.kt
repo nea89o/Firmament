@@ -157,6 +157,17 @@ object ItemExporter {
 					}
 				}
 			}
+			thenLiteral("getCustomHighlights") {
+				thenExecute {
+					val items = PowerUserTools.customHighlightItems
+					if (items.isEmpty()) {
+						MC.sendChat(Component.literal("Custom Highlights list is empty!"))
+						return@thenExecute
+					}
+					println("Custom Highlights -- ${items.joinToString(" ")} --")
+					MC.sendChat(Component.literal("Check your logs."))
+				}
+			}
 			thenLiteral("reexportSnbt") {
 				thenArgument("itemId", RestArgumentType) { itemId ->
 					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
