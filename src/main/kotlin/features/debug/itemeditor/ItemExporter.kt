@@ -145,11 +145,12 @@ object ItemExporter {
 		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
 			thenLiteral("setCustomHighlights") {
 				thenArgument("itemId", RestArgumentType) { itemId ->
+					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
 					thenExecute {
 						var items = get(itemId)
 						if (items == "clipboard") items = MC.keyboard.clipboard
 						if (!PowerUserTools.TConfig.highlightCustomItems)
-							MC.sendChat(Component.literal("Warning: Higlight Custom Items is disabled in the Config!"))
+							MC.sendChat(Component.literal("Warning: Highlight Custom Items is disabled in the Config!"))
 						val ids = items.split(" ")
 						PowerUserTools.customHighlightItems.clear()
 						PowerUserTools.customHighlightItems.addAll(ids)
