@@ -56,7 +56,7 @@ object PartyCommands {
 			return node
 		}
 
-		register("warp", "pw", "pwarp", "partywarp") {
+		register("warp", "pw", "pwarp", "partywarp", "w") {
 			executes {
 				// TODO: add check if you are the party leader
 				MC.sendCommand("p warp")
@@ -85,6 +85,43 @@ object PartyCommands {
 				0
 			}
 		}
+
+		register("promote") {
+			executes {
+				// TODO: add check if you are the party leader
+				MC.sendCommand("p promote ${it.source.name}")
+				0
+			}
+		}
+
+		register("kick","k") {
+			executes {
+				// TODO: add check if you are the party leader
+				MC.sendCommand("p kick ${it.source.name}")
+			}
+		}
+
+		register("kickoffline","ko") {
+			executes {
+				// TODO: add check if you are the party leader
+				MC.sendCommand("p kickoffline")
+			}
+		}
+
+		register("demote") {
+			executes {
+				// TODO: add check if you are the party leader
+				MC.sendCommand("p demote ${it.source.name}")
+			}
+		}
+		/*
+		// not sure if that functions should be implemented. Could allow for scamming/phishing methods
+		register("invite","inv") {
+			executes {
+				MC.sendCommand("p invite ${it.source.name}")
+			}
+		}
+		*/
 		// TODO: downtime tracker (display message again at end of dungeon)
 		// instance ends: kuudra, dungeons, bacte
 		// TODO: at TPS command
