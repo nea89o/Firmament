@@ -2,6 +2,7 @@ package moe.nea.firmament.util.compatloader
 
 import java.util.ServiceLoader
 import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.api.Version
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
 import moe.nea.firmament.Firmament
@@ -42,9 +43,17 @@ open class CompatLoader<T : Any>(val kClass: Class<T>) {
 
 	fun checkRequiredModsPresent(type: Class<*>): Boolean {
 		val requiredMods = type.getAnnotationsByType(RequireMod::class.java)
-		return requiredMods.all { FabricLoader.getInstance().isModLoaded(it.modId) }
+		return requiredMods.all { mod ->
+			val minVersion = mod.minVersion.takeUnless { it.isEmpty() }?.let(Version::parse)
+			val maxVersion = mod.maxVersion.takeUnless { it.isEmpty() }?.let(Version::parse)
+
+			FabricLoader.getInstance().getModContainer(mod.modId).orElse(null)?.metadata?.let { metadata ->
+				(minVersion == null || metadata.version >= minVersion) &&
+					(maxVersion == null || metadata.version <= maxVersion)
+			} ?: false
+		}
 	}
 
 	@Repeatable
-	annotation class RequireMod(val modId: String)
+	annotation class RequireMod(val modId: String, val minVersion: String = "", val maxVersion: String = "")
 }

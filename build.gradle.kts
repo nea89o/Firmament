@@ -204,6 +204,7 @@ val irisSourceSet = createIsolatedSourceSet("iris")
 val customTexturesSourceSet = createIsolatedSourceSet("texturePacks", "texturePacks")
 val apiSourceSet = createIsolatedSourceSet("api", "api", inheritsFromMain = false, enableKsp = false)
 val jarvisSourceSet = createIsolatedSourceSet("jarvis", "vendor/jarvis", inheritsFromMain = false, enableKsp = false)
+val owolibSourceSet = createIsolatedSourceSet("owolib")
 
 dependencies {
 	// Minecraft dependencies
@@ -268,6 +269,8 @@ dependencies {
 	val reiDeps = libs.rei
 	(reiSourceSet.implementationConfigurationName)(reiDeps.api)
 	(reiSourceSet.implementationConfigurationName)(reiDeps.fabric)
+	(owolibSourceSet.implementationConfigurationName)(reiDeps.api)
+	(owolibSourceSet.implementationConfigurationName)(libs.owolib)
 	implementation(libs.repoparser)
 	shadowMe(libs.repoparser)
 

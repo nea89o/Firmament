@@ -86,6 +86,9 @@ classtransform = "1.14.1"
 # Update from https://mvnrepository.com/artifact/org.ow2.asm/asm/
 asm = "9.9.1"
 
+# Update from https://maven.wispforest.io/#/releases/io/wispforest/owo-lib
+owolib = "0.13.0+26.1"
+
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
@@ -129,6 +132,8 @@ classTransform-mixinsTranslator = { module = "net.lenni0451.classtransform:mixin
 classTransform-core = { module = "net.lenni0451.classtransform:core", version.ref = "classtransform" }
 
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+
+owolib = { module = "io.wispforest:owo-lib", version.ref = "owolib" }
 
 [plugins]
 kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
