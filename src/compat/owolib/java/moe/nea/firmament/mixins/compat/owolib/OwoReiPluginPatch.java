@@ -1,4 +1,4 @@
-package moe.nea.firmament.mixins.owolib;
+package moe.nea.firmament.mixins.compat.owolib;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import org.spongepowered.asm.mixin.Mixin;
