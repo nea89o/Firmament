@@ -98,6 +98,7 @@ object PartyCommands {
 			executes {
 				// TODO: add check if you are the party leader
 				MC.sendCommand("p kick ${it.source.name}")
+				0
 			}
 		}
 
@@ -105,6 +106,7 @@ object PartyCommands {
 			executes {
 				// TODO: add check if you are the party leader
 				MC.sendCommand("p kickoffline")
+				0
 			}
 		}
 
@@ -112,6 +114,7 @@ object PartyCommands {
 			executes {
 				// TODO: add check if you are the party leader
 				MC.sendCommand("p demote ${it.source.name}")
+				0
 			}
 		}
 		/*
