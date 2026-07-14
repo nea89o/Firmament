@@ -24,6 +24,5 @@ runs:
                 add-job-summary-as-pr-comment: 'never'
                 dependency-graph: 'generate-and-submit'
         -   name: Prepare unpacked Jars
-            run: |
-                ./gradlew unpackAllJars
+            run: ./gradlew unpackAllJars
             shell: sh
