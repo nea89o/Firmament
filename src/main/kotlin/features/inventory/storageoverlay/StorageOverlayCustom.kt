@@ -47,7 +47,7 @@ class StorageOverlayCustom(
 		screen.x_Firmament = overview.measurements.x
 		screen.y_Firmament = overview.measurements.y
 
-		//TODO: imageWidth and imageHeight has to be set in constructor as of 26.1
+		//TODO: imageWidth and imageHeight has to be set in constructor as of 26.2
 		//screen.backgroundWidth_Firmament = overview.measurements.totalWidth
 		//screen.backgroundHeight_Firmament = overview.measurements.totalHeight
 	}

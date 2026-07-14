@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ItemStackRenderState.LayerRenderState.class)
 public class UseOverlayableItemRenderer {
 /*
-	TODO(26.1): check if this is still needed (probably not)
+	TODO(26.2): check if this is still needed (probably not)
 	@ModifyExpressionValue(method = "submit", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState$LayerRenderState;specialRenderer:Lnet/minecraft/client/renderer/special/SpecialModelRenderer;", opcode = Opcodes.GETFIELD))
 	private @Nullable SpecialModelRenderer<Object> replace(@Nullable SpecialModelRenderer<Object> original) {
 		RenderSetup.TextureBinding  binding;
