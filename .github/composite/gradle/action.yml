@@ -8,6 +8,7 @@ runs:
     using: composite
     steps:
         -   uses: actions/checkout@v4
+            name: Checkout repository
         -   name: Set up JDK 25
             uses: actions/setup-java@v4
             with:
@@ -17,3 +18,4 @@ runs:
             uses: gradle/actions/setup-gradle@v3
         -   name: Build project
             run: ./gradlew build
+            shell: bash
