@@ -2,27 +2,19 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-name: "Run Gradle on a filter=tree:0 checkout"
+name: "Setup Gradle for Minecraft 26.2"
+description: "Setup Gradle build environment"
 runs:
     using: composite
     steps:
-        -   uses: actions/checkout@v5
-            name: Checkout repository
-            with:
-                fetch-tags: true
-                fetch-depth: 0
-                filter: 'tree:0'
+        -   uses: actions/checkout@v4
         -   name: Set up JDK 25
-            uses: actions/setup-java@v5
+            uses: actions/setup-java@v4
             with:
                 distribution: temurin
                 java-version: 25
         -   name: Set up gradle cache
-            uses: gradle/actions/setup-gradle@v4
-            with:
-                cache-read-only: false
-                add-job-summary-as-pr-comment: 'never'
-                dependency-graph: 'generate-and-submit'
-        -   name: Prepare unpacked Jars
-            run: |
-                ./gradlew unpackAllJars
+            uses: gradle/actions/setup-gradle@v3
+        -   name: Build project
+            run: ./gradlew build
+            shell: bash
