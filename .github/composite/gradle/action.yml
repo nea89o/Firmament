@@ -26,4 +26,3 @@ runs:
         -   name: Prepare unpacked Jars
             run: |
                 ./gradlew unpackAllJars
-            shell: sh
