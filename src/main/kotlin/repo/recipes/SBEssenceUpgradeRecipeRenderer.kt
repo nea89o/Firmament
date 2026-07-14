@@ -3,7 +3,6 @@ package moe.nea.firmament.repo.recipes
 import io.github.moulberry.repo.NEURepository
 import me.shedaniel.math.Rectangle
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import moe.nea.firmament.Firmament
@@ -12,6 +11,7 @@ import moe.nea.firmament.repo.ExpensiveItemCacheApi
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.repo.SBItemStack
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.tr
 
 object SBEssenceUpgradeRecipeRenderer : GenericRecipeRenderer<EssenceRecipeProvider.EssenceUpgradeRecipe> {
@@ -62,9 +62,9 @@ object SBEssenceUpgradeRecipeRenderer : GenericRecipeRenderer<EssenceRecipeProvi
 		return listOfNotNull(SBItemStack(recipe.itemId))
 	}
 
-	@OptIn(ExpensiveItemCacheApi::class)
+	@OptIn(ExpensiveItemCacheApi::class, RequiresComponents::class)
 	override val icon: ItemStack by lazy {
-		SBItemStack(SkyblockId(("ESSENCE_WITHER"))).asImmutableItemStack().maybeItemStack() ?: ItemStack(Items.PAINTING)
+		SBItemStack(SkyblockId(("ESSENCE_WITHER"))).asImmutableItemStack().upgrade()
 	}
 	override val title: Component = tr("firmament.category.essence", "Essence Upgrades")
 	override val identifier: Identifier = Firmament.identifier("essence_upgrade")
