@@ -12,7 +12,6 @@ runs:
             with:
                 fetch-tags: true
                 fetch-depth: 0
-                filter: 'tree:0'
         -   name: Set up JDK 25
             uses: actions/setup-java@v5
             with:
