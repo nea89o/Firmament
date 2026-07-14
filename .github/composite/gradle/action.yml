@@ -17,4 +17,3 @@ runs:
             uses: gradle/actions/setup-gradle@v3
         -   name: Build project
             run: ./gradlew build
-            shell: bash
