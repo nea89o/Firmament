@@ -58,7 +58,7 @@ object WarpUtil {
 			return
 		}
 		if (island == SBData.skyblockLocation
-			&& sqrt(squaredDist(pos, nearestWarp)) > 1.1 * sqrt(squaredDist((MC.player ?: return).position, nearestWarp))
+			&& sqrt(squaredDist(pos, nearestWarp)) > 1.1 * sqrt(squaredDist((MC.player ?: return).position(), nearestWarp))
 		) {
 			MC.sendChat(Component.translatable("firmament.warp-util.already-close", nearestWarp.warp))
 			return

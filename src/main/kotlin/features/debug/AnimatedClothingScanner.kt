@@ -115,7 +115,7 @@ object AnimatedClothingScanner {
 								)
 							)
 							val p = MC.player!!
-							val nearestPet = p.level.getEntitiesOfClass(
+							val nearestPet = p.level().getEntitiesOfClass(
 								ArmorStand::class.java,
 								p.boundingBox.inflate(10.0),
 								{ it.isMarker })

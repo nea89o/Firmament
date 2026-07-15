@@ -13,6 +13,7 @@ import net.minecraft.util.LightCoordsUtil
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.assertTrueOr
+import moe.nea.firmament.util.center
 
 @RenderContextDSL
 class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
@@ -20,7 +21,7 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
     fun waypoint(position: BlockPos, label: Component) {
         text(
             label,
-            Component.literal("§e${FirmFormatters.formatDistance(MC.player?.position?.distanceTo(position.center) ?: 42069.0)}")
+            Component.literal("§e${FirmFormatters.formatDistance(MC.player?.position()?.distanceTo(position.center()) ?: 42069.0)}")
         )
     }
 

@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
+import net.minecraft.client.gui.Hud
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.multiplayer.ClientLevel
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraft.world.phys.Vec3
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.events.WorldReadyEvent
@@ -106,7 +108,8 @@ object MC {
 	inline val interactionManager get() = instance.gameMode
 	inline val textureManager get() = instance.textureManager
 	inline val options get() = instance.options
-	inline val inGameHud: Gui get() = instance.gui
+	inline val gui: Gui get() = instance.gui
+	inline val inGameHud: Hud get() = instance.gui.hud
 	inline val font get() = instance.font
 	inline val soundManager get() = instance.soundManager
 	inline val player: LocalPlayer? get() = TestUtil.unlessTesting { instance.player }
@@ -115,10 +118,10 @@ object MC {
 	inline val world: ClientLevel? get() = TestUtil.unlessTesting { instance.level }
 	inline val playerName: String get() = player?.name?.unformattedString ?: MC.instance.user.name
 	inline var screen: Screen?
-		get() = TestUtil.unlessTesting { instance.screen }
-		set(value) = instance.setScreen(value)
+		get() = TestUtil.unlessTesting { instance.gui.screen() }
+		set(value) = instance.gui.setScreen(value)
 	val screenName get() = screen?.title?.unformattedString?.trim()
-	inline val handledScreen: AbstractContainerScreen<*>? get() = instance.screen as? AbstractContainerScreen<*>
+	inline val handledScreen: AbstractContainerScreen<*>? get() = screen as? AbstractContainerScreen<*>
 	inline val window get() = instance.window
 	inline val currentRegistries: HolderLookup.Provider? get() = world?.registryAccess()
 	val defaultRegistries: HolderLookup.Provider by lazy { VanillaRegistries.createLookup() }
@@ -157,3 +160,7 @@ object MC {
 
 val Coordinate.blockPos: BlockPos
 	get() = BlockPos(x, y, z)
+
+fun BlockPos.center(): Vec3 {
+	return Vec3.atCenterOf(this)
+}

@@ -70,8 +70,8 @@ object WardrobeKeybinds {
 		val invSlot = handler.getSlot(slot)
 
 		val itemStack = invSlot.item
-		val isSelected = itemStack.item == Items.LIME_DYE
-		val isSelectable = itemStack.item == Items.PINK_DYE
+		val isSelected = itemStack.item == Items.DYE.lime
+		val isSelectable = itemStack.item == Items.DYE.pink
 		if (!isSelectable && !isSelected) return
 		if (!TConfig.allowUnequipping && isSelected) return
 

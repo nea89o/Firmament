@@ -91,12 +91,12 @@ public class JarvisContainer extends Jarvis {
         dispatcher.register(LiteralArgumentBuilder.<S>literal("jarvis")
             .then(LiteralArgumentBuilder.<S>literal("gui")
                 .executes(context -> {
-                    Minecraft.getInstance().submit(() -> Minecraft.getInstance().setScreen(this.getHudEditor(null)));
+                    Minecraft.getInstance().submit(() -> Minecraft.getInstance().gui.setScreen(this.getHudEditor(null)));
                     return 0;
                 }))
             .then(LiteralArgumentBuilder.<S>literal("options")
                 .executes(context -> {
-                    Minecraft.getInstance().submit(() -> Minecraft.getInstance().setScreen(
+                    Minecraft.getInstance().submit(() -> Minecraft.getInstance().gui.setScreen(
                         new JarvisConfigSearch(this, null, getAllPlugins().flatMap(it -> it.getAllConfigOptions().stream()
                             .map(opt -> new ConfigOptionWithCustody(it, opt))).collect(Collectors.toList()))));
                     return 0;
@@ -110,6 +110,6 @@ public class JarvisContainer extends Jarvis {
     }
 
     public void hudKeyBindingPressed() {
-        Minecraft.getInstance().submit(() -> Minecraft.getInstance().setScreen(this.getHudEditor(null)));
+        Minecraft.getInstance().submit(() -> Minecraft.getInstance().gui.setScreen(this.getHudEditor(null)));
     }
 }

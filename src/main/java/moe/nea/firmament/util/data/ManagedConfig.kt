@@ -278,7 +278,7 @@ abstract class ManagedConfig(
 		screen = object : MoulConfigScreenComponent(Component.empty(), GuiContext(component), parent) {
 			override fun onClose() {
 				if (guiContext.onBeforeClose() == CloseEventListener.CloseAction.NO_OBJECTIONS_TO_CLOSE) {
-					minecraft!!.setScreen(parent)
+					minecraft.gui.setScreen(parent)
 				}
 			}
 		}

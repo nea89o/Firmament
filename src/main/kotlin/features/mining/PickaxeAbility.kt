@@ -154,14 +154,11 @@ object PickaxeAbility {
 			val ability = group("name")
 			lastUsage[ability] = TimeMark.farPast()
 			if (!TConfig.cooldownReadyToast) return
-			val mc: Minecraft = Minecraft.getInstance()
-			mc.toastManager.addToast(
-				SystemToast.multiline(
-					mc,
-					SystemToast.SystemToastId.NARRATOR_TOGGLE,
-					tr("firmament.pickaxe.ability-ready", "Pickaxe Cooldown"),
-					tr("firmament.pickaxe.ability-ready.desc", "Pickaxe ability is ready!")
-				)
+			SystemToast.add(
+				MC.gui.toastManager(),
+				SystemToast.SystemToastId.NARRATOR_TOGGLE,
+				tr("firmament.pickaxe.ability-ready", "Pickaxe Cooldown"),
+				tr("firmament.pickaxe.ability-ready.desc", "Pickaxe ability is ready!")
 			)
 		}
 	}

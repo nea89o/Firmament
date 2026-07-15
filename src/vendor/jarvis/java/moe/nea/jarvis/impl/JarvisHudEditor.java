@@ -138,8 +138,7 @@ public class JarvisHudEditor extends Screen {
 
     @Override
     public void onClose() {
-        assert minecraft != null;
-        minecraft.setScreen(lastScreen);
+        minecraft.gui.setScreen(lastScreen);
         container.getAllPlugins().forEach(JarvisPlugin::onHudEditorClosed);
     }
 

@@ -9,7 +9,7 @@ import moe.nea.firmament.util.MC
  * Called when hud elements should be rendered, before the screen, but after the world.
  */
 data class HudRenderEvent(val context: GuiGraphicsExtractor, val tickDelta: DeltaTracker) : FirmamentEvent.Cancellable() {
-	val isRenderingHud = !MC.options.hideGui
+	val isRenderingHud = !MC.inGameHud.isHidden
 	val isRenderingCursor = MC.interactionManager?.playerMode != GameType.SPECTATOR && isRenderingHud
 
 	init {

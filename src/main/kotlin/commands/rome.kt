@@ -243,7 +243,7 @@ fun firmamentCommand(ctx: CommandBuildContext) = literal("firmament") {
 		thenLiteral("simulate") {
 			thenArgument("message", RestArgumentType) { message ->
 				thenExecute {
-					MC.instance.chatListener.handleSystemMessage(Component.literal(get(message)), false)
+					MC.gui.chatListener().handleSystemMessage(Component.literal(get(message)), false)
 				}
 			}
 		}
@@ -324,7 +324,7 @@ fun firmamentCommand(ctx: CommandBuildContext) = literal("firmament") {
 		thenLiteral("copyEntities") {
 			thenExecute {
 				val player = MC.player ?: return@thenExecute
-				player.level.getEntities(player, player.boundingBox.inflate(12.0))
+				player.level().getEntities(player, player.boundingBox.inflate(12.0))
 					.forEach(PowerUserTools::showEntity)
 				PowerUserTools.showEntity(player)
 			}

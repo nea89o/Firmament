@@ -15,6 +15,7 @@ import net.minecraft.world.level.BlockGetter
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.center
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.extraAttributes
@@ -182,7 +183,7 @@ object EtherwarpOverlay {
 		val heldItem = MC.stackInHand
 		if (!heldItem.accessor().extraAttributes.contains("ethermerge") && heldItem.accessor().skyBlockId != SkyBlockItems.ETHERWARP_CONDUIT) return
 
-		val world = player.level
+		val world = player.level()
 		val start = player.eyePosition
 		val end = player.getViewVector(0F).scale(160.0).add(start)
 		val hitResult = raycastWithEtherwarpTransparency(
@@ -197,7 +198,7 @@ object EtherwarpOverlay {
 				EtherwarpResult.OCCUPIED
 			else if (!isEtherwarpTransparent(world, blockPos.above(2)))
 				EtherwarpResult.OCCUPIED
-			else if (start.distanceToSqr(hitResult.accuratePos ?: blockPos.center) > 61 * 61)
+			else if (start.distanceToSqr(hitResult.accuratePos ?: blockPos.center()) > 61 * 61)
 				EtherwarpResult.TOO_DISTANT
 			else if ((MC.instance.hitResult as? BlockHitResult)
 					?.takeIf { it.type == HitResult.Type.BLOCK }
@@ -216,7 +217,7 @@ object EtherwarpOverlay {
 				)
 			if (TConfig.wireframe) wireframeCube(blockPos, 10f)
 			if (TConfig.failureText && success.label != null) {
-				withFacingThePlayer(blockPos.center) {
+				withFacingThePlayer(blockPos.center()) {
 					text(success.label)
 				}
 			}

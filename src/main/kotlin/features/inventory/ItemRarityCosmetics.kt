@@ -3,6 +3,7 @@ package moe.nea.firmament.features.inventory
 import java.awt.Color
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.network.chat.TextColor
 import net.minecraft.world.item.ItemStack
 import net.minecraft.resources.Identifier
 import moe.nea.firmament.annotations.Subscribe
@@ -24,7 +25,7 @@ object ItemRarityCosmetics {
 	}
 
 	private val rarityToColor = Rarity.colourMap.mapValues {
-		val c = Color(it.value.color!!)
+		val c = Color(TextColor.fromLegacyFormat(it.value)?.value!!)
 		c.rgb
 	}
 

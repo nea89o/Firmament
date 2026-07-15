@@ -134,7 +134,7 @@ class LineRenderer(vertexConsumers: MultiBufferSource.BufferSource) :
 				client.level?.gameTime ?: 0L,
 				client.deltaTracker,
 				client.options.menuBackgroundBlurriness,
-				gr.mainCamera.position(),
+				gr.mainCamera().position(),
 				client.options.textureFiltering().get() == TextureFilteringMethod.RGSS
 			)
 	}

@@ -8,6 +8,8 @@ import net.minecraft.network.chat.FormattedText
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.Component
 import net.minecraft.ChatFormatting
+import net.minecraft.client.gui.Hud
+import net.minecraft.network.chat.TextColor
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.TickEvent
 
@@ -26,7 +28,7 @@ object ScoreboardUtil {
 		val activeObjective = scoreboard.getDisplayObjective(DisplaySlot.SIDEBAR) ?: return listOf()
 		return scoreboard.listPlayerScores(activeObjective)
 			.filter { !it.isHidden() }
-			.sortedWith(Gui.SCORE_DISPLAY_ORDER)
+			.sortedWith(Hud.SCORE_DISPLAY_ORDER)
 			.take(15).map {
 				val team = scoreboard.getPlayersTeam(it.owner)
 				val text = it.ownerName()
@@ -38,9 +40,9 @@ object ScoreboardUtil {
 fun Component.formattedString(): String {
 	val sb = StringBuilder()
 	visit(FormattedText.StyledContentConsumer<Unit> { style, string ->
-		val c = ChatFormatting.getByName(style.color?.serialize())
+		val c = style.color?.toChatFormatting()
 		if (c != null) {
-			sb.append("§${c.char}")
+			sb.append("§${c.code}")
 		}
 		if (style.isUnderlined) {
 			sb.append("§n")

@@ -1,11 +1,12 @@
 package moe.nea.firmament.features.events.anniversity
 
 import java.util.Optional
-import me.shedaniel.math.Color
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.world.entity.player.Player
 import net.minecraft.network.chat.Style
 import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.TextColor
+import net.minecraft.util.ARGB
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.EntityRenderTintEvent
 import moe.nea.firmament.util.MC
@@ -38,8 +39,8 @@ object CenturyRaffleFeatures {
         val id: SkyblockId,
         val formatting: ChatFormatting,
 	) {
-		val searchedTextRgb = formatting.color!!
-		val brightenedRgb = Color.ofOpaque(searchedTextRgb)//.brighter(2.0)
+		val searchedTextRgb = TextColor.fromLegacyFormat(formatting)?.value!!
+		val brightenedRgb = ARGB.opaque(searchedTextRgb)
 		val tintOverlay by lazy {
 			TintedOverlayTexture().setColor(brightenedRgb)
 		}

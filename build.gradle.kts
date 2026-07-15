@@ -286,7 +286,6 @@ dependencies {
 }
 
 loom {
-	clientOnlyMinecraftJar()
 	accessWidenerPath.set(project.file("src/main/resources/firmament.accesswidener"))
 	runs {
 		removeIf { it.name == "server" }

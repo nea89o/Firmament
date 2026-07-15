@@ -4,6 +4,7 @@ import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.animal.equine.AbstractHorse
@@ -17,11 +18,11 @@ object ModifyHorse : EntityModifier {
 		var entity: AbstractHorse = entity
 		info["kind"]?.let {
 			entity = when (it.asString) {
-				"skeleton" -> EntityType.SKELETON_HORSE.create(fakeWorld, EntitySpawnReason.LOAD)!!
-				"zombie" -> EntityType.ZOMBIE_HORSE.create(fakeWorld, EntitySpawnReason.LOAD)!!
-				"mule" -> EntityType.MULE.create(fakeWorld, EntitySpawnReason.LOAD)!!
-				"donkey" -> EntityType.DONKEY.create(fakeWorld, EntitySpawnReason.LOAD)!!
-				"horse" -> EntityType.HORSE.create(fakeWorld, EntitySpawnReason.LOAD)!!
+				"skeleton" -> EntityTypes.SKELETON_HORSE.create(fakeWorld, EntitySpawnReason.LOAD)!!
+				"zombie" -> EntityTypes.ZOMBIE_HORSE.create(fakeWorld, EntitySpawnReason.LOAD)!!
+				"mule" -> EntityTypes.MULE.create(fakeWorld, EntitySpawnReason.LOAD)!!
+				"donkey" -> EntityTypes.DONKEY.create(fakeWorld, EntitySpawnReason.LOAD)!!
+				"horse" -> EntityTypes.HORSE.create(fakeWorld, EntitySpawnReason.LOAD)!!
 				else -> error("Unknown horse kind $it")
 			}
 		}
@@ -53,6 +54,4 @@ fun AbstractHorse.setIsSaddled(shouldBeSaddled: Boolean) {
 	)
 }
 
-fun AbstractHorse.setHorseArmor(itemStack: ItemStack) {
-	bodyArmorItem = itemStack
-}
+fun AbstractHorse.setHorseArmor(itemStack: ItemStack) = setItemSlot(EquipmentSlot.BODY, itemStack)

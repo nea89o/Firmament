@@ -17,6 +17,7 @@ import net.minecraft.world.phys.Vec3
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.center
 
 @RenderContextDSL
 class RenderInWorldContext private constructor(
@@ -85,9 +86,9 @@ class RenderInWorldContext private constructor(
 
 	fun waypoint(position: BlockPos, vararg label: Component) {
 		text(
-			position.center,
+			position.center(),
 			*label,
-			Component.literal("§e${FirmFormatters.formatDistance(MC.player?.position?.distanceTo(position.center) ?: 42069.0)}"),
+			Component.literal("§e${FirmFormatters.formatDistance(MC.player?.position()?.distanceTo(position.center()) ?: 42069.0)}"),
 			background = 0xAA202020.toInt()
 		)
 	}

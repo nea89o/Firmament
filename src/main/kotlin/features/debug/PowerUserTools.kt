@@ -2,7 +2,7 @@ package moe.nea.firmament.features.debug
 
 import com.mojang.serialization.JsonOps
 import kotlin.jvm.optionals.getOrNull
-import net.minecraft.advancements.criterion.NbtPredicate
+import net.minecraft.advancements.predicates.NbtPredicate
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.ListTag
@@ -125,7 +125,7 @@ object PowerUserTools {
 		ClipboardUtils.setTextContent(SNbtFormatter.prettify(nbt))
 		MC.sendChat(Component.translatable("firmament.poweruser.entity.type", target.type))
 		MC.sendChat(Component.translatable("firmament.poweruser.entity.name", target.name))
-		MC.sendChat(Component.translatableEscape("firmament.poweruser.entity.position", target.position))
+		MC.sendChat(Component.translatableEscape("firmament.poweruser.entity.position", target.position()))
 		if (target is LivingEntity) {
 			MC.sendChat(Component.translatable("firmament.poweruser.entity.armor"))
 			for ((slot, armorItem) in target.iterableArmorItems) {
@@ -229,8 +229,8 @@ object PowerUserTools {
 				MC.sendChat(Component.translatable("firmament.tooltip.copied.skull.fail"))
 				return
 			}
-			val blockAt = p.level.getBlockState(blockHit.blockPos)?.block
-			val entity = p.level.getBlockEntity(blockHit.blockPos)
+			val blockAt = p.level().getBlockState(blockHit.blockPos)?.block
+			val entity = p.level().getBlockEntity(blockHit.blockPos)
 			if (blockAt !is SkullBlock || entity !is SkullBlockEntity || entity.ownerProfile == null) {
 				MC.sendChat(Component.translatable("firmament.tooltip.copied.skull.fail"))
 				return

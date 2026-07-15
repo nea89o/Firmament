@@ -67,7 +67,7 @@ object FairySouls {
 
 	fun findNearestClickableSoul(): Coordinate? {
 		val player = MC.player ?: return null
-		val pos = player.position
+		val pos = player.position()
 		val location = SBData.skyblockLocation ?: return null
 		val soulLocations: List<Coordinate> =
 			RepoManager.neuRepo.constants.fairySouls.soulLocations[location.locrawMode] ?: return null

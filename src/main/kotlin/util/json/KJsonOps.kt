@@ -4,6 +4,7 @@ import com.google.gson.internal.LazilyParsedNumber
 import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
+import com.mojang.serialization.JavaOps
 import java.util.stream.Stream
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -107,7 +108,6 @@ class KJsonOps : DynamicOps<JsonElement> {
 		if (input is JsonPrimitive) {
 			if (input.booleanOrNull != null)
 				return DataResult.success(input.boolean)
-			return super.getBooleanValue(input)
 		}
 		return DataResult.error { "Not a boolean: $input" }
 	}

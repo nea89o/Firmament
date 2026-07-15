@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.EntitySpawnReason
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.npc.villager.VillagerProfession
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Blocks
@@ -95,7 +96,7 @@ object SBReforgeRecipeRenderer : GenericRecipeRenderer<Reforge> {
 				}
 			)
 		} else {
-			val entity = EntityType.VILLAGER.create(EntityRenderer.fakeWorld, EntitySpawnReason.COMMAND)
+			val entity = EntityTypes.VILLAGER.create(EntityRenderer.fakeWorld, EntitySpawnReason.COMMAND)
 				?.also {
 					it.villagerData =
 						it.villagerData.withProfession(

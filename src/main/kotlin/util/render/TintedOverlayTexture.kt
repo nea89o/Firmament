@@ -1,6 +1,5 @@
 package moe.nea.firmament.util.render
 
-import me.shedaniel.math.Color
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.ARGB
 import moe.nea.firmament.util.ErrorUtil
@@ -10,8 +9,8 @@ class TintedOverlayTexture : OverlayTexture() {
 		val size = 16
 	}
 
-	private var lastColor: Color? = null
-	fun setColor(color: Color): TintedOverlayTexture {
+	private var lastColor: Int? = null
+	fun setColor(color: Int): TintedOverlayTexture {
 		val image = ErrorUtil.notNullOr(texture.pixels, "Disposed TintedOverlayTexture written to") { return this }
 		if (color == lastColor) return this
 		lastColor = color
@@ -22,7 +21,7 @@ class TintedOverlayTexture : OverlayTexture() {
 					image.setPixel(j, i, 0xB2FF0000.toInt())
 				} else {
 					val k = ((1F - j / 15F * 0.75F) * 255F).toInt()
-					image.setPixel(j, i, ARGB.color(k, color.color))
+					image.setPixel(j, i, ARGB.color(k, color))
 				}
 			}
 		}

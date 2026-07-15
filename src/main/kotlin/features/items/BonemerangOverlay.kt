@@ -6,6 +6,8 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.TextColor
+import net.minecraft.util.CommonColors
 import net.minecraft.world.phys.AABB
 import moe.nea.firmament.annotations.Subscribe
 import moe.nea.firmament.events.EntityRenderTintEvent
@@ -34,7 +36,7 @@ object BonemerangOverlay {
 		val entities = mutableSetOf<LivingEntity>()
 		val camera = MC.camera as? Player ?: return entities
 		val player = MC.player ?: return entities
-		val world = player.level ?: return entities
+		val world = player.level()
 
 		val cameraPos = camera.eyePosition
 		val rayDirection = camera.lookAngle.normalize()
@@ -67,7 +69,7 @@ object BonemerangOverlay {
 		if (event.entity !in entities) return
 
 		val tintOverlay by lazy {
-			TintedOverlayTexture().setColor(Color.ofOpaque(ChatFormatting.BLUE.color!!))
+			TintedOverlayTexture().setColor(CommonColors.BLUE)
 		}
 
 		event.renderState.overlayTexture_firmament = tintOverlay

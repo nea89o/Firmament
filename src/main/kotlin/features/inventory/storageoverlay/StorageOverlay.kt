@@ -102,7 +102,7 @@ object StorageOverlay {
 	@Subscribe
 	fun onClick(event: SlotClickEvent) {
 		if (lastStorageOverlay != null && event.slot.container !is Inventory && event.slot.containerSlot < 9
-			&& event.stack.item != Items.BLACK_STAINED_GLASS_PANE
+			&& event.stack.item != Items.STAINED_GLASS_PANE.black
 		) {
 			skipNextStorageOverlayBackflip = true
 		}

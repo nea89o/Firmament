@@ -99,7 +99,7 @@ object ChatLinks {
 	fun ChatComponent.findComponentAtMousePos(x: Int, y: Int): Style? {
 		val clickableStyleFinder = ClickableStyleFinder(MC.font, x,y)
 			.includeInsertions(false)
-		captureClickableText(clickableStyleFinder, MC.window.guiScaledHeight, MC.instance.gui.guiTicks, ChatComponent.DisplayMode.FOREGROUND)
+		captureClickableText(clickableStyleFinder, MC.window.guiScaledHeight, MC.inGameHud.guiTicks, ChatComponent.DisplayMode.FOREGROUND)
 		return clickableStyleFinder.result()
 	}
 

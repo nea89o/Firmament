@@ -71,7 +71,7 @@ object AnniversaryFeatures {
 		if (event.unformattedString == "SHINY! The orb is charged! Click on it for loot!") {
 			val player = MC.player ?: return
 			val lowest =
-				clickedPigs.minByOrNull { it.startLocation.distToCenterSqr(player.position) } ?: return
+				clickedPigs.minByOrNull { it.startLocation.distToCenterSqr(player.position()) } ?: return
 			clickedPigs.remove(lowest)
 		}
 		pattern.useMatch(event.unformattedString) {

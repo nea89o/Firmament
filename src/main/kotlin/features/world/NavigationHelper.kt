@@ -14,6 +14,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.WarpUtil
+import moe.nea.firmament.util.center
 import moe.nea.firmament.util.render.RenderInWorldContext
 
 object NavigationHelper {
@@ -72,7 +73,7 @@ object NavigationHelper {
     fun onMovement(event: TickEvent) { // TODO: add a movement tick event maybe?
         val tp = targetWaypoint ?: return
         val p = MC.player ?: return
-        if (p.distanceToSqr(tp.position.center) < 5 * 5) {
+        if (p.distanceToSqr(tp.position.center()) < 5 * 5) {
             targetWaypoint = null
         }
     }

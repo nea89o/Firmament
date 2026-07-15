@@ -1,5 +1,7 @@
 package util.render
 
+import com.mojang.blaze3d.PrimitiveTopology
+import com.mojang.blaze3d.pipeline.BindGroupLayout
 import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.ColorTargetState
 import com.mojang.blaze3d.pipeline.DepthStencilState
@@ -8,8 +10,8 @@ import com.mojang.blaze3d.platform.CompareOp
 
 import com.mojang.blaze3d.shaders.UniformType
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.VertexFormat.Mode
 import java.util.function.Function
+import net.minecraft.client.renderer.BindGroupLayouts
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.rendertype.LayeringTransform
 import net.minecraft.client.renderer.rendertype.OutputTarget
@@ -24,7 +26,8 @@ object CustomRenderPipelines {
 
 	val GUI_TEXTURED_NO_DEPTH_TRIS =
 		RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-			.withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, Mode.TRIANGLES)
+			.withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR)
+			.withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
 			.withLocation(Firmament.identifier("gui_textured_overlay_tris"))
 			.withDepthStencilState(NO_DEPTH_TEST)
 			.withCull(false)
@@ -34,28 +37,39 @@ object CustomRenderPipelines {
 			.withLocation(Firmament.identifier("colored_omnipresent_quads"))
 			.withVertexShader("core/position_color")
 			.withFragmentShader("core/position_color")
-			.withVertexFormat(DefaultVertexFormat.POSITION_COLOR, Mode.QUADS)
+			.withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+			.withPrimitiveTopology(PrimitiveTopology.QUADS)
 			.withDepthStencilState(NO_DEPTH_TEST)
 			.withCull(false)
 			.withColorTargetState(ColorTargetState(BlendFunction.TRANSLUCENT))
 			.build()
 
+	val CUTOUT_DATA = BindGroupLayout.builder()
+		.withUniform("CutoutRadius", UniformType.UNIFORM_BUFFER)
+		.build()
+
 	val CIRCLE_FILTER_TRANSLUCENT_GUI_TRIS =
 		RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-			.withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, Mode.TRIANGLES)
+			.withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR)
+			.withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
 			.withLocation(Firmament.identifier("gui_textured_overlay_tris_circle"))
-			.withUniform("CutoutRadius", UniformType.UNIFORM_BUFFER)
+			.withBindGroupLayout(CUTOUT_DATA)
 			.withFragmentShader(Firmament.identifier("circle_discard_color"))
 //			.withBlend(BlendFunction.TRANSLUCENT)
 			.build()
+
+	val ANIMATION_DATA = BindGroupLayout.builder()
+		.withUniform("Animation", UniformType.UNIFORM_BUFFER)
+		.build()
+
 	val PARALLAX_CAPE_SHADER =
 		RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
 			.withLocation(Firmament.identifier("parallax_cape"))
 			.withFragmentShader(Firmament.identifier("cape/parallax"))
-			.withSampler("Sampler0")
-			.withSampler("Sampler1")
-			.withSampler("Sampler3")
-			.withUniform("Animation", UniformType.UNIFORM_BUFFER)
+			.withBindGroupLayout(BindGroupLayouts.SAMPLER0)
+			.withBindGroupLayout(BindGroupLayouts.SAMPLER1)
+			.withBindGroupLayout(BindGroupLayouts.SAMPLER2)
+			.withBindGroupLayout(ANIMATION_DATA)
 			.build()
 	val OMNIPRESENT_LINES = RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
 		.withDepthStencilState(NO_DEPTH_TEST)

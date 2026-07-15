@@ -119,7 +119,7 @@ fun Component.getLegacyFormatString(trimmed: Boolean = false): String =
 	}
 
 private fun Style.toLegacyFormatString(): String {
-	var color = color?.toChatFormatting()?.toString() ?: "§r"
+	var color = color?.toChatFormatting()?.let { "§${it.code}" } ?: "§r"
 	if (isBold)
 		color += LegacyFormattingCode.BOLD.formattingCode
 	if (isItalic)
@@ -133,8 +133,8 @@ private fun Style.toLegacyFormatString(): String {
 	return color
 }
 
-private val textColorLUT = ChatFormatting.entries
-	.mapNotNull { formatting -> formatting.color?.let { it to formatting } }
+private val textColorLUT: Map<Int, ChatFormatting?> = ChatFormatting.entries
+	.mapNotNull { formatting -> TextColor.fromLegacyFormat(formatting)?.let { it.value to formatting} }
 	.toMap()
 
 fun TextColor.toChatFormatting(): ChatFormatting? {

@@ -65,7 +65,7 @@ object BlockZapperOverlay {
 	fun renderBlockZapperOverlay(event: WorldRenderLastEvent) {
 		if (!TConfig.blockZapperOverlay) return
 		val player = MC.player ?: return
-		val world = player.level ?: return
+		val world = player.level()
 		val heldItem = MC.stackInHand
 		if (heldItem.accessor().skyBlockId != SkyBlockItems.BLOCK_ZAPPER) return
 		val hitResult = MC.instance.hitResult ?: return

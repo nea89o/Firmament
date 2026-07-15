@@ -58,7 +58,7 @@ object ExportRecipe {
 			return
 		}
 		Firmament.coroutineScope.launch {
-			val guessName = entity.level.getEntitiesOfClass(
+			val guessName = entity.level().getEntitiesOfClass(
 				ArmorStand::class.java,
 				entity.boundingBox.inflate(0.1),
 				{ !it.name.string.contains("CLICK") })

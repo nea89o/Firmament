@@ -17,6 +17,7 @@ import moe.nea.firmament.events.TickEvent
 import moe.nea.firmament.events.WorldReadyEvent
 import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.util.MC
+import moe.nea.firmament.util.center
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.mc.asFakeServer
@@ -46,14 +47,14 @@ object Waypoints {
 			if (!w.isOrdered) {
 				w.waypoints.withIndex().forEach {
 					block(it.value.blockPos, Color.ofRGBA(0, 80, 160, 128).color)
-					if (TConfig.showIndex) withFacingThePlayer(it.value.blockPos.center) {
+					if (TConfig.showIndex) withFacingThePlayer(it.value.blockPos.center()) {
 						text(Component.literal(it.index.toString()))
 					}
 				}
 			} else {
 				orderedIndex %= w.waypoints.size
 				val firstColor = Color.ofRGBA(0, 200, 40, 180)
-				tracer(w.waypoints[orderedIndex].blockPos.center, color = firstColor.color, lineWidth = 3f)
+				tracer(w.waypoints[orderedIndex].blockPos.center(), color = firstColor.color, lineWidth = 3f)
 				w.waypoints.withIndex().toList().wrappingWindow(orderedIndex, 3).zip(
 					listOf(
 						firstColor,
@@ -63,7 +64,7 @@ object Waypoints {
 				).reversed().forEach { (waypoint, col) ->
 					val (index, pos) = waypoint
 					block(pos.blockPos, col.color)
-					if (TConfig.showIndex) withFacingThePlayer(pos.blockPos.center) {
+					if (TConfig.showIndex) withFacingThePlayer(pos.blockPos.center()) {
 						text(Component.literal(index.toString()))
 					}
 				}
@@ -76,7 +77,7 @@ object Waypoints {
 		val w = useNonEmptyWaypoints() ?: return
 		if (!w.isOrdered) return
 		orderedIndex %= w.waypoints.size
-		val p = MC.player?.position ?: return
+		val p = MC.player?.position() ?: return
 		if (TConfig.skipToNearest) {
 			orderedIndex =
 				(w.waypoints.withIndex().minBy { it.value.blockPos.distToCenterSqr(p) }.index + 1) % w.waypoints.size
@@ -188,7 +189,7 @@ object Waypoints {
 					val w = useEditableWaypoints()
 					w.isOrdered = !w.isOrdered
 					if (w.isOrdered) {
-						val p = MC.player?.position ?: Vec3.ZERO
+						val p = MC.player?.position() ?: Vec3.ZERO
 						orderedIndex = // TODO: this should be extracted to a utility method
 							w.waypoints.withIndex().minByOrNull { it.value.blockPos.distToCenterSqr(p) }?.index ?: 0
 					}

@@ -29,6 +29,7 @@ import net.minecraft.nbt.TagParser
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.TextColor
 import net.minecraft.resources.Identifier
 import net.minecraft.util.datafix.DataFixers
 import net.minecraft.util.datafix.fixes.References
@@ -137,8 +138,9 @@ object ItemCache : IReloadable {
 				val colorCode = lore[nextCode + 1]
 				val formatting = LegacyFormattingCode.byCode[colorCode.lowercaseChar()] ?: LegacyFormattingCode.RESET
 				val modernFormatting = formatting.modern
-				if (modernFormatting.isColor) {
-					lastColorCode = Style.EMPTY.withColor(modernFormatting)
+				val formattingColor = TextColor.fromLegacyFormat(modernFormatting)
+				if (formattingColor != null) {
+					lastColorCode = Style.EMPTY.withColor(formattingColor)
 				} else {
 					lastColorCode = lastColorCode.applyFormat(modernFormatting)
 				}

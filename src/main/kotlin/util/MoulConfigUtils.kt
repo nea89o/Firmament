@@ -231,7 +231,7 @@ object MoulConfigUtils {
 		return object : MoulConfigScreenComponent(Component.empty(), guiContext, null) {
 			override fun onClose() {
 				if (guiContext.onBeforeClose() == CloseEventListener.CloseAction.NO_OBJECTIONS_TO_CLOSE) {
-					minecraft!!.setScreen(parent)
+					MC.gui.setScreen(parent)
 					onClose()
 				}
 			}

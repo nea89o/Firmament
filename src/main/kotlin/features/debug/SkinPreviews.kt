@@ -33,7 +33,7 @@ object SkinPreviews {
 	@Subscribe
 	fun onEntityUpdate(event: EntityUpdateEvent) {
 		if (!isRecording) return
-		if (event.entity.position != pos)
+		if (event.entity.position() != pos)
 			return
 		val entity = event.entity as? LivingEntity ?: return
 		val stack = entity.getItemBySlot(EquipmentSlot.HEAD) ?: return

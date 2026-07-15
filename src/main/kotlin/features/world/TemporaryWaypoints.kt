@@ -11,6 +11,7 @@ import moe.nea.firmament.events.WorldRenderLastEvent
 import moe.nea.firmament.features.world.Waypoints.TConfig
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
+import moe.nea.firmament.util.center
 import moe.nea.firmament.util.render.RenderInWorldContext
 
 object TemporaryWaypoints {
@@ -42,7 +43,7 @@ object TemporaryWaypoints {
 			temporaryPlayerWaypointList.forEach { (player, waypoint) ->
 				val skin =
 					MC.networkHandler?.listedOnlinePlayers?.find { it.profile.name == player }?.skin?.body
-				withFacingThePlayer(waypoint.pos.center) {
+				withFacingThePlayer(waypoint.pos.center()) {
 					waypoint(waypoint.pos, Component.translatableEscape("firmament.waypoint.temporary", player))
 					if (skin != null) {
 						matrixStack.translate(0F, -20F, 0F)

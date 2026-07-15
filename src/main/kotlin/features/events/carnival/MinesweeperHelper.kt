@@ -27,6 +27,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.MoulConfigUtils
 import moe.nea.firmament.util.ScreenUtil
 import moe.nea.firmament.util.SkyblockId
+import moe.nea.firmament.util.center
 import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.mc.accessor
 import moe.nea.firmament.util.mc.createSkullItem
@@ -271,7 +272,7 @@ object MinesweeperHelper {
         val gs = gameState ?: return
         RenderInWorldContext.renderInWorld(event) {
             for ((pos, bombCount) in gs.nearbyBombs) {
-                this.text(pos.toBlockPos().above().center, Component.literal("§a$bombCount \uD83D\uDCA3"))
+                this.text(pos.toBlockPos().above().center(), Component.literal("§a$bombCount \uD83D\uDCA3"))
             }
         }
     }

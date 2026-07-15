@@ -80,8 +80,7 @@ public class JarvisConfigSearch extends Screen {
 
     @Override
     public void onClose() {
-        assert minecraft != null;
-        minecraft.setScreen(parentScreen);
+        minecraft.gui.setScreen(parentScreen);
     }
 
     @Override
@@ -107,7 +106,6 @@ public class JarvisConfigSearch extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
-        assert minecraft != null;
         if (super.mouseClicked(mouseButtonEvent, bl)) return true;
         var mouseY = mouseButtonEvent.y() - (35 - scroll);
         int left = width / 2 - searchFieldWidth / 2;
@@ -116,7 +114,7 @@ public class JarvisConfigSearch extends Screen {
             int height = 15 + filteredOption.option().description().size() * 10;
             if (0 <= mouseX && mouseX < searchFieldWidth &&
                 0 <= mouseY && mouseY < height) {
-                minecraft.setScreen(filteredOption.option().jumpTo(this));
+                minecraft.gui.setScreen(filteredOption.option().jumpTo(this));
                 return true;
             }
             mouseY -= height;
