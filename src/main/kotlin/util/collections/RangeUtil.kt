@@ -1,3 +1,5 @@
+// Makes this available to use in Java
+@file:JvmName("RangeUtil")
 package moe.nea.firmament.util.collections
 
 import kotlin.math.floor

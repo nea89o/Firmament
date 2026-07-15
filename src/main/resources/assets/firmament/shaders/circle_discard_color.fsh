@@ -2,10 +2,7 @@
 
 in vec4 vertexColor;
 in vec2 texCoord0;
-
-layout(std140) uniform CutoutRadius {
-	float InnerCutoutRadius;
-};
+in float innerCutoutRadius;
 
 out vec4 fragColor;
 
@@ -15,7 +12,7 @@ void main() {
 		discard;
 	}
 	float d = length(texCoord0 - vec2(0.5));
-	if (d > 0.5 || d < InnerCutoutRadius)
+	if (d > 0.5 || d < innerCutoutRadius)
 	{
 		discard;
 	}

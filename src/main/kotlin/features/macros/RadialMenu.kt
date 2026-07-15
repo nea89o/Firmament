@@ -2,7 +2,6 @@ package moe.nea.firmament.features.macros
 
 import me.shedaniel.math.Color
 import org.joml.Vector2f
-import util.render.CustomRenderLayers
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -17,8 +16,9 @@ import moe.nea.firmament.features.macros.RadialMenuViewer.RadialMenu
 import moe.nea.firmament.features.macros.RadialMenuViewer.RadialMenuOption
 import moe.nea.firmament.keybindings.SavedKeyBinding
 import moe.nea.firmament.util.MC
-import moe.nea.firmament.util.render.RenderCircleProgress
+import moe.nea.firmament.util.render.CustomRenderTypes
 import moe.nea.firmament.util.render.drawLine
+import moe.nea.firmament.util.render.gui.pip.RenderCircleProgressRenderer
 import moe.nea.firmament.util.render.lerpAngle
 import moe.nea.firmament.util.render.wrapAngle
 import moe.nea.firmament.util.render.τ
@@ -78,13 +78,13 @@ object RadialMenuViewer {
 			mat.pushMatrix()
 			mat.scale(64F, 64F)
 			val cutout = INNER_CIRCLE_RADIUS / 64F / 2
-			RenderCircleProgress.renderCircularSlice(
+			RenderCircleProgressRenderer.extractCircularSlice(
 				event.context,
-				CustomRenderLayers.TRANSLUCENT_CIRCLE_GUI,
+				CustomRenderTypes.TRANSLUCENT_CIRCLE_GUI,
 				0F, 1F, 0F, 1F,
 				range,
-				color = if (selectedAngle in range) 0x70A0A0A0 else 0x70FFFFFF,
-				innerCutoutRadius = cutout
+				if (selectedAngle in range) 0x70A0A0A0 else 0x70FFFFFF,
+				cutout
 			)
 			mat.popMatrix()
 			mat.pushMatrix()

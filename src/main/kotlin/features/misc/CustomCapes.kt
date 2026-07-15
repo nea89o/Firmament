@@ -1,13 +1,20 @@
 package moe.nea.firmament.features.misc
 
-import util.render.CustomRenderPipelines
+import com.mojang.blaze3d.buffers.GpuBuffer
+import com.mojang.blaze3d.buffers.Std140Builder
+import com.mojang.blaze3d.buffers.Std140SizeCalculator
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.BufferBuilder
+import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import net.minecraft.client.player.AbstractClientPlayer
 import com.mojang.blaze3d.vertex.VertexConsumer
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.state.AvatarRenderState
 import com.mojang.blaze3d.vertex.PoseStack
+import java.util.Optional
+import java.util.OptionalDouble
+import org.lwjgl.system.MemoryStack
 import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.world.entity.player.PlayerSkin
 import net.minecraft.core.ClientAsset
@@ -17,7 +24,7 @@ import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.TimeMark
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
-import moe.nea.firmament.util.mc.CustomRenderPassHelper
+import moe.nea.firmament.util.render.CustomRenderPipelines
 
 object CustomCapes {
 	val identifier: String
@@ -31,7 +38,6 @@ object CustomCapes {
 	interface CustomCapeRenderer {
 		fun replaceRender(
             renderLayer: RenderType,
-            vertexConsumerProvider: MultiBufferSource,
             matrixStack: PoseStack,
             model: (VertexConsumer) -> Unit
 		)
@@ -42,7 +48,6 @@ object CustomCapes {
 	) : CustomCapeRenderer {
 		override fun replaceRender(
             renderLayer: RenderType,
-            vertexConsumerProvider: MultiBufferSource,
             matrixStack: PoseStack,
             model: (VertexConsumer) -> Unit
 		) {
@@ -58,29 +63,68 @@ object CustomCapes {
 	) : CustomCapeRenderer {
 		override fun replaceRender(
             renderLayer: RenderType,
-            vertexConsumerProvider: MultiBufferSource,
             matrixStack: PoseStack,
             model: (VertexConsumer) -> Unit
 		) {
 			val animationValue = (startTime.passedTime() / animationSpeed).mod(1F)
-			CustomRenderPassHelper(
-				{ "Firmament Cape Renderer" },
-				renderLayer.mode(),
-				renderLayer.format(),
-				MC.instance.mainRenderTarget,
-				true,
-			).use { renderPass ->
-				renderPass.setPipeline(CustomRenderPipelines.PARALLAX_CAPE_SHADER)
-				renderPass.setAllDefaultUniforms()
-				renderPass.setUniform("Animation", 4) {
-					it.putFloat(animationValue.toFloat())
-				}
-				renderPass.bindSampler("Sampler0", template)
-				renderPass.bindSampler("Sampler1", background)
-				renderPass.bindSampler("Sampler3", overlay)
-				renderPass.uploadVertices(2048, model)
-				renderPass.draw()
+
+			val renderTarget = MC.gameRenderer.mainRenderTarget();
+
+			// This vertex buffer management is terrible and is probably not good performance wise, but it will work
+			// which is what I want
+			val bufferBuilder = ByteBufferBuilder(2048);
+			val buffer = BufferBuilder(bufferBuilder, CustomRenderPipelines.PARALLAX_CAPE.primitiveTopology, CustomRenderPipelines.PARALLAX_CAPE.getVertexFormatBinding(0)!!);
+			model.invoke(buffer);
+
+			val meshData = buffer.buildOrThrow();
+			val vertexBuffer = RenderSystem.getDevice().createBuffer({ "Custom Cape Buffer" }, GpuBuffer.USAGE_VERTEX, meshData.vertexBuffer());
+
+			val sequentialBuffer = RenderSystem.getSequentialBuffer(CustomRenderPipelines.PARALLAX_CAPE.primitiveTopology);
+			val indexBuffer = sequentialBuffer.getBuffer(meshData.drawState().indexCount());
+			val indexType = sequentialBuffer.type();
+
+			// This uniform buffer management is also bad but whatever
+			val animationUniformBufferSize = Std140SizeCalculator().putFloat().get();
+			val animationUniformBuffer = RenderSystem.getDevice().createBuffer({ "Animation Uniform" }, GpuBuffer.USAGE_UNIFORM or GpuBuffer.USAGE_COPY_DST, animationUniformBufferSize.toLong());
+
+			MemoryStack.stackPush().use { stack ->
+				val byteBuffer = Std140Builder.onStack(stack, animationUniformBufferSize)
+					.putFloat(animationValue.toFloat())
+					.get();
+				RenderSystem.getDevice().createCommandEncoder().writeToBuffer(animationUniformBuffer.slice(), byteBuffer);
 			}
+
+			RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+				{ "Firmament Cape Renderer" },
+				renderTarget.colorTextureView!!,
+				Optional.empty(),
+				if (renderTarget.useDepth) renderTarget.depthTextureView!! else null,
+				OptionalDouble.empty()
+			).use { renderPass ->
+				renderPass.setPipeline(CustomRenderPipelines.PARALLAX_CAPE)
+
+				RenderSystem.bindDefaultUniforms(renderPass);
+				renderPass.setUniform("Animation", animationUniformBuffer);
+
+				val templateTex = MC.textureManager.getTexture(template);
+				renderPass.bindTexture("Sampler0", templateTex.textureView, templateTex.sampler);
+
+				val backgroundTex = MC.textureManager.getTexture(background);
+				renderPass.bindTexture("Sampler1", backgroundTex.textureView, backgroundTex.sampler);
+
+				val overlayTex = MC.textureManager.getTexture(overlay);
+				renderPass.bindTexture("Sampler2", overlayTex.textureView, overlayTex.sampler);
+
+				renderPass.setIndexBuffer(indexBuffer, indexType);
+				renderPass.setVertexBuffer(0, vertexBuffer.slice());
+
+				renderPass.drawIndexed(meshData.drawState().indexCount(), 1, 0, 0, 0);
+			}
+
+			bufferBuilder.close();
+			meshData.close();
+			vertexBuffer.close();
+			animationUniformBuffer.close();
 		}
 	}
 

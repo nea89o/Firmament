@@ -20,10 +20,10 @@ public class CopyChatPatch {
 	private void onRightClick(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
 		if (event.button() != 1 || !CopyChat.TConfig.INSTANCE.getCopyChat()) return;
 		Minecraft client = Minecraft.getInstance();
-		ChatComponent chatHud = client.gui.getChat();
+		ChatComponent chatHud = client.gui.hud.getChat();
 		var collector = new CopyChat.HoveredTextLineCollector((int) event.x(), (int) event.y());
 		chatHud.captureClickableText(collector,
-			MC.INSTANCE.getWindow().getGuiScaledHeight(), MC.INSTANCE.getInstance().gui.getGuiTicks(), ChatComponent.DisplayMode.FOREGROUND);
+			MC.INSTANCE.getWindow().getGuiScaledHeight(), MC.INSTANCE.getInstance().gui.hud.getGuiTicks(), ChatComponent.DisplayMode.FOREGROUND);
 		if (collector.getResult() == null) return;
 		String text = CopyChat.INSTANCE.orderedTextToString(collector.getResult());
 		ClipboardUtils.INSTANCE.setTextContent(text);

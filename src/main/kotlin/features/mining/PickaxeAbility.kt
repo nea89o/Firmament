@@ -33,7 +33,7 @@ import moe.nea.firmament.util.mc.displayNameAccordingToNbt
 import moe.nea.firmament.util.mc.loreAccordingToNbt
 import moe.nea.firmament.util.parseShortNumber
 import moe.nea.firmament.util.parseTimePattern
-import moe.nea.firmament.util.render.RenderCircleProgress
+import moe.nea.firmament.util.render.gui.pip.RenderCircleProgressRenderer
 import moe.nea.firmament.util.render.lerp
 import moe.nea.firmament.util.skyblock.AbilityUtils
 import moe.nea.firmament.util.skyblock.DungeonUtil
@@ -217,11 +217,11 @@ object PickaxeAbility {
 		event.context.pose().pushMatrix()
 		event.context.pose().translate(MC.window.guiScaledWidth / 2F, MC.window.guiScaledHeight / 2F)
 		event.context.pose().scale(TConfig.cooldownScale.toFloat(), TConfig.cooldownScale.toFloat())
-		RenderCircleProgress.renderCircle(
+		RenderCircleProgressRenderer.extractCircle(
 			event.context, Identifier.fromNamespaceAndPath("firmament", "textures/gui/circle.png"),
 			getCooldownPercentage(ability.name, ability.cooldown).toFloat(),
 			0f, 1f, 0f, 1f,
-			color = TConfig.cooldownColour.getEffectiveColourRGB()
+			TConfig.cooldownColour.getEffectiveColourRGB()
 		)
 		event.context.pose().popMatrix()
 	}

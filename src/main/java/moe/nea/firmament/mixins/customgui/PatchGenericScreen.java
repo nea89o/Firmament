@@ -95,7 +95,7 @@ public abstract class PatchGenericScreen implements HasCustomGui {
 			this.extractMenuBackground(graphics);
 		}
 
-		this.minecraft.gui.extractDeferredSubtitles();
+		this.minecraft.gui.hud.extractDeferredSubtitles();
 	}
 
 	@SuppressWarnings("MissingUnique")

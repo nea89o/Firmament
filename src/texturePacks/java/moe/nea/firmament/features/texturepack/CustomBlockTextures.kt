@@ -22,6 +22,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.serializer
 import kotlin.jvm.optionals.getOrNull
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelDispatcher
 import net.minecraft.client.renderer.block.dispatch.SingleVariant
@@ -227,11 +228,9 @@ object CustomBlockTextures {
 		currentIslandReplacements = replacements
 		if (lastReplacements != replacements) {
 			MC.nextTick {
-				MC.worldRenderer.viewArea?.sections?.forEach {
-					// false schedules rebuilds outside a 27 block radius to happen async
-					// nb: this sets the dirty but to true, the boolean parameter specifies the update behaviour
-					it.setDirty(false)
-				}
+				// This is probably wrong, I just use it in dandelion to reload chunks
+				// you probably want to change this
+				Minecraft.getInstance().levelExtractor.allChanged();
 				sodiumReloadTask?.run()
 			}
 		}

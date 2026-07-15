@@ -30,6 +30,7 @@ object Projections {
 			return -distanceFromAxis / slope
 		}
 
+		@JvmStatic
 		fun projectAngleOntoUnitBox(angleRadians: Double): Vec2 {
 			val angleRadians = wrapAngle(angleRadians)
 			val cx = cos(angleRadians)

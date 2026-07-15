@@ -41,7 +41,7 @@ public class FirmKeybindsInVanillaControlsPatch {
         return button -> {
             ((KeyBindingHandler) config.getHandler())
                 .getManagedConfig()
-                .showConfigEditor(Minecraft.getInstance().screen);
+                .showConfigEditor(Minecraft.getInstance().gui.screen());
         };
     }
 

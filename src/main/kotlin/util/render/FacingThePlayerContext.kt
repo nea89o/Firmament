@@ -1,14 +1,18 @@
 
 package moe.nea.firmament.util.render
 
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.textures.FilterMode
 import org.joml.Matrix4f
-import util.render.CustomRenderLayers
 import net.minecraft.client.gui.Font
 import com.mojang.blaze3d.vertex.VertexConsumer
-import net.minecraft.client.renderer.rendertype.RenderTypes
+import net.minecraft.client.gui.font.TextRenderable
+import net.minecraft.client.gui.render.TextureSetup
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
 import net.minecraft.core.BlockPos
+import net.minecraft.util.CommonColors
 import net.minecraft.util.LightCoordsUtil
 import moe.nea.firmament.util.FirmFormatters
 import moe.nea.firmament.util.MC
@@ -36,7 +40,7 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
             val width = MC.font.width(text)
             worldContext.matrixStack.translate(-width / 2F, verticalAlign.align(index, texts.size), 0F)
             val vertexConsumer: VertexConsumer =
-                worldContext.vertexConsumers.getBuffer(RenderTypes.textBackgroundSeeThrough())
+                CustomRenderer.getBuffer(RenderPipelines.TEXT_BACKGROUND_SEE_THROUGH)
             val matrix4f = worldContext.matrixStack.last().pose()
             vertexConsumer.addVertex(matrix4f, -1.0f, -1.0f, 0.0f).setColor(background)
                 .setLight(LightCoordsUtil.FULL_BRIGHT)
@@ -49,18 +53,17 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
                 .setLight(LightCoordsUtil.FULL_BRIGHT)
             worldContext.matrixStack.translate(0F, 0F, 0.01F)
 
-            MC.font.drawInBatch(
-                text,
-                0F,
-                0F,
-                -1,
-                false,
-                worldContext.matrixStack.last().pose(),
-                worldContext.vertexConsumers,
-                Font.DisplayMode.SEE_THROUGH,
-                0,
-				LightCoordsUtil.FULL_BRIGHT
-            )
+			val prepared = MC.font.prepareText(text.visualOrderText, 0f, 0f, CommonColors.WHITE, false, false, 0);
+            prepared.visit(object : Font.GlyphVisitor {
+				override fun acceptRenderable(glyph : TextRenderable) {
+					val setup = TextureSetup.singleTextureWithLightmap(glyph.textureView(), RenderSystem.getSamplerCache().getClampToEdge(
+						FilterMode.NEAREST));
+					// will probably not work with caxton but whatever at least it works with TTF font resource packs
+					val buffer = CustomRenderer.getBuffer(if (glyph.guiPipeline() == RenderPipelines.GUI_TEXT_GRAYSCALE) RenderPipelines.TEXT_GRAYSCALE_SEE_THROUGH else RenderPipelines.TEXT_SEE_THROUGH, setup);
+
+					glyph.render(matrix4f, buffer, LightCoordsUtil.FULL_BRIGHT, false);
+				}
+			});
             worldContext.matrixStack.popPose()
         }
     }
@@ -71,7 +74,8 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
 		u1: Float, v1: Float,
 		u2: Float, v2: Float,
     ) {
-		val buf = worldContext.vertexConsumers.getBuffer(CustomRenderLayers.GUI_TEXTURED_NO_DEPTH_TRIS.apply(texture)) // TODO: this is strictly an incorrect render layer
+		val tex = MC.textureManager.getTexture(texture);
+		val buf = CustomRenderer.getBuffer(CustomRenderPipelines.GUI_TEXTURED_NO_DEPTH_TRIANGLES, TextureSetup.singleTexture(tex.textureView, tex.sampler)) // TODO: this is strictly an incorrect render layer
         val hw = width / 2F
         val hh = height / 2F
         val matrix4f: Matrix4f = worldContext.matrixStack.last().pose()
@@ -87,7 +91,6 @@ class FacingThePlayerContext(val worldContext: RenderInWorldContext) {
         buf.addVertex(matrix4f, +hw, -hh, 0F)
             .setColor(-1)
             .setUv(u2, v1)
-	    worldContext.vertexConsumers.endBatch()
     }
 
 }

@@ -24,7 +24,7 @@ public class PublishREIOverlayKeyPressEvent {
 	public void onKeyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
 		// Only publish event if REI didn't handle the key
 		if (!cir.getReturnValue()) {
-			Screen currentScreen = Minecraft.getInstance().screen;
+			Screen currentScreen = Minecraft.getInstance().gui.screen();
 			if (currentScreen != null) {
 				HandledScreenKeyPressedEvent.Companion.publish(new HandledScreenKeyPressedEvent(
 					currentScreen,

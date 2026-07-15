@@ -34,3 +34,4 @@ gradle-app.setting
 *.kra
 .direnv
 result
+*.DS_Store

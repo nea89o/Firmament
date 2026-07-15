@@ -20,7 +20,7 @@ public class ChatPeekScrollPatch {
 	@ModifyVariable(method = "onScroll", at = @At(value = "STORE"), name = "wheel")
 	public int onGetChatHud(int wheel) {
 		if (Fixes.INSTANCE.shouldPeekChat() && Fixes.INSTANCE.shouldScrollPeekedChat())
-			Minecraft.getInstance().gui.getChat().scrollChat(wheel);
+			Minecraft.getInstance().gui.hud.getChat().scrollChat(wheel);
 		return wheel;
 	}
 

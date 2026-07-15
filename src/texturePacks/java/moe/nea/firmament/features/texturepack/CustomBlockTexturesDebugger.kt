@@ -41,7 +41,7 @@ object CustomBlockTexturesDebugger {
 	}
 
 	fun RenderInWorldContext.tryRenderBox(box: AABB, colour: Int) {
-		val player = MC.player?.position ?: Vec3.ZERO
+		val player = MC.player?.position() ?: Vec3.ZERO
 		if (box.center.distanceTo(player) < range + maxOf(
 				box.zsize, box.xsize, box.ysize
 			) / 2 && !box.contains(player)

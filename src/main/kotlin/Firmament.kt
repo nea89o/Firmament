@@ -45,6 +45,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.MC
 import moe.nea.firmament.util.SBData
 import moe.nea.firmament.util.mc.InitLevel
+import moe.nea.firmament.util.render.FirmamentRenderSystem
 import moe.nea.firmament.util.tr
 
 object Firmament {
@@ -141,9 +142,11 @@ object Firmament {
 			tr("firmament.resourcepack.transparentoverlay", "Transparent Firmament Overlay"),
 			PackActivationType.NORMAL
 		)
+		FirmamentRenderSystem.init();
 	}
 
 
+	@JvmStatic
 	fun identifier(path: String) = Identifier.fromNamespaceAndPath(MOD_ID, path)
 	inline fun <reified T : Any> tryDecodeJsonFromStream(inputStream: InputStream): Result<T> {
 		return runCatching {

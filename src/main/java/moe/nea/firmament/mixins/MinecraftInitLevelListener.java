@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class MinecraftInitLevelListener {
-	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;initBackendSystem(Lcom/mojang/blaze3d/platform/BackendOptions;)Lnet/minecraft/util/TimeSource$NanoTimeSource;"))
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;initBackendSystem()Lnet/minecraft/util/TimeSource$NanoTimeSource;"))
 	private void onInitRenderBackend(CallbackInfo ci) {
 		InitLevel.bump(InitLevel.RENDER_INIT);
 	}
