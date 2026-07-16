@@ -53,8 +53,7 @@ object CopyChat {
 					true,
 					parameters.scissor()
 				)
-					.bounds()!!
-					.containsPoint(testX, testY)
+					.bounds()?.containsPoint(testX, testY) == true
 			) {
 				this.result = formattedCharSequence
 			}
