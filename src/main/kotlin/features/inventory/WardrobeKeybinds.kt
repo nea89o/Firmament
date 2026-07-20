@@ -33,7 +33,7 @@ object WardrobeKeybinds {
 		if (event.screen !is AbstractContainerScreen<*>) return
 		if (event.isRepeat) return
 
-		val regex = Regex("Wardrobe \\([0-9]+/[0-9]+\\)")
+		val regex = Regex("\\([0-9]+/[0-9]+\\) (?:Armor|Equipment) Sets")
 		if (!regex.matches(event.screen.title.string)) return
 		if (!TConfig.wardrobeKeybinds) return
 
@@ -71,7 +71,7 @@ object WardrobeKeybinds {
 
 		val itemStack = invSlot.item
 		val isSelected = itemStack.item == Items.DYE.lime
-		val isSelectable = itemStack.item == Items.DYE.pink
+		val isSelectable = itemStack.item == Items.DYE.gray
 		if (!isSelectable && !isSelected) return
 		if (!TConfig.allowUnequipping && isSelected) return
 
