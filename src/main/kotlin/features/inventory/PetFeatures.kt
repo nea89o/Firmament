@@ -3,7 +3,6 @@ package moe.nea.firmament.features.inventory
 import java.util.regex.Matcher
 import org.joml.Vector2i
 import net.minecraft.world.entity.player.Inventory
-import net.minecraft.world.item.ItemStack
 import net.minecraft.network.chat.Component
 import net.minecraft.ChatFormatting
 import net.minecraft.util.StringRepresentable
@@ -27,7 +26,6 @@ import moe.nea.firmament.util.SkyBlockIsland
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.formattedString
-import moe.nea.firmament.util.mc.DataComponentAccessor
 import moe.nea.firmament.util.mc.LazyItemStack
 import moe.nea.firmament.util.mc.RequiresComponents
 import moe.nea.firmament.util.mc.accessor
@@ -235,8 +233,9 @@ object PetFeatures {
 		if (pet == null) {
 			// Pet is only known through tab widget or chat message, potentially saved from tab widget elsewhere
 			// (e.g. another server or before removing the widget from the tab list)
-			pet = tabPet ?: tempTabPet ?: tempChatPet ?: return
 			if (tempTabPet == null) tempTabPet = tabPet
+			else if (tabPet != null) tempTabPet!!.update(tabPet)
+			pet = tempTabPet ?: tabPet ?: tempChatPet ?: return
 		}
 
 		// Update pet based on tab widget if needed
@@ -251,6 +250,9 @@ object PetFeatures {
 				// Exp has increased since caching, level has not
 				pet.currentExp = tabPet.currentExp
 				pet.totalExp = tabPet.totalExp
+			} else if (tabPet.overflowExp > pet.overflowExp) {
+				// Overflow Exp has increased since caching, level has not
+				pet.overflowExp = tabPet.overflowExp
 			}
 			if (tabPet.petItem != pet.petItem && tabPet.petItem != "Unknown") {
 				// Pet item has changed since caching
@@ -353,6 +355,7 @@ object PetParser {
 	private val petNamePattern = " §7\\[Lvl (\\d{1,3})] §([fa956d])([\\w\\s]+)".toPattern()
 	private val petItemPattern = " (§[fa956dbc4][\\s\\w]+)".toPattern()
 	private val petExpPattern = " §e((?:\\d{1,3}[,.]?)+\\d*[kM]?)§6\\/§e((?:\\d{1,3}[,.]?)+\\d*[kM]?) XP §6\\(\\d+(?:.\\d+)?%\\)".toPattern()
+	private val isMaxLevelPattern = " §bMAX LEVEL".toPattern()
 	private val petOverflowExpPattern = " §6\\+§e((?:\\d{1,3}[,.])+\\d*[kM]?) XP".toPattern()
 	private val katPattern = " Kat:.*".toPattern()
 
@@ -375,15 +378,9 @@ object PetParser {
 		val neuRarity = petRarity.neuRepoRarity ?: return null
 		val expLadder = ExpLadders.getExpLadder(petId, neuRarity)
 
-		var currentExp = 0.0
-		val expForNextLevel: Double
-		if (found.containsKey("exp")) {
-			currentExp = parseShortNumber(found.getValue("exp").group(1))
-			expForNextLevel = parseShortNumber(found.getValue("exp").group(2))
-		} else {
-			expForNextLevel = expLadder.getPetExpForLevel(level + 1).toDouble() -
-				expLadder.getPetExpForLevel(level).toDouble()
-		}
+		val currentExp = 0.0
+		val expForNextLevel = expLadder.getPetExpForLevel(level + 1).toDouble() -
+			expLadder.getPetExpForLevel(level).toDouble()
 
 		val totalExpBeforeLevel = expLadder.getPetExpForLevel(level).toDouble()
 		val totalExp = totalExpBeforeLevel + currentExp
@@ -420,10 +417,15 @@ object PetParser {
 					continue
 				}
 			}
-			if (!found.containsKey("exp")) {
-				val matcher = petExpPattern.matcher(line.formattedString())
-				if (matcher.matches()) {
-					found["exp"] = matcher
+			if (!found.containsKey("exp") && !found.containsKey("max-level")) {
+				val expMatcher = petExpPattern.matcher(line.formattedString())
+				if (expMatcher.matches()) {
+					found["exp"] = expMatcher
+					continue
+				}
+				val levelMatcher = isMaxLevelPattern.matcher(line.formattedString())
+				if (levelMatcher.matches()) {
+					found["max-level"] = levelMatcher
 					continue
 				}
 			}
@@ -465,6 +467,9 @@ object PetParser {
 		if (found.containsKey("exp")) {
 			currentExp = parseShortNumber(found.getValue("exp").group(1))
 			expForNextLevel = parseShortNumber(found.getValue("exp").group(2))
+		} else if (found.containsKey("max-level")) {
+			currentExp = expLadder.getPetExpForLevel(petLevel).toDouble()
+			expForNextLevel = 0.0
 		} else {
 			expForNextLevel = expLadder.getPetExpForLevel(petLevel + 1).toDouble() -
 				expLadder.getPetExpForLevel(petLevel).toDouble()
@@ -555,7 +560,7 @@ data class ParsedPet(
 			totalExpBeforeLevel = other.totalExpBeforeLevel
 			overflowExp = other.overflowExp
 		} else {
-			if (other.currentExp > currentExp) currentExp = other.currentExp
+			currentExp = other.currentExp
 			expForNextLevel = other.expForNextLevel
 			if (other.totalExp > totalExp) totalExp = other.totalExp
 			if (other.totalExpBeforeLevel > totalExpBeforeLevel) totalExpBeforeLevel = other.totalExpBeforeLevel
