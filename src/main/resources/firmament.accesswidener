@@ -42,3 +42,6 @@ accessible field net/minecraft/client/renderer/rendertype/RenderSetup textures L
 accessible method net/minecraft/client/gui/GuiGraphicsExtractor innerBlit (Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIIFFFFI)V
 accessible class net/minecraft/client/resources/model/BlockStateModelLoader$LoadedBlockStateModelDispatcher
 accessible method net/minecraft/client/resources/model/BlockStateModelLoader$LoadedBlockStateModelDispatcher <init> (Ljava/lang/String;Lnet/minecraft/client/renderer/block/dispatch/BlockStateModelDispatcher;)V
+
+mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
+mutable field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageWidth I

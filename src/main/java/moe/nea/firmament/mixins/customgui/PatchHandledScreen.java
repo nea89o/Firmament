@@ -33,12 +33,17 @@ public abstract class PatchHandledScreen<T extends AbstractContainerMenu> extend
 	@Shadow
 	protected int topPos;
 
+	@Unique
+	private int savedImageWidth;
+	@Unique
+	private int savedImageHeight;
+	@Unique
+	private boolean savedImage;
+
 	@Shadow
-	@Final
 	protected int imageWidth;
 
 	@Shadow
-	@Final
 	protected int imageHeight;
 
 	protected PatchHandledScreen() {
@@ -53,11 +58,16 @@ public abstract class PatchHandledScreen<T extends AbstractContainerMenu> extend
 
 	@Unique
 	public void fixSize() {
+		if (!savedImage) {
+			savedImageHeight = imageHeight;
+			savedImageWidth = imageWidth;
+			savedImage = true;
+		}
 		var override = getCustomGui_Firmament();
-		var width = override != null ? override.getBounds().getFirst().width : imageWidth; // TODO: first??
-		var height = override != null ? override.getBounds().getFirst().height : imageHeight;
-		this.leftPos = (this.width - width) / 2;
-		this.topPos = (this.height - height) / 2;
+		imageWidth = override != null ? override.getBounds().getFirst().width : savedImageWidth;
+		imageHeight = override != null ? override.getBounds().getFirst().height : savedImageHeight;
+		this.leftPos = (this.width - imageWidth) / 2;
+		this.topPos = (this.height - imageHeight) / 2;
 	}
 
 	@Inject(method = "init", at = @At("TAIL"))
