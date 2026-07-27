@@ -2,7 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 {
-  pkgs ? import <nixpkgs> { },
+  pkgs ? import (builtins.fetchTarball {
+    sha256 = "01vhgw5s0sw5makh0i6mhdbz1ilfyhl8mymdh780x37v3mpyqqr6";
+    url = "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1042126.624af665418d/nixexprs.tar.xz";
+  }) { },
 }:
 pkgs.mkShell {
   buildInputs =
