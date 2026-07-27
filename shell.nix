@@ -11,6 +11,7 @@ pkgs.mkShell {
   buildInputs =
     with pkgs;
     [
+      argbash
       bash
       gh
       git
