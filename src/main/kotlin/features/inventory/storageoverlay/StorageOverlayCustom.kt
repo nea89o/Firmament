@@ -48,8 +48,8 @@ class StorageOverlayCustom(
 		screen.y_Firmament = overview.measurements.y
 
 		//TODO: imageWidth and imageHeight has to be set in constructor as of 26.1
-		//screen.backgroundWidth_Firmament = overview.measurements.totalWidth
-		//screen.backgroundHeight_Firmament = overview.measurements.totalHeight
+		screen.backgroundWidth_Firmament = overview.measurements.totalWidth
+		screen.backgroundHeight_Firmament = overview.measurements.totalHeight
 	}
 
 	override fun isPointOverSlot(slot: Slot, xOffset: Int, yOffset: Int, pointX: Double, pointY: Double): Boolean {
