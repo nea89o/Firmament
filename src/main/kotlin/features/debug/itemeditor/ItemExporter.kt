@@ -1,5 +1,9 @@
 package moe.nea.firmament.features.debug.itemeditor
 
+import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.suggestion.Suggestions
+import com.mojang.brigadier.suggestion.SuggestionsBuilder
+import java.util.concurrent.CompletableFuture
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -23,6 +27,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import moe.nea.firmament.Firmament
 import moe.nea.firmament.annotations.Subscribe
+import moe.nea.firmament.commands.DefaultSource
 import moe.nea.firmament.commands.RestArgumentType
 import moe.nea.firmament.commands.get
 import moe.nea.firmament.commands.thenArgument
@@ -34,6 +39,8 @@ import moe.nea.firmament.events.SlotRenderEvents
 import moe.nea.firmament.features.debug.DeveloperFeatures
 import moe.nea.firmament.features.debug.ExportedTestConstantMeta
 import moe.nea.firmament.features.debug.PowerUserTools
+import moe.nea.firmament.repo.ExpensiveItemCacheApi
+import moe.nea.firmament.repo.ItemCache.asItemStack
 import moe.nea.firmament.repo.RepoDownloadManager
 import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.LegacyTagParser
@@ -136,32 +143,60 @@ object ItemExporter {
 	@Subscribe
 	fun onCommand(event: CommandEvent.SubCommand) {
 		event.subcommand(DeveloperFeatures.DEVELOPER_SUBCOMMAND) {
+			thenLiteral("setCustomHighlights") {
+				thenArgument("itemId", RestArgumentType) { itemId ->
+					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
+					thenExecute {
+						var items = get(itemId)
+						if (items == "clipboard") items = MC.keyboard.clipboard
+						if (!PowerUserTools.TConfig.highlightCustomItems)
+							MC.sendChat(Component.literal("Warning: Highlight Custom Items is disabled in the Config!"))
+						val ids = items.split(" ")
+						PowerUserTools.customHighlightItems.clear()
+						PowerUserTools.customHighlightItems.addAll(ids)
+						MC.sendChat(Component.literal("Loaded ${PowerUserTools.customHighlightItems.size} IDs to highlight."))
+					}
+				}
+			}
+			thenLiteral("getCustomHighlights") {
+				thenExecute {
+					val items = PowerUserTools.customHighlightItems
+					if (items.isEmpty()) {
+						MC.sendChat(Component.literal("Custom Highlights list is empty!"))
+						return@thenExecute
+					}
+					println("Custom Highlights -- ${items.joinToString(" ")} --")
+					MC.sendChat(Component.literal("Check your logs."))
+				}
+			}
+			thenLiteral("reexportSnbt") {
+				thenArgument("itemId", RestArgumentType) { itemId ->
+					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
+					@OptIn(ExpensiveItemCacheApi::class)
+					thenExecute {
+						var items = get(itemId)
+						if (items == "clipboard") items = MC.keyboard.clipboard
+						for (itemId in items.split(" ").map { SkyblockId(it) }) {
+							val neuItem = RepoManager.getNEUItem(itemId)
+							val realItem = neuItem.asItemStack()
+							val output = exportItem(realItem)
+							MC.sendChat(output)
+						}
+					}
+				}
+			}
 			thenLiteral("reexportlore") {
 				thenArgument("itemid", RestArgumentType) { itemid ->
-					suggests { ctx, builder ->
-						val spaceIndex = builder.remaining.lastIndexOf(" ")
-						val (before, after) =
-							if (spaceIndex < 0) Pair("", builder.remaining)
-							else Pair(
-								builder.remaining.substring(0, spaceIndex + 1),
-								builder.remaining.substring(spaceIndex + 1)
-							)
-						RepoManager.neuRepo.items.items.keys
-							.asSequence()
-							.filter { it.startsWith(after, ignoreCase = true) }
-							.forEach {
-								builder.suggest(before + it)
-							}
-
-						builder.buildFuture()
-					}
+					suggests { ctx, builder -> itemIdSuggester(ctx, builder) }
 					thenExecute {
-						for (itemid in get(itemid).split(" ").map { SkyblockId(it) }) {
+						var items = get(itemid)
+						if (items == "clipboard") items = MC.keyboard.clipboard
+						for (itemid in items.split(" ").map { SkyblockId(it) }) {
 							if (pathFor(itemid).notExists()) {
 								MC.sendChat(
 									tr(
 										"firmament.repo.export.relore.fail",
-										"Could not find json file to relore for ${itemid}"
+										"Could not find json file to relore for $itemid"
 									)
 								)
 							}
@@ -199,6 +234,25 @@ object ItemExporter {
 				}
 			}
 		}
+	}
+
+	fun itemIdSuggester(ctx: CommandContext<DefaultSource>, builder: SuggestionsBuilder):
+		CompletableFuture<Suggestions> {
+		val spaceIndex = builder.remaining.lastIndexOf(" ")
+		val (before, after) =
+			if (spaceIndex < 0) Pair("", builder.remaining)
+			else Pair(
+				builder.remaining.substring(0, spaceIndex + 1),
+				builder.remaining.substring(spaceIndex + 1)
+			)
+		RepoManager.neuRepo.items.items.keys
+			.asSequence()
+			.filter { it.startsWith(after, ignoreCase = true) }
+			.forEach {
+				builder.suggest(before + it)
+			}
+
+		return builder.buildFuture()
 	}
 
 	fun fixLoreNbtFor(itemid: SkyblockId) {
@@ -252,27 +306,29 @@ object ItemExporter {
 		}
 
 		PowerUserTools.lastCopiedStack = itemStack to exportItem(itemStack)
+		PowerUserTools.customHighlightItems.remove(skyblockID)
 	}
 
 	val nonOverlayCache = mutableMapOf<SkyblockId, Boolean>()
 
 	@Subscribe
 	fun onRender(event: SlotRenderEvents.Before) {
-		if (!PowerUserTools.TConfig.highlightNonOverlayItems) {
+		if (!PowerUserTools.TConfig.highlightNonOverlayItems && !PowerUserTools.TConfig.highlightCustomItems) {
 			return
 		}
 		val stack = event.slot.item ?: return
 		val id = event.slot.item.accessor().skyBlockId?.neuItem
 		if (PowerUserTools.TConfig.dontHighlightSemicolonItems && id != null && id.contains(";")) return
 		val sbId = stack.accessor().skyBlockId ?: return
-		val isExported = nonOverlayCache.getOrPut(sbId) {
+		val isCustom = PowerUserTools.TConfig.highlightCustomItems && PowerUserTools.customHighlightItems.contains(sbId.toString())
+		val isExported = PowerUserTools.TConfig.highlightNonOverlayItems && nonOverlayCache.getOrPut(sbId) {
 			RepoManager.overlayData.getOverlayFiles(sbId).isNotEmpty() || // This extra case is here so that an export works immediately, without repo reload
 				RepoDownloadManager.repoSavedLocation.resolve("itemsOverlay")
 					.resolve(ExportedTestConstantMeta.current.dataVersion.toString())
 					.resolve("${stack.accessor().skyBlockId}.snbt")
 					.exists()
 		}
-		if (!isExported)
+		if (!isExported || isCustom)
 			event.context.drawGuiTexture(
 				Firmament.identifier("selected_pet_background"),
 				event.slot.x, event.slot.y, 16, 16,

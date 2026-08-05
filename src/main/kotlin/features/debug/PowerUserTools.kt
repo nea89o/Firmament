@@ -66,6 +66,7 @@ object PowerUserTools {
 		val exportUIRecipes by keyBindingWithDefaultUnbound("export-recipe")
 		val exportNpcLocation by keyBindingWithDefaultUnbound("export-npc-location")
 		val highlightNonOverlayItems by toggle("highlight-non-overlay") { false }
+		val highlightCustomItems by toggle("highlight-custom-items") { false }
 		val dontHighlightSemicolonItems by toggle("dont-highlight-semicolon-items") { false }
 		val showSlotNumbers by keyBindingWithDefaultUnbound("slot-numbers")
 		val autoCopyAnimatedSkins by toggle("copy-animated-skins") { false }
@@ -77,6 +78,8 @@ object PowerUserTools {
 			if (value != null) lastCopiedStackViewTime = 2
 		}
 	var lastCopiedStackViewTime = 0
+
+	var customHighlightItems: MutableList<String> = mutableListOf()
 
 	@Subscribe
 	fun resetLastCopiedStack(event: TickEvent) {
