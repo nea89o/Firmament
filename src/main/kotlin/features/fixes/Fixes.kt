@@ -44,7 +44,8 @@ object Fixes {
 		// Having the sprint key pressed while in a GUI is normally harmless,
 		// as "sprinting" while not actually moving is completely invisible to
 		// the server. But there's a weird bug where it just causes the tooltips
-		// of animated dyed armor pieces to completely disappear.
+		// of animated dyed armor pieces to completely disappear. Likely
+		// something to do with the item being constantly updated.
 		if (MC.screen != null) return
 		val player = MC.player ?: return
 		if (player.isSprinting) return
