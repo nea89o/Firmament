@@ -11,7 +11,8 @@ object SBItemUtil {
 	fun DataComponentAccessor.getSearchName(): String {
 		val name = this.renderingName.unformattedString
 		if (name.contains("Enchanted Book")) {
-			val enchant = this.loreAccordingToNbt.firstOrNull()?.unformattedString
+			val enchant = EnchantedBookLore.findEnchantmentName(
+				this.loreAccordingToNbt.asSequence().map { it.unformattedString })
 			if (enchant != null) return enchant
 		}
 		if (name.startsWith("[Lvl")) {

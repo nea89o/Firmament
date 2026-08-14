@@ -11,6 +11,7 @@ import moe.nea.firmament.repo.RepoManager
 import moe.nea.firmament.util.data.Config
 import moe.nea.firmament.util.data.ManagedConfig
 import moe.nea.firmament.util.extraAttributes
+import moe.nea.firmament.util.skyblock.EnchantedBookLore
 import moe.nea.firmament.util.skyblock.ItemType
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.MC
@@ -37,7 +38,7 @@ object MissingEnchantments {
 	fun enchantIdToText(enchId: String, level: Int? = null): String? {
 		val skyblockId = SkyblockId("${enchId.uppercase()};${level ?: 1}")
 		val displayName = RepoManager.getNEUItem(skyblockId)
-			?.lore?.firstOrNull()
+			?.lore?.let(EnchantedBookLore::findEnchantmentName)
 
 		return if (level == null || level <= 1) {
 			displayName?.replace(Regex(" [IVX]+$"), "")

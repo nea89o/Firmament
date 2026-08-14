@@ -7,6 +7,7 @@ import java.util.NavigableMap
 import java.util.TreeMap
 import moe.nea.firmament.util.SkyblockId
 import moe.nea.firmament.util.removeColorCodes
+import moe.nea.firmament.util.skyblock.EnchantedBookLore
 import moe.nea.firmament.util.skyblockId
 
 object ItemNameLookup : IReloadable {
@@ -35,7 +36,7 @@ object ItemNameLookup : IReloadable {
 		val names = mutableSetOf<String>()
 		names.add(item.displayName)
 		if (item.displayName.contains("Enchanted Book")) {
-			val enchantName = item.lore.firstOrNull()
+			val enchantName = EnchantedBookLore.findEnchantmentName(item.lore)
 			if (enchantName != null) {
 				names.add(enchantName)
 			}
