@@ -352,6 +352,11 @@ val DataComponentAccessor.skyBlockId: SkyblockId?
 				SkyblockId("BALLOON_HAT_${partyHatYear}_${partyHatColor?.uppercase()}")
 			}
 
+			"FACTION_RABBIT" -> {
+				val name = extraAttributes.getString("faction_rabbit_id").getOrNull()
+				SkyblockId("FACTION_RABBIT_${name?.uppercase()}")
+			}
+
 			else -> {
 				SkyblockId(id.replace(":", "-"))
 			}
